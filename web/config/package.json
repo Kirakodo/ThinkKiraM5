@@ -1,9 +1,9 @@
 {
   "name": "thinkkira-config",
   "version": "1.0.0",
-  "description": "ThinkKira Configurator",
+  "description": "ThinkKira Konfigurator",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && vite build -c vite.loader.config.js",
     "dev": "vite"
   },
   "license": "GPL-3.0-only",
@@ -12,7 +12,8 @@
     "@meshtastic/core": "^2.6.7",
     "@meshtastic/protobufs": "^2.8.0",
     "@meshtastic/transport-web-bluetooth": "^0.1.5",
-    "@meshtastic/transport-web-serial": "^0.2.5"
+    "@meshtastic/transport-web-serial": "^0.2.5",
+    "esptool-js": "^0.7.1"
   },
   "devDependencies": {
     "vite": "^8.4.0"

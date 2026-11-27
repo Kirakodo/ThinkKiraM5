@@ -4,33 +4,25 @@ Ziel: `https://devsven.de/Key/ThinkKira` → Unterseite `SUBPAGES/keylink/ThinkK
 
 ## Loader (Karte `Loader.php`)
 
-`SUBPAGES/keylink/` ist öffentlich gesperrt. Darum zwei Orte:
+Eigener Loader, komplett auf Deutsch (esptool-js, kein englischer esp-web-tools-Dialog mehr).
+JS/CSS und Firmware kommen aus dem neuesten GitHub-Release über `firmware.php`.
 
-| Datei | Wohin | Zweck |
-|---|---|---|
-| `flash/index.html` | Inhalt von `<main>` + die zwei `<script>` als Karte **`Loader.php`** in `SUBPAGES/keylink/ThinkKira/` | Flasher-Oberfläche |
-| `flash/flash.css` | zu den Styles der ThinkKira-Seite | Styles, alle Klassen mit Präfix `tk-` |
-| `flash/firmware.php` | **öffentlich erreichbarer** Ordner, z. B. `/_scripts/php/keylink/thinkkira/firmware.php` | Proxy: holt `manifest.json` und `.bin` aus dem neuesten GitHub-Release |
+| Datei | Wohin |
+|---|---|
+| `flash/firmware.php` | öffentlich: `/_scripts/php/keylink/thinkkira/firmware.php` |
 
-In `Loader.php` vor dem Flasher-Script den öffentlichen Pfad setzen:
-
-```html
-<script>window.TK_FIRMWARE_PHP = '/_scripts/php/keylink/thinkkira/firmware.php';</script>
-```
-
-Das esp-web-tools-Script muss geladen werden:
+Inhalt der Karte **`Loader.php`** in `SUBPAGES/keylink/ThinkKira/`:
 
 ```html
-<script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+<link rel="stylesheet" href="/_scripts/php/keylink/thinkkira/firmware.php?asset=thinkkira-loader.css">
+<div id="tk-loader" data-firmware="/_scripts/php/keylink/thinkkira/firmware.php"></div>
+<script type="module" src="/_scripts/php/keylink/thinkkira/firmware.php?asset=thinkkira-loader.js"></script>
 ```
 
-Wichtig:
-- Die Firmware wird **nicht** auf den Server hochgeladen. `firmware.php` lädt sie bei Bedarf von
-  `https://github.com/Kirakodo/ThinkKiraM5/releases/latest/download/…` (10 Minuten Zwischenspeicher im Temp-Ordner).
-- Nötig: PHP mit cURL, ausgehende HTTPS-Verbindungen zu github.com. Seite nur über HTTPS (Web Serial).
-- Das Manifest verweist relativ auf `firmware.php?asset=…`, also auf denselben Ordner wie `firmware.php`.
-- Neue Firmware = neues GitHub-Release, auf dem Server ist nichts zu ändern.
-- Test: `https://devsven.de/_scripts/php/keylink/thinkkira/firmware.php?asset=manifest.json` muss JSON mit der Version liefern.
+- Zeigt die neueste Version, Option „Gerät vorher komplett löschen“, Fortschrittsbalken, Meldungen auf Deutsch.
+- Nötig: HTTPS, Chrome/Edge am PC; PHP mit cURL und ausgehendem HTTPS zu github.com.
+- Test: `https://devsven.de/_scripts/php/keylink/thinkkira/firmware.php?asset=manifest.json` liefert JSON mit der Version.
+- `flash/index.html` ist nur eine Vorschauseite zum Testen.
 
 ## Konfigurator (Karte `Konfigurator.php`)
 
@@ -53,7 +45,7 @@ Inhalt der Karte **`Konfigurator.php`** in `SUBPAGES/keylink/ThinkKira/`:
 - Alles auf Deutsch.
 
 ## Erlaubte Dateien in `firmware.php`
-`?asset=` `manifest.json` · `thinkkira-m5.factory.bin` · `thinkkira-m5.bin` · `thinkkira-config.js` · `thinkkira-config.css`
+`?asset=` `manifest.json` · `thinkkira-m5.factory.bin` · `thinkkira-m5.bin` · `thinkkira-loader.js` · `thinkkira-loader.css` · `thinkkira-config.js` · `thinkkira-config.css`
 
 ## Updates
 Alles kommt aus `https://github.com/Kirakodo/ThinkKiraM5/releases/latest`. Neues Release = Seite aktuell, auf dem Server ist nichts zu tun.

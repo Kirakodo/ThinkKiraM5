@@ -41,7 +41,7 @@ function scalarInput(field, scalar, get, set) {
     input.value = get() ?? "";
     input.addEventListener("input", () => set(input.value));
   } else if (scalar === ScalarType.BYTES) {
-    input = el("input", { type: SECRET.test(field.localName) ? "password" : "text", id, placeholder: "Base64" });
+    input = el("input", { type: SECRET.test(field.localName) ? "password" : "text", id, placeholder: "Schlüssel (Base64)" });
     input.value = b64(get());
     input.addEventListener("change", () => {
       try {

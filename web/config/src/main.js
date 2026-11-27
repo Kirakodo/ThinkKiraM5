@@ -1,4 +1,4 @@
-// ThinkKira Configurator
+// ThinkKira Konfigurator
 // Verbindet sich per USB (Web Serial) oder Bluetooth (Web Bluetooth) mit dem Gerät und
 // bearbeitet alle Einstellungen. Einbettung: <div id="tk-config"></div> + dieses Modul + CSS.
 // SPDX-License-Identifier: GPL-3.0-only
@@ -204,7 +204,7 @@ const PAGES = [
   { id: "waypoints", title: "Wegpunkte", group: "ThinkKira" },
   { id: "canned", title: "Schnellantworten", group: "ThinkKira" },
   { id: "thinkkira", title: "ThinkKira-Funktionen", group: "ThinkKira" },
-  { id: "system", title: "System & Backup", group: "System" },
+  { id: "system", title: "System & Sicherung", group: "System" },
 ];
 
 function pageDevice() {
@@ -454,7 +454,7 @@ function render() {
       el(
         "div",
         { class: "tk-welcome" },
-        el("h3", {}, "ThinkKira Configurator"),
+        el("h3", {}, "ThinkKira Konfigurator"),
         el("p", {}, "Gerät per USB-Kabel oder Bluetooth verbinden. Funktioniert in Chrome oder Edge (Bluetooth auch auf Android)."),
         !hasSerial && !hasBle ? el("p", { class: "tk-bad" }, "Dieser Browser unterstützt weder Web Serial noch Web Bluetooth.") : null,
       ),

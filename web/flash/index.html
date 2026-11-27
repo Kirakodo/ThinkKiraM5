@@ -3,45 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ThinkKira Web-Flasher</title>
-  <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
-  <link rel="stylesheet" href="flash.css">
+  <title>ThinkKira Loader</title>
+  <!-- Test-/Vorschauseite. Auf devsven.de: Karte Loader.php, siehe web/EINBAU.md -->
+  <link rel="stylesheet" href="firmware.php?asset=thinkkira-loader.css">
 </head>
 <body>
-<main class="tk-flash">
-  <h1>ThinkKira Web-Flasher</h1>
+  <h1>ThinkKira Loader</h1>
   <p>Firmware für das <strong>Elecrow ThinkNode M5</strong> direkt aus dem Browser aufspielen.
-     Die Firmware kommt immer aus dem neuesten
-     <a href="https://github.com/Kirakodo/ThinkKiraM5/releases/latest" target="_blank" rel="noopener">GitHub-Release</a>.</p>
-
-  <p class="tk-version">Version: <span id="tk-version">wird geladen …</span></p>
-
-  <ol>
-    <li>Chrome oder Edge am PC verwenden (Web Serial).</li>
-    <li>ThinkNode M5 per USB-C anschließen.</li>
-    <li>Auf <em>Installieren</em> klicken und den Port wählen.</li>
-    <li>Beim ersten Wechsel auf ThinkKira „Gerät löschen“ bestätigen.</li>
-  </ol>
-
-  <!-- manifest kommt über den PHP-Proxy (gleiche Domain, sonst blockiert der Browser GitHub wegen CORS).
-       Pfad zu firmware.php wird unten in TK_FIRMWARE_PHP gesetzt. -->
-  <esp-web-install-button id="tk-install">
-    <button slot="activate" class="tk-btn">Installieren</button>
-    <span slot="unsupported">Dein Browser kann das nicht. Bitte Chrome oder Edge am PC nutzen.</span>
-    <span slot="not-allowed">Nur über HTTPS möglich.</span>
-  </esp-web-install-button>
-
-  <p class="tk-note">Kartendaten: © OpenStreetMap-Mitwirkende (ODbL). Firmware: GPL-3.0, basiert auf Meshtastic.</p>
-</main>
-<script>
-  // Öffentlicher Pfad zu firmware.php (bei Einbau anpassen, z. B. '/Key/ThinkKira/firmware.php')
-  const TK_FIRMWARE_PHP = window.TK_FIRMWARE_PHP || 'firmware.php';
-  const tkManifest = TK_FIRMWARE_PHP + '?asset=manifest.json';
-  document.getElementById('tk-install').setAttribute('manifest', tkManifest);
-  fetch(tkManifest)
-    .then(r => r.json())
-    .then(m => { document.getElementById('tk-version').textContent = m.version; })
-    .catch(() => { document.getElementById('tk-version').textContent = 'nicht erreichbar'; });
-</script>
+     Die Firmware kommt immer aus dem neuesten GitHub-Release.</p>
+  <div id="tk-loader" data-firmware="firmware.php"></div>
+  <script type="module" src="firmware.php?asset=thinkkira-loader.js"></script>
+  <p><small>Firmware: GPL-3.0, basiert auf Meshtastic. Kartendaten: © OpenStreetMap-Mitwirkende (ODbL).</small></p>
 </body>
 </html>

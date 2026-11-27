@@ -40,7 +40,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Configurator bauen
+      - name: Loader und Konfigurator bauen
         run: cd web/config && npm ci && npm run build
       - name: Release-Dateien zusammenstellen
         run: |
@@ -62,7 +62,7 @@ jobs:
             ]
           }
           JSON
-          cp web/config/dist/thinkkira-config.js web/config/dist/thinkkira-config.css dist/
+          cp web/config/dist/thinkkira-config.js web/config/dist/thinkkira-config.css web/config/dist/thinkkira-loader.js web/config/dist/thinkkira-loader.css dist/
           (cd web && zip -r ../dist/thinkkira-web.zip . -x "*/node_modules/*")
           ls -la dist
       - name: GitHub-Release anlegen

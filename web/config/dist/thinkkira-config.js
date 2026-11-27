@@ -11896,20 +11896,20 @@ var jm = {
 	mqtt: "MQTT-Brücke",
 	serial: "Serielle Schnittstelle",
 	externalNotification: "Buzzer & LEDs",
-	storeForward: "Store & Forward",
+	storeForward: "Speichern & Weiterleiten",
 	rangeTest: "Reichweitentest",
 	telemetry: "Telemetrie & Sensoren",
 	cannedMessage: "Schnellnachrichten (Modul)",
 	audio: "Audio",
-	remoteHardware: "Remote-Hardware",
+	remoteHardware: "Fern-Hardware",
 	neighborInfo: "Nachbar-Info",
 	ambientLighting: "Umgebungslicht",
 	detectionSensor: "Erkennungssensor",
-	paxcounter: "Paxcounter",
+	paxcounter: "Personenzähler",
 	statusmessage: "Statusnachricht",
 	trafficManagement: "Verkehrssteuerung",
 	tak: "TAK",
-	meshBeacon: "Mesh-Beacon"
+	meshBeacon: "Mesh-Bake"
 }, Mm = {
 	role: "Rolle",
 	rebroadcastMode: "Weiterleiten",
@@ -11923,12 +11923,12 @@ var jm = {
 	buttonGpio: "Tasten-GPIO",
 	buzzerGpio: "Buzzer-GPIO",
 	positionBroadcastSecs: "Position senden alle (s)",
-	positionBroadcastSmartEnabled: "Smart Position",
+	positionBroadcastSmartEnabled: "Intelligente Position",
 	fixedPosition: "Feste Position",
 	gpsUpdateInterval: "GPS-Abfrage alle (s)",
 	positionFlags: "Positions-Felder",
-	broadcastSmartMinimumDistance: "Smart: min. Abstand (m)",
-	broadcastSmartMinimumIntervalSecs: "Smart: min. Intervall (s)",
+	broadcastSmartMinimumDistance: "Intelligent: min. Abstand (m)",
+	broadcastSmartMinimumIntervalSecs: "Intelligent: min. Intervall (s)",
 	gpsMode: "GPS",
 	gpsEnabled: "GPS an",
 	isPowerSaving: "Stromsparmodus",
@@ -11956,7 +11956,7 @@ var jm = {
 	wakeOnTapOrMotion: "Aufwecken bei Bewegung",
 	use12hClock: "12-Stunden-Uhr",
 	usePreset: "Voreinstellung nutzen",
-	modemPreset: "Voreinstellung (Preset)",
+	modemPreset: "Voreinstellung",
 	bandwidth: "Bandbreite (kHz)",
 	spreadFactor: "Spreading Factor",
 	codingRate: "Coding Rate",
@@ -11993,8 +11993,8 @@ var jm = {
 	mapReportSettings: "Kartenmeldung",
 	name: "Name",
 	psk: "Schlüssel (PSK, Base64)",
-	uplinkEnabled: "Uplink (zu MQTT)",
-	downlinkEnabled: "Downlink (von MQTT)",
+	uplinkEnabled: "Senden zu MQTT",
+	downlinkEnabled: "Empfangen von MQTT",
 	moduleSettings: "Modul-Einstellungen",
 	positionPrecision: "Positionsgenauigkeit",
 	isMuted: "Stumm",
@@ -12142,15 +12142,15 @@ function Pm(e) {
 	return t.charAt(0).toUpperCase() + t.slice(1);
 }
 var Fm = {
-	CLIENT: "Client (Standard)",
-	CLIENT_MUTE: "Client stumm (leitet nicht weiter)",
+	CLIENT: "Teilnehmer (Standard)",
+	CLIENT_MUTE: "Teilnehmer stumm (leitet nicht weiter)",
 	ROUTER: "Router",
-	ROUTER_CLIENT: "Router + Client",
-	REPEATER: "Repeater",
+	ROUTER_CLIENT: "Router + Teilnehmer",
+	REPEATER: "Verstärker (Repeater)",
 	TRACKER: "Tracker",
 	SENSOR: "Sensor",
 	TAK: "TAK",
-	CLIENT_HIDDEN: "Client versteckt",
+	CLIENT_HIDDEN: "Teilnehmer versteckt",
 	LOST_AND_FOUND: "Verloren & Gefunden",
 	TAK_TRACKER: "TAK-Tracker",
 	ROUTER_LATE: "Router (verzögert)",
@@ -12281,7 +12281,7 @@ function Vm(e, t, n, r) {
 	}), a.value = n() ?? "", a.addEventListener("input", () => r(a.value))) : t === B.BYTES ? (a = Z("input", {
 		type: Rm.test(e.localName) ? "password" : "text",
 		id: i,
-		placeholder: "Base64"
+		placeholder: "Schlüssel (Base64)"
 	}), a.value = zm(n()), a.addEventListener("change", () => {
 		try {
 			r(Bm(a.value)), a.classList.remove("tk-bad");
@@ -12538,7 +12538,7 @@ var sh = [
 	},
 	{
 		id: "system",
-		title: "System & Backup",
+		title: "System & Sicherung",
 		group: "System"
 	}
 ];
@@ -12715,7 +12715,7 @@ function yh() {
 		disabled: n ? null : "",
 		onclick: () => qm("ble")
 	}, "Bluetooth verbinden"))), i = Z("div", { class: "tk-main" });
-	if (!e) i.append(Z("div", { class: "tk-welcome" }, Z("h3", {}, "ThinkKira Configurator"), Z("p", {}, "Gerät per USB-Kabel oder Bluetooth verbinden. Funktioniert in Chrome oder Edge (Bluetooth auch auf Android)."), !t && !n ? Z("p", { class: "tk-bad" }, "Dieser Browser unterstützt weder Web Serial noch Web Bluetooth.") : null));
+	if (!e) i.append(Z("div", { class: "tk-welcome" }, Z("h3", {}, "ThinkKira Konfigurator"), Z("p", {}, "Gerät per USB-Kabel oder Bluetooth verbinden. Funktioniert in Chrome oder Edge (Bluetooth auch auf Android)."), !t && !n ? Z("p", { class: "tk-bad" }, "Dieser Browser unterstützt weder Web Serial noch Web Bluetooth.") : null));
 	else {
 		let e = Z("nav", { class: "tk-nav" }), t = "";
 		for (let n of sh) n.group !== t && (t = n.group, e.append(Z("div", { class: "tk-navgroup" }, t))), e.append(Z("button", {

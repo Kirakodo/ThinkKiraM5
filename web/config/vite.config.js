@@ -1,4 +1,4 @@
-// ThinkKira Configurator – Build als einzelnes ES-Modul + CSS für die Einbettung in eine PHP-Seite
+// ThinkKira Konfigurator – Build als einzelnes ES-Modul + CSS für die Einbettung in eine PHP-Seite
 import { defineConfig } from "vite";
 
 export default defineConfig({
