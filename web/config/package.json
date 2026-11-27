@@ -1,0 +1,21 @@
+{
+  "name": "thinkkira-config",
+  "version": "1.0.0",
+  "description": "ThinkKira Configurator",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite"
+  },
+  "license": "GPL-3.0-only",
+  "dependencies": {
+    "@bufbuild/protobuf": "^2.17.0",
+    "@meshtastic/core": "^2.6.7",
+    "@meshtastic/protobufs": "^2.8.0",
+    "@meshtastic/transport-web-bluetooth": "^0.1.5",
+    "@meshtastic/transport-web-serial": "^0.2.5"
+  },
+  "devDependencies": {
+    "vite": "^8.4.0"
+  },
+  "type": "module"
+}

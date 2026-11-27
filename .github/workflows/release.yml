@@ -37,6 +37,11 @@ jobs:
           ~/.platformio/penv/bin/pip install "pioarduino==6.2.0"
       - name: Firmware bauen
         run: pio run -e thinknode_m5_custom
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Configurator bauen
+        run: cd web/config && npm ci && npm run build
       - name: Release-Dateien zusammenstellen
         run: |
           mkdir -p dist
@@ -57,7 +62,7 @@ jobs:
             ]
           }
           JSON
-          (cd web && zip -r ../dist/thinkkira-web.zip . -x "node_modules/*")
+          (cd web && zip -r ../dist/thinkkira-web.zip . -x "*/node_modules/*")
           ls -la dist
       - name: GitHub-Release anlegen
         env:
