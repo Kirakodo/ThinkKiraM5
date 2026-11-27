@@ -53,3 +53,9 @@ Nur wenn sich `firmware.php` selbst ändert, muss sie neu hochgeladen werden.
 
 ## Übersicht
 Kurzbeschreibung, Funktionen und Download-Link: Texte aus der README (Abschnitte „Idee“, „Geplante Funktionen“, „Bedienung“).
+
+## Design
+
+Loader und Konfigurator bringen kein eigenes Design mit. Sie erzeugen nur Bootstrap-5-Klassen
+(Buttons, Formulare, Fieldsets, Fortschrittsbalken, Alerts) und Font-Awesome-Symbole (`fas`).
+Bootstrap und Font Awesome kommen von der einbettenden Seite (wie bei Key WT32).

@@ -8,7 +8,7 @@ import { MeshDevice, Protobuf } from "@meshtastic/core";
 import { TransportWebSerial } from "@meshtastic/transport-web-serial";
 import { TransportWebBluetooth } from "@meshtastic/transport-web-bluetooth";
 import { create, toJson, fromJson, clone } from "@bufbuild/protobuf";
-import { renderMessage, el } from "./form.js";
+import { renderMessage, el, group } from "./form.js";
 import { SECTION_LABELS } from "./labels.js";
 
 const P = Protobuf;
@@ -192,158 +192,163 @@ async function sendWaypoint(w) {
 
 // ---------- Seiten ----------
 
+const icon = (name) => el("i", { class: "fas " + name + " me-1" });
+const btn = (text, onclick, kind = "primary", ic) =>
+  el("button", { type: "button", class: "btn btn-sm btn-" + kind + " me-2 mt-2", onclick }, ic ? icon(ic) : null, text);
+const grid = (...cols) => el("div", { class: "row g-3 mb-3" }, ...cols.filter(Boolean).map((c) => el("div", { class: "col-lg-6" }, c)));
+const hint = (t) => el("div", { class: "form-text mb-2" }, t);
+
 const PAGES = [
-  { id: "device", title: "Gerät", group: "Gerät" },
-  { id: "channels", title: "Kanäle", group: "Funk" },
-  ...["lora", "position", "power", "network", "bluetooth", "display", "security"].map((c) => ({
-    id: "cfg:" + c,
-    title: SECTION_LABELS[c],
-    group: c === "lora" ? "Funk" : "Einstellungen",
-  })),
-  { id: "modules", title: "Module", group: "Module" },
-  { id: "waypoints", title: "Wegpunkte", group: "ThinkKira" },
-  { id: "canned", title: "Schnellantworten", group: "ThinkKira" },
-  { id: "thinkkira", title: "ThinkKira-Funktionen", group: "ThinkKira" },
-  { id: "system", title: "System & Sicherung", group: "System" },
+  { id: "device", title: "Gerät", ic: "fa-microchip" },
+  { id: "channels", title: "Kanäle", ic: "fa-comments" },
+  { id: "cfg:lora", title: "Funk", ic: "fa-broadcast-tower" },
+  { id: "cfg:position", title: "GPS", ic: "fa-map-marker-alt" },
+  { id: "cfg:power", title: "Energie", ic: "fa-battery-three-quarters" },
+  { id: "cfg:network", title: "WLAN", ic: "fa-wifi" },
+  { id: "cfg:bluetooth", title: "Bluetooth", ic: "fa-mobile-alt" },
+  { id: "cfg:display", title: "Anzeige", ic: "fa-tv" },
+  { id: "cfg:security", title: "Sicherheit", ic: "fa-lock" },
+  { id: "modules", title: "Module", ic: "fa-puzzle-piece" },
+  { id: "waypoints", title: "Wegpunkte", ic: "fa-flag" },
+  { id: "canned", title: "Schnellantworten", ic: "fa-reply" },
+  { id: "thinkkira", title: "ThinkKira", ic: "fa-star" },
+  { id: "system", title: "System", ic: "fa-cog" },
 ];
 
-function pageDevice() {
-  const box = el("div");
+function infoRow() {
   const md = state.metadata;
-  box.append(
-    el("h3", {}, "Gerät"),
-    el(
-      "dl",
-      { class: "tk-info" },
-      el("dt", {}, "Knoten-Nr."),
-      el("dd", {}, state.myNodeNum ? "!" + state.myNodeNum.toString(16).padStart(8, "0") : "–"),
-      el("dt", {}, "Firmware"),
-      el("dd", {}, md?.firmwareVersion ?? "–"),
-      el("dt", {}, "Knoten bekannt"),
-      el("dd", {}, String(state.nodes.size)),
-    ),
-  );
   const me = state.nodes.get(state.myNodeNum);
+  const item = (label, value) =>
+    el("div", { class: "col-6 col-md-3" }, el("div", { class: "small text-muted" }, label), el("div", { class: "fw-bold" }, value));
+  return el(
+    "div",
+    { class: "row g-2 mb-3" },
+    item("Name", me?.user?.longName ?? "–"),
+    item("Knoten-Nr.", state.myNodeNum ? "!" + state.myNodeNum.toString(16).padStart(8, "0") : "–"),
+    item("Firmware", md?.firmwareVersion ?? "–"),
+    item("Knoten bekannt", String(state.nodes.size)),
+  );
+}
+
+function pageDevice() {
+  const me = state.nodes.get(state.myNodeNum);
+  let nameBox = null;
   if (me?.user) {
     const user = clone(P.Mesh.UserSchema, me.user);
-    box.append(el("h3", {}, "Name"));
-    box.append(
-      renderMessage(P.Mesh.UserSchema, user, {
-        skip: ["id", "macaddr", "hwModel", "publicKey", "role"],
-      }),
+    nameBox = group(
+      "Name",
+      renderMessage(P.Mesh.UserSchema, user, { skip: ["id", "macaddr", "hwModel", "publicKey", "role"] }),
+      btn("Name speichern", () => withEdit((d) => d.setOwner(user)), "primary", "fa-save"),
     );
-    box.append(el("button", { class: "tk-btn", onclick: () => withEdit((d) => d.setOwner(user)) }, "Name speichern"));
   }
-  if (state.config.device) {
-    box.append(el("h3", {}, "Geräte-Einstellungen"));
-    box.append(renderMessage(P.Config.Config_DeviceConfigSchema, state.config.device));
-    box.append(el("button", { class: "tk-btn", onclick: () => saveConfig("device") }, "Speichern"));
-  }
-  return box;
+  const devBox = state.config.device
+    ? group("Geräte-Einstellungen", renderMessage(P.Config.Config_DeviceConfigSchema, state.config.device), btn("Speichern", () => saveConfig("device"), "primary", "fa-save"))
+    : null;
+  return grid(nameBox, devBox);
 }
 
 function pageConfig(section) {
   const msg = state.config[section];
-  if (!msg) return el("p", {}, "Noch nicht vom Gerät geladen.");
+  if (!msg) return el("div", { class: "alert alert-warning" }, "Noch nicht vom Gerät geladen.");
   const schema = P.Config.ConfigSchema.fields.find((f) => f.localName === section).message;
-  return el(
-    "div",
-    {},
-    el("h3", {}, SECTION_LABELS[section] ?? section),
-    section === "lora" ? el("p", { class: "tk-hint" }, "Für Deutschland: Region EU_868. Der eigene ThinkKira-Funkmodus kommt mit Firmware-Phase 2.") : null,
-    renderMessage(schema, msg),
-    el("button", { class: "tk-btn", onclick: () => saveConfig(section) }, "Speichern"),
+  return grid(
+    group(
+      SECTION_LABELS[section] ?? section,
+      section === "lora" ? hint("Für Deutschland: Region EU_868. Der eigene ThinkKira-Funkmodus kommt mit Firmware-Phase 2.") : null,
+      renderMessage(schema, msg),
+      btn("Speichern", () => saveConfig(section), "primary", "fa-save"),
+    ),
   );
 }
 
 function pageChannels() {
-  const box = el("div", {}, el("h3", {}, "Kanäle"));
+  const boxes = [];
   for (let i = 0; i < 8; i++) {
     const ch = state.channels[i];
     if (!ch) continue;
-    const fs = el("fieldset", { class: "tk-sub" }, el("legend", {}, `Kanal ${i}${i === 0 ? " (primär)" : ""}`));
-    fs.append(renderMessage(P.Channel.ChannelSchema, ch, { skip: ["index"] }));
-    fs.append(el("button", { class: "tk-btn", onclick: () => withEdit((d) => d.setChannel(ch)) }, `Kanal ${i} speichern`));
-    box.append(fs);
+    boxes.push(
+      group(
+        `Kanal ${i}${i === 0 ? " (primär)" : ""}`,
+        renderMessage(P.Channel.ChannelSchema, ch, { skip: ["index"] }),
+        btn(`Kanal ${i} speichern`, () => withEdit((d) => d.setChannel(ch)), "primary", "fa-save"),
+      ),
+    );
   }
-  return box;
+  return grid(...boxes);
 }
 
 function pageModules() {
-  const box = el("div", {}, el("h3", {}, "Module"));
+  const boxes = [];
   for (const f of P.ModuleConfig.ModuleConfigSchema.fields) {
     const msg = state.moduleConfig[f.localName];
     if (!msg) continue;
-    const det = el("details", { class: "tk-sub" }, el("summary", {}, SECTION_LABELS[f.localName] ?? f.localName));
-    det.append(renderMessage(f.message, msg), el("button", { class: "tk-btn", onclick: () => saveModule(f.localName) }, "Speichern"));
-    box.append(det);
+    boxes.push(group(SECTION_LABELS[f.localName] ?? f.localName, renderMessage(f.message, msg), btn("Speichern", () => saveModule(f.localName), "primary", "fa-save")));
   }
-  return box;
+  return grid(...boxes);
 }
 
 function pageWaypoints() {
-  const box = el("div", {}, el("h3", {}, "Wegpunkte"));
-  box.append(el("p", { class: "tk-hint" }, "Wegpunkte werden als Meshtastic-Waypoint an alle gesendet und vom Gerät gespeichert. Die Verwaltung im Gerät (Liste, Navigation) kommt mit Firmware-Phase 4."));
-  const name = el("input", { type: "text", placeholder: "Name", maxlength: "29" });
-  const lat = el("input", { type: "number", step: "any", placeholder: "Breite, z. B. 52.3906" });
-  const lon = el("input", { type: "number", step: "any", placeholder: "Länge, z. B. 13.0645" });
-  box.append(
-    el("div", { class: "tk-inline" }, name, lat, lon),
-    el(
-      "button",
-      {
-        class: "tk-btn",
-        onclick: async () => {
-          if (!name.value || !lat.value || !lon.value) return toast("Name, Breite und Länge ausfüllen", true);
-          await sendWaypoint({ name: name.value, lat: parseFloat(lat.value), lon: parseFloat(lon.value) });
-          toast("Wegpunkt gesendet");
-          render();
-        },
-      },
-      "Wegpunkt senden",
-    ),
-  );
-  const gpxIn = el("input", { type: "file", accept: ".gpx,application/gpx+xml" });
+  const name = el("input", { type: "text", class: "form-control form-control-sm", placeholder: "Name", maxlength: "29" });
+  const lat = el("input", { type: "number", class: "form-control form-control-sm", step: "any", placeholder: "Breite, z. B. 52.3906" });
+  const lon = el("input", { type: "number", class: "form-control form-control-sm", step: "any", placeholder: "Länge, z. B. 13.0645" });
+  const gpxIn = el("input", { type: "file", class: "form-control form-control-sm", accept: ".gpx,application/gpx+xml" });
   gpxIn.addEventListener("change", async () => {
     const list = parseGpx(await gpxIn.files[0].text());
     for (const w of list) await sendWaypoint(w);
     toast(`${list.length} Wegpunkte gesendet`);
     render();
   });
-  box.append(
-    el("div", { class: "tk-row" }, el("label", {}, "GPX importieren"), gpxIn),
-    el(
-      "button",
-      {
-        class: "tk-btn tk-btn2",
-        onclick: () => {
+  const ul = el("ul", { class: "list-group list-group-flush" });
+  for (const w of state.waypoints.values())
+    ul.append(el("li", { class: "list-group-item px-0" }, `${w.name} – ${(w.latitudeI * 1e-7).toFixed(5)}, ${(w.longitudeI * 1e-7).toFixed(5)}`));
+  if (!state.waypoints.size) ul.append(el("li", { class: "list-group-item px-0 text-muted" }, "Noch keine Wegpunkte in dieser Sitzung."));
+
+  return grid(
+    group(
+      "Wegpunkt senden",
+      hint("Wird als Meshtastic-Wegpunkt an alle gesendet. Liste und Navigation im Gerät kommen mit Firmware-Phase 4."),
+      el("div", { class: "mb-2" }, el("label", { class: "form-label small mb-1" }, "Name"), name),
+      el("div", { class: "row g-2" }, el("div", { class: "col-6" }, lat), el("div", { class: "col-6" }, lon)),
+      btn(
+        "Wegpunkt senden",
+        async () => {
+          if (!name.value || !lat.value || !lon.value) return toast("Name, Breite und Länge ausfüllen", true);
+          await sendWaypoint({ name: name.value, lat: parseFloat(lat.value), lon: parseFloat(lon.value) });
+          toast("Wegpunkt gesendet");
+          render();
+        },
+        "primary",
+        "fa-paper-plane",
+      ),
+    ),
+    group(
+      "GPX",
+      el("div", { class: "mb-2" }, el("label", { class: "form-label small mb-1" }, "GPX-Datei importieren und senden"), gpxIn),
+      btn(
+        "GPX exportieren",
+        () => {
           const blob = new Blob([toGpx([...state.waypoints.values()])], { type: "application/gpx+xml" });
           el("a", { href: URL.createObjectURL(blob), download: "thinkkira-wegpunkte.gpx" }).click();
         },
-      },
-      "GPX exportieren",
+        "outline-secondary",
+        "fa-file-export",
+      ),
+      el("div", { class: "mt-3 small fw-bold" }, "Bekannte Wegpunkte"),
+      ul,
     ),
   );
-  const ul = el("ul", { class: "tk-list" });
-  for (const w of state.waypoints.values())
-    ul.append(el("li", {}, `${w.name} – ${(w.latitudeI * 1e-7).toFixed(5)}, ${(w.longitudeI * 1e-7).toFixed(5)}`));
-  box.append(el("h4", {}, "Bekannte Wegpunkte (diese Sitzung)"), ul);
-  return box;
 }
 
 function pageCanned() {
-  const ta = el("textarea", { rows: "6", placeholder: "Eine Nachricht pro Zeile, z. B.\nOK\nBin unterwegs\nBrauche Hilfe" });
-  return el(
-    "div",
-    {},
-    el("h3", {}, "Schnellantworten"),
-    el("p", { class: "tk-hint" }, "Erscheinen auf dem Gerät unter Nachrichten → Antworten."),
-    ta,
-    el(
-      "button",
-      {
-        class: "tk-btn",
-        onclick: () =>
+  const ta = el("textarea", { rows: "6", class: "form-control form-control-sm", placeholder: "Eine Nachricht pro Zeile, z. B.\nOK\nBin unterwegs\nBrauche Hilfe" });
+  return grid(
+    group(
+      "Schnellantworten",
+      hint("Erscheinen auf dem Gerät unter Nachrichten → Antworten. Eine Nachricht pro Zeile."),
+      ta,
+      btn(
+        "Speichern",
+        () =>
           withEdit((d) =>
             d.setCannedMessages(
               create(P.CannedMessages.CannedMessageModuleConfigSchema, {
@@ -351,8 +356,9 @@ function pageCanned() {
               }),
             ),
           ),
-      },
-      "Speichern",
+        "primary",
+        "fa-save",
+      ),
     ),
   );
 }
@@ -365,42 +371,38 @@ function pageThinkKira() {
     ["Tastenbelegung", 3],
     ["Kompass, Ankunftsradius, Track", 4],
     ["Offline-Karte hochladen", 4],
-    ["WLAN-Weboberfläche, OTA", 5],
+    ["WLAN-Weboberfläche, Update aus GitHub-Release", 5],
     ["Energieprofile (Wandern / Basis / Maximal sparen)", 6],
     ["SOS-Einstellungen", 7],
     ["Wecker & Erinnerungen", 7],
   ];
-  const ul = el("ul", { class: "tk-list" });
-  for (const [t, ph] of items) ul.append(el("li", {}, `${t} `, el("span", { class: "tk-badge" }, `ab Phase ${ph}`)));
-  return el(
-    "div",
-    {},
-    el("h3", {}, "ThinkKira-Funktionen"),
-    el("p", { class: "tk-hint" }, "Diese Einstellungen laufen über ein eigenes ThinkKira-Modul (PortNum 287) und werden freigeschaltet, sobald die Firmware-Phase fertig ist."),
-    ul,
-  );
+  const ul = el("ul", { class: "list-group list-group-flush" });
+  for (const [t, ph] of items)
+    ul.append(el("li", { class: "list-group-item px-0 d-flex justify-content-between align-items-center gap-2" }, t, el("span", { class: "badge text-bg-secondary" }, `ab Phase ${ph}`)));
+  return grid(group("ThinkKira-Funktionen", hint("Werden über ein eigenes ThinkKira-Modul eingestellt und freigeschaltet, sobald die Firmware-Phase fertig ist."), ul));
 }
 
 function pageSystem() {
-  const restore = el("input", { type: "file", accept: "application/json,.json" });
+  const restore = el("input", { type: "file", class: "form-control form-control-sm", accept: "application/json,.json" });
   restore.addEventListener("change", () => restoreBackup(restore.files[0]));
-  return el(
-    "div",
-    {},
-    el("h3", {}, "Sicherung"),
-    el("button", { class: "tk-btn", onclick: downloadBackup }, "Alle Einstellungen sichern"),
-    el("div", { class: "tk-row" }, el("label", {}, "Sicherung wiederherstellen"), restore),
-    el("h3", {}, "Gerät"),
-    el("button", { class: "tk-btn tk-btn2", onclick: () => state.device?.reboot(2) }, "Neustart"),
-    el(
-      "button",
-      {
-        class: "tk-btn tk-danger",
-        onclick: () => {
+  return grid(
+    group(
+      "Sicherung",
+      hint("Alle Einstellungen, Kanäle und den Namen als Datei sichern oder zurückspielen."),
+      btn("Alle Einstellungen sichern", downloadBackup, "primary", "fa-download"),
+      el("div", { class: "mt-3" }, el("label", { class: "form-label small mb-1" }, "Sicherung wiederherstellen"), restore),
+    ),
+    group(
+      "Gerät",
+      btn("Neustart", () => state.device?.reboot(2), "outline-secondary", "fa-redo"),
+      btn(
+        "Werkseinstellungen",
+        () => {
           if (confirm("Alle Einstellungen auf Werkseinstellungen zurücksetzen?")) state.device?.factoryResetConfig();
         },
-      },
-      "Werkseinstellungen",
+        "outline-danger",
+        "fa-exclamation-triangle",
+      ),
     ),
   );
 }
@@ -421,11 +423,11 @@ function pageContent() {
 
 let toastTimer;
 function toast(text, bad = false) {
-  const t = root.querySelector(".tk-toast");
-  t.textContent = text;
-  t.className = "tk-toast tk-show" + (bad ? " tk-bad" : "");
+  const t = root.querySelector(".tk-msg");
+  if (!t) return;
+  t.replaceChildren(el("div", { class: "alert py-2 mb-3 " + (bad ? "alert-danger" : "alert-success") }, text));
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => (t.className = "tk-toast"), 4000);
+  toastTimer = setTimeout(() => t.replaceChildren(), 5000);
 }
 
 function render() {
@@ -433,65 +435,55 @@ function render() {
   const connected = !!state.device;
   const hasSerial = "serial" in navigator;
   const hasBle = "bluetooth" in navigator;
+  const ok = state.status === "verbunden";
 
-  const head = el(
+  const bar = el(
     "div",
-    { class: "tk-head" },
-    el("span", { class: "tk-status" + (state.status === "verbunden" ? " tk-ok" : "") }, "● " + state.status),
-    connected
-      ? el("button", { class: "tk-btn tk-btn2", onclick: disconnect }, "Trennen")
-      : el(
-          "span",
-          {},
-          el("button", { class: "tk-btn", disabled: hasSerial ? null : "", onclick: () => connect("serial") }, "USB verbinden"),
-          el("button", { class: "tk-btn", disabled: hasBle ? null : "", onclick: () => connect("ble") }, "Bluetooth verbinden"),
-        ),
+    { class: "d-flex flex-wrap gap-2 align-items-center mb-3" },
+    connected ? null : el("button", { type: "button", class: "btn btn-primary", disabled: hasSerial ? null : "", onclick: () => connect("serial") }, icon("fa-plug"), "Per USB verbinden"),
+    connected ? null : el("button", { type: "button", class: "btn btn-primary", disabled: hasBle ? null : "", onclick: () => connect("ble") }, icon("fa-plug"), "Per Bluetooth verbinden"),
+    connected ? el("button", { type: "button", class: "btn btn-outline-secondary", onclick: disconnect }, icon("fa-times"), "Trennen") : null,
+    el("span", { class: "badge " + (ok ? "text-bg-success" : "text-bg-secondary") }, connected ? state.status : state.status === "getrennt" ? "nicht verbunden" : state.status),
   );
 
-  const main = el("div", { class: "tk-main" });
+  const kids = [bar, root.querySelector(".tk-msg") ?? el("div", { class: "tk-msg" })];
+
+  if (!hasSerial && !hasBle)
+    kids.push(el("div", { class: "alert alert-warning" }, "Dein Browser kann nicht auf USB oder Bluetooth zugreifen. Bitte Chrome oder Edge am Computer verwenden."));
+
   if (!connected) {
-    main.append(
-      el(
-        "div",
-        { class: "tk-welcome" },
-        el("h3", {}, "ThinkKira Konfigurator"),
-        el("p", {}, "Gerät per USB-Kabel oder Bluetooth verbinden. Funktioniert in Chrome oder Edge (Bluetooth auch auf Android)."),
-        !hasSerial && !hasBle ? el("p", { class: "tk-bad" }, "Dieser Browser unterstützt weder Web Serial noch Web Bluetooth.") : null,
-      ),
-    );
+    kids.push(el("p", { class: "text-muted" }, "Gerät per USB-Kabel oder Bluetooth verbinden. Danach lassen sich alle Einstellungen ändern."));
   } else {
-    const nav = el("nav", { class: "tk-nav" });
-    let group = "";
-    for (const pg of PAGES) {
-      if (pg.group !== group) {
-        group = pg.group;
-        nav.append(el("div", { class: "tk-navgroup" }, group));
-      }
+    kids.push(infoRow());
+    const nav = el("ul", { class: "nav nav-pills flex-wrap gap-1 mb-3" });
+    for (const pg of PAGES)
       nav.append(
         el(
-          "button",
-          {
-            class: "tk-navbtn" + (state.page === pg.id ? " tk-active" : ""),
-            onclick: () => {
-              state.page = pg.id;
-              render();
+          "li",
+          { class: "nav-item" },
+          el(
+            "button",
+            {
+              type: "button",
+              class: "nav-link py-1 px-2" + (state.page === pg.id ? " active" : ""),
+              onclick: () => {
+                state.page = pg.id;
+                render();
+              },
             },
-          },
-          pg.title,
+            icon(pg.ic),
+            pg.title,
+          ),
         ),
       );
-    }
-    main.append(nav, el("section", { class: "tk-page" }, pageContent()));
+    kids.push(nav, pageContent());
   }
-
-  const toastEl = root.querySelector(".tk-toast") ?? el("div", { class: "tk-toast" });
-  root.replaceChildren(head, main, toastEl);
+  root.replaceChildren(...kids.filter(Boolean));
 }
 
 export function mount(target = "#tk-config") {
   root = typeof target === "string" ? document.querySelector(target) : target;
   if (!root) return;
-  root.classList.add("tk-config");
   render();
 }
 

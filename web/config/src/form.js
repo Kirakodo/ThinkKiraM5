@@ -33,26 +33,26 @@ function scalarInput(field, scalar, get, set) {
   const id = "tk-" + Math.random().toString(36).slice(2);
   let input;
   if (scalar === ScalarType.BOOL) {
-    input = el("input", { type: "checkbox", id });
+    input = el("input", { type: "checkbox", id, class: "form-check-input", role: "switch" });
     input.checked = !!get();
     input.addEventListener("change", () => set(input.checked));
   } else if (scalar === ScalarType.STRING) {
-    input = el("input", { type: SECRET.test(field.localName) ? "password" : "text", id });
+    input = el("input", { type: SECRET.test(field.localName) ? "password" : "text", id, class: "form-control form-control-sm" });
     input.value = get() ?? "";
     input.addEventListener("input", () => set(input.value));
   } else if (scalar === ScalarType.BYTES) {
-    input = el("input", { type: SECRET.test(field.localName) ? "password" : "text", id, placeholder: "Schlüssel (Base64)" });
+    input = el("input", { type: SECRET.test(field.localName) ? "password" : "text", id, class: "form-control form-control-sm", placeholder: "Schlüssel (Base64)" });
     input.value = b64(get());
     input.addEventListener("change", () => {
       try {
         set(unb64(input.value));
-        input.classList.remove("tk-bad");
+        input.classList.remove("is-invalid");
       } catch {
-        input.classList.add("tk-bad");
+        input.classList.add("is-invalid");
       }
     });
   } else {
-    input = el("input", { type: "number", id, step: FLOATS.has(scalar) ? "any" : "1" });
+    input = el("input", { type: "number", id, class: "form-control form-control-sm", step: FLOATS.has(scalar) ? "any" : "1" });
     input.value = String(get() ?? 0);
     input.addEventListener("input", () => {
       if (input.value === "") return;
@@ -65,7 +65,7 @@ function scalarInput(field, scalar, get, set) {
 
 function enumInput(enumDesc, get, set) {
   const id = "tk-" + Math.random().toString(36).slice(2);
-  const sel = el("select", { id });
+  const sel = el("select", { id, class: "form-select form-select-sm" });
   for (const v of enumDesc.values) {
     const o = el("option", { value: String(v.number) }, enumLabel(v));
     sel.append(o);
@@ -76,12 +76,30 @@ function enumInput(enumDesc, get, set) {
 }
 
 function row(label, input, id, hint) {
-  return el("div", { class: "tk-row" }, el("label", { for: id }, label), input, hint ? el("small", {}, hint) : null);
+  if (input.type === "checkbox")
+    return el("div", { class: "form-check form-switch mb-2" }, input, el("label", { class: "form-check-label", for: id }, label));
+  return el(
+    "div",
+    { class: "mb-2" },
+    el("label", { class: "form-label small mb-1", for: id }, label),
+    input,
+    hint ? el("div", { class: "form-text" }, hint) : null,
+  );
+}
+
+// Gruppe im KeyLink-Stil (Bootstrap): fieldset mit Rahmen
+export function group(title, ...kids) {
+  return el(
+    "fieldset",
+    { class: "border rounded p-3 h-100" },
+    el("legend", { class: "float-none w-auto px-1 fs-6 fw-bold" }, title),
+    ...kids,
+  );
 }
 
 // msg: Nachrichten-Objekt (wird direkt verändert), schema: DescMessage
 export function renderMessage(schema, msg, opts = {}) {
-  const box = el("div", { class: "tk-form" });
+  const box = el("div");
   for (const field of schema.fields) {
     if (field.deprecated) continue;
     if (opts.skip?.includes(field.localName)) continue;
@@ -107,7 +125,11 @@ export function renderMessage(schema, msg, opts = {}) {
       }
       case "message": {
         if (!msg[field.localName]) msg[field.localName] = create(field.message);
-        const fs = el("fieldset", { class: "tk-sub" }, el("legend", {}, label));
+        const fs = el(
+          "fieldset",
+          { class: "border rounded p-2 mb-2" },
+          el("legend", { class: "float-none w-auto px-1 fs-6 fw-bold" }, label),
+        );
         fs.append(renderMessage(field.message, msg[field.localName], opts));
         box.append(fs);
         break;
@@ -115,7 +137,7 @@ export function renderMessage(schema, msg, opts = {}) {
       case "list": {
         if (field.listKind === "message") break; // z. B. Remote-Hardware-Pins: hier nicht bearbeitbar
         const id = "tk-" + Math.random().toString(36).slice(2);
-        const ta = el("textarea", { id, rows: "2", placeholder: "ein Wert pro Zeile" });
+        const ta = el("textarea", { id, rows: "2", class: "form-control form-control-sm", placeholder: "ein Wert pro Zeile" });
         const toText = (v) => (field.scalar === ScalarType.BYTES ? b64(v) : String(v));
         ta.value = (get() ?? []).map(toText).join("\n");
         ta.addEventListener("change", () => {

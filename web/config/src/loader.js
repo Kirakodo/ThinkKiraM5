@@ -10,12 +10,16 @@ let root, fw, manifest;
 const ui = {};
 
 function setStatus(text, kind = "") {
+  // kind: "" (Info), "ok" (fertig), "bad" (Fehler)
+  const cls = { ok: "alert alert-success", bad: "alert alert-danger" }[kind] || "text-muted";
+  ui.status.className = "mt-3 mb-0 " + cls;
   ui.status.textContent = text;
-  ui.status.className = "tk-ldstatus" + (kind ? " tk-" + kind : "");
 }
 function setProgress(pct) {
+  ui.progress.classList.toggle("d-none", pct <= 0);
   ui.bar.style.width = pct + "%";
-  ui.pct.textContent = pct > 0 ? pct + " %" : "";
+  ui.bar.textContent = pct + " %";
+  ui.progress.setAttribute("aria-valuenow", String(pct));
 }
 
 async function loadManifest() {
@@ -23,6 +27,7 @@ async function loadManifest() {
     const r = await fetch(fw + "?asset=manifest.json", { cache: "no-store" });
     manifest = await r.json();
     ui.version.textContent = manifest.version;
+    if (manifest.release_url) ui.gh.href = manifest.release_url;
     ui.btn.disabled = !("serial" in navigator);
   } catch {
     ui.version.textContent = "nicht erreichbar";
@@ -34,6 +39,7 @@ async function install() {
   const part = manifest?.builds?.[0]?.parts?.[0];
   if (!part) return;
   ui.btn.disabled = true;
+  ui.bar.className = "progress-bar progress-bar-striped progress-bar-animated";
   setProgress(0);
   let transport;
   try {
@@ -76,6 +82,8 @@ async function install() {
     setStatus("Neustart …");
     await loader.after();
     setProgress(100);
+    ui.bar.classList.remove("progress-bar-animated", "progress-bar-striped");
+    ui.bar.classList.add("bg-success");
     setStatus("Fertig! ThinkKira " + manifest.version + " ist installiert. Das Gerät startet neu.", "ok");
   } catch (e) {
     console.error(e);
@@ -95,29 +103,37 @@ export function mount(target = "#tk-loader") {
   fw = root.dataset.firmware || window.TK_FIRMWARE_PHP || "firmware.php";
   root.classList.add("tk-loader");
 
+  const icon = (n) => el("i", { class: "fas fa-" + n + " me-1" });
   ui.version = el("strong", {}, "wird geladen …");
-  ui.erase = el("input", { type: "checkbox", id: "tk-erase" });
+  ui.gh = el("a", { href: "https://github.com/Kirakodo/ThinkKiraM5/releases/latest", target: "_blank", rel: "noopener" }, "GitHub");
+  ui.erase = el("input", { type: "checkbox", id: "tk-erase", class: "form-check-input" });
   ui.erase.checked = true;
-  ui.btn = el("button", { class: "tk-btn", disabled: "", onclick: install }, "Firmware installieren");
-  ui.status = el("p", { class: "tk-ldstatus" });
-  ui.bar = el("div", { class: "tk-barfill" });
-  ui.pct = el("span", { class: "tk-pct" });
+  ui.btn = el("button", { type: "button", class: "btn btn-primary", disabled: "", onclick: install }, icon("download"), "Installieren / Aktualisieren");
+  ui.status = el("p", { class: "mt-3 mb-0 text-muted", role: "status" });
+  ui.bar = el("div", { class: "progress-bar progress-bar-striped progress-bar-animated", style: "width:0%" });
+  ui.progress = el("div", { class: "progress mt-3 d-none", role: "progressbar", "aria-valuemin": "0", "aria-valuemax": "100", "aria-valuenow": "0" }, ui.bar);
 
   const kids = [
-    el("p", {}, "Neueste Version: ", ui.version),
+    !("serial" in navigator)
+      ? el("div", { class: "alert alert-warning" }, icon("exclamation-triangle"), "Dieser Browser kann keine USB-Geräte ansprechen. Bitte Chrome oder Edge am PC nutzen.")
+      : null,
+    el("p", { class: "text-muted" }, "aktuelle Version ", ui.version, " · ", ui.gh),
     el(
       "ol",
       {},
       el("li", {}, "Chrome oder Edge am PC verwenden."),
       el("li", {}, "ThinkNode M5 per USB-C anschließen."),
-      el("li", {}, "„Firmware installieren“ klicken und den Port wählen."),
+      el("li", {}, "„Installieren / Aktualisieren“ klicken und den Port wählen."),
     ),
-    el("label", { class: "tk-check", for: "tk-erase" }, ui.erase, " Gerät vorher komplett löschen (empfohlen beim ersten Mal, löscht alle Einstellungen)"),
+    el(
+      "div",
+      { class: "form-check mb-3" },
+      ui.erase,
+      el("label", { class: "form-check-label", for: "tk-erase" }, "Gerät vorher komplett löschen (empfohlen beim ersten Mal, löscht alle Einstellungen)"),
+    ),
     ui.btn,
-    el("div", { class: "tk-bar" }, ui.bar),
-    ui.pct,
+    ui.progress,
     ui.status,
-    !("serial" in navigator) ? el("p", { class: "tk-ldstatus tk-bad" }, "Dieser Browser kann keine USB-Geräte ansprechen. Bitte Chrome oder Edge am PC nutzen.") : null,
   ];
   root.replaceChildren(...kids.filter(Boolean));
   loadManifest();

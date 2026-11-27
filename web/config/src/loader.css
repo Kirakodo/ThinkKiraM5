@@ -1,11 +1,2 @@
-/* ThinkKira Loader – Klassen mit Präfix tk- */
-.tk-loader { font-family: system-ui, sans-serif; font-size: 15px; line-height: 1.5; }
-.tk-loader .tk-btn { font: inherit; padding: .55rem 1.3rem; margin: .4rem 0; border: 0; border-radius: 6px; background: #2c7a4b; color: #fff; cursor: pointer; }
-.tk-loader .tk-btn[disabled] { opacity: .45; cursor: not-allowed; }
-.tk-check { display: block; margin: .4rem 0; }
-.tk-bar { height: 10px; background: rgba(127,127,127,.25); border-radius: 5px; overflow: hidden; margin-top: .6rem; max-width: 420px; }
-.tk-barfill { height: 100%; width: 0; background: #2c7a4b; transition: width .2s; }
-.tk-pct { font-size: .85rem; opacity: .7; }
-.tk-ldstatus { min-height: 1.5em; }
-.tk-ldstatus.tk-ok { color: #2c7a4b; font-weight: 600; }
-.tk-ldstatus.tk-bad { color: #b33; }
+/* ThinkKira Loader – Gestaltung kommt aus Bootstrap 5 der KeyLink-Seite. Nur eine eigene Regel: */
+.tk-code { max-height: 360px; overflow: auto; white-space: pre-wrap; font-size: .8rem; }

@@ -5183,14 +5183,18 @@ var Z = (e, t = {}, ...n) => {
 	return r;
 }, lc, uc, dc, Q = {};
 function $(e, t = "") {
-	Q.status.textContent = e, Q.status.className = "tk-ldstatus" + (t ? " tk-" + t : "");
+	let n = {
+		ok: "alert alert-success",
+		bad: "alert alert-danger"
+	}[t] || "text-muted";
+	Q.status.className = "mt-3 mb-0 " + n, Q.status.textContent = e;
 }
 function fc(e) {
-	Q.bar.style.width = e + "%", Q.pct.textContent = e > 0 ? e + " %" : "";
+	Q.progress.classList.toggle("d-none", e <= 0), Q.bar.style.width = e + "%", Q.bar.textContent = e + " %", Q.progress.setAttribute("aria-valuenow", String(e));
 }
 async function pc() {
 	try {
-		dc = await (await fetch(uc + "?asset=manifest.json", { cache: "no-store" })).json(), Q.version.textContent = dc.version, Q.btn.disabled = !("serial" in navigator);
+		dc = await (await fetch(uc + "?asset=manifest.json", { cache: "no-store" })).json(), Q.version.textContent = dc.version, dc.release_url && (Q.gh.href = dc.release_url), Q.btn.disabled = !("serial" in navigator);
 	} catch {
 		Q.version.textContent = "nicht erreichbar", $("Das neueste Release konnte nicht geladen werden. Bitte später erneut versuchen.", "bad");
 	}
@@ -5198,7 +5202,7 @@ async function pc() {
 async function mc() {
 	let e = dc?.builds?.[0]?.parts?.[0];
 	if (!e) return;
-	Q.btn.disabled = !0, fc(0);
+	Q.btn.disabled = !0, Q.bar.className = "progress-bar progress-bar-striped progress-bar-animated", fc(0);
 	let t;
 	try {
 		$("Port auswählen …");
@@ -5229,7 +5233,7 @@ async function mc() {
 			eraseAll: !1,
 			compress: !0,
 			reportProgress: (e, t, n) => fc(Math.round(t / n * 100))
-		}), $("Neustart …"), await o.after(), fc(100), $("Fertig! ThinkKira " + dc.version + " ist installiert. Das Gerät startet neu.", "ok");
+		}), $("Neustart …"), await o.after(), fc(100), Q.bar.classList.remove("progress-bar-animated", "progress-bar-striped"), Q.bar.classList.add("bg-success"), $("Fertig! ThinkKira " + dc.version + " ist installiert. Das Gerät startet neu.", "ok");
 	} catch (e) {
 		console.error(e), $("Fehler: " + (e?.name === "NotFoundError" ? "Kein Port ausgewählt." : e?.message ?? String(e)) + " – Kabel neu stecken und erneut versuchen.", "bad");
 	} finally {
@@ -5241,28 +5245,47 @@ async function mc() {
 }
 function hc(e = "#tk-loader") {
 	if (lc = typeof e == "string" ? document.querySelector(e) : e, !lc) return;
-	uc = lc.dataset.firmware || window.TK_FIRMWARE_PHP || "firmware.php", lc.classList.add("tk-loader"), Q.version = Z("strong", {}, "wird geladen …"), Q.erase = Z("input", {
+	uc = lc.dataset.firmware || window.TK_FIRMWARE_PHP || "firmware.php", lc.classList.add("tk-loader");
+	let t = (e) => Z("i", { class: "fas fa-" + e + " me-1" });
+	Q.version = Z("strong", {}, "wird geladen …"), Q.gh = Z("a", {
+		href: "https://github.com/Kirakodo/ThinkKiraM5/releases/latest",
+		target: "_blank",
+		rel: "noopener"
+	}, "GitHub"), Q.erase = Z("input", {
 		type: "checkbox",
-		id: "tk-erase"
+		id: "tk-erase",
+		class: "form-check-input"
 	}), Q.erase.checked = !0, Q.btn = Z("button", {
-		class: "tk-btn",
+		type: "button",
+		class: "btn btn-primary",
 		disabled: "",
 		onclick: mc
-	}, "Firmware installieren"), Q.status = Z("p", { class: "tk-ldstatus" }), Q.bar = Z("div", { class: "tk-barfill" }), Q.pct = Z("span", { class: "tk-pct" });
-	let t = [
-		Z("p", {}, "Neueste Version: ", Q.version),
-		Z("ol", {}, Z("li", {}, "Chrome oder Edge am PC verwenden."), Z("li", {}, "ThinkNode M5 per USB-C anschließen."), Z("li", {}, "„Firmware installieren“ klicken und den Port wählen.")),
-		Z("label", {
-			class: "tk-check",
+	}, t("download"), "Installieren / Aktualisieren"), Q.status = Z("p", {
+		class: "mt-3 mb-0 text-muted",
+		role: "status"
+	}), Q.bar = Z("div", {
+		class: "progress-bar progress-bar-striped progress-bar-animated",
+		style: "width:0%"
+	}), Q.progress = Z("div", {
+		class: "progress mt-3 d-none",
+		role: "progressbar",
+		"aria-valuemin": "0",
+		"aria-valuemax": "100",
+		"aria-valuenow": "0"
+	}, Q.bar);
+	let n = [
+		"serial" in navigator ? null : Z("div", { class: "alert alert-warning" }, t("exclamation-triangle"), "Dieser Browser kann keine USB-Geräte ansprechen. Bitte Chrome oder Edge am PC nutzen."),
+		Z("p", { class: "text-muted" }, "aktuelle Version ", Q.version, " · ", Q.gh),
+		Z("ol", {}, Z("li", {}, "Chrome oder Edge am PC verwenden."), Z("li", {}, "ThinkNode M5 per USB-C anschließen."), Z("li", {}, "„Installieren / Aktualisieren“ klicken und den Port wählen.")),
+		Z("div", { class: "form-check mb-3" }, Q.erase, Z("label", {
+			class: "form-check-label",
 			for: "tk-erase"
-		}, Q.erase, " Gerät vorher komplett löschen (empfohlen beim ersten Mal, löscht alle Einstellungen)"),
+		}, "Gerät vorher komplett löschen (empfohlen beim ersten Mal, löscht alle Einstellungen)")),
 		Q.btn,
-		Z("div", { class: "tk-bar" }, Q.bar),
-		Q.pct,
-		Q.status,
-		"serial" in navigator ? null : Z("p", { class: "tk-ldstatus tk-bad" }, "Dieser Browser kann keine USB-Geräte ansprechen. Bitte Chrome oder Edge am PC nutzen.")
+		Q.progress,
+		Q.status
 	];
-	lc.replaceChildren(...t.filter(Boolean)), pc();
+	lc.replaceChildren(...n.filter(Boolean)), pc();
 }
 typeof document < "u" && (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => hc()) : hc());
 export { hc as mount };
