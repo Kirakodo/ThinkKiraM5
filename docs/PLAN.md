@@ -63,6 +63,10 @@ Stand: 27.11.2026 · Gerät: Elecrow ThinkNode M5 · Basis: `meshtastic/firmware
 ### Phase 5 – Verbindungen
 - Bluetooth mit Meshtastic-App (bleibt). WLAN-Webseite (Einstellungen, Wegpunkte, GPX, Karten-Upload), OTA über WLAN, MQTT aus Meshtastic.
 - Umschalter „Bluetooth“ / „WLAN“ (nicht gleichzeitig).
+- **Auto-Updater aus GitHub Releases**: bei WLAN prüft das Gerät `releases/latest` (Version aus `manifest.json`),
+  lädt `thinkkira-m5.bin` per HTTPS und schreibt es über einen eigenen kleinen Update-Loader in der 640-KB-OTA-Partition
+  (bei 4 MB Flash passt kein zweites volles App-Abbild). Menü „System → Update suchen“ + automatische Prüfung (einstellbar).
+- Alle Updates kommen ausschließlich aus GitHub Releases (Web-Flasher, Configurator-Hinweis, Gerät).
 **Test:** App, Webseite im Heimnetz, OTA-Update.
 
 ### Phase 6 – Strom
