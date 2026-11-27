@@ -79,6 +79,13 @@ Stand: 27.11.2026 · Gerät: Elecrow ThinkNode M5 · Basis: `meshtastic/firmware
 - GitHub Action: Release → Firmware + Web-ZIP.
 - Nichts wird hochgeladen, Website-Dateien werden nicht angefasst.
 
+## Messwerte Phase 1 (27.11.2026)
+
+- Firmware `thinknode_m5_custom`: **2.238 KB** von 2.368 KB App-Partition (frei ca. 130 KB).
+- Standard-Aufteilung 4 MB: App 2.368 KB + OTA-Loader 640 KB + LittleFS 1.024 KB = voll.
+- Folge: Für die Karte (1 MB) und weitere Funktionen reicht 4 MB nur, wenn Teile wegfallen
+  (z. B. OTA-Loader, Meshtastic-Module) oder das Gerät tatsächlich 8 MB Flash hat → Boot-Log prüfen.
+
 ## Offene Punkte (Phase 1)
 
 | Punkt | Wie klären |

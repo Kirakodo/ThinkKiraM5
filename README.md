@@ -2,7 +2,7 @@
 
 Eigene Firmware für das **Elecrow ThinkNode M5**, aufgebaut als Fork der [Meshtastic-Firmware](https://github.com/meshtastic/firmware).
 
-> **Status: in Planung.** Es gibt noch keinen lauffähigen Code. Diese Seite beschreibt, was gebaut werden soll.
+> **Status: Phase 1 (Grundlage).** Meshtastic-Basis mit Statusseite und USB-Befehlen. Plan: [docs/PLAN.md](docs/PLAN.md)
 
 ## Idee
 
@@ -92,7 +92,7 @@ Der Quellcode der Webseite kommt in den Ordner `web/`.
 
 | Phase | Inhalt | Status |
 |---|---|---|
-| 1 | Grundlage: Fork, Build, GPS-Versionserkennung, USB-Logs | geplant |
+| 1 | Grundlage: Fork, Build, GPS-Versionserkennung, USB-Logs | in Arbeit |
 | 2 | Funk & Mesh: Meshtastic-Modus, eigener Modus, Statistik | geplant |
 | 3 | Eigene E-Ink-Oberfläche mit 6 Seiten | geplant |
 | 4 | GPS: Kompass, Track, Wegpunkt-Navigation, Offline-Karte | geplant |
@@ -103,7 +103,47 @@ Der Quellcode der Webseite kommt in den Ordner `web/`.
 
 ## Installation
 
-Folgt, sobald es eine erste Version gibt. Geplant sind der Web-Flasher und `pio run -e thinknode_m5_custom -t upload`.
+### Fertige Firmware herunterladen
+1. Auf GitHub **Actions → ThinkKira Build** öffnen, den neuesten grünen Lauf anklicken.
+2. Unten unter **Artifacts** `thinkkira-firmware` herunterladen und entpacken.
+3. Darin liegt `firmware-thinknode_m5_custom-….factory.bin` (komplettes Abbild) und `firmware-thinknode_m5_custom-….bin` (nur Update).
+
+### Flashen im Browser (am einfachsten)
+1. Chrome oder Edge öffnen: https://flasher.meshtastic.org
+2. ThinkNode M5 per USB-C anschließen.
+3. **Gerät:** „ThinkNode M5“ wählen, dann rechts **„Custom / Datei hochladen“** (Ordnersymbol) und die `….factory.bin` wählen.
+4. **„Full Erase and Install“** anhaken (beim ersten Wechsel auf ThinkKira), dann **Flash**.
+5. Port auswählen, warten bis „Done“, Gerät startet neu.
+
+Später gibt es einen eigenen Web-Flasher auf der Projektseite.
+
+### Selbst bauen und flashen (PlatformIO)
+```bash
+git clone --recursive https://github.com/Kirakodo/ThinkKiraM5
+cd ThinkKiraM5
+pip install -r .github/actions/setup-base/requirements.txt
+pio run -e thinknode_m5_custom              # bauen
+pio run -e thinknode_m5_custom -t upload    # flashen (USB)
+pio device monitor -b 115200                # Log ansehen
+```
+
+### USB-Befehle
+Im seriellen Monitor (115200 Baud) `kira help` eingeben und Enter drücken:
+
+| Befehl | Zeigt |
+|---|---|
+| `kira info` | Version, GPS-Hardware, Flash, PSRAM, Speicher |
+| `kira flash` | Flash-Partitionen |
+| `kira gps` | GPS-Status und Position |
+| `kira power` | Akku und USB |
+| `kira nodes` | Anzahl Knoten |
+| `kira reboot` | Neustart |
+
+### Meshtastic-Updates übernehmen
+```bash
+git remote add upstream https://github.com/meshtastic/firmware   # einmalig
+git fetch upstream && git merge upstream/develop
+```
 
 ## Lizenz
 
