@@ -2,20 +2,20 @@
 
 Ziel: `https://devsven.de/Key/ThinkKira` → Unterseite `SUBPAGES/keylink/ThinkKira`.
 
-## Web-Flasher (Tab „Flasher“)
+## Loader (Karte `Loader.php`)
 
 `SUBPAGES/keylink/` ist öffentlich gesperrt. Darum zwei Orte:
 
 | Datei | Wohin | Zweck |
 |---|---|---|
-| `flash/index.html` | Inhalt von `<main>` + die zwei `<script>` als Karte **`Flasher.php`** in `SUBPAGES/keylink/ThinkKira/` | Flasher-Oberfläche |
+| `flash/index.html` | Inhalt von `<main>` + die zwei `<script>` als Karte **`Loader.php`** in `SUBPAGES/keylink/ThinkKira/` | Flasher-Oberfläche |
 | `flash/flash.css` | zu den Styles der ThinkKira-Seite | Styles, alle Klassen mit Präfix `tk-` |
-| `flash/firmware.php` | **öffentlich erreichbarer** Ordner, z. B. `/_scripts/php/keylink/ThinkKira/firmware.php` | Proxy: holt `manifest.json` und `.bin` aus dem neuesten GitHub-Release |
+| `flash/firmware.php` | **öffentlich erreichbarer** Ordner, z. B. `/_scripts/php/keylink/thinkkira/firmware.php` | Proxy: holt `manifest.json` und `.bin` aus dem neuesten GitHub-Release |
 
-In `Flasher.php` vor dem Flasher-Script den öffentlichen Pfad setzen:
+In `Loader.php` vor dem Flasher-Script den öffentlichen Pfad setzen:
 
 ```html
-<script>window.TK_FIRMWARE_PHP = '/_scripts/php/keylink/ThinkKira/firmware.php';</script>
+<script>window.TK_FIRMWARE_PHP = '/_scripts/php/keylink/thinkkira/firmware.php';</script>
 ```
 
 Das esp-web-tools-Script muss geladen werden:
@@ -30,23 +30,19 @@ Wichtig:
 - Nötig: PHP mit cURL, ausgehende HTTPS-Verbindungen zu github.com. Seite nur über HTTPS (Web Serial).
 - Das Manifest verweist relativ auf `firmware.php?asset=…`, also auf denselben Ordner wie `firmware.php`.
 - Neue Firmware = neues GitHub-Release, auf dem Server ist nichts zu ändern.
-- Test: `https://devsven.de/_scripts/php/keylink/ThinkKira/firmware.php?asset=manifest.json` muss JSON mit der Version liefern.
+- Test: `https://devsven.de/_scripts/php/keylink/thinkkira/firmware.php?asset=manifest.json` muss JSON mit der Version liefern.
 
-## Configurator (Tab „Configurator“)
+## Konfigurator (Karte `Konfigurator.php`)
 
-Fertig gebaute Dateien liegen in `web/config/dist/` (auch im Release als `thinkkira-web.zip`):
+JS und CSS liegen **nicht** auf devsven.de, sondern kommen wie die Firmware aus dem neuesten GitHub-Release
+(Release-Assets `thinkkira-config.js`, `thinkkira-config.css`) über `firmware.php`.
 
-| Datei | Wohin |
-|---|---|
-| `config/dist/thinkkira-config.js` | öffentlich, z. B. `/_scripts/php/keylink/ThinkKira/thinkkira-config.js` |
-| `config/dist/thinkkira-config.css` | öffentlich, z. B. `/_scripts/php/keylink/ThinkKira/thinkkira-config.css` |
-
-Inhalt der Karte **`Configurator.php`** in `SUBPAGES/keylink/ThinkKira/`:
+Inhalt der Karte **`Konfigurator.php`** in `SUBPAGES/keylink/ThinkKira/`:
 
 ```html
-<link rel="stylesheet" href="/_scripts/php/keylink/ThinkKira/thinkkira-config.css">
+<link rel="stylesheet" href="/_scripts/php/keylink/thinkkira/firmware.php?asset=thinkkira-config.css">
 <div id="tk-config"></div>
-<script type="module" src="/_scripts/php/keylink/ThinkKira/thinkkira-config.js"></script>
+<script type="module" src="/_scripts/php/keylink/thinkkira/firmware.php?asset=thinkkira-config.js"></script>
 ```
 
 - Startet von selbst, sobald `<div id="tk-config">` da ist. Alle CSS-Klassen beginnen mit `tk-`.
@@ -54,14 +50,14 @@ Inhalt der Karte **`Configurator.php`** in `SUBPAGES/keylink/ThinkKira/`:
 - Seiten: Gerät & Name · Kanäle · Funk (LoRa) · Position & GPS · Energie · WLAN · Bluetooth · Anzeige · Sicherheit ·
   alle Module (MQTT, Telemetrie/Sensoren, Buzzer & LEDs, …) · Wegpunkte (senden, GPX-Import/Export) · Schnellantworten ·
   ThinkKira-Funktionen (werden mit den Firmware-Phasen freigeschaltet) · System (Backup/Restore, Neustart, Werkseinstellungen).
-- Alles auf Deutsch. Formulare werden aus den Meshtastic-Protobufs erzeugt, neue Einstellungen erscheinen nach Updates automatisch.
+- Alles auf Deutsch.
 
-Neu bauen (nur nötig nach Änderungen im Quellcode):
+## Erlaubte Dateien in `firmware.php`
+`?asset=` `manifest.json` · `thinkkira-m5.factory.bin` · `thinkkira-m5.bin` · `thinkkira-config.js` · `thinkkira-config.css`
 
-```bash
-cd web/config && npm ci && npm run build
-```
+## Updates
+Alles kommt aus `https://github.com/Kirakodo/ThinkKiraM5/releases/latest`. Neues Release = Seite aktuell, auf dem Server ist nichts zu tun.
+Nur wenn sich `firmware.php` selbst ändert, muss sie neu hochgeladen werden.
 
-## Übersicht (Tab „Übersicht“)
+## Übersicht
 Kurzbeschreibung, Funktionen und Download-Link: Texte aus der README (Abschnitte „Idee“, „Geplante Funktionen“, „Bedienung“).
-Download immer über `https://github.com/Kirakodo/ThinkKiraM5/releases/latest`.

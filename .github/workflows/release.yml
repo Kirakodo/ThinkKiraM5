@@ -62,6 +62,7 @@ jobs:
             ]
           }
           JSON
+          cp web/config/dist/thinkkira-config.js web/config/dist/thinkkira-config.css dist/
           (cd web && zip -r ../dist/thinkkira-web.zip . -x "*/node_modules/*")
           ls -la dist
       - name: GitHub-Release anlegen

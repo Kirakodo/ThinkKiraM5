@@ -1,6 +1,6 @@
 <?php
 // ThinkKira – Firmware-Proxy für den Web-Flasher.
-// Holt die Dateien serverseitig aus dem neuesten GitHub-Release, weil der Browser
+// Holt Firmware und Configurator-Dateien serverseitig aus dem neuesten GitHub-Release, weil der Browser
 // GitHub-Downloads wegen CORS nicht direkt laden darf. Keine Firmware liegt dauerhaft
 // auf dem Webserver: nur ein kurzer Zwischenspeicher (10 Minuten) im System-Temp.
 // SPDX-License-Identifier: GPL-3.0-only
@@ -11,6 +11,8 @@ const TK_ASSETS = [
     'manifest.json'          => 'application/json',
     'thinkkira-m5.factory.bin' => 'application/octet-stream',
     'thinkkira-m5.bin'       => 'application/octet-stream',
+    'thinkkira-config.js'    => 'text/javascript; charset=utf-8',
+    'thinkkira-config.css'   => 'text/css; charset=utf-8',
 ];
 
 $asset = $_GET['asset'] ?? '';
