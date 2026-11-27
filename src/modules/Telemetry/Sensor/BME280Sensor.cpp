@@ -1,0 +1,57 @@
+#include "configuration.h"
+
+#if !MESHTASTIC_EXCLUDE_ENVIRONMENTAL_SENSOR && __has_include(<Adafruit_BME280.h>)
+
+#include "../mesh/generated/meshtastic/telemetry.pb.h"
+#include "BME280Sensor.h"
+#include "TelemetrySensor.h"
+#include <Adafruit_BME280.h>
+#include <typeinfo>
+
+BME280Sensor::BME280Sensor() : TelemetrySensor(meshtastic_TelemetrySensorType_BME280, "BME280") {}
+
+bool BME280Sensor::initDevice(TwoWire *bus, ScanI2C::FoundDevice *dev)
+{
+    LOG_INFO("Init sensor: %s", sensorName);
+    status = bme280.begin(dev->address.address, bus);
+    if (!status) {
+        return status;
+    }
+
+    bme280.setSampling(Adafruit_BME280::MODE_FORCED,
+                       Adafruit_BME280::SAMPLING_X1, // Temp. oversampling
+                       Adafruit_BME280::SAMPLING_X1, // Pressure oversampling
+                       Adafruit_BME280::SAMPLING_X1, // Humidity oversampling
+                       Adafruit_BME280::FILTER_OFF, Adafruit_BME280::STANDBY_MS_1000);
+
+    initI2CSensor();
+    return status;
+}
+
+bool BME280Sensor::getMetrics(meshtastic_Telemetry *measurement)
+{
+    LOG_DEBUG("BME280 getMetrics");
+    if (!bme280.takeForcedMeasurement()) {
+        LOG_WARN("%s read failed", sensorName);
+        return false;
+    }
+    // Temperature last: the library drops I2C errors, so a bus that fails mid-sequence must still trip the range check.
+    float humidity = bme280.readHumidity();
+    float pressure = bme280.readPressure() / 100.0F;
+    float temperature = bme280.readTemperature();
+
+    // Datasheet operating range; a failed I2C read compensates to ~180 °C. NaN fails these compares too.
+    if (!(temperature >= -40 && temperature <= 85 && pressure >= 300 && pressure <= 1100)) {
+        LOG_WARN("%s read failed", sensorName);
+        return false;
+    }
+
+    measurement->variant.environment_metrics.has_temperature = true;
+    measurement->variant.environment_metrics.has_relative_humidity = true;
+    measurement->variant.environment_metrics.has_barometric_pressure = true;
+    measurement->variant.environment_metrics.temperature = temperature;
+    measurement->variant.environment_metrics.relative_humidity = humidity;
+    measurement->variant.environment_metrics.barometric_pressure = pressure;
+    return true;
+}
+#endif

@@ -1,0 +1,236 @@
+#include "MeshPacketQueue.h"
+#include "NodeDB.h"
+#include "Throttle.h"
+#include "UptimeClock.h"
+#include "configuration.h"
+#include <assert.h>
+
+#include <algorithm>
+
+/// @return the priority of the specified packet
+inline uint32_t getPriority(const meshtastic_MeshPacket *p)
+{
+    auto pri = p->priority;
+    return pri;
+}
+
+/// @return "true" if "p1" is ordered before "p2"
+bool CompareMeshPacketFunc(const meshtastic_MeshPacket *p1, const meshtastic_MeshPacket *p2)
+{
+    assert(p1 && p2);
+
+    // If one packet is in the late transmit window, prefer the other one
+    if ((bool)p1->tx_after != (bool)p2->tx_after) {
+        return !p1->tx_after;
+    }
+
+    auto p1p = getPriority(p1), p2p = getPriority(p2);
+    // If priorities differ, use that
+    // for equal priorities, prefer packets already on mesh.
+    return (p1p != p2p) ? (p1p > p2p) : (!isFromUs(p1) && isFromUs(p2));
+}
+
+MeshPacketQueue::MeshPacketQueue(size_t _maxLen) : maxLen(_maxLen) {}
+
+bool MeshPacketQueue::empty()
+{
+    return queue.empty();
+}
+
+/**
+ * Some clients might not properly set priority, therefore we fix it here.
+ */
+void fixPriority(meshtastic_MeshPacket *p)
+{
+    // We might receive acks from other nodes (and since generated remotely, they won't have priority assigned.  Check for that
+    // and fix it
+    if (p->priority == meshtastic_MeshPacket_Priority_UNSET) {
+        // if a reliable message give a bit higher default priority
+        p->priority = (p->want_ack ? meshtastic_MeshPacket_Priority_RELIABLE : meshtastic_MeshPacket_Priority_DEFAULT);
+        if (p->which_payload_variant == meshtastic_MeshPacket_decoded_tag) {
+            // if acks/naks give very high priority
+            if (p->decoded.portnum == meshtastic_PortNum_ROUTING_APP) {
+                p->priority = meshtastic_MeshPacket_Priority_ACK;
+                // if text or admin, give high priority
+            } else if (p->decoded.portnum == meshtastic_PortNum_TEXT_MESSAGE_APP ||
+                       p->decoded.portnum == meshtastic_PortNum_ADMIN_APP) {
+                p->priority = meshtastic_MeshPacket_Priority_HIGH;
+                // if it is a response, give higher priority to let it arrive early and stop the request being relayed
+            } else if (p->decoded.request_id != 0) {
+                p->priority = meshtastic_MeshPacket_Priority_RESPONSE;
+                // Also if we want a response, give a bit higher priority
+            } else if (p->decoded.want_response) {
+                p->priority = meshtastic_MeshPacket_Priority_RELIABLE;
+            }
+        }
+    }
+}
+
+/** enqueue a packet, return false if full */
+bool MeshPacketQueue::enqueue(meshtastic_MeshPacket *p, bool *dropped)
+{
+    // no space - try to replace a lower priority packet in the queue
+    if (queue.size() >= maxLen) {
+        bool replaced = replaceLowerPriorityPacket(p);
+        if (!replaced) {
+            LOG_WARN("TX queue is full, and there is no lower-priority packet available to evict in favour of 0x%08x", p->id);
+        }
+        if (dropped) {
+            *dropped = true;
+        }
+        return replaced;
+    }
+
+    if (dropped) {
+        *dropped = false;
+    }
+
+    // Find the correct position using upper_bound to maintain a stable order
+    auto it = std::upper_bound(queue.begin(), queue.end(), p, CompareMeshPacketFunc);
+    queue.insert(it, p); // Insert packet at the found position
+    return true;
+}
+
+meshtastic_MeshPacket *MeshPacketQueue::dequeue()
+{
+    if (empty()) {
+        return NULL;
+    }
+
+    auto *p = queue.front();
+    queue.erase(queue.begin()); // Remove the highest-priority packet
+    return p;
+}
+
+meshtastic_MeshPacket *MeshPacketQueue::getFront()
+{
+    if (empty()) {
+        return NULL;
+    }
+
+    auto *p = queue.front();
+    return p;
+}
+
+/** Get a packet from this queue. Returns a pointer to the packet, or NULL if not found. */
+meshtastic_MeshPacket *MeshPacketQueue::getPacketFromQueue(NodeNum from, PacketId id)
+{
+    for (auto it = queue.begin(); it != queue.end(); it++) {
+        auto p = (*it);
+        if (getFrom(p) == from && p->id == id) {
+            return p;
+        }
+    }
+
+    return NULL;
+}
+
+/** Attempt to find and remove a packet from this queue.  Returns a pointer to the removed packet, or NULL if not found */
+meshtastic_MeshPacket *MeshPacketQueue::remove(NodeNum from, PacketId id, bool tx_normal, bool tx_late, uint8_t hop_limit_lt)
+{
+    for (auto it = queue.begin(); it != queue.end(); it++) {
+        auto p = (*it);
+        if (getFrom(p) == from && p->id == id && ((tx_normal && !p->tx_after) || (tx_late && p->tx_after)) &&
+            (!hop_limit_lt || p->hop_limit < hop_limit_lt)) {
+            queue.erase(it);
+            return p;
+        }
+    }
+
+    return NULL;
+}
+
+/* Attempt to find a packet from this queue. Return true if it was found. */
+bool MeshPacketQueue::find(const NodeNum from, const PacketId id)
+{
+    return getPacketFromQueue(from, id) != NULL;
+}
+
+/**
+ * Attempt to find a lower-priority packet in the queue and replace it with the provided one.
+ * @return True if the replacement succeeded, false otherwise
+ */
+bool MeshPacketQueue::replaceLowerPriorityPacket(meshtastic_MeshPacket *p)
+{
+    if (queue.empty()) {
+        return false; // No packets to replace
+    }
+
+    const uint32_t now = Time::getMillis();
+    auto *backPacket = queue.back();
+
+    // 1. First, scan the entire queue for the most-overdue eligible late packet (not just queue.back(),
+    // which holds the most recently clamped lowest-priority late packet). Late packets have already
+    // been rebroadcast by another node on the mesh, so an overdue late packet should always be evicted
+    // before any un-relayed normal packet.
+    const bool incomingOverdue = p->tx_after && Throttle::deadlinePassedAt(now, p->tx_after);
+    const uint32_t incomingElapsed = incomingOverdue ? (now - p->tx_after) : 0;
+    auto overdueIt = queue.end();
+    uint32_t victimElapsed = 0;
+    for (auto it = queue.begin(); it != queue.end(); ++it) {
+        auto *candidate = *it;
+        if (!candidate->tx_after || !Throttle::deadlinePassedAt(now, candidate->tx_after))
+            continue;
+        const uint32_t elapsed = now - candidate->tx_after;
+        if (!p->tx_after || (incomingOverdue && elapsed < incomingElapsed)) {
+            if (overdueIt == queue.end() || elapsed >= victimElapsed) {
+                overdueIt = it;
+                victimElapsed = elapsed;
+            }
+        }
+    }
+    if (overdueIt != queue.end()) {
+        auto *victim = *overdueIt;
+        int32_t dt = -(int32_t)victimElapsed;
+        if (p->tx_after) {
+            LOG_WARN("Dropping late packet 0x%08x with TX delay %dms to make room in the TX queue for packet 0x%08x with "
+                     "TX delay %ums",
+                     victim->id, dt, p->id, p->tx_after - now);
+        } else {
+            LOG_WARN("Dropping late packet 0x%08x with TX delay %dms to make room in the TX queue for packet 0x%08x "
+                     "with no TX delay",
+                     victim->id, dt, p->id);
+        }
+        queue.erase(overdueIt);
+        packetPool.release(victim);
+        enqueue(p);
+        return true;
+    }
+
+    // 2. Next, if the back packet is a late packet with lower priority than the incoming packet,
+    // evict it before touching any un-relayed normal packet.
+    if (backPacket->tx_after && backPacket->priority < p->priority) {
+        LOG_WARN("Dropping late packet 0x%08x to make room in the TX queue for higher-priority packet 0x%08x", backPacket->id,
+                 p->id);
+        queue.pop_back();
+        packetPool.release(backPacket);
+        enqueue(p);
+        return true;
+    }
+
+    // 3. Finally, look for a lower-priority non-late packet to evict.
+    if (!backPacket->tx_after && backPacket->priority < p->priority) {
+        LOG_WARN("Dropping packet 0x%08x to make room in the TX queue for higher-priority packet 0x%08x", backPacket->id, p->id);
+        queue.pop_back();
+        packetPool.release(backPacket);
+        enqueue(p);
+        return true;
+    }
+
+    if (backPacket->tx_after) {
+        auto it = queue.end();
+        auto refPacket = *--it;
+        for (; refPacket->tx_after && it != queue.begin(); refPacket = *--it)
+            ;
+        if (!refPacket->tx_after && refPacket->priority < p->priority) {
+            LOG_WARN("Dropping non-late packet 0x%08x to make room in the TX queue for higher-priority packet 0x%08x",
+                     refPacket->id, p->id);
+            queue.erase(it);
+            packetPool.release(refPacket);
+            enqueue(p);
+            return true;
+        }
+    }
+
+    return false;
+}
