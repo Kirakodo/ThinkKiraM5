@@ -65,7 +65,7 @@ Stand: 27.11.2026 · Gerät: Elecrow ThinkNode M5 · Basis: `meshtastic/firmware
 - Umschalter „Bluetooth“ / „WLAN“ (nicht gleichzeitig).
 - **Auto-Updater aus GitHub Releases**: bei WLAN prüft das Gerät `releases/latest` (Version aus `manifest.json`),
   lädt `thinkkira-m5.bin` per HTTPS und schreibt es über einen eigenen kleinen Update-Loader in der 640-KB-OTA-Partition
-  (bei 4 MB Flash passt kein zweites volles App-Abbild). Menü „System → Update suchen“ + automatische Prüfung (einstellbar).
+  (bei 4 MB Flash passt kein zweites volles App-Abbild). Menü „System → Update suchen“ + automatische Prüfung; Installation erst nach Bestätigung per Taste (Sven, 28.11.2026).
 - Alle Updates kommen ausschließlich aus GitHub Releases (Web-Flasher, Configurator-Hinweis, Gerät).
 **Test:** App, Webseite im Heimnetz, OTA-Update.
 
