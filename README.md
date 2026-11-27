@@ -103,19 +103,18 @@ Der Quellcode der Webseite kommt in den Ordner `web/`.
 
 ## Installation
 
-### Fertige Firmware herunterladen
-1. Auf GitHub **Actions → ThinkKira Build** öffnen, den neuesten grünen Lauf anklicken.
-2. Unten unter **Artifacts** `thinkkira-firmware` herunterladen und entpacken.
-3. Darin liegt `firmware-thinknode_m5_custom-….factory.bin` (komplettes Abbild) und `firmware-thinknode_m5_custom-….bin` (nur Update).
-
-### Flashen im Browser (am einfachsten)
-1. Chrome oder Edge öffnen: https://flasher.meshtastic.org
+### Flashen mit dem ThinkKira-Loader (empfohlen)
+1. In Chrome oder Edge am PC öffnen: **https://devsven.de/Key/ThinkKira** → Karte **Loader**
 2. ThinkNode M5 per USB-C anschließen.
-3. **Gerät:** „ThinkNode M5“ wählen, dann rechts **„Custom / Datei hochladen“** (Ordnersymbol) und die `….factory.bin` wählen.
-4. **„Full Erase and Install“** anhaken (beim ersten Wechsel auf ThinkKira), dann **Flash**.
-5. Port auswählen, warten bis „Done“, Gerät startet neu.
+3. Beim ersten Wechsel auf ThinkKira „Gerät vorher komplett löschen“ angehakt lassen.
+4. **„Firmware installieren“** klicken, Port wählen, warten bis „Fertig!“ erscheint.
 
-Später gibt es einen eigenen Web-Flasher auf der Projektseite.
+Der Loader holt die Firmware immer aus dem neuesten [GitHub-Release](https://github.com/Kirakodo/ThinkKiraM5/releases/latest).
+Einstellungen danach im **Konfigurator** auf derselben Seite (USB oder Bluetooth).
+
+### Firmware-Dateien direkt
+Alle Dateien liegen im [neuesten Release](https://github.com/Kirakodo/ThinkKiraM5/releases/latest):
+`thinkkira-m5.factory.bin` (komplettes Abbild, Adresse 0x0) und `thinkkira-m5.bin` (nur Update).
 
 ### Selbst bauen und flashen (PlatformIO)
 ```bash
