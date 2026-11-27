@@ -83,8 +83,8 @@ Projektseite: **https://devsven.de/Key/ThinkKira** (noch im Aufbau)
 
 Geplante Tabs:
 - **Übersicht**: Funktionen, Bilder, Download, Anleitung
-- **Flasher**: Firmware direkt aus dem Browser aufspielen (Chrome/Edge, Web Serial)
-- **Configurator**: Gerät per USB oder Bluetooth einstellen, ähnlich wie client.meshtastic.org, inkl. Wegpunkte, Karten-Upload und Backup
+- **Loader**: Firmware direkt aus dem Browser aufspielen (Chrome/Edge, USB)
+- **Konfigurator**: Gerät per USB oder Bluetooth einstellen, inkl. Wegpunkte, Schnellantworten und Sicherung
 
 Der Quellcode der Webseite kommt in den Ordner `web/`.
 
