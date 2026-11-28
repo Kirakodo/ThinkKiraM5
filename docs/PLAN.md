@@ -52,12 +52,13 @@ Stand: 27.11.2026 · Gerät: Elecrow ThinkNode M5 · Basis: `meshtastic/firmware
 - Drehschalter wird nicht benutzt (nicht am ESP32).
 **Test:** alle Seiten/Menüs durchklicken, Ausschalten 4 s, Ghosting beurteilen.
 
-### Phase 4 – GPS, Kompass, Wegpunkte, Karte (4a Navigation umgesetzt 28.11.2026, 4b Karte offen)
+### Phase 4 – GPS, Kompass, Wegpunkte, Karte (umgesetzt 28.11.2026, v0.4.0)
 - Position senden, GPS-Zeit → RTC.
 - Kompass aus GPS-Kurs (ab 1,5 km/h, sonst „Stand“), Pfeil max. 1×/s.
 - Track als GPX in LittleFS.
 - Wegpunkte (64, Textdatei /kira/wp.txt statt JSON – kleiner, ohne JSON-Bibliothek), Navigation mit Pfeil/Entfernung/ETA, Ankunftsradius 20 m, Ziel überlebt Neustart.
 - Offline-Karte: `tools/mapgen/` (Python, Overpass/PBF → Kacheln, int16-Deltas, Douglas-Peucker, Detailstufen bis Budget passt), Renderer mit 2–3 Zoomstufen, Norden oben / Laufrichtung. Gebiet Potsdam–Ludwigsfelde. © OpenStreetMap-Mitwirkende.
+- Karten werden per Workflow „ThinkKira Karte“ gebaut und an die Vorabversion „karten“ gehängt; Upload über den Konfigurator (USB/Bluetooth, Go-Back-N mit `mapd|offset|base64`/`mapq`).
 **Test:** draußen gehen: Kompass, Wegpunkt anlegen + hinnavigieren, Karte vergleichen.
 
 ### Phase 5 – Verbindungen

@@ -43,7 +43,7 @@ std::string formatDistance(float m)
     return b;
 }
 
-static float degrees(float rad)
+static float toDeg(float rad)
 {
     float d = rad * 180.0f / (float)M_PI;
     return d < 0 ? d + 360 : d;
@@ -374,7 +374,7 @@ int32_t KiraNav::runOnce()
                 if (localPosition.has_ground_track && localPosition.ground_track)
                     nav.course = localPosition.ground_track * 1e-5f;
                 else
-                    nav.course = degrees(GeoCoord::bearing(lastLat * 1e-7, lastLon * 1e-7, la, lo));
+                    nav.course = toDeg(GeoCoord::bearing(lastLat * 1e-7, lastLon * 1e-7, la, lo));
             }
             lastLat = localPosition.latitude_i;
             lastLon = localPosition.longitude_i;
@@ -400,7 +400,7 @@ int32_t KiraNav::runOnce()
         nav.haveTarget = tgt.kind != TARGET_NONE && (tgt.lat || tgt.lon);
         if (nav.haveTarget) {
             nav.distance = GeoCoord::latLongToMeter(la, lo, tgt.lat * 1e-7, tgt.lon * 1e-7);
-            nav.bearing = degrees(GeoCoord::bearing(la, lo, tgt.lat * 1e-7, tgt.lon * 1e-7));
+            nav.bearing = toDeg(GeoCoord::bearing(la, lo, tgt.lat * 1e-7, tgt.lon * 1e-7));
             nav.etaSec = nav.speedKmh >= MIN_SPEED_KMH ? (uint32_t)(nav.distance / (nav.speedKmh / 3.6f)) : 0;
             if (nav.distance <= arrivalRadius)
                 onArrived();
