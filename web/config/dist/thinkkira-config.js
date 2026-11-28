@@ -12885,13 +12885,14 @@ async function Zh(e, t) {
 			if (Y.mapUp.cancel) throw $m("Abgebrochen.");
 			let t = "";
 			for (let r of e.subarray(n, n + 162)) t += String.fromCharCode(r);
-			let i = Jh(3e3, "Das Gerät quittiert nicht mehr – Verbindung prüfen.");
-			await Yh(["mapd|" + n + "|" + btoa(t)]);
+			let i = Jh(4e3, "keine Quittung");
+			await Yh(r ? ["mapd|" + n + "|" + btoa(t), "mapq"] : ["mapd|" + n + "|" + btoa(t)]);
 			let a;
 			try {
 				a = await i;
-			} catch (e) {
-				if (++r > 8) throw e;
+			} catch (t) {
+				if (console.warn("Karte: keine Quittung bei Byte", n, "Versuch", r + 1), t.message !== "keine Quittung") throw t;
+				if (++r > 15) throw $m("Das Gerät quittiert seit einer Minute nicht mehr (bei " + Math.round(n / 1024) + " von " + Math.round(e.length / 1024) + " KB). Bitte Gerät neu starten, Seite neu laden und erneut versuchen.");
 				continue;
 			}
 			if (typeof a == "number") {

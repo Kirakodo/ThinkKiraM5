@@ -397,13 +397,19 @@ async function uploadMap(bytes, label) {
       if (state.mapUp.cancel) throw deFehler("Abgebrochen.");
       let bin = "";
       for (const c of bytes.subarray(pos, pos + CH)) bin += String.fromCharCode(c);
-      const ack = waitDevice(3000, "Das Gerät quittiert nicht mehr – Verbindung prüfen.");
-      await fastSend(["mapd|" + pos + "|" + btoa(bin)]);
+      const ack = waitDevice(4000, "keine Quittung");
+      // nach einer Zeitüberschreitung zusätzlich den Stand abfragen (mapq), falls nur die Quittung verloren ging
+      await fastSend(fails ? ["mapd|" + pos + "|" + btoa(bin), "mapq"] : ["mapd|" + pos + "|" + btoa(bin)]);
       let got;
       try {
         got = await ack;
       } catch (e) {
-        if (++fails > 8) throw e;
+        console.warn("Karte: keine Quittung bei Byte", pos, "Versuch", fails + 1);
+        if (e.message !== "keine Quittung") throw e; // z. B. Fehlermeldung des Geräts
+        if (++fails > 15)
+          throw deFehler(
+            "Das Gerät quittiert seit einer Minute nicht mehr (bei " + Math.round(pos / 1024) + " von " + Math.round(bytes.length / 1024) + " KB). Bitte Gerät neu starten, Seite neu laden und erneut versuchen.",
+          );
         continue; // Stück erneut senden; das Gerät quittiert auch Wiederholungen
       }
       if (typeof got !== "number") continue;
