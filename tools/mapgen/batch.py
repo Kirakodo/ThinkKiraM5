@@ -19,7 +19,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--pbf", required=True)
 ap.add_argument("--regions", required=True)
 ap.add_argument("--out", default="karten")
-ap.add_argument("--chunk", type=int, default=6, help="Regionen je osmium-Durchlauf (mehr braucht viel Speicher)")
+ap.add_argument("--chunk", type=int, default=3, help="Regionen je osmium-Durchlauf (je Auszug ca. 2 GB Speicher)")
 ap.add_argument("--min-objects", type=int, default=300, help="Regionen mit weniger OSM-Objekten auslassen (Meer, Ausland)")
 a = ap.parse_args()
 
