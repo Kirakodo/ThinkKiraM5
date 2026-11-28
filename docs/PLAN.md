@@ -67,7 +67,8 @@ Stand: 27.11.2026 · Gerät: Elecrow ThinkNode M5 · Basis: `meshtastic/firmware
   lädt `thinkkira-m5.bin` per HTTPS und schreibt es über einen eigenen kleinen Update-Loader in der 640-KB-OTA-Partition
   (bei 4 MB Flash passt kein zweites volles App-Abbild). Menü „System → Update suchen“ + automatische Prüfung; Installation erst nach Bestätigung per Taste (Sven, 28.11.2026).
 - Alle Updates kommen ausschließlich aus GitHub Releases (Web-Flasher, Configurator-Hinweis, Gerät).
-**Test:** App, Webseite im Heimnetz, OTA-Update.
+- Loader/Konfigurator „Per WLAN verbinden“ (Sven, 28.11.2026): Gerät spricht HTTPS mit eigenem Zertifikat (devsven.de ist HTTPS, http im LAN wäre Mixed Content; einmal `https://<IP>` öffnen und bestätigen). Darüber konfigurieren und Update auslösen – das Gerät lädt die Firmware selbst aus dem GitHub-Release. Sauberes Trennen auch für WLAN.
+**Test:** App, Webseite im Heimnetz, OTA-Update, Konfigurator per WLAN.
 
 ### Phase 6 – Strom
 - Deep Sleep, Aufwachen per Zweittaste/LoRa-Interrupt; GPS-Abschaltung wie `variant.cpp`.
