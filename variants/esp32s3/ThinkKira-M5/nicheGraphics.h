@@ -10,25 +10,10 @@
 // ---------------------------
 #include "graphics/niche/InkHUD/InkHUD.h"
 
-// Applets
-#include "graphics/niche/InkHUD/Applets/User/AllMessage/AllMessageApplet.h"
-#include "graphics/niche/InkHUD/Applets/User/DM/DMApplet.h"
-#include "graphics/niche/InkHUD/Applets/User/FavoritesMap/FavoritesMapApplet.h"
-#include "graphics/niche/InkHUD/Applets/User/Heard/HeardApplet.h"
-#include "graphics/niche/InkHUD/Applets/User/Positions/PositionsApplet.h"
-#include "graphics/niche/InkHUD/Applets/User/RecentsList/RecentsListApplet.h"
-#include "graphics/niche/InkHUD/Applets/User/ThreadedMessage/ThreadedMessageApplet.h"
-#include "graphics/niche/InkHUD/Applets/User/Waypoints/WaypointListApplet.h"
-
-// ThinkKira
+// ThinkKira: eigene Oberfläche statt der InkHUD-Standard-Applets
 #include "custom/core/KiraSystem.h"
 #include "custom/features.h"
-#if CUSTOM_FEATURE_STATUS_PAGE
-#include "custom/ui/KiraStatusApplet.h"
-#endif
-#if CUSTOM_FEATURE_RADIO_STATS
-#include "custom/ui/KiraRadioApplet.h"
-#endif
+#include "custom/ui/KiraShell.h"
 
 // Shared NicheGraphics components
 // --------------------------------
@@ -74,8 +59,10 @@ void setupNicheGraphics()
     InkHUD::Applet::fontSmall = FREESANS_6PT_WIN1252;
 
     // Customize default settings
-    inkhud->persistence->settings.userTiles.maxCount = 2;              // Two applets side-by-side
-    inkhud->persistence->settings.optionalFeatures.batteryIcon = true; // Device definitely has a battery
+    inkhud->persistence->settings.userTiles.maxCount = 1;                // ThinkKira: eine Oberfläche, ganzer Bildschirm
+    inkhud->persistence->settings.optionalFeatures.batteryIcon = false;  // Akku zeigt die Oberfläche selbst
+    inkhud->persistence->settings.optionalFeatures.notifications = false; // Nachrichten zeigt die Oberfläche selbst
+    inkhud->persistence->settings.tips.firstBoot = false;                 // kein InkHUD-Tutorial
 
     // Setup backlight controller
     // LatchingBacklight not used due to backlight being on GPIO expander
@@ -83,23 +70,9 @@ void setupNicheGraphics()
     auto backlight = [](bool on) { io.digitalWrite(PCA_PIN_EINK_EN, on ? HIGH : LOW); };
     backlight(false); // start dark
 
-    // Pick applets
-#if CUSTOM_FEATURE_STATUS_PAGE
-    inkhud->addApplet("ThinkKira Status", new ThinkKira::StatusApplet, true, false, 0); // Activated, default on tile 0
-#if CUSTOM_FEATURE_RADIO_STATS
-    inkhud->addApplet("ThinkKira Funk", new ThinkKira::RadioApplet, true); // Activated
-#endif
-#endif
-    // Note: order of applets determines priority of "auto-show" feature
-    inkhud->addApplet("All Messages", new InkHUD::AllMessageApplet, true, true);      // Activated, autoshown
-    inkhud->addApplet("DMs", new InkHUD::DMApplet);                                   // -
-    inkhud->addApplet("Channel 0", new InkHUD::ThreadedMessageApplet(0));             // -
-    inkhud->addApplet("Channel 1", new InkHUD::ThreadedMessageApplet(1));             // -
-    inkhud->addApplet("Positions", new InkHUD::PositionsApplet, true);                // Activated
-    inkhud->addApplet("Waypoints", new InkHUD::WaypointListApplet);                   // -
-    inkhud->addApplet("Recents List", new InkHUD::RecentsListApplet);                 // -
-    inkhud->addApplet("Heard", new InkHUD::HeardApplet, true, false, 1);              // Activated, no autoshow, default on tile 0
-    inkhud->addApplet("Favorites Map", new InkHUD::FavoritesMapApplet, false, false); // -
+    // ThinkKira-Oberfläche als einziges Applet
+    ThinkKira::Shell *shell = new ThinkKira::Shell(Inputs::TwoButton::getUserButtonPin(), PIN_BUTTON2, backlight);
+    inkhud->addApplet("ThinkKira", shell, true, false, 0);
 
     // ThinkKira: Hardware-Bericht ins Boot-Log
     ThinkKira::startBootReport();
@@ -114,33 +87,19 @@ void setupNicheGraphics()
 
     // Elecrow diagram: https://www.elecrow.com/download/product/ILM13205D/ThinkNode_M5_User_Manual.pdf
 
-    // #0: Bottom side button
-    // Labeled "Next Page Button" by manual
+    // #0: Haupttaste (unten): kurz = weiter, lang = Menü/Auswahl, 4 s = Ausschalten (misst die Oberfläche)
     buttons->setWiring(0, Inputs::TwoButton::getUserButtonPin(), true);
     buttons->setTiming(0, 50, 500);
+    buttons->setHandlerDown(0, [shell]() { shell->keyDown(); });
     buttons->setHandlerShortPress(0, [inkhud]() { inkhud->shortpress(); });
     buttons->setHandlerLongPress(0, [inkhud]() { inkhud->longpress(); });
 
-    // #1: Top side button
-    // Labeled "Previous Page Button" by manual
-    // Currently mirrors functionality of LatchingBacklight
+    // #1: Zweittaste (oben): kurz = zurück, lang = Startseite, 3 s = SOS (misst die Oberfläche)
     buttons->setWiring(1, PIN_BUTTON2, true);
-    buttons->setTiming(1, 50, 500); // 500ms before latch
-    buttons->setHandlerDown(1, [backlight]() { backlight(true); });
-    buttons->setHandlerLongPress(1, [backlight]() {
-        backlight(false);
-        delay(25);
-        backlight(true);
-        delay(25);
-        backlight(false);
-        delay(25);
-        backlight(true);
-        playBoop();
-    });
-    buttons->setHandlerShortPress(1, [backlight]() {
-        backlight(false);
-        playChirp();
-    });
+    buttons->setTiming(1, 50, 500);
+    buttons->setHandlerDown(1, [shell]() { shell->keyDown(); });
+    buttons->setHandlerShortPress(1, [shell]() { shell->auxShort(); });
+    buttons->setHandlerLongPress(1, [shell]() { shell->auxLong(); });
 
     // Begin handling button events
     buttons->start();

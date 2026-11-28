@@ -43,6 +43,7 @@ async function connect(kind) {
     const transport = kind === "serial" ? await TransportWebSerial.create(115200) : await TransportWebBluetooth.create();
     const device = new MeshDevice(transport);
     state.device = device;
+    state.transport = transport;
     state.config = {};
     state.moduleConfig = {};
     state.channels = [];
@@ -57,7 +58,11 @@ async function connect(kind) {
         setStatus("verbunden");
         kiraSend("get");
       }
-      else if (s === 2) setStatus("getrennt");
+      else if (s === 2 && state.device === device && !state.closing) {
+        // Gerät weg (Kabel gezogen, Neustart, Bluetooth aus): aufräumen
+        closeConnection(device, transport);
+        resetConnection("Verbindung verloren");
+      }
       else if (s === 6) setStatus("lese Einstellungen …");
     });
     device.events.onMyNodeInfo.subscribe((i) => (state.myNodeNum = i.myNodeNum));
@@ -91,17 +96,52 @@ async function connect(kind) {
     setStatus("verbunden");
   } catch (e) {
     console.error(e);
-    setStatus("Fehler: " + fehlerText(e));
+    if (state.device) await closeConnection(state.device, state.transport);
+    resetConnection("Fehler: " + fehlerText(e));
   }
 }
 
-async function disconnect() {
+// Schließt die Verbindung Schritt für Schritt; ein Fehler in einem Schritt hält die anderen nicht auf.
+async function closeConnection(device, transport) {
   try {
-    await state.device?.disconnect();
+    device?.complete?.();
   } catch {}
-  state.device = null;
-  setStatus("getrennt");
+  try {
+    await device?.transport?.toDevice?.close();
+  } catch {}
+  try {
+    await transport?.disconnect();
+  } catch {}
 }
+
+function resetConnection(status) {
+  state.device = null;
+  state.transport = null;
+  state.dirty = false;
+  state.kira = null;
+  state.kiraStats = null;
+  state.wifiNets = null;
+  state.wifiScanning = false;
+  setStatus(status);
+}
+
+async function disconnect() {
+  if (!state.device) return;
+  if (state.dirty && !confirm("Es gibt ungespeicherte Änderungen. Trotzdem trennen und verwerfen?")) return;
+  state.closing = true;
+  setStatus("trenne …");
+  await closeConnection(state.device, state.transport);
+  state.closing = false;
+  resetConnection("getrennt – das Gerät kann jetzt abgezogen werden");
+}
+
+// Seite wird verlassen: Port/Bluetooth freigeben, damit Loader oder andere Tabs das Gerät wieder öffnen können
+window.addEventListener("beforeunload", (e) => {
+  if (state.device && state.dirty) e.preventDefault();
+});
+window.addEventListener("pagehide", () => {
+  if (state.device) closeConnection(state.device, state.transport);
+});
 
 function setStatus(s) {
   state.status = s;

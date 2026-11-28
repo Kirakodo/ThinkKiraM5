@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #ifdef THINKKIRA
 #include "KiraModule.h"
+#include "KiraMessages.h"
 #include "KiraRadio.h"
 #include "KiraSettings.h"
 #include "KiraSystem.h"
@@ -235,6 +236,9 @@ void setupModule()
     kiraModule = new KiraModule();
 #if CUSTOM_FEATURE_RADIO_STATS
     new KiraStatsModule();
+#endif
+#if defined(MESHTASTIC_INCLUDE_INKHUD)
+    kiraMessages = new KiraMessageModule();
 #endif
 }
 

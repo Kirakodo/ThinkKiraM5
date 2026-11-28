@@ -4,6 +4,7 @@
 #include "FSCommon.h"
 #include "SPILock.h"
 #include "configuration.h"
+#include <stdlib.h>
 #include <string.h>
 
 namespace ThinkKira
@@ -22,6 +23,12 @@ static void parseLine(char *s)
     const char *key = s, *val = eq + 1;
     if (!strcmp(key, "radio"))
         current.radioMode = !strcmp(val, "kira") ? RADIO_KIRA : RADIO_MESHTASTIC;
+    else if (!strcmp(key, "light"))
+        current.light = (LightMode)(atoi(val) % 3);
+    else if (!strcmp(key, "leds"))
+        current.leds = atoi(val) != 0;
+    else if (!strcmp(key, "pages"))
+        current.pages = (uint8_t)(atoi(val) | 0x21); // Start und Einstellungen immer an
 }
 
 Settings &settings()
@@ -66,6 +73,7 @@ bool saveSettings()
         return false;
     }
     f.printf("radio=%s\n", current.radioMode == RADIO_KIRA ? "kira" : "meshtastic");
+    f.printf("light=%u\nleds=%u\npages=%u\n", (unsigned)current.light, current.leds ? 1u : 0u, (unsigned)current.pages);
     f.close();
     return true;
 #else

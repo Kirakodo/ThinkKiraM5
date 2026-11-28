@@ -2,7 +2,7 @@
 
 Eigene Firmware für das **Elecrow ThinkNode M5**, aufgebaut als Fork der [Meshtastic-Firmware](https://github.com/meshtastic/firmware).
 
-> **Status: Phase 2 (Funk & Mesh).** Meshtastic-Basis mit Statusseite, USB-Befehlen, umschaltbarem Kira-Funk, Funk-Statistik und Reichweitentest. Plan: [docs/PLAN.md](docs/PLAN.md)
+> **Status: Phase 3 (eigene Oberfläche).** Meshtastic-Basis, umschaltbarer Kira-Funk, Funk-Statistik, Reichweitentest und eigene E-Ink-Oberfläche mit 6 Seiten, Menüs, Schnellantworten und SOS. Navigation und Karte folgen in Phase 4. Plan: [docs/PLAN.md](docs/PLAN.md)
 
 ## Idee
 

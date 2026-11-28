@@ -13,8 +13,13 @@ enum RadioMode : uint8_t { RADIO_MESHTASTIC = 0, RADIO_KIRA = 1 };
 constexpr uint8_t SYNC_MESHTASTIC = 0x2b;
 constexpr uint8_t SYNC_KIRA = 0x24;
 
+enum LightMode : uint8_t { LIGHT_OFF = 0, LIGHT_ON_KEY = 1, LIGHT_ALWAYS = 2 };
+
 struct Settings {
     RadioMode radioMode = RADIO_MESHTASTIC;
+    LightMode light = LIGHT_ON_KEY; // Hintergrundlicht
+    bool leds = true;               // LED-Hinweise (blaue LED bei Nachricht)
+    uint8_t pages = 0x3F;           // Seiten ein/aus (Bit 0 = Start … Bit 5 = Einstellungen)
 };
 
 Settings &settings();   // lädt beim ersten Aufruf aus dem Dateisystem

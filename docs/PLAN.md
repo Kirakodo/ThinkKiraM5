@@ -46,7 +46,7 @@ Stand: 27.11.2026 · Gerät: Elecrow ThinkNode M5 · Basis: `meshtastic/firmware
 - Funk-Statistik: RSSI/SNR letzter Pakete, Zähler RX/TX/Fehler, Reichweitentest (Ping/Pong mit Zähler).
 **Test:** Nachricht mit zweitem Meshtastic-Gerät, Modus wechseln, Statistik prüfen.
 
-### Phase 3 – Eigene Oberfläche
+### Phase 3 – Eigene Oberfläche (umgesetzt 28.11.2026, Test offen)
 - 6 Seiten im Kreis, Menüs max. 2 Ebenen, Tastenbelegung wie im Prompt (kurz/0,5 s/4 s bzw. kurz/0,5 s/3 s SOS).
 - Licht, Buzzer, LEDs einstellbar. Teil-Refresh, Voll-Refresh höchstens alle 10 Teil-Refreshes.
 - Drehschalter wird nicht benutzt (nicht am ESP32).
