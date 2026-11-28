@@ -1,0 +1,42 @@
+# ThinkKira: Offline-Karte aus OpenStreetMap bauen und an das Release „karten“ hängen.
+# Das Release ist als Vorabversion markiert, damit „releases/latest“ weiter die Firmware ist.
+name: ThinkKira Karte
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "Dateiname ohne Endung, z. B. potsdam-ludwigsfelde"
+        default: "potsdam-ludwigsfelde"
+        required: true
+      bbox:
+        description: "Süd,West,Nord,Ost"
+        default: "52.26,12.95,52.45,13.32"
+        required: true
+      budget:
+        description: "maximale Größe in KB"
+        default: "700"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  map:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Karte erzeugen
+        run: |
+          python3 tools/mapgen/mapgen.py --bbox "${{ github.event.inputs.bbox }}" --budget "${{ github.event.inputs.budget }}" \
+            --out "${{ github.event.inputs.name }}.tkm" | tee mapgen.log
+      - name: An Release „karten“ hängen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release view karten >/dev/null 2>&1 || gh release create karten --prerelease --title "ThinkKira Offline-Karten" \
+            --notes "Offline-Karten für ThinkKira. Kartendaten © OpenStreetMap-Mitwirkende, ODbL (https://www.openstreetmap.org/copyright)."
+          gh release upload karten "${{ github.event.inputs.name }}.tkm" --clobber
