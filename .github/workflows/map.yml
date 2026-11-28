@@ -31,6 +31,7 @@ jobs:
           python-version: "3.12"
       - name: Karte erzeugen
         run: |
+          set -o pipefail
           python3 tools/mapgen/mapgen.py --bbox "${{ github.event.inputs.bbox }}" --budget "${{ github.event.inputs.budget }}" \
             --out "${{ github.event.inputs.name }}.tkm" | tee mapgen.log
       - name: An Release „karten“ hängen

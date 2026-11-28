@@ -24,6 +24,7 @@ import json
 import math
 import struct
 import sys
+import time
 import urllib.parse
 import urllib.request
 
@@ -60,9 +61,19 @@ def overpass(bbox):
 );
 out geom;"""
     data = urllib.parse.urlencode({"data": q}).encode()
-    req = urllib.request.Request("https://overpass-api.de/api/interpreter", data=data, headers={"User-Agent": "ThinkKira-mapgen"})
-    with urllib.request.urlopen(req, timeout=600) as r:
-        return json.load(r)
+    servers = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter"]
+    last = None
+    for attempt in range(6):  # Overpass ist oft überlastet: mehrere Server, mit Pausen
+        url = servers[attempt % len(servers)]
+        try:
+            req = urllib.request.Request(url, data=data, headers={"User-Agent": "ThinkKira-mapgen"})
+            with urllib.request.urlopen(req, timeout=600) as r:
+                return json.load(r)
+        except Exception as e:  # noqa: BLE001
+            last = e
+            print(f"{url}: {e} – neuer Versuch …", flush=True)
+            time.sleep(20 * (attempt + 1))
+    raise SystemExit(f"OpenStreetMap-Daten nicht erreichbar: {last}")
 
 
 def classify(el):
