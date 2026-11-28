@@ -8,6 +8,7 @@
 #include "PowerStatus.h"
 #include "RTC.h"
 #include "buzz.h"
+#include "custom/core/KiraMenu.h"
 #include "custom/core/KiraMessages.h"
 #include "custom/core/KiraModule.h"
 #include "custom/core/KiraRadio.h"
@@ -84,54 +85,66 @@ void Shell::keyDown()
     setIntervalFromNow(100); // Halten messen
 }
 
+// Tastenbelegung aus dem Designer: keys = [Haupt kurz, Haupt lang, Zweit kurz, Zweit lang, Haupt 4 s, Zweit 3 s]
+// Rollen: n weiter, p zurück, m Menü/Auswählen, h Startseite, l Licht, x nichts; Halten: o Ausschalten, s SOS, x nichts
 void Shell::onButtonShortPress()
 {
-    if (holdHandled || consumeSpecial())
-        return;
-    if (!stack.empty()) {
-        Menu &m = stack.back();
-        if (!m.items.empty())
-            m.sel = (m.sel + 1) % m.items.size();
-        redraw();
-    } else
-        changePage(+1);
+    gesture(ThinkKira::settings().keys[0]);
 }
 
 void Shell::onButtonLongPress()
 {
-    if (holdHandled || consumeSpecial())
-        return;
-    if (stack.empty()) {
-        openPageMenu();
-        return;
-    }
-    Menu &m = stack.back();
-    if (m.items.empty())
-        return;
-    auto action = m.items[m.sel].action; // Kopie: die Aktion darf den Stapel ändern
-    if (action)
-        action();
-    redraw();
+    gesture(ThinkKira::settings().keys[1]);
 }
 
 void Shell::auxShort()
 {
     playChirp();
-    if (holdHandled || consumeSpecial())
-        return;
-    if (!stack.empty()) {
-        stack.pop_back();
-        redraw();
-    } else
-        changePage(-1);
+    gesture(ThinkKira::settings().keys[2]);
 }
 
 void Shell::auxLong()
 {
     playBoop();
+    gesture(ThinkKira::settings().keys[3]);
+}
+
+void Shell::gesture(char role)
+{
     if (holdHandled || consumeSpecial())
         return;
-    goHome();
+    if (role == 'h') {
+        goHome();
+        return;
+    }
+    if (role == 'l') {
+        runAction("light.toggle");
+        toast(actionLabel("light.toggle"));
+        return;
+    }
+    if (stack.empty()) {
+        if (role == 'n')
+            changePage(+1);
+        else if (role == 'p')
+            changePage(-1);
+        else if (role == 'm')
+            openPageMenu();
+        return;
+    }
+    Menu &m = stack.back();
+    if (role == 'n') {
+        if (!m.items.empty())
+            m.sel = (m.sel + 1) % m.items.size();
+    } else if (role == 'p') {
+        stack.pop_back();
+    } else if (role == 'm') {
+        if (m.items.empty())
+            return;
+        auto action = m.items[m.sel].action; // Kopie: die Aktion darf den Stapel ändern
+        if (action)
+            action();
+    }
+    redraw();
 }
 
 // ---------------------------------------------------------------- Ablauf
@@ -149,13 +162,18 @@ int32_t Shell::runOnce()
             mainDownAt = 0;
         if (!auxHeld)
             auxDownAt = 0;
-        if (mainDownAt && !holdHandled && now - mainDownAt >= OFF_HOLD_MS) {
+        const char *k = ThinkKira::settings().keys;
+        char hold = 0;
+        if (mainDownAt && !holdHandled && now - mainDownAt >= OFF_HOLD_MS)
+            hold = k[4];
+        else if (auxDownAt && !holdHandled && now - auxDownAt >= SOS_HOLD_MS)
+            hold = k[5];
+        if (hold == 'o') {
             holdHandled = true;
             showInfo("Ausschalten", {"ThinkKira wird", "ausgeschaltet …"});
             playShutdownMelody();
             shutdownAtMsec = now + 1500;
-        }
-        if (auxDownAt && !holdHandled && now - auxDownAt >= SOS_HOLD_MS && sos == SOS_OFF) {
+        } else if (hold == 's' && sos == SOS_OFF) {
             holdHandled = true;
             startSos();
         }
@@ -199,6 +217,7 @@ int32_t Shell::runOnce()
     // Inhalte aktualisieren (nur wenn sich etwas geändert hat; E-Ink schonen)
     if (s.uiRev != lastUiRev) {
         lastUiRev = s.uiRev;
+        stack.clear(); // Menüs können neu geladen worden sein
         if (!(s.pages & (1 << page)))
             page = P_START;
         redraw(true);
@@ -380,59 +399,204 @@ std::string Shell::ago(uint32_t ms)
 
 void Shell::openPageMenu()
 {
-    switch (page) {
-    case P_START:
-        pushMenu(menuStart());
-        break;
-    case P_MSG:
-        pushMenu(menuMessages());
-        break;
-    case P_NAV:
-        pushMenu(menuNav());
-        break;
-    case P_MAP:
-        pushMenu(menuMap());
-        break;
-    case P_NODES:
-        pushMenu(menuNodes());
-        break;
-    default:
-        pushMenu(menuSettings());
-        break;
+    const std::vector<MenuEntry> &def = pageMenu(page);
+    if (def.empty()) {
+        toast("Kein Menü auf dieser Seite");
+        return;
     }
+    pushMenu(buildMenu(page == P_START ? "Start" : PAGE_NAMES[page], def));
 }
 
-Shell::Menu Shell::menuStart()
+// Baut ein Menü aus den Designer-Daten. Untermenüs werden erst beim Öffnen gebaut (Texte bleiben aktuell).
+Shell::Menu Shell::buildMenu(const std::string &title, const std::vector<MenuEntry> &entries)
 {
-    Menu m{"Start", {}};
-    m.items.push_back({"Position senden", [this]() {
-                           bool ok = positionModule && positionModule->sendOurPosition();
-                           closeMenus();
-                           toast(ok ? "Position gesendet" : "Keine Position");
-                       }});
-    m.items.push_back({lightOn ? "Licht aus" : "Licht an", [this]() {
-                           ThinkKira::Settings &s = ThinkKira::settings();
-                           s.light = (s.light == LIGHT_ALWAYS) ? LIGHT_ON_KEY : LIGHT_ALWAYS;
-                           saveSettings();
-                           setLight(s.light == LIGHT_ALWAYS);
-                           closeMenus();
-                           toast(s.light == LIGHT_ALWAYS ? "Licht: immer an" : "Licht: bei Tastendruck");
-                       }});
-    bool mute = config.device.buzzer_mode == meshtastic_Config_DeviceConfig_BuzzerMode_DISABLED;
-    m.items.push_back({mute ? "Ton an" : "Stumm", [this, mute]() {
-                           config.device.buzzer_mode = mute ? meshtastic_Config_DeviceConfig_BuzzerMode_ALL_ENABLED
-                                                            : meshtastic_Config_DeviceConfig_BuzzerMode_DISABLED;
-                           nodeDB->saveToDisk(SEGMENT_CONFIG);
-                           closeMenus();
-                           toast(mute ? "Töne an" : "Stumm");
-                       }});
-    m.items.push_back({"Bildschirm aus", [this]() {
-                           closeMenus();
-                           screenOff = true;
-                           setLight(false);
-                           redraw(true);
-                       }});
+    Menu m{title, {}};
+    for (const MenuEntry &e : entries) {
+        if (e.action.empty()) {
+            std::vector<MenuEntry> sub = e.sub; // Kopie: das Menü kann vom Designer ersetzt werden
+            std::string t = e.label;
+            m.items.push_back({t, [this, t, sub]() { pushMenu(buildMenu(t, sub)); }});
+        } else {
+            std::string id = e.action, custom = e.label;
+            m.items.push_back({custom.empty() ? actionLabel(id) : custom, [this, id, custom]() {
+                                   size_t depth = stack.size();
+                                   int sel = depth ? stack.back().sel : 0;
+                                   bool stay = runAction(id);
+                                   // Schalter bleiben im Menü; Standardtext an den neuen Zustand anpassen
+                                   if (stay && custom.empty() && stack.size() == depth && depth && sel < (int)stack.back().items.size())
+                                       stack.back().items[sel].label = actionLabel(id);
+                               }});
+        }
+    }
     return m;
+}
+
+std::string Shell::actionLabel(const std::string &id)
+{
+    ThinkKira::Settings &s = ThinkKira::settings();
+    bool mute = config.device.buzzer_mode == meshtastic_Config_DeviceConfig_BuzzerMode_DISABLED;
+    if (id == "light.toggle")
+        return s.light == LIGHT_ALWAYS ? "Licht: immer an" : "Licht: bei Taste";
+    if (id == "light.cycle") {
+        static const char *const L[] = {"Licht: aus", "Licht: bei Taste", "Licht: immer"};
+        return L[s.light % 3];
+    }
+    if (id == "sound.toggle")
+        return mute ? "Töne: aus" : "Töne: an";
+    if (id == "leds.toggle")
+        return s.leds ? "LED-Hinweise: an" : "LED-Hinweise: aus";
+    if (id == "radio.mode")
+        return s.radioMode == RADIO_KIRA ? "Zu Meshtastic wechseln" : "Zu Kira-Funk wechseln";
+    if (id == "bt.toggle")
+        return config.bluetooth.enabled ? "Bluetooth aus (Neustart)" : "Bluetooth an (Neustart)";
+    if (id == "screen.off")
+        return "Bildschirm aus";
+    if (id == "home")
+        return "Zur Startseite";
+    if (id == "sos")
+        return "SOS auslösen";
+    return id;
+}
+
+// Führt eine Aktion aus. true = im Menü bleiben (Schalter), false = Menü wurde geschlossen/gewechselt.
+bool Shell::runAction(const std::string &id)
+{
+    ThinkKira::Settings &s = ThinkKira::settings();
+    auto phase = [this](const char *n) {
+        toast(std::string("Kommt mit Phase ") + n);
+        return true;
+    };
+    if (id == "pos.send") {
+        bool ok = positionModule && positionModule->sendOurPosition();
+        closeMenus();
+        toast(ok ? "Position gesendet" : "Keine Position");
+    } else if (id == "light.toggle") {
+        s.light = (s.light == LIGHT_ALWAYS) ? LIGHT_ON_KEY : LIGHT_ALWAYS;
+        saveSettings();
+        setLight(s.light == LIGHT_ALWAYS);
+        return true;
+    } else if (id == "light.cycle") {
+        s.light = (LightMode)((s.light + 1) % 3);
+        saveSettings();
+        return true;
+    } else if (id == "sound.toggle") {
+        bool mute = config.device.buzzer_mode == meshtastic_Config_DeviceConfig_BuzzerMode_DISABLED;
+        config.device.buzzer_mode =
+            mute ? meshtastic_Config_DeviceConfig_BuzzerMode_ALL_ENABLED : meshtastic_Config_DeviceConfig_BuzzerMode_DISABLED;
+        nodeDB->saveToDisk(SEGMENT_CONFIG);
+        return true;
+    } else if (id == "leds.toggle") {
+        s.leds = !s.leds;
+        saveSettings();
+        return true;
+    } else if (id == "screen.off") {
+        closeMenus();
+        screenOff = true;
+        setLight(false);
+        redraw(true);
+    } else if (id == "msg.reply") {
+        if (!kiraMessages || !kiraMessages->count()) {
+            toast("Keine Nachricht zum Antworten");
+            return true;
+        }
+        const KiraMessage &last = kiraMessages->get(0);
+        uint32_t to = last.outgoing ? last.to : (last.to == NODENUM_BROADCAST ? NODENUM_BROADCAST : last.from);
+        pushMenu(menuQuickReplies(to, last.channel, "Antwort an " + nodeName(to)));
+    } else if (id == "msg.new") {
+        pushMenu(menuQuickReplies(NODENUM_BROADCAST, 0, "An alle"));
+    } else if (id == "msg.chats") {
+        std::vector<std::string> lines;
+        for (int i = 0; kiraMessages && i < kiraMessages->count(); i++) {
+            const KiraMessage &k = kiraMessages->get(i);
+            lines.push_back((k.outgoing ? "Ich > " + nodeName(k.to) : nodeName(k.from)) + ": " + parse(k.text));
+        }
+        if (lines.empty())
+            lines.push_back("Keine Nachrichten");
+        showInfo("Alle Chats", lines);
+    } else if (id == "msg.clear") {
+        if (kiraMessages)
+            kiraMessages->clear();
+        closeMenus();
+        toast("Nachrichten gelöscht");
+    } else if (id == "nav.goto" || id == "nav.wpsave" || id == "nav.track" || id == "map.offline") {
+        return phase("4");
+    } else if (id == "wifi") {
+        return phase("5");
+    } else if (id == "nodes.list") {
+        pushMenu(menuNodeList());
+    } else if (id == "ping") {
+        bool ok = kiraModule && kiraModule->sendPing();
+        closeMenus();
+        toast(ok ? "Ping gesendet" : "Ping nicht möglich");
+    } else if (id == "radio.mode") {
+        bool kira = s.radioMode == RADIO_KIRA;
+        s.radioMode = kira ? RADIO_MESHTASTIC : RADIO_KIRA;
+        saveSettings();
+        showInfo("Funkmodus", {kira ? "Meshtastic" : "Kira-Funk", "Neustart …"});
+        rebootAtMsec = millis() + 2000;
+    } else if (id == "radio.stats") {
+        RadioCounters c = radioCounters();
+        char b[48];
+        std::vector<std::string> l;
+        l.push_back(radioModeName(s.radioMode));
+        snprintf(b, sizeof(b), "RX %lu, Fehler %lu", (unsigned long)c.rxGood, (unsigned long)c.rxBad);
+        l.push_back(b);
+        snprintf(b, sizeof(b), "TX %lu, weiter %lu", (unsigned long)c.txGood, (unsigned long)c.txRelay);
+        l.push_back(b);
+        const RadioStats &rs = radioStats();
+        if (rs.heard[0].atMs) {
+            snprintf(b, sizeof(b), "Zuletzt %d dBm / %.1f dB", rs.heard[0].rssi, rs.heard[0].snr);
+            l.push_back(b);
+        }
+        snprintf(b, sizeof(b), "Reichweite: %lu/%lu", (unsigned long)rs.pongsReceived, (unsigned long)rs.pingsSent);
+        l.push_back(b);
+        showInfo("Funk-Statistik", l);
+    } else if (id == "pages") {
+        Menu a{"Seiten ein/aus", {}};
+        for (int p = P_MSG; p <= P_NODES; p++) {
+            auto label = [p]() {
+                return std::string(PAGE_NAMES[p]) + ((ThinkKira::settings().pages & (1 << p)) ? ": an" : ": aus");
+            };
+            int idx = (int)a.items.size();
+            a.items.push_back({label(), [this, p, idx, label]() {
+                                   ThinkKira::settings().pages ^= (1 << p);
+                                   saveSettings();
+                                   stack.back().items[idx].label = label();
+                               }});
+        }
+        pushMenu(a);
+    } else if (id == "bt.toggle") {
+        bool bt = config.bluetooth.enabled;
+        config.bluetooth.enabled = !bt;
+        nodeDB->saveToDisk(SEGMENT_CONFIG);
+        showInfo("Bluetooth", {bt ? "aus" : "an", "Neustart …"});
+        rebootAtMsec = millis() + 2000;
+    } else if (id == "sys.info") {
+        SystemInfo i;
+        collectSystemInfo(i);
+        char b[48];
+        std::vector<std::string> l;
+        l.push_back("ThinkKira " THINKKIRA_VERSION);
+        l.push_back(std::string("GPS: ") + gpsVersionText(i.gpsV2));
+        snprintf(b, sizeof(b), "Flash %u MB, frei %u KB", (unsigned)(i.flashPhysical >> 20), (unsigned)((i.appSlot - i.appUsed) / 1024));
+        l.push_back(b);
+        snprintf(b, sizeof(b), "Speicher %u/%u KB", (unsigned)(i.fsUsed / 1024), (unsigned)(i.fsTotal / 1024));
+        l.push_back(b);
+        l.push_back(hexifyNodeNum(nodeDB->getNodeNum()));
+        showInfo("Info", l);
+    } else if (id == "sys.reboot") {
+        showInfo("Neustart", {"Neustart …"});
+        rebootAtMsec = millis() + 1500;
+    } else if (id == "sys.off") {
+        showInfo("Ausschalten", {"ThinkKira wird", "ausgeschaltet …"});
+        shutdownAtMsec = millis() + 1500;
+    } else if (id == "home") {
+        goHome();
+    } else if (id == "sos") {
+        startSos();
+    } else
+        toast("Unbekannte Aktion");
+    return false;
 }
 
 Shell::Menu Shell::menuQuickReplies(uint32_t to, uint8_t channel, const std::string &title)
@@ -454,56 +618,6 @@ Shell::Menu Shell::menuQuickReplies(uint32_t to, uint8_t channel, const std::str
                                toast(ok ? "Gesendet" : "Senden fehlgeschlagen");
                            }});
     }
-    return m;
-}
-
-Shell::Menu Shell::menuMessages()
-{
-    Menu m{"Nachrichten", {}};
-    if (kiraMessages && kiraMessages->count()) {
-        const KiraMessage &last = kiraMessages->get(0);
-        uint32_t to = last.outgoing ? last.to : (last.to == NODENUM_BROADCAST ? NODENUM_BROADCAST : last.from);
-        uint8_t ch = last.channel;
-        m.items.push_back({"Antworten", [this, to, ch]() { pushMenu(menuQuickReplies(to, ch, "Antwort an " + nodeName(to))); }});
-    }
-    m.items.push_back({"Neue Nachricht (alle)", [this]() { pushMenu(menuQuickReplies(NODENUM_BROADCAST, 0, "An alle")); }});
-    m.items.push_back({"Alle Chats", [this]() {
-                           std::vector<std::string> lines;
-                           for (int i = 0; kiraMessages && i < kiraMessages->count(); i++) {
-                               const KiraMessage &k = kiraMessages->get(i);
-                               lines.push_back((k.outgoing ? "Ich > " + nodeName(k.to) : nodeName(k.from)) + ": " + parse(k.text));
-                           }
-                           if (lines.empty())
-                               lines.push_back("Keine Nachrichten");
-                           showInfo("Alle Chats", lines);
-                       }});
-    m.items.push_back({"Löschen", [this]() {
-                           if (kiraMessages)
-                               kiraMessages->clear();
-                           closeMenus();
-                           toast("Nachrichten gelöscht");
-                       }});
-    return m;
-}
-
-Shell::Menu Shell::menuNav()
-{
-    Menu m{"Navigation", {}};
-    m.items.push_back({"Position senden", [this]() {
-                           bool ok = positionModule && positionModule->sendOurPosition();
-                           closeMenus();
-                           toast(ok ? "Position gesendet" : "Keine Position");
-                       }});
-    m.items.push_back({"Navigieren zu … (Phase 4)", [this]() { toast("Kommt mit Phase 4"); }});
-    m.items.push_back({"Wegpunkt speichern (Phase 4)", [this]() { toast("Kommt mit Phase 4"); }});
-    m.items.push_back({"Track Start/Stopp (Phase 4)", [this]() { toast("Kommt mit Phase 4"); }});
-    return m;
-}
-
-Shell::Menu Shell::menuMap()
-{
-    Menu m{"Karte", {}};
-    m.items.push_back({"Offline-Karte (Phase 4)", [this]() { toast("Kommt mit Phase 4"); }});
     return m;
 }
 
@@ -561,141 +675,6 @@ Shell::Menu Shell::menuNode(uint32_t num)
                            showInfo("Signal-Info", l);
                        }});
     m.items.push_back({"Als Ziel (Phase 4)", [this]() { toast("Kommt mit Phase 4"); }});
-    return m;
-}
-
-Shell::Menu Shell::menuNodes()
-{
-    Menu m{"Knoten", {}};
-    m.items.push_back({"Knoten wählen …", [this]() { pushMenu(menuNodeList()); }});
-    m.items.push_back({"Reichweitentest (Ping)", [this]() {
-                           bool ok = kiraModule && kiraModule->sendPing();
-                           closeMenus();
-                           toast(ok ? "Ping gesendet" : "Ping nicht möglich");
-                       }});
-    return m;
-}
-
-Shell::Menu Shell::menuSettings()
-{
-    Menu m{"Einstellungen", {}};
-    m.items.push_back({"Funk", [this]() {
-                           Menu f{"Funk", {}};
-                           bool kira = ThinkKira::settings().radioMode == RADIO_KIRA;
-                           f.items.push_back({kira ? "Zu Meshtastic wechseln" : "Zu Kira-Funk wechseln", [this, kira]() {
-                                                  ThinkKira::settings().radioMode = kira ? RADIO_MESHTASTIC : RADIO_KIRA;
-                                                  saveSettings();
-                                                  showInfo("Funkmodus", {kira ? "Meshtastic" : "Kira-Funk", "Neustart …"});
-                                                  rebootAtMsec = millis() + 2000;
-                                              }});
-                           f.items.push_back({"Statistik", [this]() {
-                                                  RadioCounters c = radioCounters();
-                                                  char b[48];
-                                                  std::vector<std::string> l;
-                                                  l.push_back(radioModeName(ThinkKira::settings().radioMode));
-                                                  snprintf(b, sizeof(b), "RX %lu, Fehler %lu", (unsigned long)c.rxGood,
-                                                           (unsigned long)c.rxBad);
-                                                  l.push_back(b);
-                                                  snprintf(b, sizeof(b), "TX %lu, weiter %lu", (unsigned long)c.txGood,
-                                                           (unsigned long)c.txRelay);
-                                                  l.push_back(b);
-                                                  const RadioStats &s = radioStats();
-                                                  if (s.heard[0].atMs) {
-                                                      snprintf(b, sizeof(b), "Zuletzt %d dBm / %.1f dB", s.heard[0].rssi,
-                                                               s.heard[0].snr);
-                                                      l.push_back(b);
-                                                  }
-                                                  snprintf(b, sizeof(b), "Reichweite: %lu/%lu", (unsigned long)s.pongsReceived,
-                                                           (unsigned long)s.pingsSent);
-                                                  l.push_back(b);
-                                                  showInfo("Funk-Statistik", l);
-                                              }});
-                           f.items.push_back({"Reichweitentest (Ping)", [this]() {
-                                                  bool ok = kiraModule && kiraModule->sendPing();
-                                                  closeMenus();
-                                                  toast(ok ? "Ping gesendet" : "Ping nicht möglich");
-                                              }});
-                           pushMenu(f);
-                       }});
-    m.items.push_back({"Anzeige & Töne", [this]() {
-                           Menu a{"Anzeige & Töne", {}};
-                           static const char *const LIGHT[] = {"Licht: aus", "Licht: bei Taste", "Licht: immer"};
-                           a.items.push_back({LIGHT[ThinkKira::settings().light], [this]() {
-                                                  ThinkKira::Settings &s = ThinkKira::settings();
-                                                  s.light = (LightMode)((s.light + 1) % 3);
-                                                  saveSettings();
-                                                  stack.back().items[0].label = LIGHT[s.light];
-                                              }});
-                           a.items.push_back({ThinkKira::settings().leds ? "LED-Hinweise: an" : "LED-Hinweise: aus", [this]() {
-                                                  ThinkKira::Settings &s = ThinkKira::settings();
-                                                  s.leds = !s.leds;
-                                                  saveSettings();
-                                                  stack.back().items[1].label = s.leds ? "LED-Hinweise: an" : "LED-Hinweise: aus";
-                                              }});
-                           bool mute = config.device.buzzer_mode == meshtastic_Config_DeviceConfig_BuzzerMode_DISABLED;
-                           a.items.push_back({mute ? "Töne: aus" : "Töne: an", [this]() {
-                                                  bool m2 = config.device.buzzer_mode ==
-                                                            meshtastic_Config_DeviceConfig_BuzzerMode_DISABLED;
-                                                  config.device.buzzer_mode =
-                                                      m2 ? meshtastic_Config_DeviceConfig_BuzzerMode_ALL_ENABLED
-                                                         : meshtastic_Config_DeviceConfig_BuzzerMode_DISABLED;
-                                                  nodeDB->saveToDisk(SEGMENT_CONFIG);
-                                                  stack.back().items[2].label = m2 ? "Töne: an" : "Töne: aus";
-                                              }});
-                           for (int p = P_MSG; p <= P_NODES; p++) {
-                               auto label = [p]() {
-                                   return std::string("Seite ") + PAGE_NAMES[p] +
-                                          ((ThinkKira::settings().pages & (1 << p)) ? ": an" : ": aus");
-                               };
-                               int idx = (int)a.items.size();
-                               a.items.push_back({label(), [this, p, idx, label]() {
-                                                      ThinkKira::settings().pages ^= (1 << p);
-                                                      saveSettings();
-                                                      stack.back().items[idx].label = label();
-                                                  }});
-                           }
-                           pushMenu(a);
-                       }});
-    m.items.push_back({"Verbindungen", [this]() {
-                           Menu v{"Verbindungen", {}};
-                           bool bt = config.bluetooth.enabled;
-                           v.items.push_back({bt ? "Bluetooth aus (Neustart)" : "Bluetooth an (Neustart)", [this, bt]() {
-                                                  config.bluetooth.enabled = !bt;
-                                                  nodeDB->saveToDisk(SEGMENT_CONFIG);
-                                                  showInfo("Bluetooth", {bt ? "aus" : "an", "Neustart …"});
-                                                  rebootAtMsec = millis() + 2000;
-                                              }});
-                           v.items.push_back({"WLAN & Web (Phase 5)", [this]() { toast("Kommt mit Phase 5"); }});
-                           pushMenu(v);
-                       }});
-    m.items.push_back({"System", [this]() {
-                           Menu sy{"System", {}};
-                           sy.items.push_back({"Info", [this]() {
-                                                   SystemInfo i;
-                                                   collectSystemInfo(i);
-                                                   char b[48];
-                                                   std::vector<std::string> l;
-                                                   l.push_back("ThinkKira " THINKKIRA_VERSION);
-                                                   l.push_back(std::string("GPS: ") + gpsVersionText(i.gpsV2));
-                                                   snprintf(b, sizeof(b), "Flash %u MB, frei %u KB", (unsigned)(i.flashPhysical >> 20),
-                                                            (unsigned)((i.appSlot - i.appUsed) / 1024));
-                                                   l.push_back(b);
-                                                   snprintf(b, sizeof(b), "Speicher %u/%u KB", (unsigned)(i.fsUsed / 1024),
-                                                            (unsigned)(i.fsTotal / 1024));
-                                                   l.push_back(b);
-                                                   l.push_back(hexifyNodeNum(nodeDB->getNodeNum()));
-                                                   showInfo("Info", l);
-                                               }});
-                           sy.items.push_back({"Neustart", [this]() {
-                                                   showInfo("Neustart", {"Neustart …"});
-                                                   rebootAtMsec = millis() + 1500;
-                                               }});
-                           sy.items.push_back({"Ausschalten", [this]() {
-                                                   showInfo("Ausschalten", {"ThinkKira wird", "ausgeschaltet …"});
-                                                   shutdownAtMsec = millis() + 1500;
-                                               }});
-                           pushMenu(sy);
-                       }});
     return m;
 }
 

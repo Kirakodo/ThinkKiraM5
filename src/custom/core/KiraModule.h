@@ -14,6 +14,7 @@
 //   "ping|<nr>"  -> Antwort "pong|<nr>|<rssi>|<snr>" an den Absender
 // SPDX-License-Identifier: GPL-3.0-only
 #pragma once
+#include <string>
 #include "custom/features.h"
 #include "mesh/SinglePortModule.h"
 
@@ -40,6 +41,8 @@ class KiraModule : public SinglePortModule
     void sendMode();
     void sendInfo();
     void sendUi();
+    void sendMenu();
+    std::string menuUpload; // Designer-Menü wird in Stücken übertragen
     uint32_t lastPongMs = 0;
     bool pingFromClient = false;
 };

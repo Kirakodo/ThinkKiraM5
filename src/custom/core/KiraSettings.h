@@ -23,6 +23,7 @@ struct Settings {
     // Designer (Konfigurator): Reihenfolge der Seiten als Ziffern 0–5, Bausteine der Startseite, Schnellantworten
     char order[7] = "012345";
     char start[12] = "cbgsknm"; // c Uhr, b Akku, g GPS, s Signal, k Knoten, n Nachrichten, m Funkmodus, p Position
+    char keys[7] = "nmphos"; // Tastenbelegung, siehe KiraShell.cpp
     uint8_t uiRev = 0; // wird bei Designer-Änderung erhöht, die Oberfläche zeichnet dann neu (nicht gespeichert)
     char replies[170] = "OK;Ja;Nein;Bin unterwegs;Komme gleich;Alles gut;Wo bist du?;Brauche Hilfe";
 };
@@ -31,6 +32,7 @@ struct Settings {
 bool setOrder(const char *order);
 bool setStart(const char *start);
 bool setReplies(const char *replies);
+bool setKeys(const char *keys);
 
 Settings &settings();   // lädt beim ersten Aufruf aus dem Dateisystem
 bool saveSettings();    // schreibt die aktuelle Einstellung

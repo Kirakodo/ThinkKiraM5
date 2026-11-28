@@ -35,6 +35,8 @@ static void parseLine(char *s)
         setStart(val);
     else if (!strcmp(key, "replies"))
         setReplies(val);
+    else if (!strcmp(key, "keys"))
+        setKeys(val);
 }
 
 bool setOrder(const char *o)
@@ -61,6 +63,22 @@ bool setStart(const char *st)
         if (!strchr("cbgsknmp", st[i]))
             return false;
     memcpy(current.start, st, n + 1);
+    return true;
+}
+
+bool setKeys(const char *k)
+{
+    // 4 Tasten-Rollen + 2 Halte-Aktionen; Menü und Weiter müssen belegt sein, sonst ist das Gerät nicht bedienbar
+    if (strlen(k) != 6)
+        return false;
+    for (int i = 0; i < 4; i++)
+        if (!strchr("nmphlx", k[i]))
+            return false;
+    if (!strchr("osx", k[4]) || !strchr("osx", k[5]))
+        return false;
+    if (!memchr(k, 'm', 4) || !memchr(k, 'n', 4))
+        return false;
+    memcpy(current.keys, k, 7);
     return true;
 }
 
@@ -116,7 +134,7 @@ bool saveSettings()
     }
     f.printf("radio=%s\n", current.radioMode == RADIO_KIRA ? "kira" : "meshtastic");
     f.printf("light=%u\nleds=%u\npages=%u\n", (unsigned)current.light, current.leds ? 1u : 0u, (unsigned)current.pages);
-    f.printf("order=%s\nstart=%s\nreplies=%s\n", current.order, current.start, current.replies);
+    f.printf("order=%s\nstart=%s\nreplies=%s\nkeys=%s\n", current.order, current.start, current.replies, current.keys);
     f.close();
     return true;
 #else

@@ -8,6 +8,7 @@
 #if defined(THINKKIRA) && defined(MESHTASTIC_INCLUDE_INKHUD)
 
 #include "concurrency/OSThread.h"
+#include "custom/core/KiraMenu.h"
 #include "graphics/niche/InkHUD/Applet.h"
 #include <functional>
 #include <string>
@@ -58,12 +59,10 @@ class Shell : public NicheGraphics::InkHUD::Applet, private concurrency::OSThrea
     void redraw(bool full = false);
 
     // Menüs der Seiten
-    Menu menuStart();
-    Menu menuMessages();
-    Menu menuNav();
-    Menu menuMap();
-    Menu menuNodes();
-    Menu menuSettings();
+    Menu buildMenu(const std::string &title, const std::vector<MenuEntry> &entries);
+    bool runAction(const std::string &id);
+    std::string actionLabel(const std::string &id);
+    void gesture(char role); // Rolle aus der Tastenbelegung ausführen
     Menu menuQuickReplies(uint32_t to, uint8_t channel, const std::string &title);
     Menu menuNodeList();
     Menu menuNode(uint32_t num);

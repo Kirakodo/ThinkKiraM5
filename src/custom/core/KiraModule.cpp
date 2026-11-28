@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #ifdef THINKKIRA
 #include "KiraModule.h"
+#include "KiraMenu.h"
 #include "KiraMessages.h"
 #include "KiraRadio.h"
 #include "KiraSettings.h"
@@ -51,11 +52,28 @@ void KiraModule::handleLocal(char *cmd)
             reply("err|Ping konnte nicht gesendet werden");
     } else if (!strcmp(cmd, "ui"))
         sendUi();
+    else if (!strcmp(cmd, "mg"))
+        sendMenu();
+    else if (!strcmp(cmd, "mb"))
+        menuUpload.clear();
+    else if (!strncmp(cmd, "ml|", 3)) {
+        if (menuUpload.size() < MENU_MAX_TEXT + 256)
+            menuUpload += cmd + 3;
+    } else if (!strcmp(cmd, "me") || !strcmp(cmd, "mr")) {
+        std::string err;
+        bool ok = cmd[1] == 'r' ? resetMenu() : setMenuText(menuUpload, err);
+        menuUpload.clear();
+        if (ok) {
+            settings().uiRev++;
+            reply("M|ok");
+        } else
+            reply(("err|Menü: " + err).c_str());
+    }
     else if (!strncmp(cmd, "ui|", 3)) {
-        // ui|reihenfolge|seitenbits|startbausteine|antworten (leere Felder bleiben unverändert)
-        char *f[4] = {nullptr};
+        // ui|reihenfolge|seitenbits|startbausteine|antworten|tasten (leere Felder bleiben unverändert)
+        char *f[5] = {nullptr};
         char *p = cmd + 3;
-        for (int i = 0; i < 4 && p; i++) {
+        for (int i = 0; i < 5 && p; i++) {
             f[i] = p;
             p = strchr(p, '|');
             if (p)
@@ -71,6 +89,8 @@ void KiraModule::handleLocal(char *cmd)
             ok &= setStart(f[2]);
         if (f[3] && *f[3])
             ok &= setReplies(f[3]);
+        if (f[4] && *f[4])
+            ok &= setKeys(f[4]);
         s.uiRev++;
         saveSettings();
         if (!ok)
@@ -89,11 +109,20 @@ void KiraModule::handleLocal(char *cmd)
         reply("err|unbekannter Befehl");
 }
 
+void KiraModule::sendMenu()
+{
+    // in Stücken, eine Antwort hat höchstens ~230 Byte
+    std::string t = menuText();
+    for (size_t i = 0; i < t.size(); i += 200)
+        reply(("M|" + t.substr(i, 200)).c_str());
+    reply("M|end");
+}
+
 void KiraModule::sendUi()
 {
     const Settings &s = settings();
     char out[240];
-    snprintf(out, sizeof(out), "u|%s|%u|%s|%s", s.order, (unsigned)s.pages, s.start, s.replies);
+    snprintf(out, sizeof(out), "u|%s|%u|%s|%s|%s", s.order, (unsigned)s.pages, s.start, s.replies, s.keys);
     reply(out);
 }
 
