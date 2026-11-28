@@ -1,0 +1,3115 @@
+[
+ {
+  "name": "potsdam-ludwigsfelde",
+  "title": "Potsdam – Ludwigsfelde",
+  "bbox": [
+   52.26,
+   12.95,
+   52.45,
+   13.32
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "berlin",
+  "title": "Berlin",
+  "bbox": [
+   52.348,
+   13.13,
+   52.693,
+   13.67
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "hamburg",
+  "title": "Hamburg",
+  "bbox": [
+   53.412,
+   9.774,
+   53.688,
+   10.206
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "muenchen",
+  "title": "München",
+  "bbox": [
+   48.002,
+   11.364,
+   48.278,
+   11.796
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "koeln",
+  "title": "Köln",
+  "bbox": [
+   50.825,
+   6.78,
+   51.055,
+   7.14
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "frankfurt",
+  "title": "Frankfurt am Main",
+  "bbox": [
+   49.995,
+   8.5,
+   50.225,
+   8.86
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "stuttgart",
+  "title": "Stuttgart",
+  "bbox": [
+   48.665,
+   9.0,
+   48.895,
+   9.36
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "duesseldorf",
+  "title": "Düsseldorf",
+  "bbox": [
+   51.115,
+   6.6,
+   51.345,
+   6.96
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "dortmund",
+  "title": "Dortmund",
+  "bbox": [
+   51.395,
+   7.29,
+   51.625,
+   7.65
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "essen",
+  "title": "Essen",
+  "bbox": [
+   51.345,
+   6.83,
+   51.575,
+   7.19
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "leipzig",
+  "title": "Leipzig",
+  "bbox": [
+   51.225,
+   12.19,
+   51.455,
+   12.55
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "dresden",
+  "title": "Dresden",
+  "bbox": [
+   50.935,
+   13.56,
+   51.165,
+   13.92
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "hannover",
+  "title": "Hannover",
+  "bbox": [
+   52.255,
+   9.55,
+   52.485,
+   9.91
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "nuernberg",
+  "title": "Nürnberg",
+  "bbox": [
+   49.335,
+   10.9,
+   49.565,
+   11.26
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "bremen",
+  "title": "Bremen",
+  "bbox": [
+   52.965,
+   8.62,
+   53.195,
+   8.98
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "kiel",
+  "title": "Kiel",
+  "bbox": [
+   54.205,
+   9.95,
+   54.435,
+   10.31
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "rostock",
+  "title": "Rostock",
+  "bbox": [
+   53.975,
+   11.92,
+   54.205,
+   12.28
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "magdeburg",
+  "title": "Magdeburg",
+  "bbox": [
+   52.015,
+   11.45,
+   52.245,
+   11.81
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "erfurt",
+  "title": "Erfurt",
+  "bbox": [
+   50.865,
+   10.85,
+   51.095,
+   11.21
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "mainz-wiesbaden",
+  "title": "Mainz / Wiesbaden",
+  "bbox": [
+   49.915,
+   8.07,
+   50.145,
+   8.43
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "saarbruecken",
+  "title": "Saarbrücken",
+  "bbox": [
+   49.125,
+   6.81,
+   49.355,
+   7.17
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "freiburg",
+  "title": "Freiburg im Breisgau",
+  "bbox": [
+   47.875,
+   7.67,
+   48.105,
+   8.03
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "karlsruhe",
+  "title": "Karlsruhe",
+  "bbox": [
+   48.895,
+   8.22,
+   49.125,
+   8.58
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "mannheim-heidelberg",
+  "title": "Mannheim / Heidelberg",
+  "bbox": [
+   49.335,
+   8.39,
+   49.565,
+   8.75
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "augsburg",
+  "title": "Augsburg",
+  "bbox": [
+   48.255,
+   10.72,
+   48.485,
+   11.08
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "regensburg",
+  "title": "Regensburg",
+  "bbox": [
+   48.895,
+   11.92,
+   49.125,
+   12.28
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "wuerzburg",
+  "title": "Würzburg",
+  "bbox": [
+   49.675,
+   9.77,
+   49.905,
+   10.13
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "muenster",
+  "title": "Münster",
+  "bbox": [
+   51.845,
+   7.45,
+   52.075,
+   7.81
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "bielefeld",
+  "title": "Bielefeld",
+  "bbox": [
+   51.905,
+   8.35,
+   52.135,
+   8.71
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "kassel",
+  "title": "Kassel",
+  "bbox": [
+   51.195,
+   9.3,
+   51.425,
+   9.66
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "braunschweig",
+  "title": "Braunschweig",
+  "bbox": [
+   52.155,
+   10.34,
+   52.385,
+   10.7
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "aachen",
+  "title": "Aachen",
+  "bbox": [
+   50.665,
+   5.9,
+   50.895,
+   6.26
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "bonn",
+  "title": "Bonn",
+  "bbox": [
+   50.615,
+   6.92,
+   50.845,
+   7.28
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "chemnitz",
+  "title": "Chemnitz",
+  "bbox": [
+   50.715,
+   12.74,
+   50.945,
+   13.1
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "schwerin",
+  "title": "Schwerin",
+  "bbox": [
+   53.515,
+   11.23,
+   53.745,
+   11.59
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "harz",
+  "title": "Harz (Brocken)",
+  "bbox": [
+   51.685,
+   10.44,
+   51.915,
+   10.8
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "saechsische-schweiz",
+  "title": "Sächsische Schweiz",
+  "bbox": [
+   50.805,
+   13.97,
+   51.035,
+   14.33
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "schwarzwald",
+  "title": "Schwarzwald (Feldberg)",
+  "bbox": [
+   47.755,
+   7.82,
+   47.985,
+   8.18
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "allgaeu",
+  "title": "Allgäu (Oberstdorf)",
+  "bbox": [
+   47.295,
+   10.1,
+   47.525,
+   10.46
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "berchtesgaden",
+  "title": "Berchtesgadener Land",
+  "bbox": [
+   47.515,
+   12.81,
+   47.745,
+   13.17
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "garmisch",
+  "title": "Garmisch-Partenkirchen / Zugspitze",
+  "bbox": [
+   47.375,
+   10.92,
+   47.605,
+   11.28
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "ruegen",
+  "title": "Rügen",
+  "bbox": [
+   54.27,
+   13.196,
+   54.57,
+   13.664
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "spreewald",
+  "title": "Spreewald",
+  "bbox": [
+   51.755,
+   13.82,
+   51.985,
+   14.18
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "bayerischer-wald",
+  "title": "Bayerischer Wald",
+  "bbox": [
+   48.885,
+   13.17,
+   49.115,
+   13.53
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "eifel",
+  "title": "Eifel",
+  "bbox": [
+   50.285,
+   6.62,
+   50.515,
+   6.98
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "thueringer-wald",
+  "title": "Thüringer Wald",
+  "bbox": [
+   50.535,
+   10.57,
+   50.765,
+   10.93
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "mecklenburger-seen",
+  "title": "Mecklenburgische Seenplatte",
+  "bbox": [
+   53.285,
+   12.57,
+   53.515,
+   12.93
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "usedom",
+  "title": "Usedom",
+  "bbox": [
+   53.835,
+   13.87,
+   54.065,
+   14.23
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "sylt",
+  "title": "Sylt",
+  "bbox": [
+   54.785,
+   8.15,
+   55.015,
+   8.51
+  ],
+  "kind": "region"
+ },
+ {
+  "name": "de-raster-00-00",
+  "bbox": [
+   47.23,
+   5.83,
+   47.72,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-00-01",
+  "bbox": [
+   47.23,
+   6.58,
+   47.72,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-00-02",
+  "bbox": [
+   47.23,
+   7.33,
+   47.72,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-00-03",
+  "bbox": [
+   47.23,
+   8.08,
+   47.72,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-00-04",
+  "bbox": [
+   47.23,
+   8.83,
+   47.72,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-00-05",
+  "bbox": [
+   47.23,
+   9.58,
+   47.72,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-00-06",
+  "bbox": [
+   47.23,
+   10.33,
+   47.72,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-00-07",
+  "bbox": [
+   47.23,
+   11.08,
+   47.72,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-00-08",
+  "bbox": [
+   47.23,
+   11.83,
+   47.72,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-00-09",
+  "bbox": [
+   47.23,
+   12.58,
+   47.72,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-00-10",
+  "bbox": [
+   47.23,
+   13.33,
+   47.72,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-00-11",
+  "bbox": [
+   47.23,
+   14.08,
+   47.72,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-00-12",
+  "bbox": [
+   47.23,
+   14.83,
+   47.72,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-01-00",
+  "bbox": [
+   47.68,
+   5.83,
+   48.17,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-01-01",
+  "bbox": [
+   47.68,
+   6.58,
+   48.17,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-01-02",
+  "bbox": [
+   47.68,
+   7.33,
+   48.17,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-01-03",
+  "bbox": [
+   47.68,
+   8.08,
+   48.17,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-01-04",
+  "bbox": [
+   47.68,
+   8.83,
+   48.17,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-01-05",
+  "bbox": [
+   47.68,
+   9.58,
+   48.17,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-01-06",
+  "bbox": [
+   47.68,
+   10.33,
+   48.17,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-01-07",
+  "bbox": [
+   47.68,
+   11.08,
+   48.17,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-01-08",
+  "bbox": [
+   47.68,
+   11.83,
+   48.17,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-01-09",
+  "bbox": [
+   47.68,
+   12.58,
+   48.17,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-01-10",
+  "bbox": [
+   47.68,
+   13.33,
+   48.17,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-01-11",
+  "bbox": [
+   47.68,
+   14.08,
+   48.17,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-01-12",
+  "bbox": [
+   47.68,
+   14.83,
+   48.17,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-02-00",
+  "bbox": [
+   48.13,
+   5.83,
+   48.62,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-02-01",
+  "bbox": [
+   48.13,
+   6.58,
+   48.62,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-02-02",
+  "bbox": [
+   48.13,
+   7.33,
+   48.62,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-02-03",
+  "bbox": [
+   48.13,
+   8.08,
+   48.62,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-02-04",
+  "bbox": [
+   48.13,
+   8.83,
+   48.62,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-02-05",
+  "bbox": [
+   48.13,
+   9.58,
+   48.62,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-02-06",
+  "bbox": [
+   48.13,
+   10.33,
+   48.62,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-02-07",
+  "bbox": [
+   48.13,
+   11.08,
+   48.62,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-02-08",
+  "bbox": [
+   48.13,
+   11.83,
+   48.62,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-02-09",
+  "bbox": [
+   48.13,
+   12.58,
+   48.62,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-02-10",
+  "bbox": [
+   48.13,
+   13.33,
+   48.62,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-02-11",
+  "bbox": [
+   48.13,
+   14.08,
+   48.62,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-02-12",
+  "bbox": [
+   48.13,
+   14.83,
+   48.62,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-03-00",
+  "bbox": [
+   48.58,
+   5.83,
+   49.07,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-03-01",
+  "bbox": [
+   48.58,
+   6.58,
+   49.07,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-03-02",
+  "bbox": [
+   48.58,
+   7.33,
+   49.07,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-03-03",
+  "bbox": [
+   48.58,
+   8.08,
+   49.07,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-03-04",
+  "bbox": [
+   48.58,
+   8.83,
+   49.07,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-03-05",
+  "bbox": [
+   48.58,
+   9.58,
+   49.07,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-03-06",
+  "bbox": [
+   48.58,
+   10.33,
+   49.07,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-03-07",
+  "bbox": [
+   48.58,
+   11.08,
+   49.07,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-03-08",
+  "bbox": [
+   48.58,
+   11.83,
+   49.07,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-03-09",
+  "bbox": [
+   48.58,
+   12.58,
+   49.07,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-03-10",
+  "bbox": [
+   48.58,
+   13.33,
+   49.07,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-03-11",
+  "bbox": [
+   48.58,
+   14.08,
+   49.07,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-03-12",
+  "bbox": [
+   48.58,
+   14.83,
+   49.07,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-04-00",
+  "bbox": [
+   49.03,
+   5.83,
+   49.52,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-04-01",
+  "bbox": [
+   49.03,
+   6.58,
+   49.52,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-04-02",
+  "bbox": [
+   49.03,
+   7.33,
+   49.52,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-04-03",
+  "bbox": [
+   49.03,
+   8.08,
+   49.52,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-04-04",
+  "bbox": [
+   49.03,
+   8.83,
+   49.52,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-04-05",
+  "bbox": [
+   49.03,
+   9.58,
+   49.52,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-04-06",
+  "bbox": [
+   49.03,
+   10.33,
+   49.52,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-04-07",
+  "bbox": [
+   49.03,
+   11.08,
+   49.52,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-04-08",
+  "bbox": [
+   49.03,
+   11.83,
+   49.52,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-04-09",
+  "bbox": [
+   49.03,
+   12.58,
+   49.52,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-04-10",
+  "bbox": [
+   49.03,
+   13.33,
+   49.52,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-04-11",
+  "bbox": [
+   49.03,
+   14.08,
+   49.52,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-04-12",
+  "bbox": [
+   49.03,
+   14.83,
+   49.52,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-05-00",
+  "bbox": [
+   49.48,
+   5.83,
+   49.97,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-05-01",
+  "bbox": [
+   49.48,
+   6.58,
+   49.97,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-05-02",
+  "bbox": [
+   49.48,
+   7.33,
+   49.97,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-05-03",
+  "bbox": [
+   49.48,
+   8.08,
+   49.97,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-05-04",
+  "bbox": [
+   49.48,
+   8.83,
+   49.97,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-05-05",
+  "bbox": [
+   49.48,
+   9.58,
+   49.97,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-05-06",
+  "bbox": [
+   49.48,
+   10.33,
+   49.97,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-05-07",
+  "bbox": [
+   49.48,
+   11.08,
+   49.97,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-05-08",
+  "bbox": [
+   49.48,
+   11.83,
+   49.97,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-05-09",
+  "bbox": [
+   49.48,
+   12.58,
+   49.97,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-05-10",
+  "bbox": [
+   49.48,
+   13.33,
+   49.97,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-05-11",
+  "bbox": [
+   49.48,
+   14.08,
+   49.97,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-05-12",
+  "bbox": [
+   49.48,
+   14.83,
+   49.97,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-06-00",
+  "bbox": [
+   49.93,
+   5.83,
+   50.42,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-06-01",
+  "bbox": [
+   49.93,
+   6.58,
+   50.42,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-06-02",
+  "bbox": [
+   49.93,
+   7.33,
+   50.42,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-06-03",
+  "bbox": [
+   49.93,
+   8.08,
+   50.42,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-06-04",
+  "bbox": [
+   49.93,
+   8.83,
+   50.42,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-06-05",
+  "bbox": [
+   49.93,
+   9.58,
+   50.42,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-06-06",
+  "bbox": [
+   49.93,
+   10.33,
+   50.42,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-06-07",
+  "bbox": [
+   49.93,
+   11.08,
+   50.42,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-06-08",
+  "bbox": [
+   49.93,
+   11.83,
+   50.42,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-06-09",
+  "bbox": [
+   49.93,
+   12.58,
+   50.42,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-06-10",
+  "bbox": [
+   49.93,
+   13.33,
+   50.42,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-06-11",
+  "bbox": [
+   49.93,
+   14.08,
+   50.42,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-06-12",
+  "bbox": [
+   49.93,
+   14.83,
+   50.42,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-07-00",
+  "bbox": [
+   50.38,
+   5.83,
+   50.87,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-07-01",
+  "bbox": [
+   50.38,
+   6.58,
+   50.87,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-07-02",
+  "bbox": [
+   50.38,
+   7.33,
+   50.87,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-07-03",
+  "bbox": [
+   50.38,
+   8.08,
+   50.87,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-07-04",
+  "bbox": [
+   50.38,
+   8.83,
+   50.87,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-07-05",
+  "bbox": [
+   50.38,
+   9.58,
+   50.87,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-07-06",
+  "bbox": [
+   50.38,
+   10.33,
+   50.87,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-07-07",
+  "bbox": [
+   50.38,
+   11.08,
+   50.87,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-07-08",
+  "bbox": [
+   50.38,
+   11.83,
+   50.87,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-07-09",
+  "bbox": [
+   50.38,
+   12.58,
+   50.87,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-07-10",
+  "bbox": [
+   50.38,
+   13.33,
+   50.87,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-07-11",
+  "bbox": [
+   50.38,
+   14.08,
+   50.87,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-07-12",
+  "bbox": [
+   50.38,
+   14.83,
+   50.87,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-08-00",
+  "bbox": [
+   50.83,
+   5.83,
+   51.32,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-08-01",
+  "bbox": [
+   50.83,
+   6.58,
+   51.32,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-08-02",
+  "bbox": [
+   50.83,
+   7.33,
+   51.32,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-08-03",
+  "bbox": [
+   50.83,
+   8.08,
+   51.32,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-08-04",
+  "bbox": [
+   50.83,
+   8.83,
+   51.32,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-08-05",
+  "bbox": [
+   50.83,
+   9.58,
+   51.32,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-08-06",
+  "bbox": [
+   50.83,
+   10.33,
+   51.32,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-08-07",
+  "bbox": [
+   50.83,
+   11.08,
+   51.32,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-08-08",
+  "bbox": [
+   50.83,
+   11.83,
+   51.32,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-08-09",
+  "bbox": [
+   50.83,
+   12.58,
+   51.32,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-08-10",
+  "bbox": [
+   50.83,
+   13.33,
+   51.32,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-08-11",
+  "bbox": [
+   50.83,
+   14.08,
+   51.32,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-08-12",
+  "bbox": [
+   50.83,
+   14.83,
+   51.32,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-09-00",
+  "bbox": [
+   51.28,
+   5.83,
+   51.77,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-09-01",
+  "bbox": [
+   51.28,
+   6.58,
+   51.77,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-09-02",
+  "bbox": [
+   51.28,
+   7.33,
+   51.77,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-09-03",
+  "bbox": [
+   51.28,
+   8.08,
+   51.77,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-09-04",
+  "bbox": [
+   51.28,
+   8.83,
+   51.77,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-09-05",
+  "bbox": [
+   51.28,
+   9.58,
+   51.77,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-09-06",
+  "bbox": [
+   51.28,
+   10.33,
+   51.77,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-09-07",
+  "bbox": [
+   51.28,
+   11.08,
+   51.77,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-09-08",
+  "bbox": [
+   51.28,
+   11.83,
+   51.77,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-09-09",
+  "bbox": [
+   51.28,
+   12.58,
+   51.77,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-09-10",
+  "bbox": [
+   51.28,
+   13.33,
+   51.77,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-09-11",
+  "bbox": [
+   51.28,
+   14.08,
+   51.77,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-09-12",
+  "bbox": [
+   51.28,
+   14.83,
+   51.77,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-10-00",
+  "bbox": [
+   51.73,
+   5.83,
+   52.22,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-10-01",
+  "bbox": [
+   51.73,
+   6.58,
+   52.22,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-10-02",
+  "bbox": [
+   51.73,
+   7.33,
+   52.22,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-10-03",
+  "bbox": [
+   51.73,
+   8.08,
+   52.22,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-10-04",
+  "bbox": [
+   51.73,
+   8.83,
+   52.22,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-10-05",
+  "bbox": [
+   51.73,
+   9.58,
+   52.22,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-10-06",
+  "bbox": [
+   51.73,
+   10.33,
+   52.22,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-10-07",
+  "bbox": [
+   51.73,
+   11.08,
+   52.22,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-10-08",
+  "bbox": [
+   51.73,
+   11.83,
+   52.22,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-10-09",
+  "bbox": [
+   51.73,
+   12.58,
+   52.22,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-10-10",
+  "bbox": [
+   51.73,
+   13.33,
+   52.22,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-10-11",
+  "bbox": [
+   51.73,
+   14.08,
+   52.22,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-10-12",
+  "bbox": [
+   51.73,
+   14.83,
+   52.22,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-11-00",
+  "bbox": [
+   52.18,
+   5.83,
+   52.67,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-11-01",
+  "bbox": [
+   52.18,
+   6.58,
+   52.67,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-11-02",
+  "bbox": [
+   52.18,
+   7.33,
+   52.67,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-11-03",
+  "bbox": [
+   52.18,
+   8.08,
+   52.67,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-11-04",
+  "bbox": [
+   52.18,
+   8.83,
+   52.67,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-11-05",
+  "bbox": [
+   52.18,
+   9.58,
+   52.67,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-11-06",
+  "bbox": [
+   52.18,
+   10.33,
+   52.67,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-11-07",
+  "bbox": [
+   52.18,
+   11.08,
+   52.67,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-11-08",
+  "bbox": [
+   52.18,
+   11.83,
+   52.67,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-11-09",
+  "bbox": [
+   52.18,
+   12.58,
+   52.67,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-11-10",
+  "bbox": [
+   52.18,
+   13.33,
+   52.67,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-11-11",
+  "bbox": [
+   52.18,
+   14.08,
+   52.67,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-11-12",
+  "bbox": [
+   52.18,
+   14.83,
+   52.67,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-12-00",
+  "bbox": [
+   52.63,
+   5.83,
+   53.12,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-12-01",
+  "bbox": [
+   52.63,
+   6.58,
+   53.12,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-12-02",
+  "bbox": [
+   52.63,
+   7.33,
+   53.12,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-12-03",
+  "bbox": [
+   52.63,
+   8.08,
+   53.12,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-12-04",
+  "bbox": [
+   52.63,
+   8.83,
+   53.12,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-12-05",
+  "bbox": [
+   52.63,
+   9.58,
+   53.12,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-12-06",
+  "bbox": [
+   52.63,
+   10.33,
+   53.12,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-12-07",
+  "bbox": [
+   52.63,
+   11.08,
+   53.12,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-12-08",
+  "bbox": [
+   52.63,
+   11.83,
+   53.12,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-12-09",
+  "bbox": [
+   52.63,
+   12.58,
+   53.12,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-12-10",
+  "bbox": [
+   52.63,
+   13.33,
+   53.12,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-12-11",
+  "bbox": [
+   52.63,
+   14.08,
+   53.12,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-12-12",
+  "bbox": [
+   52.63,
+   14.83,
+   53.12,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-13-00",
+  "bbox": [
+   53.08,
+   5.83,
+   53.57,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-13-01",
+  "bbox": [
+   53.08,
+   6.58,
+   53.57,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-13-02",
+  "bbox": [
+   53.08,
+   7.33,
+   53.57,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-13-03",
+  "bbox": [
+   53.08,
+   8.08,
+   53.57,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-13-04",
+  "bbox": [
+   53.08,
+   8.83,
+   53.57,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-13-05",
+  "bbox": [
+   53.08,
+   9.58,
+   53.57,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-13-06",
+  "bbox": [
+   53.08,
+   10.33,
+   53.57,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-13-07",
+  "bbox": [
+   53.08,
+   11.08,
+   53.57,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-13-08",
+  "bbox": [
+   53.08,
+   11.83,
+   53.57,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-13-09",
+  "bbox": [
+   53.08,
+   12.58,
+   53.57,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-13-10",
+  "bbox": [
+   53.08,
+   13.33,
+   53.57,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-13-11",
+  "bbox": [
+   53.08,
+   14.08,
+   53.57,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-13-12",
+  "bbox": [
+   53.08,
+   14.83,
+   53.57,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-14-00",
+  "bbox": [
+   53.53,
+   5.83,
+   54.02,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-14-01",
+  "bbox": [
+   53.53,
+   6.58,
+   54.02,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-14-02",
+  "bbox": [
+   53.53,
+   7.33,
+   54.02,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-14-03",
+  "bbox": [
+   53.53,
+   8.08,
+   54.02,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-14-04",
+  "bbox": [
+   53.53,
+   8.83,
+   54.02,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-14-05",
+  "bbox": [
+   53.53,
+   9.58,
+   54.02,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-14-06",
+  "bbox": [
+   53.53,
+   10.33,
+   54.02,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-14-07",
+  "bbox": [
+   53.53,
+   11.08,
+   54.02,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-14-08",
+  "bbox": [
+   53.53,
+   11.83,
+   54.02,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-14-09",
+  "bbox": [
+   53.53,
+   12.58,
+   54.02,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-14-10",
+  "bbox": [
+   53.53,
+   13.33,
+   54.02,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-14-11",
+  "bbox": [
+   53.53,
+   14.08,
+   54.02,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-14-12",
+  "bbox": [
+   53.53,
+   14.83,
+   54.02,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-15-00",
+  "bbox": [
+   53.98,
+   5.83,
+   54.47,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-15-01",
+  "bbox": [
+   53.98,
+   6.58,
+   54.47,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-15-02",
+  "bbox": [
+   53.98,
+   7.33,
+   54.47,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-15-03",
+  "bbox": [
+   53.98,
+   8.08,
+   54.47,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-15-04",
+  "bbox": [
+   53.98,
+   8.83,
+   54.47,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-15-05",
+  "bbox": [
+   53.98,
+   9.58,
+   54.47,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-15-06",
+  "bbox": [
+   53.98,
+   10.33,
+   54.47,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-15-07",
+  "bbox": [
+   53.98,
+   11.08,
+   54.47,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-15-08",
+  "bbox": [
+   53.98,
+   11.83,
+   54.47,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-15-09",
+  "bbox": [
+   53.98,
+   12.58,
+   54.47,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-15-10",
+  "bbox": [
+   53.98,
+   13.33,
+   54.47,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-15-11",
+  "bbox": [
+   53.98,
+   14.08,
+   54.47,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-15-12",
+  "bbox": [
+   53.98,
+   14.83,
+   54.47,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-16-00",
+  "bbox": [
+   54.43,
+   5.83,
+   54.92,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-16-01",
+  "bbox": [
+   54.43,
+   6.58,
+   54.92,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-16-02",
+  "bbox": [
+   54.43,
+   7.33,
+   54.92,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-16-03",
+  "bbox": [
+   54.43,
+   8.08,
+   54.92,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-16-04",
+  "bbox": [
+   54.43,
+   8.83,
+   54.92,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-16-05",
+  "bbox": [
+   54.43,
+   9.58,
+   54.92,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-16-06",
+  "bbox": [
+   54.43,
+   10.33,
+   54.92,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-16-07",
+  "bbox": [
+   54.43,
+   11.08,
+   54.92,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-16-08",
+  "bbox": [
+   54.43,
+   11.83,
+   54.92,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-16-09",
+  "bbox": [
+   54.43,
+   12.58,
+   54.92,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-16-10",
+  "bbox": [
+   54.43,
+   13.33,
+   54.92,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-16-11",
+  "bbox": [
+   54.43,
+   14.08,
+   54.92,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-16-12",
+  "bbox": [
+   54.43,
+   14.83,
+   54.92,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-17-00",
+  "bbox": [
+   54.88,
+   5.83,
+   55.37,
+   6.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-17-01",
+  "bbox": [
+   54.88,
+   6.58,
+   55.37,
+   7.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-17-02",
+  "bbox": [
+   54.88,
+   7.33,
+   55.37,
+   8.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-17-03",
+  "bbox": [
+   54.88,
+   8.08,
+   55.37,
+   8.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-17-04",
+  "bbox": [
+   54.88,
+   8.83,
+   55.37,
+   9.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-17-05",
+  "bbox": [
+   54.88,
+   9.58,
+   55.37,
+   10.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-17-06",
+  "bbox": [
+   54.88,
+   10.33,
+   55.37,
+   11.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-17-07",
+  "bbox": [
+   54.88,
+   11.08,
+   55.37,
+   11.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-17-08",
+  "bbox": [
+   54.88,
+   11.83,
+   55.37,
+   12.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-17-09",
+  "bbox": [
+   54.88,
+   12.58,
+   55.37,
+   13.37
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-17-10",
+  "bbox": [
+   54.88,
+   13.33,
+   55.37,
+   14.12
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-17-11",
+  "bbox": [
+   54.88,
+   14.08,
+   55.37,
+   14.87
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ },
+ {
+  "name": "de-raster-17-12",
+  "bbox": [
+   54.88,
+   14.83,
+   55.37,
+   15.62
+  ],
+  "kind": "raster",
+  "minLevel": 0
+ }
+]

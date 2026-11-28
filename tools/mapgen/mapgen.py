@@ -4,8 +4,10 @@
 #
 #   python3 mapgen.py --bbox 52.26,12.95,52.45,13.32 --budget 700 --out potsdam.tkm
 #   python3 mapgen.py --osm export.json ...      (statt Overpass: gespeicherte Overpass-JSON-Antwort)
+#   python3 mapgen.py --geojson gebiet.geojsonseq ...   (aus PBF: osmium export -f geojsonseq, für viele Regionen)
 #
 # Detailstufen (es wird die höchste genommen, die ins Budget passt):
+#   0 Notlösung:  nur Hauptstraßen, Bahn, Flüsse, Seeufer, Städte (für große Gebiete)
 #   1 immer:      Haupt- und Nebenstraßen, Bahn, Flüsse/Kanäle, Seeufer, Ortsnamen
 #   2 wenn Platz: Wohnstraßen, Erschließungs-, Feld- und Waldwege
 #   3 nur bei Platz: Fußwege, Pfade, Radwege, wenige Orte von Interesse
@@ -100,6 +102,30 @@ def classify(el):
     if t.get("natural") == "water":
         return T_WATERSHORE, 1, None
     return None
+
+
+def read_geojson(path):
+    """GeoJSON (FeatureCollection oder geojsonseq von osmium) → Elemente wie bei Overpass"""
+    with open(path, encoding="utf-8") as f:
+        text = f.read()
+    try:
+        feats = json.loads(text)["features"]  # FeatureCollection
+    except (ValueError, KeyError, TypeError):
+        feats = [json.loads(line.strip("\x1e \n")) for line in text.splitlines() if line.strip("\x1e \n")]  # geojsonseq
+    els = []
+    for ft in feats:
+        g, tags = ft.get("geometry") or {}, ft.get("properties") or {}
+        kind, c = g.get("type"), g.get("coordinates")
+        if kind == "Point":
+            els.append({"type": "node", "lat": c[1], "lon": c[0], "tags": tags})
+            continue
+        lines = {"LineString": [c], "MultiLineString": c, "Polygon": c, "MultiPolygon": [r for poly in (c or []) for r in poly]}.get(kind, [])
+        for ln in lines:
+            els.append({"type": "way", "tags": tags, "geometry": [{"lat": p[1], "lon": p[0]} for p in ln]})
+    return {"elements": els}
+
+
+LEVEL0 = {T_MAJOR, T_RAIL, T_WATERWAY, T_WATERSHORE, T_CITY, T_TOWN}
 
 
 def to_xy(lat, lon, lat0):
@@ -214,9 +240,11 @@ def make(data, bbox, level, tol):
     lat0 = (bbox[0] + bbox[2]) / 2
     for el in data["elements"]:
         c = classify(el)
-        if not c or c[1] > level:
+        if not c or c[1] > max(level, 1):
             continue
         typ, _, name = c
+        if level == 0 and typ not in LEVEL0:
+            continue
         if el["type"] == "node":
             b.add_point(typ, el["lat"], el["lon"], name)
         elif "geometry" in el:
@@ -232,11 +260,16 @@ def main():
     ap.add_argument("--budget", type=int, default=700, help="maximale Größe in KB")
     ap.add_argument("--tolerance", type=float, default=6.0, help="Vereinfachung in Metern (Douglas-Peucker)")
     ap.add_argument("--osm", help="gespeicherte Overpass-JSON-Datei statt Download")
+    ap.add_argument("--geojson", help="GeoJSON/geojsonseq (osmium export) statt Download")
+    ap.add_argument("--min-level", type=int, default=1, help="kleinste erlaubte Detailstufe (0 für große Gebiete)")
+    ap.add_argument("--info", help="Kurzinfo als JSON schreiben (Stufe, Größe, größter Ort)")
     ap.add_argument("--save-osm", help="Overpass-Antwort zusätzlich speichern")
     ap.add_argument("--out", default="thinkkira-map.tkm")
     a = ap.parse_args()
     bbox = tuple(float(x) for x in a.bbox.split(","))
-    if a.osm:
+    if a.geojson:
+        data = read_geojson(a.geojson)
+    elif a.osm:
         with open(a.osm, encoding="utf-8") as f:
             data = json.load(f)
     else:
@@ -247,7 +280,9 @@ def main():
                 json.dump(data, f)
     print(f"{len(data['elements'])} OSM-Objekte", flush=True)
     best = None
-    for level in (1, 2, 3):
+    for level in range(a.min_level, 4):
+        if best is None and level > a.min_level:
+            break  # schon die kleinere Stufe passte nicht
         for tol in (a.tolerance, a.tolerance * 1.7):
             out = make(data, bbox, level, tol)
             kb = len(out) / 1024
@@ -260,6 +295,12 @@ def main():
     level, tol, out = best
     with open(a.out, "wb") as f:
         f.write(out)
+    if a.info:
+        rank = {"city": 0, "town": 1, "village": 2}
+        places = [el["tags"] for el in data["elements"] if el["type"] == "node" and el.get("tags", {}).get("place") in rank and el["tags"].get("name")]
+        places.sort(key=lambda t: (rank[t["place"]], -int("".join(ch for ch in t.get("population", "0") if ch.isdigit()) or 0)))
+        with open(a.info, "w", encoding="utf-8") as f:
+            json.dump({"level": level, "bytes": len(out), "bbox": bbox, "places": [t["name"] for t in places[:3]], "objects": len(data["elements"])}, f, ensure_ascii=False)
     print(f"Fertig: {a.out}, Stufe {level}, {len(out) / 1024:.0f} KB. Daten © OpenStreetMap-Mitwirkende (ODbL).")
 
 

@@ -242,6 +242,57 @@ function toGpx(list) {
 }
 
 // ---------- Offline-Karte ----------
+const FALLBACK_MAPS = [{ name: "potsdam-ludwigsfelde", title: "Potsdam – Ludwigsfelde", kind: "region", bbox: [52.26, 12.95, 52.45, 13.32] }];
+
+// Verzeichnis der Karten (Release „karten“) einmal laden
+function loadMapList() {
+  if (state.mapList !== undefined) return;
+  state.mapList = null;
+  fetch(firmwareUrl() + "?maps=1")
+    .then((r) => (r.ok ? r.json() : Promise.reject()))
+    .then((j) => {
+      state.mapList = Array.isArray(j.maps) && j.maps.length ? j.maps : null;
+      renderSoon();
+    })
+    .catch(() => {});
+}
+
+// Kleinste Karte, die die eigene Position enthält (Detailregion vor Raster)
+function mapForPosition(list) {
+  const p = state.nodes.get(state.myNodeNum)?.position;
+  if (!p?.latitudeI) return null;
+  const lat = p.latitudeI * 1e-7,
+    lon = p.longitudeI * 1e-7;
+  const hits = list.filter((m) => lat >= m.bbox[0] && lat <= m.bbox[2] && lon >= m.bbox[1] && lon <= m.bbox[3]);
+  hits.sort((a, b) => (a.kind !== "region") - (b.kind !== "region") || (a.bbox[2] - a.bbox[0]) * (a.bbox[3] - a.bbox[1]) - (b.bbox[2] - b.bbox[0]) * (b.bbox[3] - b.bbox[1]));
+  return hits[0] ?? null;
+}
+
+function mapPicker() {
+  loadMapList();
+  const list = state.mapList || FALLBACK_MAPS;
+  const here = mapForPosition(list);
+  if (!state.mapPick || !list.some((m) => m.name === state.mapPick)) state.mapPick = (here ?? list[0]).name;
+  const sel = el("select", { class: "form-select form-select-sm mb-2", "aria-label": "Karte", onchange: (e) => (state.mapPick = e.target.value) });
+  const kb = (m) => (m.bytes ? " (" + Math.round(m.bytes / 1024) + " KB)" : "");
+  const groups = [
+    ["Detailkarten (Städte und Wandergebiete)", list.filter((m) => m.kind === "region")],
+    ["Ganz Deutschland, grob (ca. 50 × 50 km)", list.filter((m) => m.kind !== "region")],
+  ];
+  for (const [label, ms] of groups) {
+    if (!ms.length) continue;
+    const g = el("optgroup", { label });
+    for (const m of ms) g.append(el("option", { value: m.name }, (here && m.name === here.name ? "📍 " : "") + m.title + kb(m)));
+    sel.append(g);
+  }
+  sel.value = state.mapPick;
+  return el(
+    "div",
+    {},
+    sel,
+    here ? el("div", { class: "small text-muted mb-2" }, "📍 = passt zur aktuellen Position des Geräts") : null,
+  );
+}
 let mapWait = null;
 function waitDevice(ms, text) {
   return new Promise((resolve, reject) => {
@@ -953,14 +1004,16 @@ function pageThinkKira() {
       : el(
           "div",
           {},
+          mapPicker(),
           btn(
-            "Potsdam–Ludwigsfelde laden",
+            "Karte laden",
             async () => {
+              const m = (state.mapList || FALLBACK_MAPS).find((x) => x.name === state.mapPick) ?? FALLBACK_MAPS[0];
               try {
-                toast("Lade Karte …");
-                const r = await fetch(firmwareUrl() + "?map=potsdam-ludwigsfelde");
+                toast("Lade Karte „" + m.title + "“ …");
+                const r = await fetch(firmwareUrl() + "?map=" + encodeURIComponent(m.name));
                 if (!r.ok) throw deFehler("Karte nicht erreichbar (" + r.status + ").");
-                await uploadMap(new Uint8Array(await r.arrayBuffer()), "Potsdam–Ludwigsfelde");
+                await uploadMap(new Uint8Array(await r.arrayBuffer()), m.title);
               } catch (e) {
                 toast(fehlerText(e), true);
               }
@@ -979,7 +1032,7 @@ function pageThinkKira() {
           ),
           mi ? btn("Karte löschen", () => confirm("Die Offline-Karte im Gerät löschen?") && kiraSend("mapx"), "outline-danger", "fa-trash") : null,
         ),
-    hint("Übertragung per USB dauert einige Minuten. Eigene Gebiete erzeugt das Werkzeug tools/mapgen. Kartendaten © OpenStreetMap-Mitwirkende (ODbL)."),
+    hint("Übertragung per USB dauert einige Minuten. Detailkarten zeigen auch Wege und Pfade, die groben Karten nur Hauptstraßen, Flüsse und Orte. Kartendaten © OpenStreetMap-Mitwirkende (ODbL)."),
   );
   return el("div", {}, grid(modeBox, statBox), grid(rangeBox, designBox), grid(mapBox, group("Kommt noch", ul)));
 }

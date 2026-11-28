@@ -21,7 +21,12 @@ const TK_ASSETS = [
 $asset = $_GET['asset'] ?? '';
 $map = $_GET['map'] ?? '';
 $release = 'latest/download';
-if ($map !== '') {
+if (isset($_GET['maps'])) {
+    // Verzeichnis aller Offline-Karten (Name, Titel, Gebiet, Größe) für den Konfigurator
+    $asset = 'karten.json';
+    $release = 'download/karten';
+    $mime = 'application/json; charset=utf-8';
+} elseif ($map !== '') {
     // Offline-Karten liegen im Release „karten“: ?map=potsdam-ludwigsfelde → potsdam-ludwigsfelde.tkm
     if (!preg_match('/^[a-z0-9-]{1,40}$/', $map)) {
         http_response_code(404);

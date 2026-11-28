@@ -1,0 +1,68 @@
+# ThinkKira: Offline-Karten für ganz Deutschland (Raster + Detailregionen) aus Geofabrik-PBF bauen
+# und an die Vorabversion „karten“ hängen, dazu das Verzeichnis karten.json für den Konfigurator.
+name: ThinkKira Karten Deutschland
+
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "nur diese Karten neu bauen (Namen mit Komma, leer = alle)"
+        default: ""
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  maps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+      - name: osmium installieren
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq osmium-tool
+      - name: OSM-Daten Deutschland laden und filtern
+        run: |
+          curl -fsSL --retry 5 -o germany.osm.pbf https://download.geofabrik.de/europe/germany-latest.osm.pbf
+          ls -lh germany.osm.pbf
+          osmium tags-filter germany.osm.pbf \
+            w/highway w/railway=rail,light_rail,subway,tram w/waterway=river,canal,stream nwr/natural=water \
+            n/place=city,town,village,suburb,hamlet n/amenity=hospital,pharmacy,police,fire_station n/railway=station \
+            -o filtered.osm.pbf
+          rm germany.osm.pbf
+          ls -lh filtered.osm.pbf
+      - name: Karten bauen
+        env:
+          ONLY: ${{ github.event.inputs.only }}
+        run: |
+          python3 - <<'EOF'
+          import json, os
+          r = json.load(open("tools/mapgen/regions-de.json", encoding="utf-8"))
+          only = {x.strip() for x in os.environ.get("ONLY", "").split(",") if x.strip()}
+          if only:
+              r = [x for x in r if x["name"] in only]
+          json.dump(r, open("regions.json", "w"), ensure_ascii=False)
+          print(len(r), "Regionen")
+          EOF
+          python3 tools/mapgen/batch.py --pbf filtered.osm.pbf --regions regions.json --out karten
+          ls karten/*.tkm | wc -l
+      - name: Verzeichnis zusammenführen (bei Teil-Neubau)
+        if: ${{ github.event.inputs.only != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release download karten -p karten.json -O old.json || echo '{"maps":[]}' > old.json
+          python3 - <<'EOF'
+          import json
+          old, new = json.load(open("old.json")), json.load(open("karten/karten.json"))
+          names = {m["name"] for m in new["maps"]}
+          new["maps"] = sorted([m for m in old["maps"] if m["name"] not in names] + new["maps"], key=lambda x: (x["kind"] != "region", x["title"]))
+          json.dump(new, open("karten/karten.json", "w"), ensure_ascii=False, indent=1)
+          EOF
+      - name: An Release „karten“ hängen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release view karten >/dev/null 2>&1 || gh release create karten --prerelease --title "ThinkKira Offline-Karten" \
+            --notes "Offline-Karten für ThinkKira. Kartendaten © OpenStreetMap-Mitwirkende, ODbL (https://www.openstreetmap.org/copyright)."
+          gh release upload karten karten/*.tkm karten/karten.json --clobber
