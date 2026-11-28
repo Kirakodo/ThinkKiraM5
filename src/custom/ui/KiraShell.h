@@ -65,6 +65,7 @@ class Shell : public NicheGraphics::InkHUD::Applet, private concurrency::OSThrea
     void gesture(char role); // Rolle aus der Tastenbelegung ausführen
     Menu menuQuickReplies(uint32_t to, uint8_t channel, const std::string &title);
     Menu menuNodeList();
+    void showUpdateMenu();
     Menu menuWaypoints(bool manage);
     Menu menuTargets();
     void targetWaypoint(size_t i);

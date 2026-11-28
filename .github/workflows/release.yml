@@ -37,6 +37,8 @@ jobs:
           ~/.platformio/penv/bin/pip install "pioarduino==6.2.0"
       - name: Firmware bauen
         run: pio run -e thinknode_m5_custom
+      - name: Updater bauen
+        run: pio run -d updater && test $(stat -c %s updater/.pio/build/updater/firmware.bin) -le 655360
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -46,7 +48,15 @@ jobs:
         run: |
           mkdir -p dist
           B=.pio/build/thinknode_m5_custom
-          cp $(ls $B/firmware-thinknode_m5_custom-*.factory.bin | head -1) dist/thinkkira-m5.factory.bin
+          # Werksabbild = ThinkKira + Updater in „flashApp“ (0x260000), damit das Gerät sich später selbst aktualisieren kann
+          python3 - "$(ls $B/firmware-thinknode_m5_custom-*.factory.bin | head -1)" updater/.pio/build/updater/firmware.bin dist/thinkkira-m5.factory.bin <<'PY'
+          import sys
+          fw = open(sys.argv[1], "rb").read()
+          up = open(sys.argv[2], "rb").read()
+          assert len(fw) <= 0x260000 and len(up) <= 0xA0000
+          open(sys.argv[3], "wb").write(fw + b"\xff" * (0x260000 - len(fw)) + up)
+          PY
+          cp updater/.pio/build/updater/firmware.bin dist/thinkkira-updater.bin
           cp $(ls $B/firmware-thinknode_m5_custom-*.bin | grep -v factory | head -1) dist/thinkkira-m5.bin
           VERSION="${TAG#v}"
           cat > dist/manifest.json <<JSON

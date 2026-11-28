@@ -17,6 +17,7 @@
 #include "custom/core/KiraSettings.h"
 #include "custom/core/KiraSystem.h"
 #include "custom/features.h"
+#include "custom/core/KiraUpdate.h"
 #include "gps/GeoCoord.h"
 #include "main.h"
 #if HAS_WIFI
@@ -228,6 +229,26 @@ int32_t Shell::runOnce()
         setLight(true);
     else if (s.light != LIGHT_ALWAYS && lightOn && (s.light == LIGHT_OFF || (int32_t)(now - lightUntil) >= 0))
         setLight(false);
+
+    // Updates: Ergebnis des letzten Updates einmal melden, regelmäßig nach neuer Version sehen
+    static bool updResultShown = false;
+    if (!updResultShown && now > 8000) {
+        updResultShown = true;
+        std::string r = ThinkKira::updateLastResult();
+        if (r == "ok")
+            showInfo("Update", {"Installiert:", "ThinkKira " THINKKIRA_VERSION});
+        else if (!r.empty())
+            showInfo("Update fehlgeschlagen", {r.substr(r.find(':') + 1), "Die bisherige Firmware läuft weiter."});
+    }
+    ThinkKira::updateAutoCheck();
+    static ThinkKira::UpdState lastUpd = ThinkKira::UpdState::IDLE;
+    if (ThinkKira::updateInfo().state != lastUpd) {
+        lastUpd = ThinkKira::updateInfo().state;
+        if (lastUpd == ThinkKira::UpdState::AVAILABLE)
+            toast("Update " + ThinkKira::updateInfo().latest + ": Menü → Update");
+        if (!stack.empty() && stack.back().title == "Update")
+            showUpdateMenu(); // Menü mit neuem Stand zeigen
+    }
 
     // Kurzmeldung ausblenden
     if (toastUntil && (int32_t)(now - toastUntil) >= 0) {
@@ -727,6 +748,10 @@ bool Shell::runAction(const std::string &id)
         l.push_back(b);
         l.push_back(hexifyNodeNum(nodeDB->getNodeNum()));
         showInfo("Info", l);
+    } else if (id == "sys.update") {
+        if (ThinkKira::updateInfo().state != ThinkKira::UpdState::AVAILABLE)
+            ThinkKira::updateCheckNow();
+        showUpdateMenu();
     } else if (id == "sys.reboot") {
         showInfo("Neustart", {"Neustart …"});
         rebootAtMsec = millis() + 1500;
@@ -1595,6 +1620,45 @@ void Shell::drawSos()
         printAt(width() / 2, height() - 30, "Taste = Beenden", CENTER, MIDDLE);
     }
     setTextColor(BLACK);
+}
+
+// Menü „Update“: Stand anzeigen, bei neuer Version „Jetzt installieren“ (erst nach Tastendruck)
+void Shell::showUpdateMenu()
+{
+    using namespace ThinkKira;
+    const UpdateInfo &u = updateInfo();
+    Menu m{"Update", {}};
+    m.items.push_back({"Installiert: " THINKKIRA_VERSION, nullptr});
+    switch (u.state) {
+    case UpdState::CHECKING:
+        m.items.push_back({"Suche …", nullptr});
+        break;
+    case UpdState::NONE:
+        m.items.push_back({"Aktuell (neueste: " + u.latest + ")", nullptr});
+        break;
+    case UpdState::ERROR:
+        m.items.push_back({"Fehler: " + u.error, nullptr});
+        break;
+    case UpdState::AVAILABLE:
+        m.items.push_back({"Neu: " + u.latest, nullptr});
+        m.items.push_back({"Jetzt installieren", [this]() {
+                               std::string err;
+                               closeMenus();
+                               if (!updateInstall(err))
+                                   return showInfo("Update", {"Nicht möglich:", err});
+                               showInfo("Update läuft", {"Lädt " + updateInfo().latest + " über WLAN.", "Dauert 2–4 Minuten.",
+                                                         "Nicht ausschalten!", "Danach startet ThinkKira neu."});
+                               rebootAtMsec = millis() + 3000;
+                           }});
+        break;
+    default:
+        m.items.push_back({"Kein WLAN: in den Einstellungen einschalten", nullptr});
+        break;
+    }
+    m.items.push_back({"Nochmal suchen", [this]() { ThinkKira::updateCheckNow(); showUpdateMenu(); }});
+    if (!stack.empty() && stack.back().title == "Update")
+        stack.pop_back(); // ersetzen statt stapeln
+    pushMenu(m);
 }
 
 void Shell::drawOff()

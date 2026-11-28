@@ -13,7 +13,7 @@ namespace ThinkKira
 static const char *const ACTIONS[] = {
     "pos.send",   "light.toggle", "light.cycle", "sound.toggle", "leds.toggle", "screen.off", "msg.reply", "msg.new",
     "msg.chats",  "msg.clear",    "nav.goto",    "nav.wpsave",   "nav.track",   "map.offline", "nodes.list", "ping",
-    "radio.mode", "radio.stats",  "pages",       "bt.toggle",    "wifi",        "sys.info",    "sys.reboot", "sys.off",
+    "radio.mode", "radio.stats",  "pages",       "bt.toggle",    "wifi",        "sys.info",    "sys.update", "sys.reboot", "sys.off",
     "home",       "sos",          "nav.stop",    "wp.manage",    "track.clear", "map.zoomin", "map.zoomout", "map.move", "map.center", "map.rotate",
     "map.wphere", "map.gohere"};
 
@@ -64,6 +64,7 @@ const char *const DEFAULT_MENU = "P0\n"
                                  "E\n"
                                  "SSystem\n"
                                  "Isys.info|Info\n"
+                                 "Isys.update|Update\n"
                                  "Isys.reboot|Neustart\n"
                                  "Isys.off|Ausschalten\n"
                                  "E\n";

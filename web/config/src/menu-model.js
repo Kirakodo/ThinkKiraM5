@@ -35,6 +35,7 @@ export const ACTIONS = {
   "bt.toggle": ["Bluetooth an/aus", "Bluetooth aus (Neustart)"],
   wifi: ["WLAN & Web (Adresse anzeigen)", "wifi"],
   "sys.info": ["System-Info", "sys.info"],
+  "sys.update": ["Update suchen und installieren", "Update"],
   "sys.reboot": ["Neustart", "sys.reboot"],
   "sys.off": ["Ausschalten", "sys.off"],
   home: ["Zur Startseite", "Zur Startseite"],
@@ -88,6 +89,7 @@ Iwifi|WLAN & Web
 E
 SSystem
 Isys.info|Info
+Isys.update|Update
 Isys.reboot|Neustart
 Isys.off|Ausschalten
 E

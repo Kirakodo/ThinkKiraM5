@@ -31,6 +31,11 @@ jobs:
           ~/.platformio/penv/bin/pip install "pioarduino==6.2.0"
       - name: Firmware bauen
         run: pio run -e thinknode_m5_custom
+      - name: Updater bauen (muss in 640 KB passen)
+        run: |
+          pio run -d updater
+          ls -l updater/.pio/build/updater/firmware.bin
+          test $(stat -c %s updater/.pio/build/updater/firmware.bin) -le 655360
       - name: Firmware als Artefakt
         uses: actions/upload-artifact@v4
         with:
@@ -38,4 +43,5 @@ jobs:
           path: |
             .pio/build/thinknode_m5_custom/firmware*.bin
             .pio/build/thinknode_m5_custom/firmware*.factory.bin
+            updater/.pio/build/updater/firmware.bin
           if-no-files-found: warn
