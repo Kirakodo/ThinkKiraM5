@@ -63,7 +63,7 @@ bool setStart(const char *st)
     if (n >= sizeof(current.start))
         return false;
     for (size_t i = 0; i < n; i++)
-        if (!strchr("cbgsknmp", st[i]))
+        if (!strchr("cbgsknmpt", st[i]))
             return false;
     memcpy(current.start, st, n + 1);
     return true;

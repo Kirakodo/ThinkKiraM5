@@ -22,7 +22,7 @@ struct Settings {
     uint8_t pages = 0x3F;           // Seiten ein/aus (Bit 0 = Start … Bit 5 = Einstellungen)
     // Designer (Konfigurator): Reihenfolge der Seiten als Ziffern 0–5, Bausteine der Startseite, Schnellantworten
     char order[7] = "012345";
-    char start[12] = "cbgsknm"; // c Uhr, b Akku, g GPS, s Signal, k Knoten, n Nachrichten, m Funkmodus, p Position
+    char start[12] = "cbtgsknm"; // c Uhr, b Akku, t Ziel, g GPS, s Signal, k Knoten, n Nachrichten, m Funkmodus, p Position
     uint16_t arrive = 20; // Ankunftsradius in m
     char keys[7] = "nmphos"; // Tastenbelegung, siehe KiraShell.cpp
     uint8_t uiRev = 0; // wird bei Designer-Änderung erhöht, die Oberfläche zeichnet dann neu (nicht gespeichert)

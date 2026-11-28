@@ -10,6 +10,7 @@
 #include "buzz.h"
 #include "custom/core/KiraMenu.h"
 #include "custom/core/KiraMessages.h"
+#include "custom/core/KiraNav.h"
 #include "custom/core/KiraModule.h"
 #include "custom/core/KiraRadio.h"
 #include "custom/core/KiraSettings.h"
@@ -235,7 +236,22 @@ int32_t Shell::runOnce()
         } else if (page == P_START && minute != lastMinute) {
             lastMinute = minute;
             redraw();
+        } else if (kiraNav && (page == P_NAV || page == P_START)) {
+            // Navigation: nur neu zeichnen, wenn sich die Anzeige sichtbar ändert (höchstens 1×/s)
+            const NavInfo &n = kiraNav->info();
+            uint32_t sig = (uint32_t)(n.course / 10) ^ ((uint32_t)(n.bearing / 10) << 6) ^ ((uint32_t)(n.distance / 10) << 12) ^
+                           ((uint32_t)n.moving << 30) ^ ((uint32_t)n.haveTarget << 31) ^ ((uint32_t)kiraNav->rev << 24) ^
+                           ((uint32_t)n.havePos << 29);
+            if (sig != lastNavSig) {
+                lastNavSig = sig;
+                redraw();
+            }
         }
+    }
+    if (kiraNav && kiraNav->arrivedFlag) {
+        kiraNav->arrivedFlag = false;
+        showInfo("Ziel erreicht", {"Du bist angekommen.", "Die Navigation ist beendet."});
+        redraw(true);
     }
     return needFast ? 100 : 1000;
 }
@@ -453,6 +469,8 @@ std::string Shell::actionLabel(const std::string &id)
         return "Bildschirm aus";
     if (id == "home")
         return "Zur Startseite";
+    if (id == "nav.track")
+        return kiraNav && kiraNav->tracking() ? "Track stoppen" : "Track starten";
     if (id == "sos")
         return "SOS auslösen";
     return id;
@@ -518,8 +536,33 @@ bool Shell::runAction(const std::string &id)
             kiraMessages->clear();
         closeMenus();
         toast("Nachrichten gelöscht");
-    } else if (id == "nav.goto" || id == "nav.wpsave" || id == "nav.track" || id == "map.offline") {
-        return phase("4");
+    } else if (id == "nav.goto") {
+        pushMenu(menuTargets());
+    } else if (id == "nav.wpsave") {
+        std::string name;
+        bool ok = kiraNav && kiraNav->addHere(name);
+        closeMenus();
+        toast(ok ? "Gespeichert als " + name : "Keine GPS-Position");
+    } else if (id == "nav.track") {
+        if (!kiraNav)
+            return true;
+        kiraNav->setTracking(!kiraNav->tracking());
+        closeMenus();
+        toast(kiraNav->tracking() ? "Track läuft" : "Track gestoppt (" + std::to_string(kiraNav->trackPoints()) + " Punkte)");
+    } else if (id == "nav.stop") {
+        if (kiraNav)
+            kiraNav->clearTarget();
+        closeMenus();
+        toast("Navigation beendet");
+    } else if (id == "wp.manage") {
+        pushMenu(menuWaypoints(true));
+    } else if (id == "track.clear") {
+        if (kiraNav)
+            kiraNav->clearTrack();
+        closeMenus();
+        toast("Track gelöscht");
+    } else if (id == "map.offline") {
+        return phase("4b");
     } else if (id == "wifi") {
         return phase("5");
     } else if (id == "nodes.list") {
@@ -621,6 +664,71 @@ Shell::Menu Shell::menuQuickReplies(uint32_t to, uint8_t channel, const std::str
     return m;
 }
 
+// Wegpunkte, nächste zuerst. manage = Verwalten-Menü statt direkt als Ziel
+Shell::Menu Shell::menuWaypoints(bool manage)
+{
+    Menu m{manage ? "Wegpunkte" : "Ziel: Wegpunkt", {}};
+    if (!kiraNav)
+        return m;
+    const auto &w = kiraNav->waypoints();
+    const NavInfo &n = kiraNav->info();
+    for (size_t i : kiraNav->waypointsByDistance()) {
+        std::string label = w[i].name;
+        if (n.havePos)
+            label += "  " + formatDistance(GeoCoord::latLongToMeter(localPosition.latitude_i * 1e-7, localPosition.longitude_i * 1e-7,
+                                                                   w[i].lat * 1e-7, w[i].lon * 1e-7));
+        std::string name = w[i].name;
+        m.items.push_back({label, [this, i, manage, name]() {
+                               if (!manage) {
+                                   targetWaypoint(i);
+                                   return;
+                               }
+                               Menu a{name, {}};
+                               a.items.push_back({"Als Ziel", [this, i]() { targetWaypoint(i); }});
+                               a.items.push_back({"Ins Mesh senden", [this, i]() {
+                                                      bool ok = kiraNav->sendWaypointToMesh(i);
+                                                      closeMenus();
+                                                      toast(ok ? "Wegpunkt gesendet" : "Senden nicht möglich");
+                                                  }});
+                               a.items.push_back({"Löschen", [this, i]() {
+                                                      kiraNav->removeWaypoint(i);
+                                                      closeMenus();
+                                                      toast("Wegpunkt gelöscht");
+                                                  }});
+                               pushMenu(a);
+                           }});
+    }
+    if (m.items.empty())
+        m.items.push_back({"Noch keine Wegpunkte", nullptr});
+    return m;
+}
+
+void Shell::targetWaypoint(size_t i)
+{
+    const auto &w = kiraNav->waypoints();
+    if (i >= w.size())
+        return;
+    Target t;
+    t.kind = TARGET_POINT;
+    strncpy(t.name, w[i].name, sizeof(t.name) - 1);
+    t.lat = w[i].lat;
+    t.lon = w[i].lon;
+    kiraNav->setTarget(t);
+    stack.clear();
+    page = P_NAV;
+    redraw();
+}
+
+Shell::Menu Shell::menuTargets()
+{
+    Menu m{"Navigieren zu …", {}};
+    m.items.push_back({"Wegpunkt …", [this]() { pushMenu(menuWaypoints(false)); }});
+    m.items.push_back({"Knoten …", [this]() { pushMenu(menuNodeList()); }});
+    if (kiraNav && kiraNav->target().kind != TARGET_NONE)
+        m.items.push_back({"Navigation beenden", [this]() { runAction("nav.stop"); }});
+    return m;
+}
+
 Shell::Menu Shell::menuNodeList()
 {
     Menu m{"Knoten wählen", {}};
@@ -674,7 +782,25 @@ Shell::Menu Shell::menuNode(uint32_t num)
                            }
                            showInfo("Signal-Info", l);
                        }});
-    m.items.push_back({"Als Ziel (Phase 4)", [this]() { toast("Kommt mit Phase 4"); }});
+    m.items.push_back({"Als Ziel", [this, num]() {
+                           Target t;
+                           t.kind = TARGET_NODE;
+                           t.node = num;
+                           strncpy(t.name, nodeName(num).c_str(), sizeof(t.name) - 1);
+                           meshtastic_PositionLite p;
+                           if (nodeDB->copyNodePosition(num, p)) {
+                               t.lat = p.latitude_i;
+                               t.lon = p.longitude_i;
+                           }
+                           if (!kiraNav || (!t.lat && !t.lon)) {
+                               toast("Knoten hat keine Position");
+                               return;
+                           }
+                           kiraNav->setTarget(t);
+                           stack.clear();
+                           page = P_NAV;
+                           redraw();
+                       }});
     return m;
 }
 
@@ -822,6 +948,12 @@ void Shell::drawStart()
         case 'm':
             snprintf(b, sizeof(b), "Funk: %s", radioModeName(ThinkKira::settings().radioMode));
             break;
+        case 't':
+            if (!kiraNav || !kiraNav->info().haveTarget)
+                continue;
+            snprintf(b, sizeof(b), "→ %s %s", kiraNav->target().name,
+                     kiraNav->info().havePos ? formatDistance(kiraNav->info().distance).c_str() : "");
+            break;
         case 'p':
             if (localPosition.latitude_i || localPosition.longitude_i)
                 snprintf(b, sizeof(b), "%.4f N  %.4f O", localPosition.latitude_i * 1e-7, localPosition.longitude_i * 1e-7);
@@ -868,31 +1000,79 @@ void Shell::drawMessages()
     }
 }
 
+// Großer Pfeil: Spitze zeigt in Richtung angle (Grad, 0 = oben)
+void Shell::drawArrow(int16_t cx, int16_t cy, int16_t r, float angle)
+{
+    float a = angle * (float)M_PI / 180.0f;
+    auto pt = [&](float ang, float len, int16_t &x, int16_t &y) {
+        x = cx + (int16_t)(sinf(ang) * len);
+        y = cy - (int16_t)(cosf(ang) * len);
+    };
+    int16_t tx, ty, lx, ly, rx, ry, bx, by;
+    pt(a, r, tx, ty);                     // Spitze
+    pt(a + 2.5f, r * 0.8f, lx, ly);       // links hinten
+    pt(a - 2.5f, r * 0.8f, rx, ry);       // rechts hinten
+    pt(a + (float)M_PI, r * 0.35f, bx, by); // Kerbe
+    fillTriangle(tx, ty, lx, ly, bx, by, BLACK);
+    fillTriangle(tx, ty, rx, ry, bx, by, BLACK);
+}
+
 void Shell::drawNav()
 {
-    drawTopBar("Navigation");
-    setFont(fontMedium);
-    int16_t y = fontSmall.lineHeight() + 10;
-    const int16_t lh = fontMedium.lineHeight() + 4;
+    drawTopBar(kiraNav && kiraNav->tracking() ? "Navigation  [Track]" : "Navigation");
+    const int16_t top = fontSmall.lineHeight() + 6;
     char b[48];
-    if (localPosition.latitude_i || localPosition.longitude_i) {
-        snprintf(b, sizeof(b), "%.5f N", localPosition.latitude_i * 1e-7);
-        printAt(4, y, b);
-        y += lh;
-        snprintf(b, sizeof(b), "%.5f O", localPosition.longitude_i * 1e-7);
-        printAt(4, y, b);
-        y += lh;
-        if (localPosition.has_altitude) {
-            snprintf(b, sizeof(b), "Höhe %d m", (int)localPosition.altitude);
-            printAt(4, y, parse(b));
-            y += lh;
+    if (!kiraNav || !kiraNav->info().havePos) {
+        setFont(fontMedium);
+        printAt(width() / 2, height() / 2 - 10, "Keine GPS-Position", CENTER, MIDDLE);
+        setFont(fontSmall);
+        printAt(width() / 2, height() / 2 + 12, parse("Unter freiem Himmel warten …"), CENTER, MIDDLE);
+        return;
+    }
+    const NavInfo &n = kiraNav->info();
+    const int16_t cx = width() / 2, cy = top + 62, r = 50;
+    if (n.haveTarget) {
+        setFont(fontSmall);
+        printAt(cx, top + 2, parse(std::string("Ziel: ") + kiraNav->target().name), CENTER);
+        // in Bewegung: relativ zur Laufrichtung; im Stand: Peilung mit Norden oben
+        float ang = n.moving ? n.bearing - n.course : n.bearing;
+        drawArrow(cx, cy + 6, r - 6, ang);
+        if (!n.moving) {
+            printAt(cx, cy - r + 6, "N", CENTER);
         }
+        setFont(fontLarge);
+        printAt(cx, cy + r + 4, formatDistance(n.distance), CENTER);
+        setFont(fontSmall);
+        int16_t y = cy + r + 4 + fontLarge.lineHeight() + 2;
+        if (n.moving) {
+            uint32_t m = n.etaSec / 60;
+            if (m >= 60)
+                snprintf(b, sizeof(b), "%u°  ·  %.1f km/h  ·  %uh %02um", (unsigned)n.bearing, n.speedKmh, (unsigned)(m / 60), (unsigned)(m % 60));
+            else
+                snprintf(b, sizeof(b), "%u°  ·  %.1f km/h  ·  %u min", (unsigned)n.bearing, n.speedKmh, (unsigned)m);
+        } else
+            snprintf(b, sizeof(b), "%u° (Norden oben) · Gehe los für Richtung", (unsigned)n.bearing);
+        printAt(cx, y, parse(b), CENTER);
+        return;
+    }
+    // Kompass ohne Ziel: Pfeil zeigt nach Norden relativ zur Laufrichtung
+    setFont(fontSmall);
+    printAt(cx, top + 2, n.moving ? "Kompass (aus GPS-Kurs)" : "Kompass", CENTER);
+    if (n.moving) {
+        drawArrow(cx, cy + 6, r - 6, -n.course);
+        printAt(cx, cy + 6 - r - 2, "N", CENTER);
+        setFont(fontLarge);
+        snprintf(b, sizeof(b), "%u°", (unsigned)n.course);
+        printAt(cx, cy + r + 4, b, CENTER);
     } else {
-        printAt(4, y, "Keine GPS-Position");
-        y += lh;
+        setFont(fontLarge);
+        printAt(cx, cy, "Stand", CENTER, MIDDLE);
+        setFont(fontSmall);
+        printAt(cx, cy + 22, parse("Gehe los für Richtung"), CENTER, MIDDLE);
     }
     setFont(fontSmall);
-    printWrapped(4, y + 6, width() - 8, parse("Ziel-Navigation mit Pfeil, Wegpunkte und Track kommen mit Phase 4."));
+    snprintf(b, sizeof(b), "%.5f  %.5f", localPosition.latitude_i * 1e-7, localPosition.longitude_i * 1e-7);
+    printAt(cx, height() - 26, b, CENTER);
 }
 
 void Shell::drawMap()

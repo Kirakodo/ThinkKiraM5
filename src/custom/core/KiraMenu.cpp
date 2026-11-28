@@ -14,7 +14,7 @@ static const char *const ACTIONS[] = {
     "pos.send",   "light.toggle", "light.cycle", "sound.toggle", "leds.toggle", "screen.off", "msg.reply", "msg.new",
     "msg.chats",  "msg.clear",    "nav.goto",    "nav.wpsave",   "nav.track",   "map.offline", "nodes.list", "ping",
     "radio.mode", "radio.stats",  "pages",       "bt.toggle",    "wifi",        "sys.info",    "sys.reboot", "sys.off",
-    "home",       "sos"};
+    "home",       "sos",          "nav.stop",    "wp.manage",    "track.clear"};
 
 const char *const DEFAULT_MENU = "P0\n"
                                  "Ipos.send|Position senden\n"
@@ -27,10 +27,12 @@ const char *const DEFAULT_MENU = "P0\n"
                                  "Imsg.chats|Alle Chats\n"
                                  "Imsg.clear|Löschen\n"
                                  "P2\n"
-                                 "Ipos.send|Position senden\n"
                                  "Inav.goto|Navigieren zu …\n"
-                                 "Inav.wpsave|Wegpunkt speichern\n"
-                                 "Inav.track|Track Start/Stopp\n"
+                                 "Inav.wpsave|Wegpunkt hier speichern\n"
+                                 "Iwp.manage|Wegpunkte verwalten\n"
+                                 "Inav.stop|Navigation beenden\n"
+                                 "Inav.track|\n"
+                                 "Ipos.send|Position senden\n"
                                  "P3\n"
                                  "Imap.offline|Offline-Karte\n"
                                  "P4\n"

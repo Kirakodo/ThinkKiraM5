@@ -65,6 +65,9 @@ class Shell : public NicheGraphics::InkHUD::Applet, private concurrency::OSThrea
     void gesture(char role); // Rolle aus der Tastenbelegung ausführen
     Menu menuQuickReplies(uint32_t to, uint8_t channel, const std::string &title);
     Menu menuNodeList();
+    Menu menuWaypoints(bool manage);
+    Menu menuTargets();
+    void targetWaypoint(size_t i);
     Menu menuNode(uint32_t num);
 
     // Zeichnen
@@ -73,6 +76,7 @@ class Shell : public NicheGraphics::InkHUD::Applet, private concurrency::OSThrea
     void drawStart();
     void drawMessages();
     void drawNav();
+    void drawArrow(int16_t cx, int16_t cy, int16_t r, float angle);
     void drawMap();
     void drawNodes();
     void drawSettings();
@@ -114,6 +118,7 @@ class Shell : public NicheGraphics::InkHUD::Applet, private concurrency::OSThrea
     int lastMsgCount = -1;
     int lastUnread = -1;
     uint8_t lastUiRev = 0;
+    uint32_t lastNavSig = 0;
 };
 
 } // namespace ThinkKira
