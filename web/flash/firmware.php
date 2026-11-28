@@ -37,6 +37,7 @@ const TK_ASSETS = [
     'thinkkira-loader.js'    => 'text/javascript; charset=utf-8',
     'thinkkira-loader.css'   => 'text/css; charset=utf-8',
     'thinkkira-designer.js'  => 'text/javascript; charset=utf-8',
+    'thinkkira-map.js'       => 'text/javascript; charset=utf-8',
 ];
 
 $asset = $_GET['asset'] ?? '';
