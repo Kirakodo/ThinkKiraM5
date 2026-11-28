@@ -8,6 +8,7 @@
 #include "PowerStatus.h"
 #include "RTC.h"
 #include "buzz.h"
+#include "custom/core/KiraMap.h"
 #include "custom/core/KiraMenu.h"
 #include "custom/core/KiraMessages.h"
 #include "custom/core/KiraNav.h"
@@ -35,6 +36,8 @@ static constexpr uint32_t OFF_HOLD_MS = 4000;        // Haupttaste halten = Auss
 static constexpr uint32_t SOS_HOLD_MS = 3000;        // Zweittaste halten = SOS
 static constexpr uint32_t SOS_COUNTDOWN_MS = 5000;   // Countdown vor dem Senden
 static constexpr uint32_t SOS_REPEAT_MS = 60 * 1000; // SOS wiederholen
+static constexpr int MAP_ZOOMS = 3;
+static const float MAP_SCALES[MAP_ZOOMS] = {3, 8, 20}; // Meter pro Pixel
 
 Shell::Shell(uint8_t mainPin, uint8_t auxPin, std::function<void(bool)> backlight)
     : OSThread("KiraShell"), mainPin(mainPin), auxPin(auxPin), backlight(backlight)
@@ -121,6 +124,20 @@ void Shell::gesture(char role)
     if (role == 'l') {
         runAction("light.toggle");
         toast(actionLabel("light.toggle"));
+        return;
+    }
+    if (stack.empty() && mapPan && page == P_MAP) {
+        // Karte bewegen: Weiter = schieben, Zurück = Richtung drehen, Menü = Zoom, Startseite = fertig
+        if (role == 'n') {
+            static const int8_t DY[] = {1, 0, -1, 0}, DX[] = {0, 1, 0, -1};
+            float step = MAP_SCALES[mapZoom] * 70; // Meter, ca. ein Drittel des Bildschirms
+            mapLat += (int32_t)(DY[mapDir] * step / 110540.0f * 1e7f);
+            mapLon += (int32_t)(DX[mapDir] * step / (111320.0f * cosf(mapLat * 1e-7f * (float)M_PI / 180)) * 1e7f);
+        } else if (role == 'p')
+            mapDir = (mapDir + 1) % 4;
+        else if (role == 'm')
+            mapZoom = (mapZoom + 1) % MAP_ZOOMS;
+        redraw();
         return;
     }
     if (stack.empty()) {
@@ -236,7 +253,7 @@ int32_t Shell::runOnce()
         } else if (page == P_START && minute != lastMinute) {
             lastMinute = minute;
             redraw();
-        } else if (kiraNav && (page == P_NAV || page == P_START)) {
+        } else if (kiraNav && (page == P_NAV || page == P_START || (page == P_MAP && !mapPan))) {
             // Navigation: nur neu zeichnen, wenn sich die Anzeige sichtbar ändert (höchstens 1×/s)
             const NavInfo &n = kiraNav->info();
             uint32_t sig = (uint32_t)(n.course / 10) ^ ((uint32_t)(n.bearing / 10) << 6) ^ ((uint32_t)(n.distance / 10) << 12) ^
@@ -289,6 +306,11 @@ void Shell::changePage(int dir)
 
 void Shell::goHome()
 {
+    if (mapPan && page == P_MAP) { // aus dem Verschieben-Modus erst zurück zur Karte
+        mapPan = false;
+        redraw();
+        return;
+    }
     stack.clear();
     infoOpen = false;
     page = P_START;
@@ -469,6 +491,8 @@ std::string Shell::actionLabel(const std::string &id)
         return "Bildschirm aus";
     if (id == "home")
         return "Zur Startseite";
+    if (id == "map.rotate")
+        return mapCourseUp ? "Ausrichtung: Norden oben" : "Ausrichtung: Laufrichtung";
     if (id == "nav.track")
         return kiraNav && kiraNav->tracking() ? "Track stoppen" : "Track starten";
     if (id == "sos")
@@ -562,7 +586,63 @@ bool Shell::runAction(const std::string &id)
         closeMenus();
         toast("Track gelöscht");
     } else if (id == "map.offline") {
-        return phase("4b");
+        KiraMapFile &mf = mapFile();
+        if (!mf.available())
+            showInfo("Offline-Karte", {"Keine Karte im Gerät.", "Hochladen: Konfigurator → ThinkKira → Offline-Karte."});
+        else {
+            const MapHeader &h = mf.header();
+            char b[64];
+            std::vector<std::string> l;
+            snprintf(b, sizeof(b), "%u KB, Detailstufe %u", (unsigned)(mf.fileSize() / 1024), (unsigned)h.level);
+            l.push_back(b);
+            snprintf(b, sizeof(b), "%.2f–%.2f N", h.latMin * 1e-7, h.latMax * 1e-7);
+            l.push_back(parse(b));
+            snprintf(b, sizeof(b), "%.2f–%.2f O", h.lonMin * 1e-7, h.lonMax * 1e-7);
+            l.push_back(parse(b));
+            l.push_back(parse("© OpenStreetMap-Mitwirkende"));
+            showInfo("Offline-Karte", l);
+        }
+    } else if (id == "map.zoomin" || id == "map.zoomout") {
+        if (id == "map.zoomin" && mapZoom > 0)
+            mapZoom--;
+        else if (id == "map.zoomout" && mapZoom < MAP_ZOOMS - 1)
+            mapZoom++;
+        closeMenus();
+    } else if (id == "map.move") {
+        if (!mapFree)
+            mapCenterHere();
+        mapFree = mapPan = true;
+        closeMenus();
+    } else if (id == "map.center") {
+        mapFree = mapPan = false;
+        closeMenus();
+    } else if (id == "map.rotate") {
+        mapCourseUp = !mapCourseUp;
+        closeMenus();
+        toast(mapCourseUp ? "Karte: in Laufrichtung" : "Karte: Norden oben");
+    } else if (id == "map.wphere" || id == "map.gohere") {
+        int32_t la, lo;
+        if (!mapCenter(la, lo)) {
+            toast("Keine Kartenmitte");
+            return true;
+        }
+        if (id == "map.wphere") {
+            char n[20];
+            snprintf(n, sizeof(n), "Karte %02u", (unsigned)(kiraNav ? kiraNav->waypoints().size() + 1 : 1));
+            bool ok = kiraNav && kiraNav->addWaypoint(n, la, lo, getValidTime(RTCQualityDevice));
+            closeMenus();
+            toast(ok ? std::string("Gespeichert als ") + n : "Speichern nicht möglich");
+        } else if (kiraNav) {
+            Target t;
+            t.kind = TARGET_POINT;
+            strncpy(t.name, "Kartenpunkt", sizeof(t.name) - 1);
+            t.lat = la;
+            t.lon = lo;
+            kiraNav->setTarget(t);
+            mapPan = false;
+            closeMenus();
+            toast("Navigation zur Kartenmitte");
+        }
     } else if (id == "wifi") {
         return phase("5");
     } else if (id == "nodes.list") {
@@ -951,7 +1031,7 @@ void Shell::drawStart()
         case 't':
             if (!kiraNav || !kiraNav->info().haveTarget)
                 continue;
-            snprintf(b, sizeof(b), "→ %s %s", kiraNav->target().name,
+            snprintf(b, sizeof(b), "Ziel %s: %s", kiraNav->target().name,
                      kiraNav->info().havePos ? formatDistance(kiraNav->info().distance).c_str() : "");
             break;
         case 'p':
@@ -1075,13 +1155,170 @@ void Shell::drawNav()
     printAt(cx, height() - 26, b, CENTER);
 }
 
+// Kartenmitte: frei verschoben, sonst eigene Position, sonst Mitte der Karte
+bool Shell::mapCenter(int32_t &lat, int32_t &lon)
+{
+    if (mapFree) {
+        lat = mapLat;
+        lon = mapLon;
+        return true;
+    }
+    if (localPosition.latitude_i || localPosition.longitude_i) {
+        lat = localPosition.latitude_i;
+        lon = localPosition.longitude_i;
+        return true;
+    }
+    KiraMapFile &mf = mapFile();
+    if (!mf.available())
+        return false;
+    lat = mf.header().latMin / 2 + mf.header().latMax / 2;
+    lon = mf.header().lonMin / 2 + mf.header().lonMax / 2;
+    return true;
+}
+
+void Shell::mapCenterHere()
+{
+    mapCenter(mapLat, mapLon);
+}
+
 void Shell::drawMap()
 {
-    drawTopBar("Karte");
-    setFont(fontMedium);
-    printWrapped(8, height() / 2 - 20, width() - 16, parse("Offline-Karte Potsdam–Ludwigsfelde kommt mit Phase 4."));
+    static const char *const DIRS[] = {"Nord", "Ost", "Süd", "West"};
+    KiraMapFile &mf = mapFile();
+    int32_t cLat, cLon;
+    bool haveCenter = mapCenter(cLat, cLon);
+    const float scale = MAP_SCALES[mapZoom]; // Meter pro Pixel
+    const int16_t top = fontSmall.lineHeight() + 5;
+    const int16_t cx = width() / 2, cy = top + (height() - top) / 2;
+    const NavInfo *nav = kiraNav ? &kiraNav->info() : nullptr;
+    const float rot = (mapCourseUp && nav && nav->moving && !mapFree) ? nav->course * (float)M_PI / 180 : 0;
+    const float cosLat = cosf(cLat * 1e-7f * (float)M_PI / 180);
+    const float sr = sinf(rot), cr = cosf(rot);
+    // Breite/Länge (1e-7) → Bildschirm
+    auto toScreen = [&](double lat, double lon, int16_t &x, int16_t &y) {
+        float dx = (float)((lon - cLon * 1e-7) * 111320.0 * cosLat) / scale;
+        float dy = (float)((lat - cLat * 1e-7) * 110540.0) / scale;
+        float rx = dx * cr - dy * sr, ry = dx * sr + dy * cr;
+        x = cx + (int16_t)rx;
+        y = cy - (int16_t)ry;
+    };
+
+    if (!mf.available()) {
+        drawTopBar("Karte");
+        setFont(fontMedium);
+        printWrapped(8, height() / 2 - 30, width() - 16, parse("Keine Offline-Karte im Gerät."));
+        setFont(fontSmall);
+        printWrapped(8, height() / 2 + 4, width() - 16, parse("Hochladen über den Konfigurator: ThinkKira → Offline-Karte."));
+        return;
+    }
+    if (haveCenter) {
+        const MapHeader &h = mf.header();
+        const float tileLat = 0.01f, tileLon = 0.015f;
+        float radius = scale * 150; // Meter bis zur Bildschirmecke (mit Rand)
+        float dLat = radius / 110540.0f, dLon = radius / (111320.0f * cosLat);
+        float la = cLat * 1e-7f, lo = cLon * 1e-7f;
+        int tx0 = (int)floorf((lo - dLon - h.lonMin * 1e-7f) / tileLon), tx1 = (int)floorf((lo + dLon - h.lonMin * 1e-7f) / tileLon);
+        int ty0 = (int)floorf((la - dLat - h.latMin * 1e-7f) / tileLat), ty1 = (int)floorf((la + dLat - h.latMin * 1e-7f) / tileLat);
+        std::vector<uint8_t> t;
+        setFont(fontSmall);
+        for (int ty = std::max(0, ty0); ty <= std::min((int)h.ny - 1, ty1); ty++)
+            for (int tx = std::max(0, tx0); tx <= std::min((int)h.nx - 1, tx1); tx++) {
+                if (!mf.readTile(tx, ty, t))
+                    continue;
+                double oLat = h.latMin * 1e-7 + ty * (double)tileLat, oLon = h.lonMin * 1e-7 + tx * (double)tileLon;
+                size_t p = 0;
+                while (p + 3 <= t.size()) {
+                    uint8_t type = t[p];
+                    uint16_t n = t[p + 1] | (t[p + 2] << 8);
+                    p += 3;
+                    if (p + 4u * n > t.size())
+                        break;
+                    // je Zoomstufe nur passende Objekte zeigen
+                    bool show = !((mapZoom >= 1 && (type == MT_PATH || type == MT_POI)) ||
+                                  (mapZoom >= 2 && (type == MT_TRACK || type == MT_RESIDENTIAL || type == MT_SUBURB || type == MT_VILLAGE)));
+                    int32_t qa = 0, qo = 0;
+                    int16_t px = 0, py = 0;
+                    for (uint16_t i = 0; i < n; i++, p += 4) {
+                        qa += (int16_t)(t[p] | (t[p + 1] << 8));
+                        qo += (int16_t)(t[p + 2] | (t[p + 3] << 8));
+                        int16_t x, y;
+                        toScreen(oLat + qa * 1e-5, oLon + qo * 1e-5, x, y);
+                        if (i && show) {
+                            if (type == MT_RAIL || type == MT_TRACK || type == MT_PATH) {
+                                // gestrichelt: nur jeden zweiten Abschnitt halb zeichnen
+                                drawLine(px, py, (px + x) / 2, (py + y) / 2, BLACK);
+                            } else {
+                                drawLine(px, py, x, y, BLACK);
+                                if (type == MT_MAJOR || type == MT_WATERWAY)
+                                    drawLine(px + 1, py, x + 1, y, BLACK);
+                            }
+                        }
+                        px = x;
+                        py = y;
+                    }
+                    if (type >= MT_CITY) { // Name
+                        if (p >= t.size())
+                            break;
+                        uint8_t len = t[p++];
+                        if (p + len > t.size())
+                            break;
+                        if (show && px > 0 && px < width() && py > top && py < height())
+                            printAt(px, py, parse(std::string((const char *)&t[p], len)), CENTER, MIDDLE);
+                        p += len;
+                    }
+                }
+            }
+
+        // Wegpunkte und Linie zum Ziel
+        if (kiraNav) {
+            for (const Waypoint &w : kiraNav->waypoints()) {
+                int16_t x, y;
+                toScreen(w.lat * 1e-7, w.lon * 1e-7, x, y);
+                if (x > 2 && x < width() - 2 && y > top && y < height() - 2) {
+                    fillRect(x - 2, y - 2, 5, 5, BLACK);
+                    if (mapZoom == 0)
+                        printAt(x + 4, y, parse(w.name), LEFT, MIDDLE);
+                }
+            }
+            if (nav && nav->haveTarget && nav->havePos) {
+                int16_t x1, y1, x2, y2;
+                toScreen(localPosition.latitude_i * 1e-7, localPosition.longitude_i * 1e-7, x1, y1);
+                toScreen(kiraNav->target().lat * 1e-7, kiraNav->target().lon * 1e-7, x2, y2);
+                for (int k = 0; k < 20; k += 2) // gestrichelt
+                    drawLine(x1 + (x2 - x1) * k / 20, y1 + (y2 - y1) * k / 20, x1 + (x2 - x1) * (k + 1) / 20,
+                             y1 + (y2 - y1) * (k + 1) / 20, BLACK);
+                drawCircle(x2, y2, 5, BLACK);
+            }
+        }
+        // eigene Position
+        if (localPosition.latitude_i || localPosition.longitude_i) {
+            int16_t x, y;
+            toScreen(localPosition.latitude_i * 1e-7, localPosition.longitude_i * 1e-7, x, y);
+            fillCircle(x, y, 5, WHITE);
+            drawCircle(x, y, 5, BLACK);
+            fillCircle(x, y, 2, BLACK);
+        }
+        if (mapFree) { // Fadenkreuz in der Mitte
+            drawLine(cx - 6, cy, cx + 6, cy, BLACK);
+            drawLine(cx, cy - 6, cx, cy + 6, BLACK);
+        }
+    }
+
+    // Kopfzeile + Maßstab + Hinweise über der Karte
+    fillRect(0, 0, width(), top, WHITE);
+    char b[40];
+    snprintf(b, sizeof(b), "Karte  %s%s", formatDistance(scale * 50).c_str(), rot != 0 ? "  (Laufr.)" : "");
+    drawTopBar(b);
+    drawLine(4, height() - 4, 54, height() - 4, BLACK); // Maßstab: 50 Pixel
+    drawLine(4, height() - 7, 4, height() - 1, BLACK);
+    drawLine(54, height() - 7, 54, height() - 1, BLACK);
     setFont(fontSmall);
-    printAt(width() / 2, height() - 20, parse("© OpenStreetMap-Mitwirkende"), CENTER);
+    printAt(width() - 2, height() - 2, parse("© OSM"), RIGHT, BOTTOM);
+    if (mapPan) {
+        std::string hint = std::string("Schieben: ") + DIRS[mapDir] + "  ·  Zurück = Richtung";
+        fillRect(0, top + 1, width(), fontSmall.lineHeight() + 3, WHITE);
+        printAt(cx, top + 2, parse(hint), CENTER);
+    }
 }
 
 void Shell::drawNodes()

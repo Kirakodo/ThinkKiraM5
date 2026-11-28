@@ -4,6 +4,7 @@
 #include "RTC.h"
 #include <algorithm>
 #include <deque>
+#include "KiraMap.h"
 #include "KiraMenu.h"
 #include "KiraMessages.h"
 #include "KiraNav.h"
@@ -56,6 +57,8 @@ void KiraModule::handleLocal(char *cmd)
             reply("err|Ping konnte nicht gesendet werden");
     } else if (!strcmp(cmd, "ui"))
         sendUi();
+    else if (!strncmp(cmd, "map", 3))
+        mapCommand(cmd);
     else if (!strcmp(cmd, "wpl"))
         sendWaypoints();
     else if (!strncmp(cmd, "wpa|", 4) || !strncmp(cmd, "wpr|", 4) || !strncmp(cmd, "wpd|", 4) || !strncmp(cmd, "wps|", 4) ||
@@ -190,6 +193,45 @@ void KiraModule::waypointCommand(char *cmd)
     if (!ok)
         reply("err|Wegpunkt: Aktion nicht möglich (voll, ungültig oder nicht gefunden)");
     sendWaypoints();
+}
+
+// Offline-Karte: mapb|bytes (Beginn) · mapd|base64 (Daten) · mape (fertig) · mapx (löschen) · mapi (Info)
+// Antworten: k|ready · k|p|bytes (Fortschritt) · k|ok|bytes · k|info|bytes|stufe|latMin|lonMin|latMax|lonMax · k|none
+void KiraModule::mapCommand(char *cmd)
+{
+    KiraMapFile &m = mapFile();
+    std::string err;
+    char b[120];
+    if (!strncmp(cmd, "mapd|", 5)) {
+        uint32_t before = m.received();
+        if (!m.appendBase64(cmd + 5))
+            reply("err|Karte: Daten konnten nicht geschrieben werden");
+        else if (before / 32768 != m.received() / 32768) {
+            snprintf(b, sizeof(b), "k|p|%lu", (unsigned long)m.received());
+            reply(b);
+        }
+    } else if (!strncmp(cmd, "mapb|", 5)) {
+        if (m.beginUpload(strtoul(cmd + 5, nullptr, 10), err))
+            reply("k|ready");
+        else
+            reply(("err|Karte: " + err).c_str());
+    } else if (!strcmp(cmd, "mape")) {
+        if (m.finishUpload(err)) {
+            snprintf(b, sizeof(b), "k|ok|%lu", (unsigned long)m.fileSize());
+            reply(b);
+        } else
+            reply(("err|Karte: " + err).c_str());
+    } else if (!strcmp(cmd, "mapx")) {
+        m.remove();
+        reply("k|none");
+    } else if (!strcmp(cmd, "mapi")) {
+        if (!m.available())
+            return reply("k|none");
+        const MapHeader &h = m.header();
+        snprintf(b, sizeof(b), "k|info|%lu|%u|%ld|%ld|%ld|%ld", (unsigned long)m.fileSize(), (unsigned)h.level, (long)h.latMin,
+                 (long)h.lonMin, (long)h.latMax, (long)h.lonMax);
+        reply(b);
+    }
 }
 
 // t|<stück> … t|end|punkte — Inhalt: lat_i,lon_i,zeit je Zeile

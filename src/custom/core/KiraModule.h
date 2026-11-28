@@ -46,6 +46,7 @@ class KiraModule : public SinglePortModule
     void sendWaypoints();
     void waypointCommand(char *cmd);
     void sendTrack();
+    void mapCommand(char *cmd);
     std::string menuUpload; // Designer-Menü wird in Stücken übertragen
     uint32_t lastPongMs = 0;
     bool pingFromClient = false;

@@ -14,7 +14,8 @@ static const char *const ACTIONS[] = {
     "pos.send",   "light.toggle", "light.cycle", "sound.toggle", "leds.toggle", "screen.off", "msg.reply", "msg.new",
     "msg.chats",  "msg.clear",    "nav.goto",    "nav.wpsave",   "nav.track",   "map.offline", "nodes.list", "ping",
     "radio.mode", "radio.stats",  "pages",       "bt.toggle",    "wifi",        "sys.info",    "sys.reboot", "sys.off",
-    "home",       "sos",          "nav.stop",    "wp.manage",    "track.clear"};
+    "home",       "sos",          "nav.stop",    "wp.manage",    "track.clear", "map.zoomin", "map.zoomout", "map.move", "map.center", "map.rotate",
+    "map.wphere", "map.gohere"};
 
 const char *const DEFAULT_MENU = "P0\n"
                                  "Ipos.send|Position senden\n"
@@ -34,7 +35,14 @@ const char *const DEFAULT_MENU = "P0\n"
                                  "Inav.track|\n"
                                  "Ipos.send|Position senden\n"
                                  "P3\n"
-                                 "Imap.offline|Offline-Karte\n"
+                                 "Imap.move|Karte verschieben\n"
+                                 "Imap.zoomin|Hineinzoomen\n"
+                                 "Imap.zoomout|Herauszoomen\n"
+                                 "Imap.center|Zur eigenen Position\n"
+                                 "Imap.rotate|\n"
+                                 "Imap.wphere|Wegpunkt in Kartenmitte\n"
+                                 "Imap.gohere|Hierhin navigieren\n"
+                                 "Imap.offline|Karten-Info\n"
                                  "P4\n"
                                  "Inodes.list|Knoten wählen …\n"
                                  "Iping|Reichweitentest (Ping)\n"

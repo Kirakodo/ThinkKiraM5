@@ -19,7 +19,14 @@ export const ACTIONS = {
   "nav.stop": ["Navigation beenden", "nav.stop"],
   "nav.track": ["Track starten/stoppen", "Track starten"],
   "track.clear": ["Track löschen", "track.clear"],
-  "map.offline": ["Offline-Karte (kommt bald)", "map.offline"],
+  "map.offline": ["Karten-Info", "map.offline"],
+  "map.move": ["Karte verschieben (Tasten-Modus)", "map.move"],
+  "map.zoomin": ["Hineinzoomen", "map.zoomin"],
+  "map.zoomout": ["Herauszoomen", "map.zoomout"],
+  "map.center": ["Zur eigenen Position", "map.center"],
+  "map.rotate": ["Ausrichtung Norden/Laufrichtung", "Ausrichtung: Laufrichtung"],
+  "map.wphere": ["Wegpunkt in Kartenmitte", "map.wphere"],
+  "map.gohere": ["Zur Kartenmitte navigieren", "map.gohere"],
   "nodes.list": ["Knotenliste (mit Knoten-Menü)", "nodes.list"],
   ping: ["Reichweitentest (Ping)", "ping"],
   "radio.mode": ["Funkmodus wechseln", "Zu Kira-Funk wechseln"],
@@ -52,7 +59,14 @@ Inav.stop|Navigation beenden
 Inav.track|
 Ipos.send|Position senden
 P3
-Imap.offline|Offline-Karte
+Imap.move|Karte verschieben
+Imap.zoomin|Hineinzoomen
+Imap.zoomout|Herauszoomen
+Imap.center|Zur eigenen Position
+Imap.rotate|
+Imap.wphere|Wegpunkt in Kartenmitte
+Imap.gohere|Hierhin navigieren
+Imap.offline|Karten-Info
 P4
 Inodes.list|Knoten wählen …
 Iping|Reichweitentest (Ping)

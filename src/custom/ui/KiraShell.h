@@ -78,6 +78,8 @@ class Shell : public NicheGraphics::InkHUD::Applet, private concurrency::OSThrea
     void drawNav();
     void drawArrow(int16_t cx, int16_t cy, int16_t r, float angle);
     void drawMap();
+    bool mapCenter(int32_t &lat, int32_t &lon);
+    void mapCenterHere();
     void drawNodes();
     void drawSettings();
     void drawMenu(const Menu &m);
@@ -119,6 +121,10 @@ class Shell : public NicheGraphics::InkHUD::Applet, private concurrency::OSThrea
     int lastUnread = -1;
     uint8_t lastUiRev = 0;
     uint32_t lastNavSig = 0;
+    // Karte
+    uint8_t mapZoom = 0, mapDir = 0;
+    bool mapFree = false, mapPan = false, mapCourseUp = false;
+    int32_t mapLat = 0, mapLon = 0;
 };
 
 } // namespace ThinkKira
