@@ -1,0 +1,97 @@
+// Testhilfe: simuliert ein ThinkNode M5 mit ThinkKira-Firmware über ein falsches navigator.serial.
+// Nur für Browser-Tests (vite build -c vite.test.config.js), wird nicht ausgeliefert.
+import { create, toBinary, fromBinary } from "@bufbuild/protobuf";
+import { Protobuf } from "@meshtastic/core";
+
+const P = Protobuf;
+const MY = 0x1234abcd;
+const log = (window.__mockLog = []);
+
+function frame(msg) {
+  const b = toBinary(P.Mesh.FromRadioSchema, create(P.Mesh.FromRadioSchema, msg));
+  return new Uint8Array([0x94, 0xc3, b.length >> 8, b.length & 0xff, ...b]);
+}
+
+function kiraPacket(text) {
+  return frame({
+    payloadVariant: {
+      case: "packet",
+      value: create(P.Mesh.MeshPacketSchema, {
+        from: MY,
+        to: MY,
+        payloadVariant: { case: "decoded", value: { portnum: 287, payload: new TextEncoder().encode(text) } },
+      }),
+    },
+  });
+}
+
+function configFrames(id) {
+  const C = P.Config;
+  return [
+    frame({ payloadVariant: { case: "myInfo", value: { myNodeNum: MY } } }),
+    frame({ payloadVariant: { case: "nodeInfo", value: { num: MY, user: { longName: "Sven M5", shortName: "SV5", hwModel: 107 } } } }),
+    frame({ payloadVariant: { case: "metadata", value: { firmwareVersion: "2.8.3.test", hwModel: 107, hasWifi: true, hasBluetooth: true } } }),
+    frame({ payloadVariant: { case: "config", value: create(C.ConfigSchema, { payloadVariant: { case: "device", value: { role: 0 } } }) } }),
+    frame({ payloadVariant: { case: "config", value: create(C.ConfigSchema, { payloadVariant: { case: "lora", value: { region: 3, modemPreset: 0 } } }) } }),
+    frame({ payloadVariant: { case: "config", value: create(C.ConfigSchema, { payloadVariant: { case: "network", value: { wifiSsid: "Altes-Netz" } } }) } }),
+    frame({ payloadVariant: { case: "channel", value: { index: 0, role: 1, settings: { name: "" } } } }),
+    frame({ payloadVariant: { case: "configCompleteId", value: id } }),
+  ];
+}
+
+class FakePort {
+  constructor() {
+    this.readable = null;
+    this.writable = null;
+  }
+  async open() {
+    this.readable = new ReadableStream({ start: (c) => (this.ctrl = c) });
+    let buf = [];
+    this.writable = new WritableStream({
+      write: (chunk) => {
+        buf.push(...chunk);
+        while (buf.length >= 4) {
+          const i = buf.findIndex((x, k) => x === 0x94 && buf[k + 1] === 0xc3);
+          if (i < 0) return void (buf = []);
+          if (i > 0) buf = buf.slice(i);
+          const len = (buf[2] << 8) | buf[3];
+          if (buf.length < 4 + len) return;
+          this.handle(new Uint8Array(buf.slice(4, 4 + len)));
+          buf = buf.slice(4 + len);
+        }
+      },
+    });
+  }
+  send(bytes) {
+    setTimeout(() => this.ctrl.enqueue(bytes), 5);
+  }
+  handle(bytes) {
+    const m = fromBinary(P.Mesh.ToRadioSchema, bytes);
+    const v = m.payloadVariant;
+    log.push(v.case);
+    if (v.case === "wantConfigId") configFrames(v.value).forEach((f) => this.send(f));
+    if (v.case === "packet" && v.value.payloadVariant.case === "decoded" && v.value.payloadVariant.value.portnum === 287) {
+      const cmd = new TextDecoder().decode(v.value.payloadVariant.value.payload);
+      log.push("kira:" + cmd);
+      const replies = {
+        wifiscan: ["w|-55|0|Heimnetz", "w|-78|1|Cafe Gast", "w|end|2"],
+        get: ["m|meshtastic|0.2.1"],
+        info: ["i|0.2.1|v2|4096|4096|2244|2368|120|8|0|180|87|4012|1", "f|1024"],
+        stats: ["s|12|1|5|2|1|1", "h|0a0b0c0d|-91|5.5|12", "r|1|0a0b0c0d|-95|4.0|-93|5.0|30", "s|end"],
+        ping: ["r|2|0a0b0c0d|-96|3.5|-94|4.5|0"],
+      }[cmd];
+      (replies ?? []).forEach((t) => this.send(kiraPacket(t)));
+    }
+  }
+  async close() {
+    this.readable = this.writable = null;
+  }
+  getInfo() {
+    return {};
+  }
+}
+
+export const fakePort = new FakePort();
+Object.defineProperty(navigator, "serial", {
+  value: { requestPort: async () => fakePort, getPorts: async () => [fakePort], addEventListener() {}, removeEventListener() {} },
+});

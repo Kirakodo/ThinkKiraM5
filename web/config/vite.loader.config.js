@@ -1,7 +1,9 @@
 // ThinkKira Loader – eigenes ES-Modul + CSS
 import { defineConfig } from "vite";
+import { nodeShims } from "./src/node-shims/alias.js";
 
 export default defineConfig({
+  resolve: { alias: nodeShims },
   base: "./",
   build: {
     outDir: "dist",

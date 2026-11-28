@@ -3,6 +3,8 @@
 #include "KiraModule.h"
 #include "KiraRadio.h"
 #include "KiraSettings.h"
+#include "KiraSystem.h"
+#include "PowerStatus.h"
 #include "MeshService.h"
 #include "NodeDB.h"
 #include "configuration.h"
@@ -38,6 +40,8 @@ void KiraModule::handleLocal(char *cmd)
         wifiScan();
     else if (!strcmp(cmd, "get"))
         sendMode();
+    else if (!strcmp(cmd, "info"))
+        sendInfo();
     else if (!strcmp(cmd, "stats"))
         sendStats();
     else if (!strcmp(cmd, "ping")) {
@@ -151,6 +155,22 @@ void KiraModule::sendMode()
 {
     char out[48];
     snprintf(out, sizeof(out), "m|%s|%s", settings().radioMode == RADIO_KIRA ? "kira" : "meshtastic", THINKKIRA_VERSION);
+    reply(out);
+}
+
+void KiraModule::sendInfo()
+{
+    SystemInfo i;
+    collectSystemInfo(i);
+    char out[200];
+    snprintf(out, sizeof(out), "i|%s|%s|%lu|%lu|%lu|%lu|%lu|%u|%lu|%lu|%d|%d|%d", THINKKIRA_VERSION, i.gpsV2 ? "v2" : "v1",
+             (unsigned long)(i.flashPhysical / 1024), (unsigned long)(i.flashConfigured / 1024), (unsigned long)(i.appUsed / 1024),
+             (unsigned long)(i.appSlot / 1024), (unsigned long)(i.fsUsed / 1024), (unsigned)i.psramEfuseMB,
+             (unsigned long)(i.psramUsable / 1024), (unsigned long)(i.heapFree / 1024),
+             powerStatus ? (int)powerStatus->getBatteryChargePercent() : -1, powerStatus ? powerStatus->getBatteryVoltageMv() : -1,
+             powerStatus && powerStatus->getHasUSB() ? 1 : 0);
+    reply(out);
+    snprintf(out, sizeof(out), "f|%lu", (unsigned long)(i.fsTotal / 1024));
     reply(out);
 }
 

@@ -6,6 +6,7 @@ import "./shim.js";
 import "./loader.css";
 import { ESPLoader, Transport } from "esptool-js";
 import { el, fehlerText, deFehler } from "./form.js";
+import { readBootInfo, readRuntimeInfo } from "./deviceinfo.js";
 
 let root, fw, manifest;
 let busy = false;
@@ -32,6 +33,40 @@ function setBusy(b) {
   ui.btn.disabled = b || !usb || !manifest;
   ui.backup.disabled = b || !usb;
   ui.restore.disabled = b || !usb;
+  ui.read.disabled = b || !usb;
+}
+
+// ---------- Geräte-Infos anzeigen ----------
+let lastInfo = [];
+function showInfo(sections, append = false) {
+  lastInfo = append ? lastInfo.concat(sections) : sections;
+  const cards = lastInfo.map(([title, rows]) =>
+    el(
+      "div",
+      { class: "col-lg-6" },
+      el(
+        "fieldset",
+        { class: "border rounded p-3 h-100" },
+        el("legend", { class: "float-none w-auto px-1 fs-6 fw-bold" }, title),
+        el(
+          "table",
+          { class: "table table-sm mb-0" },
+          el("tbody", {}, ...rows.map(([k, v]) => el("tr", {}, el("th", { class: "fw-normal text-muted w-50" }, k), el("td", {}, v)))),
+        ),
+      ),
+    ),
+  );
+  const save = el("button", { type: "button", class: "btn btn-sm btn-outline-secondary mt-3", onclick: saveInfo }, el("i", { class: "fas fa-file-download me-1" }), "Infos als Datei speichern");
+  ui.info.replaceChildren(el("h6", { class: "fw-bold mt-4" }, "Geräte-Infos"), el("div", { class: "row g-3" }, ...cards), save);
+}
+function saveInfo() {
+  const lines = ["ThinkKira – Geräte-Infos (" + new Date().toLocaleString("de-DE") + ")", ""];
+  for (const [title, rows] of lastInfo) {
+    lines.push("== " + title + " ==");
+    for (const [k, v] of rows) lines.push(k + ": " + v);
+    lines.push("");
+  }
+  download(new TextEncoder().encode(lines.join("\n")), "thinkkira-geraeteinfo.txt");
 }
 
 async function loadManifest() {
@@ -65,7 +100,7 @@ async function connect() {
     await transport.disconnect().catch(() => {});
     throw e;
   }
-  return { loader, transport };
+  return { loader, transport, port };
 }
 
 function errorText(e) {
@@ -118,6 +153,8 @@ function install() {
     if (!res.ok) throw deFehler("Download fehlgeschlagen (" + res.status + ")");
     const data = new Uint8Array(await res.arrayBuffer());
     const { loader } = keep(await connect());
+    setStatus("Lese Geräte-Infos vor dem Update …");
+    showInfo((await readBootInfo(loader)).sections);
     await writeImage(loader, data, part.offset ?? 0, ui.erase.checked);
     setStatus("Fertig! ThinkKira " + manifest.version + " ist installiert. Das Gerät startet neu.", "ok");
   });
@@ -135,7 +172,10 @@ function download(data, name) {
 function backup() {
   run(async (keep) => {
     const { loader } = keep(await connect());
-    const sizeStr = (await loader.detectFlashSize()) || "4MB";
+    setStatus("Lese Geräte-Infos …");
+    const bi = await readBootInfo(loader);
+    showInfo(bi.sections);
+    const sizeStr = bi.flashSize || "4MB";
     const total = (SIZES[sizeStr] || 4) * 1024 * 1024;
     const image = new Uint8Array(total);
     setStatus("Backup wird gelesen (" + sizeStr.replace("MB", " MB") + ", ca. 1–2 Minuten) …");
@@ -149,6 +189,28 @@ function backup() {
     const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-");
     download(image, "thinkkira-backup-" + stamp + ".bin");
     setStatus("Backup gespeichert (" + sizeStr.replace("MB", " MB") + "). Die Datei enthält Firmware, Einstellungen, Knoten und Schlüssel – sicher aufbewahren!", "ok");
+  });
+}
+
+function readDevice() {
+  run(async (keep) => {
+    const conn = keep(await connect());
+    setStatus("Lese Chip, Speicher und installierte Firmware …");
+    setProgress(30);
+    showInfo((await readBootInfo(conn.loader)).sections);
+    setProgress(50);
+    await conn.loader.after(); // Neustart in die Firmware
+    await conn.transport.disconnect().catch(() => {});
+    keep(null);
+    const rt = await readRuntimeInfo(conn.port, (t) => setStatus(t));
+    setProgress(100, true);
+    if (rt) {
+      showInfo(rt, true);
+      setStatus("Gerät ausgelesen. Nichts wurde verändert.", "ok");
+    } else {
+      showInfo([["Laufende Firmware", [["Status", "keine Antwort – keine Meshtastic-/ThinkKira-Firmware aktiv"]]]], true);
+      setStatus("Chip und Speicher ausgelesen. Die Firmware hat nicht geantwortet (leer oder fremde Firmware). Nichts wurde verändert.", "ok");
+    }
   });
 }
 
@@ -182,6 +244,8 @@ export function mount(target = "#tk-loader") {
   ui.erase.checked = true;
   ui.btn = el("button", { type: "button", class: "btn btn-primary", onclick: install }, icon("download"), "Installieren / Aktualisieren");
   ui.backup = el("button", { type: "button", class: "btn btn-outline-secondary", onclick: backup }, icon("save"), "Backup erstellen");
+  ui.read = el("button", { type: "button", class: "btn btn-outline-secondary", onclick: readDevice }, icon("info-circle"), "Gerät auslesen");
+  ui.info = el("div");
   ui.restore = el("button", { type: "button", class: "btn btn-outline-secondary", onclick: restore }, icon("upload"), "Backup zurückspielen");
   ui.file = el("input", { type: "file", accept: ".bin", class: "d-none", onchange: restoreFile });
   ui.status = el("p", { class: "mt-3 mb-0 text-muted", role: "status" });
@@ -207,15 +271,16 @@ export function mount(target = "#tk-loader") {
       ui.erase,
       el("label", { class: "form-check-label", for: "tk-erase" }, "Gerät vorher komplett löschen (empfohlen beim ersten Mal, löscht alle Einstellungen)"),
     ),
-    el("div", { class: "d-flex flex-wrap gap-2" }, ui.btn, ui.backup, ui.restore),
+    el("div", { class: "d-flex flex-wrap gap-2" }, ui.btn, ui.read, ui.backup, ui.restore),
     el(
       "p",
       { class: "form-text mb-0 mt-2" },
-      "Das Backup ist ein komplettes Abbild des Geräts (Firmware, Einstellungen, Knoten, Schlüssel) als .bin-Datei. Zurückspielen stellt genau diesen Stand wieder her.",
+      "„Gerät auslesen“ zeigt Chip, Speicher, installierte Firmware und Einstellungen, ohne etwas zu ändern. Das Backup ist ein komplettes Abbild des Geräts (Firmware, Einstellungen, Knoten, Schlüssel) als .bin-Datei. Zurückspielen stellt genau diesen Stand wieder her.",
     ),
     ui.file,
     ui.progress,
     ui.status,
+    ui.info,
   ];
   root.replaceChildren(...kids.filter(Boolean));
   setBusy(false);

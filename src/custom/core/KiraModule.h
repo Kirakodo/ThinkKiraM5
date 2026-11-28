@@ -3,6 +3,8 @@
 // Vom angeschlossenen Client (Konfigurator über USB/Bluetooth):
 //   "wifiscan"          -> je Netz "w|<rssi>|<offen 0/1>|<ssid>", danach "w|end|<anzahl>"
 //   "get"               -> "m|<meshtastic|kira>|<version>"
+//   "info"              -> "i|version|gps v1/v2|flashKB|flashBuildKB|appKB|appSlotKB|fsUsedKB|psramEfuseMB|psramKB|heapKB|akku%|mV|usb"
+//                          und "f|fsTotalKB"
 //   "mode|<meshtastic|kira>" -> "m|…", danach Neustart (nur bei Änderung)
 //   "stats"             -> "s|rxGut|rxFehler|tx|weitergeleitet|pings|pongs",
 //                          je gehörtem Paket "h|<von hex>|<rssi>|<snr>|<vor s>",
@@ -36,6 +38,7 @@ class KiraModule : public SinglePortModule
     void wifiScan();
     void sendStats();
     void sendMode();
+    void sendInfo();
     uint32_t lastPongMs = 0;
     bool pingFromClient = false;
 };

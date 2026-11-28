@@ -4,7 +4,8 @@
   "description": "ThinkKira Konfigurator",
   "scripts": {
     "build": "vite build && vite build -c vite.loader.config.js",
-    "dev": "vite"
+    "dev": "vite",
+    "test:browser": "TK_TEST_OUT=${TK_TEST_OUT:-/tmp/tk-test} vite build -c test/vite.test.config.js"
   },
   "license": "GPL-3.0-only",
   "dependencies": {

@@ -1,7 +1,9 @@
 // ThinkKira Konfigurator – Build als einzelnes ES-Modul + CSS für die Einbettung in eine PHP-Seite
 import { defineConfig } from "vite";
+import { nodeShims } from "./src/node-shims/alias.js";
 
 export default defineConfig({
+  resolve: { alias: nodeShims },
   base: "./",
   build: {
     outDir: "dist",
