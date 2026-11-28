@@ -30,7 +30,8 @@ function setProgress(pct, done = false) {
 function setBusy(b) {
   busy = b;
   const usb = "serial" in navigator;
-  ui.btn.disabled = b || !usb || !manifest;
+  const src = ui.src?.value || "tk:latest";
+  ui.btn.disabled = b || !usb || (src === "tk:latest" && !manifest) || (src === "file" && !ui.own.files?.[0]);
   ui.backup.disabled = b || !usb;
   ui.restore.disabled = b || !usb;
   ui.read.disabled = b || !usb;
@@ -76,10 +77,12 @@ async function loadManifest() {
     ui.version.textContent = manifest.version;
     if (manifest.release_url) ui.gh.href = manifest.release_url;
   } catch {
+    manifest = null;
     ui.version.textContent = "nicht erreichbar";
     setStatus("Das neueste Release konnte nicht geladen werden. Backup geht trotzdem.", "bad");
   }
   setBusy(busy);
+  loadSources();
 }
 
 // Port wählen, mit dem ESP32-S3 im Bootmodus verbinden. Gibt { loader, transport } zurück.
@@ -143,20 +146,83 @@ async function writeImage(loader, data, address, erase) {
   setProgress(100, true);
 }
 
+// Firmware-Quellen für die Auswahl: neueste/ältere ThinkKira-Versionen, Meshtastic-Original, eigene Datei
+async function loadSources() {
+  const [rel, mt] = await Promise.all([
+    fetch(fw + "?releases=1").then((r) => (r.ok ? r.json() : [])).catch(() => []),
+    fetch(fw + "?mt=info").then((r) => (r.ok ? r.json() : null)).catch(() => null),
+  ]);
+  const keep = ui.src.value;
+  const opts = [el("option", { value: "tk:latest" }, "ThinkKira " + (manifest?.version ?? "") + " (neueste, empfohlen)")];
+  const old = (Array.isArray(rel) ? rel : []).filter((r) => r.tag.slice(1) !== manifest?.version);
+  if (old.length) opts.push(el("optgroup", { label: "Ältere ThinkKira-Versionen" }, ...old.map((r) => el("option", { value: "tk:" + r.tag }, "ThinkKira " + r.tag.slice(1) + (r.date ? " vom " + r.date.split("-").reverse().join(".") : "")))));
+  if (mt?.version) {
+    const g = el("optgroup", { label: "Original Meshtastic (ohne ThinkKira-Funktionen)" }, el("option", { value: "mt:m5" }, "Meshtastic " + mt.version));
+    if (mt.inkhud) g.append(el("option", { value: "mt:m5-inkhud" }, "Meshtastic " + mt.version + " mit InkHUD-Anzeige"));
+    opts.push(g);
+  }
+  opts.push(el("option", { value: "file" }, "Eigene Firmware-Datei (.bin) vom PC …"));
+  ui.src.replaceChildren(...opts);
+  ui.src.value = [...ui.src.querySelectorAll("option")].some((o) => o.value === keep) ? keep : "tk:latest";
+  sourceChanged();
+}
+
+function sourceChanged() {
+  const v = ui.src.value;
+  ui.ownBox.classList.toggle("d-none", v !== "file");
+  ui.srcHint.textContent = v.startsWith("mt:")
+    ? "Achtung: Mit der originalen Meshtastic-Firmware fehlen Kira-Funk, eigene Oberfläche, Navigation und Offline-Karte. Zurück zu ThinkKira geht jederzeit hier im Loader."
+    : v === "file"
+      ? "Erlaubt sind komplette Abbilder (*.factory.bin, an Adresse 0) und reine App-Dateien (*.bin, an Adresse 0x10000). Nur Dateien für den ESP32-S3 im ThinkNode M5 verwenden!"
+      : v !== "tk:latest"
+        ? "Ältere Version: nur nötig, wenn die neueste Probleme macht. Einstellungen können dabei verloren gehen."
+        : "";
+  setBusy(busy);
+}
+
+// Adresse einer Datei bestimmen: Abbild mit Partitionstabelle → 0, App-Abbild (0xE9) → 0x10000
+function imageAddress(data) {
+  if (data.length > 0x8002 && data[0] === 0xe9 && data[0x8000] === 0xaa && data[0x8001] === 0x50) return 0;
+  if (data.length > 0x1000 && data[0] === 0xe9) return 0x10000;
+  throw deFehler("Die Datei ist keine ESP32-Firmware (.bin).");
+}
+
+async function fetchBin(url) {
+  setStatus("Firmware wird geladen …");
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw deFehler("Download fehlgeschlagen (" + res.status + ")");
+  return new Uint8Array(await res.arrayBuffer());
+}
+
 function install() {
-  const part = manifest?.builds?.[0]?.parts?.[0];
-  if (!part) return;
+  const src = ui.src.value;
+  const own = ui.own.files?.[0];
   run(async (keep) => {
-    setStatus("Firmware wird geladen …");
-    const url = new URL(part.path, new URL(fw + "?asset=manifest.json", location.href)).href;
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) throw deFehler("Download fehlgeschlagen (" + res.status + ")");
-    const data = new Uint8Array(await res.arrayBuffer());
+    let data, address = 0, name;
+    if (src === "tk:latest") {
+      const part = manifest?.builds?.[0]?.parts?.[0];
+      if (!part) throw deFehler("Das neueste Release ist nicht erreichbar.");
+      data = await fetchBin(new URL(part.path, new URL(fw + "?asset=manifest.json", location.href)).href);
+      address = part.offset ?? 0;
+      name = "ThinkKira " + manifest.version;
+    } else if (src.startsWith("tk:")) {
+      data = await fetchBin(fw + "?tag=" + encodeURIComponent(src.slice(3)) + "&asset=thinkkira-m5.factory.bin");
+      name = "ThinkKira " + src.slice(4);
+    } else if (src.startsWith("mt:")) {
+      data = await fetchBin(fw + "?mt=" + encodeURIComponent(src.slice(3)));
+      name = "Meshtastic" + (src === "mt:m5-inkhud" ? " (InkHUD)" : "");
+    } else {
+      if (!own) throw deFehler("Bitte zuerst eine Firmware-Datei wählen.");
+      data = new Uint8Array(await own.arrayBuffer());
+      address = imageAddress(data);
+      name = "„" + own.name + "“";
+    }
+    if (data.length < 0x1000 || data[0] !== 0xe9) throw deFehler("Die geladene Datei ist keine gültige Firmware.");
     const { loader } = keep(await connect());
     setStatus("Lese Geräte-Infos vor dem Update …");
     showInfo((await readBootInfo(loader)).sections);
-    await writeImage(loader, data, part.offset ?? 0, ui.erase.checked);
-    setStatus("Fertig! ThinkKira " + manifest.version + " ist installiert. Das Gerät startet neu.", "ok");
+    await writeImage(loader, data, address, ui.erase.checked && address === 0);
+    setStatus("Fertig! " + name + " ist installiert. Das Gerät startet neu.", "ok");
   });
 }
 
@@ -243,6 +309,10 @@ export function mount(target = "#tk-loader") {
   ui.erase = el("input", { type: "checkbox", id: "tk-erase", class: "form-check-input" });
   ui.erase.checked = true;
   ui.btn = el("button", { type: "button", class: "btn btn-primary", onclick: install }, icon("download"), "Installieren / Aktualisieren");
+  ui.src = el("select", { id: "tk-src", class: "form-select", onchange: sourceChanged }, el("option", { value: "tk:latest" }, "ThinkKira (neueste, empfohlen)"));
+  ui.own = el("input", { type: "file", accept: ".bin", class: "form-control", "aria-label": "Firmware-Datei", onchange: () => setBusy(busy) });
+  ui.ownBox = el("div", { class: "mb-2 d-none" }, ui.own);
+  ui.srcHint = el("div", { class: "form-text mb-2" });
   ui.backup = el("button", { type: "button", class: "btn btn-outline-secondary", onclick: backup }, icon("save"), "Backup erstellen");
   ui.read = el("button", { type: "button", class: "btn btn-outline-secondary", onclick: readDevice }, icon("info-circle"), "Gerät auslesen");
   ui.info = el("div");
@@ -263,8 +333,12 @@ export function mount(target = "#tk-loader") {
       el("li", {}, "Chrome oder Edge am PC verwenden."),
       el("li", {}, "ThinkNode M5 per USB-C anschließen."),
       el("li", {}, "Vor dem ersten Aufspielen am besten „Backup erstellen“."),
-      el("li", {}, "„Installieren / Aktualisieren“ klicken und den Port wählen."),
+      el("li", {}, "Firmware wählen (normalerweise die neueste ThinkKira), dann „Installieren / Aktualisieren“ klicken und den Port wählen."),
     ),
+    el("label", { class: "form-label", for: "tk-src" }, "Firmware"),
+    ui.src,
+    el("div", { class: "mt-2" }, ui.ownBox),
+    ui.srcHint,
     el(
       "div",
       { class: "form-check mb-3" },

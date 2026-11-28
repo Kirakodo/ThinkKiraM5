@@ -1,0 +1,46 @@
+# ThinkKira: originale Meshtastic-Firmware für das ThinkNode M5 aus dem neuesten Meshtastic-Release holen
+# und an die Vorabversion „meshtastic“ hängen – damit der Loader auch zurück auf Meshtastic wechseln kann.
+name: Meshtastic-Original für M5
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 4 * * 1" # montags
+
+permissions:
+  contents: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Neuestes Meshtastic-Release holen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eo pipefail
+          tag=$(gh api repos/meshtastic/firmware/releases/latest --jq .tag_name)
+          echo "Meshtastic $tag"
+          mkdir dl out
+          # je nach Meshtastic-Version heißt das Paket firmware-esp32s3-….zip oder enthält den Boardnamen
+          gh release download "$tag" -R meshtastic/firmware -D dl -p 'firmware-esp32s3-*.zip' || \
+            gh release download "$tag" -R meshtastic/firmware -D dl -p '*thinknode_m5*'
+          ls -l dl
+          for z in dl/*.zip; do unzip -o -q "$z" -d dl/x || true; done
+          find dl -name '*thinknode_m5*factory*.bin' | sort
+          m5=$(find dl -name 'firmware-thinknode_m5-[0-9]*.factory.bin' | head -1)
+          ink=$(find dl -name 'firmware-thinknode_m5-inkhud-[0-9]*.factory.bin' | head -1)
+          test -n "$m5" || { echo "Keine ThinkNode-M5-Firmware im Release $tag gefunden"; exit 1; }
+          cp "$m5" out/meshtastic-m5.factory.bin
+          if [ -n "$ink" ]; then cp "$ink" out/meshtastic-m5-inkhud.factory.bin; fi
+          ver=$(basename "$m5" | sed -E 's/firmware-thinknode_m5-(.*)\.factory\.bin/\1/')
+          printf '{"tag":"%s","version":"%s","inkhud":%s}\n' "$tag" "$ver" "$([ -n "$ink" ] && echo true || echo false)" > out/meshtastic.json
+          cat out/meshtastic.json
+      - name: An Release „meshtastic“ hängen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release view meshtastic >/dev/null 2>&1 || gh release create meshtastic --prerelease --title "Meshtastic-Original für ThinkNode M5" \
+            --notes "Unveränderte Meshtastic-Firmware (GPL-3.0, https://github.com/meshtastic/firmware) zum Zurückwechseln über den ThinkKira-Loader."
+          gh release upload meshtastic out/* --clobber

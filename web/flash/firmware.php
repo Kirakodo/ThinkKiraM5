@@ -21,7 +21,45 @@ const TK_ASSETS = [
 $asset = $_GET['asset'] ?? '';
 $map = $_GET['map'] ?? '';
 $release = 'latest/download';
-if (isset($_GET['maps'])) {
+$url = null;       // abweichende Quelle (GitHub-API)
+$transform = null; // Antwort vor dem Zwischenspeichern umbauen
+$cacheKey = null;
+if (isset($_GET['releases'])) {
+    // Liste der ThinkKira-Versionen für die Auswahl im Loader (ohne die Sammel-Releases „karten“ und „meshtastic“)
+    $asset = 'releases.json';
+    $url = 'https://api.github.com/repos/' . TK_REPO . '/releases?per_page=40';
+    $mime = 'application/json; charset=utf-8';
+    $transform = function ($data) {
+        $list = [];
+        foreach (json_decode($data, true) ?: [] as $r) {
+            if (!preg_match('/^v\d+\.\d+\.\d+$/', $r['tag_name'] ?? '') || !empty($r['draft'])) {
+                continue;
+            }
+            $list[] = ['tag' => $r['tag_name'], 'date' => substr($r['published_at'] ?? '', 0, 10), 'prerelease' => !empty($r['prerelease'])];
+        }
+        return json_encode($list);
+    };
+} elseif (isset($_GET['mt'])) {
+    // Originale Meshtastic-Firmware für das M5 (Workflow „Meshtastic-Original“ legt sie ins Release „meshtastic“)
+    $files = ['info' => 'meshtastic.json', 'm5' => 'meshtastic-m5.factory.bin', 'm5-inkhud' => 'meshtastic-m5-inkhud.factory.bin'];
+    if (!isset($files[$_GET['mt']])) {
+        http_response_code(404);
+        exit('unbekannte Datei');
+    }
+    $asset = $files[$_GET['mt']];
+    $release = 'download/meshtastic';
+    $mime = $_GET['mt'] === 'info' ? 'application/json; charset=utf-8' : 'application/octet-stream';
+    $cacheKey = 'mt-' . $asset;
+} elseif (isset($_GET['tag'])) {
+    // ältere ThinkKira-Version: ?tag=v0.3.2&asset=thinkkira-m5.factory.bin
+    if (!preg_match('/^v\d+\.\d+\.\d+$/', $_GET['tag']) || !in_array($asset, ['manifest.json', 'thinkkira-m5.factory.bin'], true)) {
+        http_response_code(404);
+        exit('unbekannte Version');
+    }
+    $release = 'download/' . $_GET['tag'];
+    $mime = TK_ASSETS[$asset];
+    $cacheKey = $_GET['tag'] . '-' . $asset;
+} elseif (isset($_GET['maps'])) {
     // Verzeichnis aller Offline-Karten (Name, Titel, Gebiet, Größe) für den Konfigurator
     $asset = 'karten.json';
     $release = 'download/karten';
@@ -46,10 +84,10 @@ $cacheDir = sys_get_temp_dir() . '/thinkkira-fw';
 if (!is_dir($cacheDir)) {
     @mkdir($cacheDir, 0700, true);
 }
-$cacheFile = $cacheDir . '/' . $asset;
+$cacheFile = $cacheDir . '/' . ($cacheKey ?? $asset);
 
 if (!is_file($cacheFile) || filemtime($cacheFile) < time() - TK_CACHE_SECONDS) {
-    $url = 'https://github.com/' . TK_REPO . '/releases/' . $release . '/' . rawurlencode($asset);
+    $url = $url ?? 'https://github.com/' . TK_REPO . '/releases/' . $release . '/' . rawurlencode($asset);
     $ch = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
@@ -57,6 +95,7 @@ if (!is_file($cacheFile) || filemtime($cacheFile) < time() - TK_CACHE_SECONDS) {
         CURLOPT_MAXREDIRS => 5,
         CURLOPT_TIMEOUT => 60,
         CURLOPT_USERAGENT => 'ThinkKira-Flasher',
+        CURLOPT_HTTPHEADER => ['Accept: application/vnd.github+json'],
     ]);
     $data = curl_exec($ch);
     $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -68,6 +107,9 @@ if (!is_file($cacheFile) || filemtime($cacheFile) < time() - TK_CACHE_SECONDS) {
             exit('GitHub-Release nicht erreichbar');
         }
     } else {
+        if ($transform) {
+            $data = $transform($data);
+        }
         file_put_contents($cacheFile . '.tmp', $data);
         rename($cacheFile . '.tmp', $cacheFile);
     }

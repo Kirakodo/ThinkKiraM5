@@ -11590,8 +11590,8 @@ function r1(e, t = !1) {
 }
 function i1(e) {
 	e1 = e;
-	let t = "serial" in navigator;
-	Q.btn.disabled = e || !t || !$_, Q.backup.disabled = e || !t, Q.restore.disabled = e || !t, Q.read.disabled = e || !t;
+	let t = "serial" in navigator, n = Q.src?.value || "tk:latest";
+	Q.btn.disabled = e || !t || n === "tk:latest" && !$_ || n === "file" && !Q.own.files?.[0], Q.backup.disabled = e || !t, Q.restore.disabled = e || !t, Q.read.disabled = e || !t;
 }
 var a1 = [];
 function o1(e, t = !1) {
@@ -11610,15 +11610,15 @@ function s1() {
 		for (let [t, r] of n) e.push(t + ": " + r);
 		e.push("");
 	}
-	m1(new TextEncoder().encode(e.join("\n")), "thinkkira-geraeteinfo.txt");
+	v1(new TextEncoder().encode(e.join("\n")), "thinkkira-geraeteinfo.txt");
 }
 async function c1() {
 	try {
 		$_ = await (await fetch(Q_ + "?asset=manifest.json", { cache: "no-store" })).json(), Q.version.textContent = $_.version, $_.release_url && (Q.gh.href = $_.release_url);
 	} catch {
-		Q.version.textContent = "nicht erreichbar", $("Das neueste Release konnte nicht geladen werden. Backup geht trotzdem.", "bad");
+		$_ = null, Q.version.textContent = "nicht erreichbar", $("Das neueste Release konnte nicht geladen werden. Backup geht trotzdem.", "bad");
 	}
-	i1(e1);
+	i1(e1), p1();
 }
 async function l1() {
 	$("Port auswählen …");
@@ -11674,24 +11674,56 @@ async function f1(e, t, n, r) {
 		reportProgress: (e, t, n) => r1(Math.round(t / n * 100))
 	}), $("Neustart …"), await e.after(), r1(100, !0);
 }
-function p1() {
-	let e = $_?.builds?.[0]?.parts?.[0];
-	e && d1(async (t) => {
-		$("Firmware wird geladen …");
-		let n = new URL(e.path, new URL(Q_ + "?asset=manifest.json", location.href)).href, r = await fetch(n, { cache: "no-store" });
-		if (!r.ok) throw Dc("Download fehlgeschlagen (" + r.status + ")");
-		let i = new Uint8Array(await r.arrayBuffer()), { loader: a } = t(await l1());
-		$("Lese Geräte-Infos vor dem Update …"), o1((await q_(a)).sections), await f1(a, i, e.offset ?? 0, Q.erase.checked), $("Fertig! ThinkKira " + $_.version + " ist installiert. Das Gerät startet neu.", "ok");
+async function p1() {
+	let [e, t] = await Promise.all([fetch(Q_ + "?releases=1").then((e) => e.ok ? e.json() : []).catch(() => []), fetch(Q_ + "?mt=info").then((e) => e.ok ? e.json() : null).catch(() => null)]), n = Q.src.value, r = [N("option", { value: "tk:latest" }, "ThinkKira " + ($_?.version ?? "") + " (neueste, empfohlen)")], i = (Array.isArray(e) ? e : []).filter((e) => e.tag.slice(1) !== $_?.version);
+	if (i.length && r.push(N("optgroup", { label: "Ältere ThinkKira-Versionen" }, ...i.map((e) => N("option", { value: "tk:" + e.tag }, "ThinkKira " + e.tag.slice(1) + (e.date ? " vom " + e.date.split("-").reverse().join(".") : ""))))), t?.version) {
+		let e = N("optgroup", { label: "Original Meshtastic (ohne ThinkKira-Funktionen)" }, N("option", { value: "mt:m5" }, "Meshtastic " + t.version));
+		t.inkhud && e.append(N("option", { value: "mt:m5-inkhud" }, "Meshtastic " + t.version + " mit InkHUD-Anzeige")), r.push(e);
+	}
+	r.push(N("option", { value: "file" }, "Eigene Firmware-Datei (.bin) vom PC …")), Q.src.replaceChildren(...r), Q.src.value = [...Q.src.querySelectorAll("option")].some((e) => e.value === n) ? n : "tk:latest", m1();
+}
+function m1() {
+	let e = Q.src.value;
+	Q.ownBox.classList.toggle("d-none", e !== "file"), Q.srcHint.textContent = e.startsWith("mt:") ? "Achtung: Mit der originalen Meshtastic-Firmware fehlen Kira-Funk, eigene Oberfläche, Navigation und Offline-Karte. Zurück zu ThinkKira geht jederzeit hier im Loader." : e === "file" ? "Erlaubt sind komplette Abbilder (*.factory.bin, an Adresse 0) und reine App-Dateien (*.bin, an Adresse 0x10000). Nur Dateien für den ESP32-S3 im ThinkNode M5 verwenden!" : e === "tk:latest" ? "" : "Ältere Version: nur nötig, wenn die neueste Probleme macht. Einstellungen können dabei verloren gehen.", i1(e1);
+}
+function h1(e) {
+	if (e.length > 32770 && e[0] === 233 && e[32768] === 170 && e[32769] === 80) return 0;
+	if (e.length > 4096 && e[0] === 233) return 65536;
+	throw Dc("Die Datei ist keine ESP32-Firmware (.bin).");
+}
+async function g1(e) {
+	$("Firmware wird geladen …");
+	let t = await fetch(e, { cache: "no-store" });
+	if (!t.ok) throw Dc("Download fehlgeschlagen (" + t.status + ")");
+	return new Uint8Array(await t.arrayBuffer());
+}
+function _1() {
+	let e = Q.src.value, t = Q.own.files?.[0];
+	d1(async (n) => {
+		let r, i = 0, a;
+		if (e === "tk:latest") {
+			let e = $_?.builds?.[0]?.parts?.[0];
+			if (!e) throw Dc("Das neueste Release ist nicht erreichbar.");
+			r = await g1(new URL(e.path, new URL(Q_ + "?asset=manifest.json", location.href)).href), i = e.offset ?? 0, a = "ThinkKira " + $_.version;
+		} else if (e.startsWith("tk:")) r = await g1(Q_ + "?tag=" + encodeURIComponent(e.slice(3)) + "&asset=thinkkira-m5.factory.bin"), a = "ThinkKira " + e.slice(4);
+		else if (e.startsWith("mt:")) r = await g1(Q_ + "?mt=" + encodeURIComponent(e.slice(3))), a = "Meshtastic" + (e === "mt:m5-inkhud" ? " (InkHUD)" : "");
+		else {
+			if (!t) throw Dc("Bitte zuerst eine Firmware-Datei wählen.");
+			r = new Uint8Array(await t.arrayBuffer()), i = h1(r), a = "„" + t.name + "“";
+		}
+		if (r.length < 4096 || r[0] !== 233) throw Dc("Die geladene Datei ist keine gültige Firmware.");
+		let { loader: o } = n(await l1());
+		$("Lese Geräte-Infos vor dem Update …"), o1((await q_(o)).sections), await f1(o, r, i, Q.erase.checked && i === 0), $("Fertig! " + a + " ist installiert. Das Gerät startet neu.", "ok");
 	});
 }
-function m1(e, t) {
+function v1(e, t) {
 	let n = URL.createObjectURL(new Blob([e], { type: "application/octet-stream" })), r = N("a", {
 		href: n,
 		download: t
 	});
 	document.body.append(r), r.click(), r.remove(), setTimeout(() => URL.revokeObjectURL(n), 1e4);
 }
-function h1() {
+function y1() {
 	d1(async (e) => {
 		let { loader: t } = e(await l1());
 		$("Lese Geräte-Infos …");
@@ -11703,10 +11735,10 @@ function h1() {
 			let n = Math.min(n1, i - e);
 			a.set(await t.readFlash(e, n), e), r1(Math.round((e + n) / i * 100));
 		}
-		await t.after(), r1(100, !0), m1(a, "thinkkira-backup-" + (/* @__PURE__ */ new Date()).toISOString().slice(0, 16).replace(/[:T]/g, "-") + ".bin"), $("Backup gespeichert (" + r.replace("MB", " MB") + "). Die Datei enthält Firmware, Einstellungen, Knoten und Schlüssel – sicher aufbewahren!", "ok");
+		await t.after(), r1(100, !0), v1(a, "thinkkira-backup-" + (/* @__PURE__ */ new Date()).toISOString().slice(0, 16).replace(/[:T]/g, "-") + ".bin"), $("Backup gespeichert (" + r.replace("MB", " MB") + "). Die Datei enthält Firmware, Einstellungen, Knoten und Schlüssel – sicher aufbewahren!", "ok");
 	});
 }
-function g1() {
+function b1() {
 	d1(async (e) => {
 		let t = e(await l1());
 		$("Lese Chip, Speicher und installierte Firmware …"), r1(30), o1((await q_(t.loader)).sections), r1(50), await t.loader.after(), await t.transport.disconnect().catch(() => {}), e(null);
@@ -11714,10 +11746,10 @@ function g1() {
 		r1(100, !0), n ? (o1(n, !0), $("Gerät ausgelesen. Nichts wurde verändert.", "ok")) : (o1([["Laufende Firmware", [["Status", "keine Antwort – keine Meshtastic-/ThinkKira-Firmware aktiv"]]]], !0), $("Chip und Speicher ausgelesen. Die Firmware hat nicht geantwortet (leer oder fremde Firmware). Nichts wurde verändert.", "ok"));
 	});
 }
-function _1() {
+function x1() {
 	Q.file.value = "", Q.file.click();
 }
-function v1() {
+function S1() {
 	let e = Q.file.files?.[0];
 	e && d1(async (t) => {
 		let n = new Uint8Array(await e.arrayBuffer());
@@ -11726,7 +11758,7 @@ function v1() {
 		await f1(r, n, 0, !1), $("Backup „" + e.name + "“ wurde zurückgespielt. Das Gerät startet neu.", "ok");
 	});
 }
-function y1(e = "#tk-loader") {
+function C1(e = "#tk-loader") {
 	if (Z_ = typeof e == "string" ? document.querySelector(e) : e, !Z_) return;
 	Q_ = Z_.dataset.firmware || window.TK_FIRMWARE_PHP || "firmware.php", Z_.classList.add("tk-loader");
 	let t = (e) => N("i", { class: "fas fa-" + e + " me-1" });
@@ -11741,24 +11773,34 @@ function y1(e = "#tk-loader") {
 	}), Q.erase.checked = !0, Q.btn = N("button", {
 		type: "button",
 		class: "btn btn-primary",
-		onclick: p1
-	}, t("download"), "Installieren / Aktualisieren"), Q.backup = N("button", {
+		onclick: _1
+	}, t("download"), "Installieren / Aktualisieren"), Q.src = N("select", {
+		id: "tk-src",
+		class: "form-select",
+		onchange: m1
+	}, N("option", { value: "tk:latest" }, "ThinkKira (neueste, empfohlen)")), Q.own = N("input", {
+		type: "file",
+		accept: ".bin",
+		class: "form-control",
+		"aria-label": "Firmware-Datei",
+		onchange: () => i1(e1)
+	}), Q.ownBox = N("div", { class: "mb-2 d-none" }, Q.own), Q.srcHint = N("div", { class: "form-text mb-2" }), Q.backup = N("button", {
 		type: "button",
 		class: "btn btn-outline-secondary",
-		onclick: h1
+		onclick: y1
 	}, t("save"), "Backup erstellen"), Q.read = N("button", {
 		type: "button",
 		class: "btn btn-outline-secondary",
-		onclick: g1
+		onclick: b1
 	}, t("info-circle"), "Gerät auslesen"), Q.info = N("div"), Q.restore = N("button", {
 		type: "button",
 		class: "btn btn-outline-secondary",
-		onclick: _1
+		onclick: x1
 	}, t("upload"), "Backup zurückspielen"), Q.file = N("input", {
 		type: "file",
 		accept: ".bin",
 		class: "d-none",
-		onchange: v1
+		onchange: S1
 	}), Q.status = N("p", {
 		class: "mt-3 mb-0 text-muted",
 		role: "status"
@@ -11775,7 +11817,14 @@ function y1(e = "#tk-loader") {
 	let n = [
 		"serial" in navigator ? null : N("div", { class: "alert alert-warning" }, t("exclamation-triangle"), "Dieser Browser kann keine USB-Geräte ansprechen. Bitte Chrome oder Edge am PC nutzen."),
 		N("p", { class: "text-muted" }, "aktuelle Version ", Q.version, " · ", Q.gh),
-		N("ol", {}, N("li", {}, "Chrome oder Edge am PC verwenden."), N("li", {}, "ThinkNode M5 per USB-C anschließen."), N("li", {}, "Vor dem ersten Aufspielen am besten „Backup erstellen“."), N("li", {}, "„Installieren / Aktualisieren“ klicken und den Port wählen.")),
+		N("ol", {}, N("li", {}, "Chrome oder Edge am PC verwenden."), N("li", {}, "ThinkNode M5 per USB-C anschließen."), N("li", {}, "Vor dem ersten Aufspielen am besten „Backup erstellen“."), N("li", {}, "Firmware wählen (normalerweise die neueste ThinkKira), dann „Installieren / Aktualisieren“ klicken und den Port wählen.")),
+		N("label", {
+			class: "form-label",
+			for: "tk-src"
+		}, "Firmware"),
+		Q.src,
+		N("div", { class: "mt-2" }, Q.ownBox),
+		Q.srcHint,
 		N("div", { class: "form-check mb-3" }, Q.erase, N("label", {
 			class: "form-check-label",
 			for: "tk-erase"
@@ -11789,5 +11838,5 @@ function y1(e = "#tk-loader") {
 	];
 	Z_.replaceChildren(...n.filter(Boolean)), i1(!1), c1();
 }
-typeof document < "u" && (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => y1()) : y1());
-export { y1 as mount };
+typeof document < "u" && (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => C1()) : C1());
+export { C1 as mount };
