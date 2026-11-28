@@ -19,7 +19,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--pbf", required=True)
 ap.add_argument("--regions", required=True)
 ap.add_argument("--out", default="karten")
-ap.add_argument("--chunk", type=int, default=25, help="Regionen je osmium-Durchlauf")
+ap.add_argument("--chunk", type=int, default=6, help="Regionen je osmium-Durchlauf (mehr braucht viel Speicher)")
 ap.add_argument("--min-objects", type=int, default=300, help="Regionen mit weniger OSM-Objekten auslassen (Meer, Ausland)")
 a = ap.parse_args()
 
@@ -37,7 +37,7 @@ for i in range(0, len(regions), a.chunk):
         cfg["extracts"].append({"output": r["name"] + ".osm.pbf", "bbox": [w, s, e, n]})
     cfg_path = os.path.join(work, "extracts.json")
     json.dump(cfg, open(cfg_path, "w"))
-    subprocess.run(["osmium", "extract", "-c", cfg_path, "--overwrite", "-s", "smart", a.pbf], check=True)
+    subprocess.run(["osmium", "extract", "-c", cfg_path, "--overwrite", "-s", "complete_ways", a.pbf], check=True)
     for r in part:
         pbf = os.path.join(work, r["name"] + ".osm.pbf")
         gj = os.path.join(work, r["name"] + ".geojsonseq")
