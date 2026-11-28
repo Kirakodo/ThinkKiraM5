@@ -3,6 +3,11 @@
 #include "./LogoApplet.h"
 
 #include "mesh/NodeDB.h"
+#ifdef THINKKIRA
+#include "custom/features.h"
+#include "custom/ui/KiraLogo.h"
+#define KIRA_VER "ThinkKira " THINKKIRA_VERSION
+#endif
 
 using namespace NicheGraphics;
 
@@ -16,14 +21,24 @@ InkHUD::LogoApplet::LogoApplet() : concurrency::OSThread("LogoApplet")
     if (!settings->tips.safeShutdownSeen) {
         meshtastic_NodeInfoLite *ourNode = nodeDB->getMeshNode(nodeDB->getNodeNum());
         fontTitle = fontMedium;
+#ifdef THINKKIRA
+        textLeft = KIRA_VER;
+        textRight = parseShortName(ourNode);
+        textTitle = "ThinkKira";
+#else
         textLeft = xstr(APP_VERSION_SHORT);
         textRight = parseShortName(ourNode);
         textTitle = "Meshtastic";
+#endif
     } else {
         fontTitle = fontSmall;
         textLeft = "";
         textRight = "";
+#ifdef THINKKIRA
+        textTitle = KIRA_VER;
+#else
         textTitle = xstr(APP_VERSION_SHORT);
+#endif
     }
 
     bringToForeground();
@@ -86,7 +101,13 @@ void InkHUD::LogoApplet::onRender(bool full)
 
 #endif
 
+#ifdef THINKKIRA
+    // ThinkKira-Logo (vereinfachtes devsven.de-Logo) statt Meshtastic-Logo
+    logoH = KIRA_LOGO_H;
+    drawXBitmap(logoCX - KIRA_LOGO_W / 2, logoCY - KIRA_LOGO_H / 2, KIRA_LOGO, KIRA_LOGO_W, KIRA_LOGO_H, inverted ? WHITE : BLACK);
+#else
     drawLogo(logoCX, logoCY, logoW, logoH, inverted ? WHITE : BLACK);
+#endif
 
     if (!textLeft.empty()) {
         setFont(fontSmall);
@@ -130,7 +151,11 @@ void InkHUD::LogoApplet::onShutdown()
 
     textLeft = "";
     textRight = "";
+    #ifdef THINKKIRA
+    textTitle = "Fahre herunter …";
+#else
     textTitle = "Shutting Down...";
+#endif
     fontTitle = fontSmall;
 
     // Draw a shutting down screen, twice.
@@ -161,7 +186,11 @@ void InkHUD::LogoApplet::onApplyingChanges()
 
     textLeft = "";
     textRight = "";
+    #ifdef THINKKIRA
+    textTitle = "Übernehme Änderungen …";
+#else
     textTitle = "Applying changes";
+#endif
     fontTitle = fontSmall;
 
     inkhud->forceUpdate(Drivers::EInk::FAST, false);
@@ -173,7 +202,11 @@ void InkHUD::LogoApplet::onReboot()
 
     textLeft = "";
     textRight = "";
+    #ifdef THINKKIRA
+    textTitle = "Neustart …";
+#else
     textTitle = "Rebooting...";
+#endif
     fontTitle = fontSmall;
 
     inkhud->forceUpdate(Drivers::EInk::FULL, true, false);
