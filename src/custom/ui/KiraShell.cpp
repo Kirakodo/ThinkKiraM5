@@ -650,7 +650,21 @@ bool Shell::runAction(const std::string &id)
             toast("Navigation zur Kartenmitte");
         }
     } else if (id == "wifi") {
-        return phase("5");
+        // WLAN-Zustand und Adresse für „Per WLAN verbinden“ im Konfigurator
+        std::vector<std::string> l;
+#if HAS_WIFI
+        if (!config.network.wifi_enabled) {
+            l = {"WLAN ist aus.", "Einschalten im Konfigurator unter Einstellungen → WLAN."};
+        } else if (WiFi.status() == WL_CONNECTED) {
+            l = {"Verbunden mit", std::string(config.network.wifi_ssid), "Adresse:", std::string(WiFi.localIP().toString().c_str()),
+                 "Im Konfigurator: Per WLAN verbinden"};
+        } else {
+            l = {"WLAN an, aber nicht verbunden.", std::string("Netz: ") + config.network.wifi_ssid};
+        }
+#else
+        l = {"Dieses Gerät hat kein WLAN."};
+#endif
+        showInfo("WLAN & Web", l);
     } else if (id == "nodes.list") {
         pushMenu(menuNodeList());
     } else if (id == "ping") {

@@ -44,7 +44,7 @@ var r = {
 	"radio.stats": ["Funk-Statistik", "radio.stats"],
 	pages: ["Seiten ein/aus", "pages"],
 	"bt.toggle": ["Bluetooth an/aus", "Bluetooth aus (Neustart)"],
-	wifi: ["WLAN & Web (Phase 5)", "wifi"],
+	wifi: ["WLAN & Web (Adresse anzeigen)", "wifi"],
 	"sys.info": ["System-Info", "sys.info"],
 	"sys.reboot": ["Neustart", "sys.reboot"],
 	"sys.off": ["Ausschalten", "sys.off"],

@@ -143,7 +143,7 @@ class FakePort {
         trk: ["t|523906000,130645000,1764300000\n523910000,130650000,1764300010\n", "t|end|2"],
         ui: [this.ui ?? "u|012345|63|cbgsknm|OK;Ja;Nein;Bin unterwegs"],
         wifiscan: ["w|-55|0|Heimnetz", "w|-78|1|Cafe Gast", "w|end|2"],
-        get: ["m|meshtastic|0.4.5"],
+        get: ["m|meshtastic|0.4.5", "W|1|1|192.168.178.40"],
         info: ["i|0.2.1|v2|4096|4096|2244|2368|120|8|0|180|87|4012|1", "f|1024"],
         stats: ["s|12|1|5|2|1|1", "h|0a0b0c0d|-91|5.5|12", "r|1|0a0b0c0d|-95|4.0|-93|5.0|30", "s|end"],
         ping: ["r|2|0a0b0c0d|-96|3.5|-94|4.5|0"],
@@ -160,6 +160,26 @@ class FakePort {
 }
 
 export const fakePort = new FakePort();
+
+// WLAN: Gerät unter https://192.168.178.40 (HTTP-API /api/v1/toradio und /api/v1/fromradio)
+const httpPort = new FakePort();
+const httpOut = [];
+httpPort.send = (bytes) => httpOut.push(bytes.slice(4)); // ohne Seriell-Rahmen
+const realFetch = window.fetch.bind(window);
+window.fetch = async (url, opt = {}) => {
+  const m = String(url).match(/^https:\/\/192\.168\.178\.40(\/.*)$/);
+  if (!m) {
+    if (/^https:\/\/\d+\.\d+\.\d+\.\d+/.test(String(url))) throw new TypeError("Failed to fetch");
+    return realFetch(url, opt);
+  }
+  await new Promise((r) => setTimeout(r, 15));
+  if (m[1].startsWith("/api/v1/toradio")) {
+    if (opt.method === "PUT") httpPort.handle(new Uint8Array(opt.body));
+    return new Response(null, { status: opt.method === "OPTIONS" ? 204 : 200 });
+  }
+  if (m[1].startsWith("/api/v1/fromradio")) return new Response(httpOut.shift() ?? new Uint8Array(0), { status: 200 });
+  return new Response("", { status: 404 });
+};
 Object.defineProperty(navigator, "serial", {
   value: { requestPort: async () => fakePort, getPorts: async () => [fakePort], addEventListener() {}, removeEventListener() {} },
 });

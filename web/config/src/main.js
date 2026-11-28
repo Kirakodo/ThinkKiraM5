@@ -7,6 +7,7 @@ import "./style.css";
 import { MeshDevice, Protobuf } from "@meshtastic/core";
 import { TransportWebSerial } from "@meshtastic/transport-web-serial";
 import { TransportWebBluetooth } from "@meshtastic/transport-web-bluetooth";
+import { TransportHTTP } from "@meshtastic/transport-http";
 import { create, toJson, fromJson, clone, toBinary } from "@bufbuild/protobuf";
 import { renderMessage, el, group, fehlerText, deFehler } from "./form.js";
 import { SECTION_LABELS } from "./labels.js";
@@ -27,6 +28,9 @@ const state = {
   nodes: new Map(),
   waypoints: new Map(),
   wifiNets: null, // Ergebnis der WLAN-Suche: [{ ssid, rssi, open }]
+  wifi: null, // WLAN des Geräts: { on, up, ip } (Antwort „W|…“)
+  wlanHost: localStorage.getItem("tk-wlan-host") ?? "", // Adresse für „Per WLAN verbinden“
+  wlanHelp: false, // Hinweis zum Zertifikat zeigen
   wifiScanning: false,
   kira: null, // { mode, version } vom Gerät
   kiraStats: null, // { counters, heard: [], range: [] }
@@ -39,14 +43,40 @@ let root;
 
 // ---------- Verbindung ----------
 
+// WLAN: Das Gerät spricht HTTPS mit eigenem Zertifikat. Die Bibliothek fragt nur alle 3 s nach neuen
+// Daten – für Antworten (z. B. beim Kartenupload) viel zu langsam, daher öfter und direkt nach jedem Senden.
+async function wlanTransport(host) {
+  host = host.trim().replace(/^https?:\/\//, "").replace(/\/.*$/, "");
+  if (!host) throw deFehler("Bitte die Adresse des Geräts eingeben (steht auf dem Gerät unter Menü → WLAN & Web).");
+  state.wlanHost = host;
+  localStorage.setItem("tk-wlan-host", host);
+  let t;
+  try {
+    t = await TransportHTTP.create(host, true);
+  } catch {
+    state.wlanHelp = true;
+    throw deFehler(`Das Gerät unter ${host} ist nicht erreichbar. Siehe Hinweis unten.`);
+  }
+  state.wlanHelp = false;
+  if (t.interval) clearInterval(t.interval);
+  t.interval = setInterval(() => void t.safePoll(), 400);
+  const write = t.writeToRadio.bind(t);
+  t.writeToRadio = async (d) => {
+    await write(d);
+    setTimeout(() => void t.safePoll(), 30);
+  };
+  return t;
+}
+
 async function connect(kind) {
   try {
     setStatus("verbinde …");
-    const transport = kind === "serial" ? await TransportWebSerial.create(115200) : await TransportWebBluetooth.create();
+    const transport =
+      kind === "serial" ? await TransportWebSerial.create(115200) : kind === "wlan" ? await wlanTransport(state.wlanHost) : await TransportWebBluetooth.create();
     const device = new MeshDevice(transport);
     state.device = device;
     state.transport = transport;
-    state.transportKind = kind === "serial" ? "USB" : "Bluetooth";
+    state.transportKind = { serial: "USB", wlan: "WLAN", ble: "Bluetooth" }[kind];
     state.config = {};
     state.moduleConfig = {};
     state.channels = [];
@@ -55,6 +85,7 @@ async function connect(kind) {
     state.kiraStats = null;
     state.kiraStatsAsked = false;
     state.wifiNets = null;
+    state.wifi = null;
     state.ui = null;
     state.menuText = state.menuBuf = null;
     state.tips = state.tipsBuf = null;
@@ -569,6 +600,11 @@ function onKiraPacket(p) {
     state.diag.lastKira = text.slice(0, 30);
   }
   const [kind, a, b, ...rest] = text.split("|");
+  if (kind === "W") {
+    state.wifi = { on: a === "1", up: b === "1", ip: rest[0] ?? "" };
+    renderSoon();
+    return;
+  }
   if (kind === "m") {
     state.kira = { mode: a, version: b };
     renderSoon();
@@ -834,10 +870,37 @@ function pageConfig(section) {
     group(
       SECTION_LABELS[section] ?? section,
       section === "lora" ? hint("Für Deutschland: Region EU_868. Der eigene ThinkKira-Funkmodus kommt mit Firmware-Phase 2.") : null,
-      section === "network" ? hint("„Netze suchen“ lässt das Gerät die WLAN-Netze in der Nähe suchen (dauert ein paar Sekunden).") : null,
+      section === "network" ? hint("„Netze suchen“ lässt das Gerät die WLAN-Netze in der Nähe suchen (dauert ein paar Sekunden). Ist WLAN an, ist Bluetooth aus.") : null,
+      section === "network" && state.wifi ? wifiStatusLine() : null,
       renderMessage(schema, msg, section === "network" ? { custom: { wifiSsid: ssidPicker } } : {}),
       btn("Speichern", () => saveConfig(section), "primary", "fa-save"),
     ),
+  );
+}
+
+function wifiStatusLine() {
+  const w = state.wifi;
+  if (!w.on) return el("div", { class: "small mb-2" }, "WLAN am Gerät: aus");
+  if (!w.up) return el("div", { class: "small mb-2" }, "WLAN am Gerät: an, aber nicht verbunden");
+  return el(
+    "div",
+    { class: "small mb-2 d-flex flex-wrap align-items-center gap-2" },
+    `WLAN am Gerät: verbunden, Adresse ${w.ip}`,
+    state.wlanHost === w.ip
+      ? el("span", { class: "badge text-bg-success" }, "für „Per WLAN verbinden“ gemerkt")
+      : el(
+          "button",
+          {
+            type: "button",
+            class: "btn btn-sm btn-outline-secondary",
+            onclick: () => {
+              state.wlanHost = w.ip;
+              localStorage.setItem("tk-wlan-host", w.ip);
+              render();
+            },
+          },
+          "Adresse für „Per WLAN verbinden“ merken",
+        ),
   );
 }
 
@@ -1285,6 +1348,42 @@ function toast(text, bad = false) {
   toastTimer = setTimeout(() => t.replaceChildren(), 5000);
 }
 
+// Eingabe der Geräteadresse + „Per WLAN verbinden“
+function wlanConnectGroup() {
+  const inp = el("input", { type: "text", class: "form-control", placeholder: "Adresse, z. B. 192.168.178.40", value: state.wlanHost, "aria-label": "Adresse des Geräts im WLAN", inputmode: "url" });
+  inp.addEventListener("input", () => (state.wlanHost = inp.value));
+  inp.addEventListener("keydown", (e) => e.key === "Enter" && connect("wlan"));
+  return el(
+    "div",
+    { class: "input-group w-auto" },
+    inp,
+    el("button", { type: "button", class: "btn btn-primary", onclick: () => connect("wlan") }, icon("fa-wifi"), "Per WLAN verbinden"),
+  );
+}
+
+function wlanHelpBox() {
+  const url = "https://" + state.wlanHost;
+  return el(
+    "div",
+    { class: "alert alert-info" },
+    el("div", { class: "fw-bold mb-1" }, "So klappt die Verbindung per WLAN:"),
+    el(
+      "ol",
+      { class: "mb-0" },
+      el("li", {}, "Gerät und Computer sind im selben WLAN. WLAN ist am Gerät eingeschaltet (Konfigurator → Einstellungen → WLAN). Bluetooth ist dann aus."),
+      el("li", {}, "Die Adresse steht auf dem Gerät unter Menü → WLAN & Web."),
+      el(
+        "li",
+        {},
+        "Einmalig ",
+        el("a", { href: url, target: "_blank", rel: "noopener" }, url + " öffnen"),
+        " und die Zertifikats-Warnung bestätigen (Erweitert → Weiter zu …). Das Gerät hat ein eigenes Zertifikat.",
+      ),
+      el("li", {}, "Zurück hierher und nochmal „Per WLAN verbinden“ drücken. Fragt der Browser nach Zugriff auf Geräte im lokalen Netzwerk: Zulassen."),
+    ),
+  );
+}
+
 function render() {
   if (!root) return;
   const connected = !!state.device;
@@ -1297,17 +1396,25 @@ function render() {
     { class: "d-flex flex-wrap gap-2 align-items-center mb-3" },
     connected ? null : el("button", { type: "button", class: "btn btn-primary", disabled: hasSerial ? null : "", onclick: () => connect("serial") }, icon("fa-plug"), "Per USB verbinden"),
     connected ? null : el("button", { type: "button", class: "btn btn-primary", disabled: hasBle ? null : "", onclick: () => connect("ble") }, icon("fa-plug"), "Per Bluetooth verbinden"),
+    connected ? null : wlanConnectGroup(),
     connected ? el("button", { type: "button", class: "btn btn-outline-secondary", onclick: disconnect }, icon("fa-times"), "Trennen") : null,
     el("span", { class: "badge " + (ok ? "text-bg-success" : "text-bg-secondary") }, connected ? state.status : state.status === "getrennt" ? "nicht verbunden" : state.status),
   );
 
   const kids = [bar, root.querySelector(".tk-msg") ?? el("div", { class: "tk-msg position-fixed bottom-0 end-0 p-3 z-3", role: "status", "aria-live": "polite" })];
 
+  if (!connected && state.wlanHelp) kids.push(wlanHelpBox());
   if (!hasSerial && !hasBle)
     kids.push(el("div", { class: "alert alert-warning" }, "Dein Browser kann nicht auf USB oder Bluetooth zugreifen. Bitte Chrome oder Edge am Computer verwenden."));
 
   if (!connected) {
-    kids.push(el("p", { class: "text-muted" }, "Gerät per USB-Kabel oder Bluetooth verbinden. Danach lassen sich alle Einstellungen ändern."));
+    kids.push(
+      el(
+        "p",
+        { class: "text-muted" },
+        "Gerät per USB-Kabel, Bluetooth oder WLAN verbinden. Danach lassen sich alle Einstellungen ändern. Für WLAN muss das Gerät im selben Netz sein; seine Adresse steht auf dem Gerät unter Menü → WLAN & Web.",
+      ),
+    );
   } else {
     kids.push(infoRow());
     const nav = el("ul", { class: "nav nav-pills flex-wrap gap-1 mb-3" });

@@ -437,6 +437,14 @@ void KiraModule::sendMode()
     char out[48];
     snprintf(out, sizeof(out), "m|%s|%s", settings().radioMode == RADIO_KIRA ? "kira" : "meshtastic", THINKKIRA_VERSION);
     reply(out);
+    // WLAN: W|an(0/1)|verbunden(0/1)|ip – für „Per WLAN verbinden“ im Konfigurator
+#if HAS_WIFI
+    bool on = config.network.wifi_enabled, up = on && WiFi.status() == WL_CONNECTED;
+    snprintf(out, sizeof(out), "W|%d|%d|%s", on ? 1 : 0, up ? 1 : 0, up ? WiFi.localIP().toString().c_str() : "");
+#else
+    snprintf(out, sizeof(out), "W|0|0|");
+#endif
+    reply(out);
 }
 
 void KiraModule::sendInfo()
