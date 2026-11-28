@@ -35,6 +35,7 @@ export const ACTIONS = {
   "bt.toggle": ["Bluetooth an/aus", "Bluetooth aus (Neustart)"],
   wifi: ["WLAN & Web (Adresse anzeigen)", "wifi"],
   "sys.info": ["System-Info", "sys.info"],
+  "sys.time": ["Uhrzeit, Zeitzone, Sommerzeit", "Uhrzeit & Zeitzone"],
   "sys.update": ["Update suchen und installieren", "Update"],
   "sys.reboot": ["Neustart", "sys.reboot"],
   "sys.off": ["Ausschalten", "sys.off"],
@@ -89,6 +90,7 @@ Iwifi|WLAN & Web
 E
 SSystem
 Isys.info|Info
+Isys.time|Uhrzeit & Zeitzone
 Isys.update|Update
 Isys.reboot|Neustart
 Isys.off|Ausschalten

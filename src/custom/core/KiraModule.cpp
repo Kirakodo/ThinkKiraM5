@@ -12,6 +12,7 @@
 #include "KiraSettings.h"
 #include "KiraSystem.h"
 #include "KiraTips.h"
+#include "KiraTime.h"
 #include "PowerStatus.h"
 #include "MeshService.h"
 #include "NodeDB.h"
@@ -114,6 +115,11 @@ void KiraModule::handleLocal(char *cmd)
             reply(("T|ok|" + std::to_string(tips().size())).c_str());
         else
             reply(("err|Tipps: " + err).c_str());
+    }
+    // time|epoch: Uhrzeit vom Konfigurator (PC-Uhr), GPS-Zeit hat Vorrang
+    else if (!strncmp(cmd, "time|", 5)) {
+        if (getRTCQuality() < RTCQualityGPS)
+            setClock(strtoul(cmd + 5, nullptr, 10));
     }
     else if (!strncmp(cmd, "ui|", 3)) {
         // ui|reihenfolge|seitenbits|startbausteine|antworten|tasten|statuszeile (leere Felder bleiben unverändert)

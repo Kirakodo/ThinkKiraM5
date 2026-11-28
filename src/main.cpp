@@ -1031,7 +1031,12 @@ void setup()
         setenv("TZ", config.device.tzdef, 1);
     } else {
         if (strncmp((const char *)slipstreamTZString, "tzpl", 4) == 0) {
+#ifdef THINKKIRA
+            strcpy(config.device.tzdef, "CET-1CEST,M3.5.0,M10.5.0/3"); // ThinkKira: Deutschland als Vorgabe
+            setenv("TZ", config.device.tzdef, 1);
+#else
             setenv("TZ", "GMT0", 1);
+#endif
         } else {
             setenv("TZ", (const char *)slipstreamTZString, 1);
             strcpy(config.device.tzdef, (const char *)slipstreamTZString);

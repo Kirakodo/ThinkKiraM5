@@ -12534,12 +12534,13 @@ var uh = {
 	"bt.toggle": ["Bluetooth an/aus", "Bluetooth aus (Neustart)"],
 	wifi: ["WLAN & Web (Adresse anzeigen)", "wifi"],
 	"sys.info": ["System-Info", "sys.info"],
+	"sys.time": ["Uhrzeit, Zeitzone, Sommerzeit", "Uhrzeit & Zeitzone"],
 	"sys.update": ["Update suchen und installieren", "Update"],
 	"sys.reboot": ["Neustart", "sys.reboot"],
 	"sys.off": ["Ausschalten", "sys.off"],
 	home: ["Zur Startseite", "Zur Startseite"],
 	sos: ["SOS auslösen", "SOS auslösen"]
-}, dh = "P0\nIpos.send|Position senden\nIlight.toggle|\nIsound.toggle|\nIscreen.off|Bildschirm aus\nP1\nImsg.reply|Antworten\nImsg.new|Neue Nachricht (alle)\nImsg.chats|Alle Chats\nImsg.clear|Löschen\nP2\nInav.goto|Navigieren zu …\nInav.wpsave|Wegpunkt hier speichern\nIwp.manage|Wegpunkte verwalten\nInav.stop|Navigation beenden\nInav.track|\nIpos.send|Position senden\nP3\nImap.move|Karte verschieben\nImap.zoomin|Hineinzoomen\nImap.zoomout|Herauszoomen\nImap.center|Zur eigenen Position\nImap.rotate|\nImap.wphere|Wegpunkt in Kartenmitte\nImap.gohere|Hierhin navigieren\nImap.offline|Karten-Info\nP4\nInodes.list|Knoten wählen …\nIping|Reichweitentest (Ping)\nP5\nSFunk\nIradio.mode|\nIradio.stats|Statistik\nIping|Reichweitentest (Ping)\nE\nSAnzeige & Töne\nIlight.cycle|\nIleds.toggle|\nIsound.toggle|\nIpages|Seiten ein/aus\nE\nSVerbindungen\nIbt.toggle|\nIwifi|WLAN & Web\nE\nSSystem\nIsys.info|Info\nIsys.update|Update\nIsys.reboot|Neustart\nIsys.off|Ausschalten\nE\n";
+}, dh = "P0\nIpos.send|Position senden\nIlight.toggle|\nIsound.toggle|\nIscreen.off|Bildschirm aus\nP1\nImsg.reply|Antworten\nImsg.new|Neue Nachricht (alle)\nImsg.chats|Alle Chats\nImsg.clear|Löschen\nP2\nInav.goto|Navigieren zu …\nInav.wpsave|Wegpunkt hier speichern\nIwp.manage|Wegpunkte verwalten\nInav.stop|Navigation beenden\nInav.track|\nIpos.send|Position senden\nP3\nImap.move|Karte verschieben\nImap.zoomin|Hineinzoomen\nImap.zoomout|Herauszoomen\nImap.center|Zur eigenen Position\nImap.rotate|\nImap.wphere|Wegpunkt in Kartenmitte\nImap.gohere|Hierhin navigieren\nImap.offline|Karten-Info\nP4\nInodes.list|Knoten wählen …\nIping|Reichweitentest (Ping)\nP5\nSFunk\nIradio.mode|\nIradio.stats|Statistik\nIping|Reichweitentest (Ping)\nE\nSAnzeige & Töne\nIlight.cycle|\nIleds.toggle|\nIsound.toggle|\nIpages|Seiten ein/aus\nE\nSVerbindungen\nIbt.toggle|\nIwifi|WLAN & Web\nE\nSSystem\nIsys.info|Info\nIsys.time|Uhrzeit & Zeitzone\nIsys.update|Update\nIsys.reboot|Neustart\nIsys.off|Ausschalten\nE\n";
 function fh(e) {
 	let t = [
 		[],
@@ -12820,7 +12821,7 @@ async function Wh(e) {
 			wlan: "WLAN",
 			ble: "Bluetooth"
 		}[e], q.config = {}, q.moduleConfig = {}, q.channels = [], q.nodes.clear(), q.kira = null, q.boot = null, q.kiraStats = null, q.kiraStatsAsked = !1, q.wifiNets = null, q.wifi = null, q.ui = null, q.menuText = q.menuBuf = null, q.tips = q.tipsBuf = null, q.devWps = q.wpBuf = null, q.wpAsked = !1, q.mapInfo = void 0, q.mapAsked = !1, n.events.onDeviceStatus.subscribe((e) => {
-			e === Vh ? (Jh("verbunden"), X("get"), X("ui"), X("mg"), X("tg")) : e === 2 && q.device === n && !q.closing ? (Gh(n, t), Kh("Verbindung verloren")) : e === 6 && Jh("lese Einstellungen …");
+			e === Vh ? (Jh("verbunden"), X(`time|${Math.floor(Date.now() / 1e3)}`), X("get"), X("ui"), X("mg"), X("tg")) : e === 2 && q.device === n && !q.closing ? (Gh(n, t), Kh("Verbindung verloren")) : e === 6 && Jh("lese Einstellungen …");
 		}), n.events.onMyNodeInfo.subscribe((e) => q.myNodeNum = e.myNodeNum), n.events.onDeviceMetadataPacket.subscribe((e) => {
 			q.metadata = e.data, $();
 		}), n.events.onConfigPacket.subscribe((e) => {

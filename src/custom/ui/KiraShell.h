@@ -66,6 +66,7 @@ class Shell : public NicheGraphics::InkHUD::Applet, private concurrency::OSThrea
     Menu menuQuickReplies(uint32_t to, uint8_t channel, const std::string &title);
     Menu menuNodeList();
     void showUpdateMenu();
+    void showTimeMenu(int sel);
     Menu menuWaypoints(bool manage);
     Menu menuTargets();
     void targetWaypoint(size_t i);

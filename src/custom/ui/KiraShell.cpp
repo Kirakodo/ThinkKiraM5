@@ -18,6 +18,7 @@
 #include "custom/core/KiraSystem.h"
 #include "custom/features.h"
 #include "custom/core/KiraUpdate.h"
+#include "custom/core/KiraTime.h"
 #include "gps/GeoCoord.h"
 #include "main.h"
 #if HAS_WIFI
@@ -748,6 +749,8 @@ bool Shell::runAction(const std::string &id)
         l.push_back(b);
         l.push_back(hexifyNodeNum(nodeDB->getNodeNum()));
         showInfo("Info", l);
+    } else if (id == "sys.time") {
+        showTimeMenu(0);
     } else if (id == "sys.update") {
         if (ThinkKira::updateInfo().state != ThinkKira::UpdState::AVAILABLE)
             ThinkKira::updateCheckNow();
@@ -1659,6 +1662,68 @@ void Shell::showUpdateMenu()
     if (!stack.empty() && stack.back().title == "Update")
         stack.pop_back(); // ersetzen statt stapeln
     pushMenu(m);
+}
+
+// Uhrzeit & Zeitzone: eine Ebene, wird nach jeder Änderung neu aufgebaut (Auswahl bleibt stehen)
+void Shell::showTimeMenu(int sel)
+{
+    using namespace ThinkKira;
+    TimeZone z = timeZone();
+    Menu m{"Uhrzeit", {}};
+    uint32_t t = getValidTime(RTCQualityDevice, true);
+    char b[48];
+    if (t) {
+        time_t tt = t;
+        struct tm lt;
+        gmtime_r(&tt, &lt); // t ist schon Ortszeit
+        static const char *const WD[] = {"So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"};
+        snprintf(b, sizeof(b), "%02d:%02d  %s %02d.%02d.%04d", lt.tm_hour, lt.tm_min, WD[lt.tm_wday], lt.tm_mday, lt.tm_mon + 1,
+                 lt.tm_year + 1900);
+        m.items.push_back({b, nullptr});
+    } else
+        m.items.push_back({"Uhr noch nicht gestellt", nullptr});
+    auto adj = [this](int32_t d, int at) {
+        return [this, d, at]() {
+            if (!ThinkKira::adjustClock(d))
+                toast("Uhr lässt sich nicht stellen");
+            showTimeMenu(at);
+        };
+    };
+    m.items.push_back({"Stunde +1", adj(3600, 1)});
+    m.items.push_back({"Stunde -1", adj(-3600, 2)});
+    m.items.push_back({"Minute +10", adj(600, 3)});
+    m.items.push_back({"Minute -10", adj(-600, 4)});
+    m.items.push_back({"Minute +1", adj(60, 5)});
+    m.items.push_back({"Minute -1", adj(-60, 6)});
+    m.items.push_back({std::string("Zeitzone: ") + (z.custom ? std::string("eigene") : tzLabel(z.offsetMin)), [this]() {
+                           TimeZone c = timeZone();
+                           Menu l{"Zeitzone", {}};
+                           for (int16_t off = -12 * 60; off <= 14 * 60; off += 60) {
+                               if (!c.custom && off == c.offsetMin)
+                                   l.sel = l.items.size();
+                               l.items.push_back({tzLabel(off) + (off == 60 ? " (Deutschland)" : ""), [this, off]() {
+                                                      TimeZone n = timeZone();
+                                                      setTimeZone(off, n.custom ? DST_AUTO : n.dst);
+                                                      showTimeMenu(7);
+                                                  }});
+                           }
+                           stack.pop_back();
+                           pushMenu(l);
+                       }});
+    m.items.push_back({std::string("Sommerzeit: ") + dstLabel(z.dst), [this]() {
+                           TimeZone c = timeZone();
+                           setTimeZone(c.custom ? 60 : c.offsetMin, (DstMode)((c.dst + 1) % 3));
+                           showTimeMenu(8);
+                       }});
+    m.items.push_back({"Wird von GPS und App automatisch gestellt", nullptr});
+    m.sel = sel < (int)m.items.size() ? sel : 0;
+    if (!stack.empty() && (stack.back().title == "Uhrzeit" || stack.back().title == "Zeitzone"))
+        stack.pop_back(); // ersetzen statt stapeln
+    if (stack.size() >= 2)
+        stack.back() = m;
+    else
+        stack.push_back(m);
+    redraw();
 }
 
 void Shell::drawOff()

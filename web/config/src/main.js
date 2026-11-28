@@ -90,6 +90,7 @@ async function connect(kind) {
     device.events.onDeviceStatus.subscribe((s) => {
       if (s === STATUS_CONFIGURED) {
         setStatus("verbunden");
+        kiraSend(`time|${Math.floor(Date.now() / 1000)}`); // Uhr des Geräts nach dem PC stellen
         kiraSend("get");
         kiraSend("ui");
         kiraSend("mg");
