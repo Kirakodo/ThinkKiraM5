@@ -12819,7 +12819,7 @@ async function Wh(e) {
 			serial: "USB",
 			wlan: "WLAN",
 			ble: "Bluetooth"
-		}[e], q.config = {}, q.moduleConfig = {}, q.channels = [], q.nodes.clear(), q.kira = null, q.kiraStats = null, q.kiraStatsAsked = !1, q.wifiNets = null, q.wifi = null, q.ui = null, q.menuText = q.menuBuf = null, q.tips = q.tipsBuf = null, q.devWps = q.wpBuf = null, q.wpAsked = !1, q.mapInfo = void 0, q.mapAsked = !1, n.events.onDeviceStatus.subscribe((e) => {
+		}[e], q.config = {}, q.moduleConfig = {}, q.channels = [], q.nodes.clear(), q.kira = null, q.boot = null, q.kiraStats = null, q.kiraStatsAsked = !1, q.wifiNets = null, q.wifi = null, q.ui = null, q.menuText = q.menuBuf = null, q.tips = q.tipsBuf = null, q.devWps = q.wpBuf = null, q.wpAsked = !1, q.mapInfo = void 0, q.mapAsked = !1, n.events.onDeviceStatus.subscribe((e) => {
 			e === Vh ? (Jh("verbunden"), X("get"), X("ui"), X("mg"), X("tg")) : e === 2 && q.device === n && !q.closing ? (Gh(n, t), Kh("Verbindung verloren")) : e === 6 && Jh("lese Einstellungen …");
 		}), n.events.onMyNodeInfo.subscribe((e) => q.myNodeNum = e.myNodeNum), n.events.onDeviceMetadataPacket.subscribe((e) => {
 			q.metadata = e.data, $();
@@ -13171,6 +13171,15 @@ function Sg(e) {
 	let n = new TextDecoder().decode(t.payload);
 	q.diag && (q.diag.kira++, q.diag.lastKira = n.slice(0, 30));
 	let [r, i, a, ...o] = n.split("|");
+	if (r === "B") {
+		q.boot = {
+			reason: i,
+			up: +a,
+			heap: +o[0],
+			at: Date.now()
+		}, J();
+		return;
+	}
 	if (r === "W") {
 		q.wifi = {
 			on: i === "1",
@@ -13565,7 +13574,7 @@ function Ig() {
 		max: "500",
 		value: String(q.arrive ?? 20),
 		id: "tk-arrive"
-	}), u = e ? G("Wegpunkte im Gerät (" + o.length + " von 64)", q.navTarget ? W("div", { class: "alert alert-info py-1 px-2 small" }, "Aktuelles Ziel: " + q.navTarget) : null, o.length ? zg([
+	}), u = e ? G("Wegpunkte im Gerät (" + o.length + " von 64)", q.navTarget ? W("div", { class: "alert alert-info py-1 px-2 small" }, "Aktuelles Ziel: " + q.navTarget) : null, o.length ? Bg([
 		"Name",
 		"Position",
 		""
@@ -13608,7 +13617,10 @@ function Lg() {
 	});
 	return Dg(G("Schnellantworten", Og("Erscheinen auf dem Gerät unter Nachrichten → Antworten. Eine Nachricht pro Zeile."), e, Z("Speichern", () => Xh((t) => t.setCannedMessages(B(K.CannedMessages.CannedMessageModuleConfigSchema, { messages: e.value.split("\n").map((e) => e.trim()).filter(Boolean).join("|") }))), "primary", "fa-save")));
 }
-function Rg() {
+function Rg(e) {
+	return e < 3600 ? Math.round(e / 60) + " min" : e < 86400 ? (e / 3600).toFixed(1).replace(".", ",") + " h" : (e / 86400).toFixed(1).replace(".", ",") + " Tagen";
+}
+function zg() {
 	let e = q.kira, t;
 	if (!e) t = G("Funkmodus", W("div", { class: "alert alert-warning mb-0" }, "Keine Antwort vom ThinkKira-Modul. Bitte die neueste ThinkKira-Firmware über den Loader aufspielen."));
 	else {
@@ -13622,14 +13634,14 @@ function Rg() {
 		}, "Modus"), n), Og("Kira-Funk nutzt ein eigenes Sync-Word: Die Geräte hören nur noch andere ThinkKira-Geräte im Kira-Funk, nicht mehr das Meshtastic-Netz. Kanäle und Verschlüsselung bleiben gleich. Beim Wechsel startet das Gerät neu."), Z("Modus speichern", async () => {
 			if (n.value === e.mode) return Q("Der Modus ist schon eingestellt.");
 			await X("mode|" + n.value) && Q("Gespeichert. Das Gerät startet neu – danach bitte neu verbinden.");
-		}, "primary", "fa-save"), W("div", { class: "small text-muted mt-2" }, "ThinkKira " + e.version));
+		}, "primary", "fa-save"), W("div", { class: "small text-muted mt-2" }, "ThinkKira " + e.version), q.boot ? W("div", { class: "small text-muted" }, `Läuft seit ${Rg(q.boot.up)} · letzter Neustart: ${q.boot.reason} · frei ${q.boot.heap} KB`) : null);
 	}
 	let n = q.kiraStats, r = [];
 	if (n?.counters) {
 		let e = n.counters, t = (e, t) => W("div", { class: "col-6 col-md-4" }, W("div", { class: "small text-muted" }, e), W("div", { class: "fw-bold" }, String(t)));
 		r.push(W("div", { class: "row g-2 mb-3" }, t("Empfangen", e.rxGood), t("Empfangsfehler", e.rxBad), t("Gesendet", e.tx), t("Weitergeleitet", e.relay), t("Pings", e.pings), t("Antworten", e.pongs)));
 	}
-	n?.heard?.length && (r.push(W("div", { class: "fw-bold small mb-1" }, "Zuletzt gehört")), r.push(zg([
+	n?.heard?.length && (r.push(W("div", { class: "fw-bold small mb-1" }, "Zuletzt gehört")), r.push(Bg([
 		"Knoten",
 		"RSSI",
 		"SNR",
@@ -13641,7 +13653,7 @@ function Rg() {
 		e.ago + " s"
 	])))), n || r.push(Og("Noch keine Werte geladen."));
 	let i = G("Funk-Statistik", ...r, Z("Aktualisieren", () => X("stats"), "outline-secondary", "fa-sync")), a = [Og("Sendet einen Ping an alle direkt erreichbaren ThinkKira-Geräte (ohne Weiterleitung). Jede Antwort zeigt, wie gut beide Seiten sich hören.")];
-	n?.range?.length && a.push(zg([
+	n?.range?.length && a.push(Bg([
 		"#",
 		"Gerät",
 		"dort gehört",
@@ -13718,10 +13730,10 @@ function Rg() {
 	}, "outline-secondary", "fa-folder-open"), d ? Z("Karte löschen", () => confirm("Die Offline-Karte im Gerät löschen?") && X("mapx"), "outline-danger", "fa-trash") : null, q.mapLogText ? Z("Fehlerprotokoll kopieren", () => navigator.clipboard.writeText(q.mapLogText).then(() => Q("Protokoll kopiert – bitte an Sven/Claude schicken.")), "outline-secondary", "fa-clipboard") : null), Og("Übertragung per USB dauert einige Minuten. Detailkarten zeigen auch Wege und Pfade, die groben Karten nur Hauptstraßen, Flüsse und Orte. Kartendaten © OpenStreetMap-Mitwirkende (ODbL)."));
 	return W("div", {}, Dg(t, i), Dg(o, u), Dg(ee, G("Kommt noch", c)));
 }
-function zg(e, t) {
+function Bg(e, t) {
 	return W("div", { class: "table-responsive" }, W("table", { class: "table table-sm table-striped mb-2" }, W("thead", {}, W("tr", {}, ...e.map((e) => W("th", {}, e)))), W("tbody", {}, ...t.map((e) => W("tr", {}, ...e.map((e) => W("td", {}, e)))))));
 }
-function Bg() {
+function Vg() {
 	let e = W("input", {
 		type: "file",
 		class: "form-control form-control-sm",
@@ -13731,16 +13743,16 @@ function Bg() {
 		confirm("Alle Einstellungen auf Werkseinstellungen zurücksetzen?") && q.device?.factoryResetConfig();
 	}, "outline-danger", "fa-exclamation-triangle")));
 }
-function Vg() {
+function Hg() {
 	let e = q.page;
-	return e === "device" ? jg() : e === "channels" ? Pg() : e.startsWith("cfg:") ? Mg(e.slice(4)) : e === "modules" ? Fg() : e === "waypoints" ? Ig() : e === "canned" ? Lg() : e === "thinkkira" ? Rg() : Bg();
+	return e === "device" ? jg() : e === "channels" ? Pg() : e.startsWith("cfg:") ? Mg(e.slice(4)) : e === "modules" ? Fg() : e === "waypoints" ? Ig() : e === "canned" ? Lg() : e === "thinkkira" ? zg() : Vg();
 }
-var Hg;
+var Ug;
 function Q(e, t = !1) {
 	let n = Hh.querySelector(".tk-msg");
-	n && (n.replaceChildren(W("div", { class: "alert shadow py-2 mb-0 " + (t ? "alert-danger" : "alert-success") }, e)), clearTimeout(Hg), Hg = setTimeout(() => n.replaceChildren(), 5e3));
+	n && (n.replaceChildren(W("div", { class: "alert shadow py-2 mb-0 " + (t ? "alert-danger" : "alert-success") }, e)), clearTimeout(Ug), Ug = setTimeout(() => n.replaceChildren(), 5e3));
 }
-function Ug() {
+function Wg() {
 	let e = W("input", {
 		type: "text",
 		class: "form-control",
@@ -13755,7 +13767,7 @@ function Ug() {
 		onclick: () => Wh("wlan")
 	}, Eg("fa-wifi"), "Per WLAN verbinden"));
 }
-function Wg() {
+function Gg() {
 	let e = "https://" + q.wlanHost;
 	return W("div", { class: "alert alert-info" }, W("div", { class: "fw-bold mb-1" }, "So klappt die Verbindung per WLAN:"), W("ol", { class: "mb-0" }, W("li", {}, "Gerät und Computer sind im selben WLAN. WLAN ist am Gerät eingeschaltet (Konfigurator → Einstellungen → WLAN). Bluetooth ist dann aus."), W("li", {}, "Die Adresse steht auf dem Gerät unter Menü → WLAN & Web."), W("li", {}, "Einmalig ", W("a", {
 		href: e,
@@ -13775,7 +13787,7 @@ function $() {
 		class: "btn btn-primary",
 		disabled: n ? null : "",
 		onclick: () => Wh("ble")
-	}, Eg("fa-plug"), "Per Bluetooth verbinden"), e ? null : Ug(), e ? W("button", {
+	}, Eg("fa-plug"), "Per Bluetooth verbinden"), e ? null : Wg(), e ? W("button", {
 		type: "button",
 		class: "btn btn-outline-secondary",
 		onclick: qh
@@ -13784,7 +13796,7 @@ function $() {
 		role: "status",
 		"aria-live": "polite"
 	})];
-	if (!e && q.wlanHelp && i.push(Wg()), !t && !n && i.push(W("div", { class: "alert alert-warning" }, "Dein Browser kann nicht auf USB oder Bluetooth zugreifen. Bitte Chrome oder Edge am Computer verwenden.")), !e) i.push(W("p", { class: "text-muted" }, "Gerät per USB-Kabel, Bluetooth oder WLAN verbinden. Danach lassen sich alle Einstellungen ändern. Für WLAN muss das Gerät im selben Netz sein; seine Adresse steht auf dem Gerät unter Menü → WLAN & Web."));
+	if (!e && q.wlanHelp && i.push(Gg()), !t && !n && i.push(W("div", { class: "alert alert-warning" }, "Dein Browser kann nicht auf USB oder Bluetooth zugreifen. Bitte Chrome oder Edge am Computer verwenden.")), !e) i.push(W("p", { class: "text-muted" }, "Gerät per USB-Kabel, Bluetooth oder WLAN verbinden. Danach lassen sich alle Einstellungen ändern. Für WLAN muss das Gerät im selben Netz sein; seine Adresse steht auf dem Gerät unter Menü → WLAN & Web."));
 	else {
 		i.push(Ag());
 		let e = W("ul", { class: "nav nav-pills flex-wrap gap-1 mb-3" });
@@ -13795,12 +13807,12 @@ function $() {
 				q.page = t.id, $();
 			}
 		}, Eg(t.ic), t.title)));
-		i.push(e, Vg());
+		i.push(e, Hg());
 	}
 	Hh.replaceChildren(...i.filter(Boolean));
 }
-function Gg(e = "#tk-config") {
+function Kg(e = "#tk-config") {
 	Hh = typeof e == "string" ? document.querySelector(e) : e, Hh && $();
 }
-typeof document < "u" && (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => Gg()) : Gg());
-export { Gg as mount };
+typeof document < "u" && (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => Kg()) : Kg());
+export { Kg as mount };

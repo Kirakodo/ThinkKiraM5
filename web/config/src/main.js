@@ -74,6 +74,7 @@ async function connect(kind) {
     state.channels = [];
     state.nodes.clear();
     state.kira = null;
+    state.boot = null;
     state.kiraStats = null;
     state.kiraStatsAsked = false;
     state.wifiNets = null;
@@ -595,6 +596,12 @@ function onKiraPacket(p) {
     state.diag.lastKira = text.slice(0, 30);
   }
   const [kind, a, b, ...rest] = text.split("|");
+  if (kind === "B") {
+    // Laufzeit und Grund des letzten Neustarts (Fehlersuche)
+    state.boot = { reason: a, up: +b, heap: +rest[0], at: Date.now() };
+    renderSoon();
+    return;
+  }
   if (kind === "W") {
     state.wifi = { on: a === "1", up: b === "1", ip: rest[0] ?? "" };
     renderSoon();
@@ -1075,6 +1082,12 @@ function pageCanned() {
   );
 }
 
+function laufzeit(s) {
+  if (s < 3600) return Math.round(s / 60) + " min";
+  if (s < 86400) return (s / 3600).toFixed(1).replace(".", ",") + " h";
+  return (s / 86400).toFixed(1).replace(".", ",") + " Tagen";
+}
+
 function pageThinkKira() {
   const k = state.kira;
   // Funkmodus
@@ -1105,6 +1118,7 @@ function pageThinkKira() {
         "fa-save",
       ),
       el("div", { class: "small text-muted mt-2" }, "ThinkKira " + k.version),
+      state.boot ? el("div", { class: "small text-muted" }, `Läuft seit ${laufzeit(state.boot.up)} · letzter Neustart: ${state.boot.reason} · frei ${state.boot.heap} KB`) : null,
     );
   }
 

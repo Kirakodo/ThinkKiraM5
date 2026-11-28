@@ -23,6 +23,9 @@
 #if HAS_WIFI
 #include <WiFi.h>
 #endif
+#ifdef ARCH_ESP32
+#include <esp_system.h>
+#endif
 
 namespace ThinkKira
 {
@@ -468,6 +471,15 @@ void KiraModule::sendMode()
     snprintf(out, sizeof(out), "W|0|0|");
 #endif
     reply(out);
+    // Laufzeit und Grund des letzten Neustarts: B|grund|sekunden|freier Speicher (KB)
+#ifdef ARCH_ESP32
+    static const char *const REASONS[] = {"unbekannt", "Einschalten", "extern", "Software", "Absturz", "Watchdog (Interrupt)",
+                                          "Watchdog (Task)", "Watchdog", "Tiefschlaf", "Spannungsabfall", "SDIO"};
+    int rr = (int)esp_reset_reason();
+    snprintf(out, sizeof(out), "B|%s|%lu|%lu", rr >= 0 && rr < 11 ? REASONS[rr] : "unbekannt", (unsigned long)(millis() / 1000),
+             (unsigned long)(ESP.getFreeHeap() / 1024));
+    reply(out);
+#endif
 }
 
 void KiraModule::sendInfo()
