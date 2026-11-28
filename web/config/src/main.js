@@ -10,7 +10,7 @@ import { TransportWebBluetooth } from "@meshtastic/transport-web-bluetooth";
 import { create, toJson, fromJson, clone } from "@bufbuild/protobuf";
 import { renderMessage, el, group, fehlerText } from "./form.js";
 import { SECTION_LABELS } from "./labels.js";
-import { pageDesigner, parseUi } from "./designer.js";
+import { parseUi, uiCommand, parseDesign, exportDesign, pickFile } from "./designer.js";
 
 const P = Protobuf;
 const STATUS_CONFIGURED = 7;
@@ -53,8 +53,7 @@ async function connect(kind) {
     state.kiraStats = null;
     state.kiraStatsAsked = false;
     state.wifiNets = null;
-    state.ui = state.uiDraft = null;
-    state.uiPreview = 0;
+    state.ui = null;
 
     device.events.onDeviceStatus.subscribe((s) => {
       if (s === STATUS_CONFIGURED) {
@@ -126,7 +125,7 @@ function resetConnection(status) {
   state.kiraStats = null;
   state.wifiNets = null;
   state.wifiScanning = false;
-  state.ui = state.uiDraft = null;
+  state.ui = null;
   setStatus(status);
 }
 
@@ -265,7 +264,6 @@ function onKiraPacket(p) {
   }
   if (kind === "u") {
     state.ui = parseUi([a, b, ...rest]);
-    if (!state.dirty) state.uiDraft = null; // neu vom Gerät übernehmen
     renderSoon();
     return;
   }
@@ -409,7 +407,6 @@ const PAGES = [
   { id: "waypoints", title: "Wegpunkte", ic: "fa-flag" },
   { id: "canned", title: "Schnellantworten", ic: "fa-reply" },
   { id: "thinkkira", title: "ThinkKira", ic: "fa-star" },
-  { id: "designer", title: "Designer", ic: "fa-paint-brush" },
   { id: "system", title: "System", ic: "fa-cog" },
 ];
 
@@ -646,8 +643,6 @@ function pageThinkKira() {
   );
 
   const later = [
-    ["Seiten ein/aus, Licht, Buzzer, LEDs", 3],
-    ["Tastenbelegung", 3],
     ["Kompass, Ankunftsradius, Track", 4],
     ["Offline-Karte hochladen", 4],
     ["WLAN-Weboberfläche, Update aus GitHub-Release", 5],
@@ -662,7 +657,38 @@ function pageThinkKira() {
     state.kiraStatsAsked = true;
     setTimeout(() => kiraSend("stats"), 0);
   }
-  return el("div", {}, grid(modeBox, statBox), grid(rangeBox, group("Kommt noch", ul)));
+  // Design (Oberfläche) aus dem ThinkKira Designer
+  const ui = state.ui;
+  const designBox = group(
+    "Design der Oberfläche",
+    hint("Das Design erstellst du im ThinkKira Designer (geht auch ohne Gerät) und exportierst es als Datei. Hier überträgst du die Datei aufs Gerät. Das Gerät übernimmt sie sofort."),
+    ui
+      ? el(
+          "div",
+          { class: "small mb-1" },
+          el("div", {}, "Seiten: " + [...ui.order].filter((c) => ui.pages & (1 << +c)).map((c) => ["Start", "Nachrichten", "Navigation", "Karte", "Knoten", "Einstellungen"][+c]).join(" → ")),
+          el("div", {}, "Schnellantworten: " + ui.replies.join(", ")),
+        )
+      : el("div", { class: "alert alert-warning py-2 mb-1" }, "Das Gerät kennt noch kein Design. Bitte ThinkKira 0.3.1 oder neuer über den Loader aufspielen."),
+    btn(
+      "Design übertragen …",
+      async () => {
+        const f = await pickFile();
+        if (!f) return;
+        try {
+          const d = parseDesign(await f.text());
+          if (await kiraSend(uiCommand(d))) toast("Design „" + f.name + "“ übertragen.");
+          else toast("Übertragen fehlgeschlagen. Ist das Gerät noch verbunden?", true);
+        } catch (e) {
+          toast(e.message, true);
+        }
+      },
+      "primary",
+      "fa-upload",
+    ),
+    ui ? btn("Design vom Gerät exportieren", () => exportDesign(ui), "outline-secondary", "fa-download") : null,
+  );
+  return el("div", {}, grid(modeBox, statBox), grid(rangeBox, designBox), grid(group("Kommt noch", ul)));
 }
 
 function table(head, rows) {
@@ -712,7 +738,6 @@ function pageContent() {
   if (p === "waypoints") return pageWaypoints();
   if (p === "canned") return pageCanned();
   if (p === "thinkkira") return pageThinkKira();
-  if (p === "designer") return pageDesigner({ state, render, kiraSend, toast, btn, hint });
   return pageSystem();
 }
 

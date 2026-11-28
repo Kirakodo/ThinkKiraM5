@@ -44,8 +44,25 @@ Inhalt der Karte **`Konfigurator.php`** in `SUBPAGES/keylink/ThinkKira/`:
   ThinkKira-Funktionen (werden mit den Firmware-Phasen freigeschaltet) · System (Backup/Restore, Neustart, Werkseinstellungen).
 - Alles auf Deutsch.
 
+## Designer (eigener Tab, Karte `Designer.php`)
+
+Eigenständiges Werkzeug für die Bildschirm-Oberfläche: Seiten-Reihenfolge und an/aus, Bausteine der Startseite,
+Schnellantworten, Vorschau. Braucht **kein Gerät**; der Entwurf bleibt im Browser gespeichert. Ergebnis wird als
+Design-Datei (`thinkkira-design.json`) exportiert und im Konfigurator unter ThinkKira → „Design übertragen …“ aufs Gerät gebracht.
+
+Inhalt der Karte **`Designer.php`** in `SUBPAGES/keylink/ThinkKira/`:
+
+```html
+<div id="tk-designer"></div>
+<script type="module" src="/_scripts/php/keylink/thinkkira/firmware.php?asset=thinkkira-designer.js"></script>
+<a class="btn btn-outline-secondary btn-sm mt-3" href="https://github.com/Kirakodo/ThinkKiraM5/releases/latest/download/thinkkira-designer.html" download><i class="fas fa-download me-1"></i>Designer zum Offline-Nutzen herunterladen</a>
+```
+
+- `thinkkira-designer.html` ist eine einzelne Datei mit allem drin; per Doppelklick im Browser öffnen, geht ohne Internet.
+- `firmware.php` muss neu hochgeladen werden (neue erlaubte Datei `thinkkira-designer.js`).
+
 ## Erlaubte Dateien in `firmware.php`
-`?asset=` `manifest.json` · `thinkkira-m5.factory.bin` · `thinkkira-m5.bin` · `thinkkira-loader.js` · `thinkkira-loader.css` · `thinkkira-config.js` · `thinkkira-config.css`
+`?asset=` `manifest.json` · `thinkkira-m5.factory.bin` · `thinkkira-m5.bin` · `thinkkira-loader.js` · `thinkkira-loader.css` · `thinkkira-config.js` · `thinkkira-config.css` · `thinkkira-designer.js`
 
 ## Updates
 Alles kommt aus `https://github.com/Kirakodo/ThinkKiraM5/releases/latest`. Neues Release = Seite aktuell, auf dem Server ist nichts zu tun.

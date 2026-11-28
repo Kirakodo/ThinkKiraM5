@@ -1,5 +1,6 @@
-// ThinkKira Konfigurator – Designer für die Bildschirm-Oberfläche:
+// ThinkKira Designer – Bausteine für die Bildschirm-Oberfläche:
 // Seiten-Reihenfolge und an/aus, Bausteine der Startseite, Schnellantworten, mit Vorschau (200×200 E-Ink).
+// Design-Datei (JSON): { format: "thinkkira-design", version: 1, order, pages, start, replies[] }.
 // Gerätebefehle auf Port 287: "ui" → "u|reihenfolge|seitenbits|bausteine|antwort;antwort;…", "ui|…" setzt.
 // SPDX-License-Identifier: GPL-3.0-only
 import { el, group } from "./form.js";
@@ -26,6 +27,7 @@ const SAMPLE = {
   p: "52.3906 N  13.0645 O",
 };
 const MAX_REPLIES_LEN = 169;
+export const MAX_LEN = 169;
 export const DEFAULT_UI = {
   order: "012345",
   pages: 63,
@@ -43,7 +45,48 @@ export function uiCommand(d) {
   return ["ui", d.order, String(d.pages | 0x21), d.start, d.replies.join(";")].join("|");
 }
 
-const copy = (u) => ({ ...u, replies: [...u.replies] });
+export const copy = (u) => ({ order: u.order, pages: u.pages, start: u.start, replies: [...u.replies] });
+
+export function exportDesign(d, name = "thinkkira-design.json") {
+  const json = JSON.stringify({ format: "thinkkira-design", version: 1, ...copy(d) }, null, 2);
+  const a = el("a", { href: URL.createObjectURL(new Blob([json], { type: "application/json" })), download: name });
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+// Prüft eine Design-Datei; wirft einen Fehler mit deutschem Text, wenn sie nicht passt
+export function parseDesign(text) {
+  let j;
+  try {
+    j = JSON.parse(text);
+  } catch {
+    throw new Error("Die Datei ist keine gültige Design-Datei (kein JSON).");
+  }
+  if (j?.format !== "thinkkira-design") throw new Error("Das ist keine ThinkKira-Design-Datei.");
+  const order = String(j.order ?? "");
+  if (order.length !== 6 || [...order].sort().join("") !== "012345") throw new Error("Die Seiten-Reihenfolge in der Datei ist ungültig.");
+  const start = String(j.start ?? "");
+  if (start.length > 11 || [...start].some((w) => !WIDGETS[w])) throw new Error("Die Startseiten-Bausteine in der Datei sind ungültig.");
+  const replies = (Array.isArray(j.replies) ? j.replies : []).map((r) => String(r).replace(/[;|\n]/g, "").trim()).filter(Boolean);
+  if (!replies.length || replies.join(";").length > MAX_REPLIES_LEN) throw new Error("Die Schnellantworten in der Datei fehlen oder sind zu lang.");
+  return { order, pages: (+j.pages & 63) | 0x21, start, replies };
+}
+
+export function pickFile(accept = ".json,application/json") {
+  return new Promise((res) => {
+    const inp = el("input", { type: "file", accept });
+    inp.addEventListener("change", () => res(inp.files[0] ?? null));
+    inp.click();
+  });
+}
+
+// Prüft vor dem Übertragen/Exportieren; gibt einen Fehlertext oder null zurück
+export function checkDesign(d) {
+  d.replies = d.replies.map((x) => x.trim()).filter(Boolean);
+  if (!d.replies.length) return "Mindestens eine Schnellantwort wird gebraucht.";
+  if (d.replies.join(";").length > MAX_REPLIES_LEN) return "Die Schnellantworten sind zusammen zu lang. Bitte kürzen.";
+  return null;
+}
 const move = (arr, i, dir) => {
   const j = i + dir;
   if (j < 0 || j >= arr.length) return arr;
@@ -110,23 +153,11 @@ function drawPreview(canvas, d, pageIdx) {
   }
 }
 
-// ctx: { state, render, kiraSend, toast, btn, hint }
-export function pageDesigner(ctx) {
-  const { state, render, kiraSend, toast, btn, hint } = ctx;
-  if (!state.ui) {
-    return group(
-      "Designer",
-      el("div", { class: "alert alert-warning mb-0" }, "Keine Antwort vom Gerät. Der Designer braucht ThinkKira 0.3.1 oder neuer – bitte über den Loader aktualisieren."),
-    );
-  }
-  state.uiDraft ??= copy(state.ui);
-  state.uiPreview ??= 0;
-  const d = state.uiDraft;
-  const changed = () => {
-    state.dirty = true;
-    render();
-  };
-
+// Baut die Designer-Ansicht. v: { d (Entwurf, wird direkt geändert), preview (Seitenindex), changed(), setPreview(i),
+// hint(text), actions: [Elemente unter der Vorschau] }
+export function designerView(v) {
+  const { d, changed, hint } = v;
+  const state = { uiPreview: v.preview };
   // --- Seiten
   const pageRows = [...d.order].map((ch, i) => {
     const p = +ch;
@@ -143,10 +174,7 @@ export function pageDesigner(ctx) {
       { class: "list-group-item d-flex align-items-center gap-2 py-1" + (i === state.uiPreview ? " active" : "") },
       el("span", { class: "badge text-bg-secondary" }, String(i + 1)),
       el("div", { class: "form-check form-switch mb-0 flex-grow-1" }, sw, el("label", { class: "form-check-label", for: "tk-pg" + p }, PAGES[p] + (fixed ? " (immer an)" : ""))),
-      smallBtn("fa-eye", "Vorschau", () => {
-        state.uiPreview = i;
-        render();
-      }),
+      smallBtn("fa-eye", "Vorschau", () => v.setPreview(i)),
       smallBtn("fa-arrow-up", "Nach oben", () => {
         d.order = move([...d.order], i, -1).join("");
         changed();
@@ -210,7 +238,7 @@ export function pageDesigner(ctx) {
     const inp = el("input", { type: "text", class: "form-control form-control-sm", value: r, maxlength: "40", "aria-label": "Schnellantwort " + (i + 1) });
     inp.addEventListener("input", () => {
       d.replies[i] = inp.value.replace(/[;|]/g, "");
-      state.dirty = true;
+      v.typed?.();
       updCounter();
     });
     return el(
@@ -237,10 +265,19 @@ export function pageDesigner(ctx) {
     ...replyRows,
     counter,
     d.replies.length < 12
-      ? btn("Antwort hinzufügen", () => {
-          d.replies.push("Neue Antwort");
-          changed();
-        }, "outline-secondary", "fa-plus")
+      ? el(
+          "button",
+          {
+            type: "button",
+            class: "btn btn-sm btn-outline-secondary mt-2",
+            onclick: () => {
+              d.replies.push("Neue Antwort");
+              changed();
+            },
+          },
+          el("i", { class: "fas fa-plus me-1" }),
+          "Antwort hinzufügen",
+        )
       : null,
   );
 
@@ -251,30 +288,7 @@ export function pageDesigner(ctx) {
     "Vorschau",
     canvas,
     el("div", { class: "form-text text-center mb-2" }, "Seite " + (state.uiPreview + 1) + ": " + PAGES[+d.order[state.uiPreview]] + " – Beispielwerte"),
-    btn(
-      "Auf das Gerät übertragen",
-      async () => {
-        const r = d.replies.map((x) => x.trim()).filter(Boolean);
-        if (!r.length) return toast("Mindestens eine Schnellantwort wird gebraucht.", true);
-        if (r.join(";").length > MAX_REPLIES_LEN) return toast("Die Schnellantworten sind zusammen zu lang. Bitte kürzen.", true);
-        d.replies = r;
-        if (await kiraSend(uiCommand(d))) {
-          state.dirty = false;
-          toast("Übertragen. Das Gerät zeigt die neue Oberfläche sofort.");
-        } else toast("Übertragen fehlgeschlagen. Ist das Gerät noch verbunden?", true);
-      },
-      "primary",
-      "fa-upload",
-    ),
-    btn("Änderungen verwerfen", () => {
-      state.uiDraft = copy(state.ui);
-      state.dirty = false;
-      render();
-    }, "outline-secondary", "fa-undo"),
-    btn("Standard", () => {
-      state.uiDraft = copy(DEFAULT_UI);
-      changed();
-    }, "outline-secondary", "fa-magic"),
+    ...(v.actions ?? []),
   );
 
   return el(

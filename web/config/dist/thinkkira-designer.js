@@ -1,0 +1,263 @@
+// node_modules/@bufbuild/protobuf/dist/esm/descriptors.js
+var e;
+(function(e) {
+	e[e.DOUBLE = 1] = "DOUBLE", e[e.FLOAT = 2] = "FLOAT", e[e.INT64 = 3] = "INT64", e[e.UINT64 = 4] = "UINT64", e[e.INT32 = 5] = "INT32", e[e.FIXED64 = 6] = "FIXED64", e[e.FIXED32 = 7] = "FIXED32", e[e.BOOL = 8] = "BOOL", e[e.STRING = 9] = "STRING", e[e.BYTES = 12] = "BYTES", e[e.UINT32 = 13] = "UINT32", e[e.SFIXED32 = 15] = "SFIXED32", e[e.SFIXED64 = 16] = "SFIXED64", e[e.SINT32 = 17] = "SINT32", e[e.SINT64 = 18] = "SINT64";
+})(e ||= {}), e.INT64, e.UINT64, e.FIXED64, e.SFIXED64, e.SINT64, e.FLOAT, e.DOUBLE;
+var t = (e, t = {}, ...n) => {
+	let r = document.createElement(e);
+	for (let [e, n] of Object.entries(t)) e === "class" ? r.className = n : e.startsWith("on") ? r.addEventListener(e.slice(2), n) : n != null && r.setAttribute(e, n);
+	for (let e of n) e != null && r.append(e);
+	return r;
+};
+function n(e, ...n) {
+	return t("fieldset", { class: "border rounded p-3 h-100" }, t("legend", { class: "float-none w-auto px-1 fs-6 fw-bold" }, e), ...n);
+}
+// src/designer.js
+var r = [
+	"Start",
+	"Nachrichten",
+	"Navigation",
+	"Karte",
+	"Knoten",
+	"Einstellungen"
+], i = [0, 5], a = {
+	c: "Uhr (groß)",
+	b: "Akku",
+	g: "GPS-Status",
+	s: "Letztes Signal",
+	k: "Knoten online",
+	n: "Ungelesene Nachrichten",
+	m: "Funkmodus",
+	p: "Position (Koordinaten)"
+}, o = {
+	b: "Akku 87%",
+	g: "GPS: Fix, 9 Sat.",
+	s: "Signal: -92 dBm (vor 2m)",
+	k: "Knoten online: 4",
+	n: "Ungelesen: 2",
+	m: "Funk: Meshtastic",
+	p: "52.3906 N  13.0645 O"
+}, s = 169, c = {
+	order: "012345",
+	pages: 63,
+	start: "cbgsknm",
+	replies: [
+		"OK",
+		"Ja",
+		"Nein",
+		"Bin unterwegs",
+		"Komme gleich",
+		"Alles gut",
+		"Wo bist du?",
+		"Brauche Hilfe"
+	]
+}, l = (e) => ({
+	order: e.order,
+	pages: e.pages,
+	start: e.start,
+	replies: [...e.replies]
+});
+function u(e, n = "thinkkira-design.json") {
+	let r = JSON.stringify({
+		format: "thinkkira-design",
+		version: 1,
+		...l(e)
+	}, null, 2), i = t("a", {
+		href: URL.createObjectURL(new Blob([r], { type: "application/json" })),
+		download: n
+	});
+	i.click(), setTimeout(() => URL.revokeObjectURL(i.href), 1e3);
+}
+function d(e) {
+	let t;
+	try {
+		t = JSON.parse(e);
+	} catch {
+		throw Error("Die Datei ist keine gültige Design-Datei (kein JSON).");
+	}
+	if (t?.format !== "thinkkira-design") throw Error("Das ist keine ThinkKira-Design-Datei.");
+	let n = String(t.order ?? "");
+	if (n.length !== 6 || [...n].sort().join("") !== "012345") throw Error("Die Seiten-Reihenfolge in der Datei ist ungültig.");
+	let r = String(t.start ?? "");
+	if (r.length > 11 || [...r].some((e) => !a[e])) throw Error("Die Startseiten-Bausteine in der Datei sind ungültig.");
+	let i = (Array.isArray(t.replies) ? t.replies : []).map((e) => String(e).replace(/[;|\n]/g, "").trim()).filter(Boolean);
+	if (!i.length || i.join(";").length > s) throw Error("Die Schnellantworten in der Datei fehlen oder sind zu lang.");
+	return {
+		order: n,
+		pages: t.pages & 63 | 33,
+		start: r,
+		replies: i
+	};
+}
+function f(e = ".json,application/json") {
+	return new Promise((n) => {
+		let r = t("input", {
+			type: "file",
+			accept: e
+		});
+		r.addEventListener("change", () => n(r.files[0] ?? null)), r.click();
+	});
+}
+function p(e) {
+	return e.replies = e.replies.map((e) => e.trim()).filter(Boolean), e.replies.length ? e.replies.join(";").length > s ? "Die Schnellantworten sind zusammen zu lang. Bitte kürzen." : null : "Mindestens eine Schnellantwort wird gebraucht.";
+}
+var m = (e, t, n) => {
+	let r = t + n;
+	if (r < 0 || r >= e.length) return e;
+	let i = [...e];
+	return [i[t], i[r]] = [i[r], i[t]], i;
+}, h = (e, n, r, i) => t("button", {
+	type: "button",
+	class: "btn btn-sm btn-outline-secondary",
+	title: n,
+	"aria-label": n,
+	onclick: r,
+	disabled: i ? "" : null
+}, t("i", { class: "fas " + e }));
+function g(e, t, n) {
+	let a = e.getContext("2d");
+	a.setTransform(2, 0, 0, 2, 0, 0), a.fillStyle = "#fff", a.fillRect(0, 0, 200, 200), a.fillStyle = "#000", a.strokeStyle = "#000", a.lineWidth = 1, a.textBaseline = "top";
+	let s = +t.order[n];
+	a.font = "9px sans-serif", a.fillText(s === 0 ? "ThinkKira" : r[s], 2, 2), a.textAlign = "right", a.fillText("12:34  87%", 198, 2), a.textAlign = "left", a.beginPath(), a.moveTo(0, 14.5), a.lineTo(200, 14.5), a.stroke();
+	let c = 20;
+	if (s === 0) for (let e of t.start) {
+		if (c > 184) break;
+		e === "c" ? (a.font = "bold 34px sans-serif", a.textAlign = "center", a.fillText("12:34", 100, c), a.textAlign = "left", c += 42) : (a.font = "13px sans-serif", a.fillText(o[e] ?? "", 4, c), c += 18);
+	}
+	else a.font = "13px sans-serif", a.textAlign = "center", a.fillText(r[s], 100, 90), a.font = "10px sans-serif", a.fillText("(Inhalt wie auf dem Gerät)", 100, 108), a.textAlign = "left";
+	let l = [...t.order].map(Number).filter((e) => t.pages & 1 << e || i.includes(e)), u = 100 - (l.length - 1) * 12 / 2;
+	for (let e of l) a.beginPath(), a.arc(u, 194, 3, 0, Math.PI * 2), e === s ? a.fill() : a.stroke(), u += 12;
+}
+function _(e) {
+	let { d: o, changed: c, hint: l } = e, u = { uiPreview: e.preview }, d = [...o.order].map((n, a) => {
+		let s = +n, l = i.includes(s), d = t("input", {
+			type: "checkbox",
+			class: "form-check-input",
+			role: "switch",
+			id: "tk-pg" + s
+		});
+		return d.checked = l || !!(o.pages & 1 << s), d.disabled = l, d.addEventListener("change", () => {
+			o.pages ^= 1 << s, c();
+		}), t("li", { class: "list-group-item d-flex align-items-center gap-2 py-1" + (a === u.uiPreview ? " active" : "") }, t("span", { class: "badge text-bg-secondary" }, String(a + 1)), t("div", { class: "form-check form-switch mb-0 flex-grow-1" }, d, t("label", {
+			class: "form-check-label",
+			for: "tk-pg" + s
+		}, r[s] + (l ? " (immer an)" : ""))), h("fa-eye", "Vorschau", () => e.setPreview(a)), h("fa-arrow-up", "Nach oben", () => {
+			o.order = m([...o.order], a, -1).join(""), c();
+		}, a === 0), h("fa-arrow-down", "Nach unten", () => {
+			o.order = m([...o.order], a, 1).join(""), c();
+		}, a === 5));
+	}), f = n("Seiten & Reihenfolge", l("Die Haupttaste blättert in dieser Reihenfolge, die Zweittaste rückwärts. Lang auf der Zweittaste springt immer zur Startseite."), t("ul", { class: "list-group mb-0" }, ...d)), p = [...o.start].map((e, n) => t("li", { class: "list-group-item d-flex align-items-center gap-2 py-1" }, t("span", { class: "flex-grow-1" }, a[e]), h("fa-arrow-up", "Nach oben", () => {
+		o.start = m([...o.start], n, -1).join(""), c();
+	}, n === 0), h("fa-arrow-down", "Nach unten", () => {
+		o.start = m([...o.start], n, 1).join(""), c();
+	}, n === o.start.length - 1), h("fa-trash", "Entfernen", () => {
+		o.start = o.start.slice(0, n) + o.start.slice(n + 1), c();
+	}))), _ = Object.keys(a).filter((e) => !o.start.includes(e)), v = t("select", {
+		class: "form-select form-select-sm",
+		"aria-label": "Baustein hinzufügen"
+	}, t("option", { value: "" }, "Baustein hinzufügen …"), ..._.map((e) => t("option", { value: e }, a[e])));
+	v.addEventListener("change", () => {
+		v.value && (o.start += v.value, c());
+	});
+	let y = n("Startseite", l("Was auf der Startseite steht, von oben nach unten. Was nicht mehr auf den Bildschirm passt, wird weggelassen."), t("ul", { class: "list-group mb-2" }, ...p.length ? p : [t("li", { class: "list-group-item text-muted" }, "Keine Bausteine")]), _.length ? v : null), b = () => o.replies.join(";").length, x = t("div", { class: "form-text" }), S = () => {
+		let e = b();
+		x.textContent = e + " von 169 Zeichen", x.className = "form-text" + (e > s ? " text-danger" : "");
+	};
+	S();
+	let C = o.replies.map((n, r) => {
+		let i = t("input", {
+			type: "text",
+			class: "form-control form-control-sm",
+			value: n,
+			maxlength: "40",
+			"aria-label": "Schnellantwort " + (r + 1)
+		});
+		return i.addEventListener("input", () => {
+			o.replies[r] = i.value.replace(/[;|]/g, ""), e.typed?.(), S();
+		}), t("div", { class: "input-group input-group-sm mb-1" }, i, h("fa-arrow-up", "Nach oben", () => {
+			o.replies = m(o.replies, r, -1), c();
+		}, r === 0), h("fa-arrow-down", "Nach unten", () => {
+			o.replies = m(o.replies, r, 1), c();
+		}, r === o.replies.length - 1), h("fa-trash", "Löschen", () => {
+			o.replies.splice(r, 1), c();
+		}));
+	}), w = n("Schnellantworten", l("Erscheinen auf dem Gerät unter Nachrichten → Antworten. Zeichen ; und | sind nicht erlaubt."), ...C, x, o.replies.length < 12 ? t("button", {
+		type: "button",
+		class: "btn btn-sm btn-outline-secondary mt-2",
+		onclick: () => {
+			o.replies.push("Neue Antwort"), c();
+		}
+	}, t("i", { class: "fas fa-plus me-1" }), "Antwort hinzufügen") : null), T = t("canvas", {
+		width: "400",
+		height: "400",
+		class: "border rounded d-block mx-auto mw-100",
+		"aria-label": "Vorschau des Bildschirms"
+	});
+	g(T, o, u.uiPreview);
+	let E = n("Vorschau", T, t("div", { class: "form-text text-center mb-2" }, "Seite " + (u.uiPreview + 1) + ": " + r[+o.order[u.uiPreview]] + " – Beispielwerte"), ...e.actions ?? []);
+	return t("div", {}, t("div", { class: "row g-3 mb-3" }, t("div", { class: "col-lg-6" }, f), t("div", { class: "col-lg-6" }, E)), t("div", { class: "row g-3 mb-3" }, t("div", { class: "col-lg-6" }, y), t("div", { class: "col-lg-6" }, w)));
+}
+// src/designer-main.js
+var v = "thinkkira-design", y, b, x = 0, S;
+function C() {
+	try {
+		let e = localStorage.getItem(v);
+		if (e) return d(e);
+	} catch {}
+	return l(c);
+}
+function w() {
+	try {
+		localStorage.setItem(v, JSON.stringify({
+			format: "thinkkira-design",
+			version: 1,
+			...b
+		}));
+	} catch {}
+}
+function T(e, n = !1) {
+	let r = y.querySelector(".tk-msg");
+	r.replaceChildren(t("div", { class: "alert py-2 mb-3 " + (n ? "alert-danger" : "alert-success") }, e)), clearTimeout(S), S = setTimeout(() => r.replaceChildren(), 5e3);
+}
+var E = (e, n, r, i) => t("button", {
+	type: "button",
+	class: "btn btn-sm btn-" + r + " me-2 mt-2",
+	onclick: i
+}, t("i", { class: "fas " + n + " me-1" }), e);
+function D() {
+	let e = _({
+		d: b,
+		preview: x,
+		hint: (e) => t("div", { class: "form-text mb-2" }, e),
+		changed: () => {
+			w(), D();
+		},
+		typed: w,
+		setPreview: (e) => {
+			x = e, D();
+		},
+		actions: [
+			E("Design exportieren", "fa-download", "primary", () => {
+				let e = p(b);
+				if (e) return T(e, !0);
+				w(), u(b), T("Design-Datei gespeichert. Übertragen: Konfigurator → ThinkKira → „Design übertragen“.");
+			}),
+			E("Design importieren", "fa-upload", "outline-secondary", async () => {
+				let e = await f();
+				if (e) try {
+					b = d(await e.text()), x = 0, w(), D(), T("Design „" + e.name + "“ geladen.");
+				} catch (e) {
+					T(e.message, !0);
+				}
+			}),
+			E("Standard", "fa-magic", "outline-secondary", () => {
+				b = l(c), x = 0, w(), D();
+			})
+		]
+	});
+	y.replaceChildren(t("p", { class: "text-muted" }, "Hier stellst du die Oberfläche des ThinkKira ein – ganz ohne Gerät. Der Entwurf bleibt in diesem Browser gespeichert."), t("div", { class: "tk-msg" }), e);
+}
+function O() {
+	y = document.getElementById("tk-designer"), y && (b = C(), D());
+}
+document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", O) : O();
