@@ -1,18 +1,18 @@
 #pragma once
 
-#ifdef THINKKIRA
-namespace ThinkKira
-{
-uint8_t radioSyncWord(); // THINKKIRA: src/custom/core/KiraSettings.cpp
-}
-#endif
-
 #include "MeshPacketQueue.h"
 #include "RadioInterface.h"
 #include "concurrency/NotifiedWorkerThread.h"
 
 #include <RadioLib.h>
 #include <sys/types.h>
+
+#ifdef THINKKIRA
+namespace ThinkKira
+{
+uint8_t radioSyncWord(); // THINKKIRA: src/custom/core/KiraSettings.cpp
+}
+#endif
 
 // ESP32 has special rules about ISR code
 #ifdef ARDUINO_ARCH_ESP32
