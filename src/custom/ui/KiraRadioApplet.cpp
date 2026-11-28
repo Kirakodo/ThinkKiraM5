@@ -42,7 +42,7 @@ void RadioApplet::onRender(bool)
     renderedRx = c.rxGood + c.rxBad;
     renderedPongs = s.pongsReceived;
 
-    drawHeader(settings().radioMode == RADIO_KIRA ? "Funk: Kira-Funk" : "Funk: Meshtastic");
+    drawHeader(ThinkKira::settings().radioMode == RADIO_KIRA ? "Funk: Kira-Funk" : "Funk: Meshtastic");
     setFont(fontSmall);
     const int16_t x = 4;
     const int16_t lh = fontSmall.lineHeight() + 3;
