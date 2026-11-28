@@ -53,16 +53,19 @@ if (!is_dir($cacheDir)) {
 if (isset($_GET['releases'])) {
     // Liste der ThinkKira-Versionen für die Auswahl im Loader (ohne die Sammel-Releases „karten“ und „meshtastic“)
     $asset = 'releases.json';
-    $url = 'https://api.github.com/repos/' . TK_REPO . '/releases?per_page=40';
+    // Atom-Feed statt GitHub-API: hat kein Abruf-Limit (die API sperrt geteilte Server-IPs schnell)
+    $url = 'https://github.com/' . TK_REPO . '/releases.atom';
     $mime = 'application/json; charset=utf-8';
     $ttl = TK_LATEST_SECONDS * 2;
     $transform = function ($data) {
         $list = [];
-        foreach (json_decode($data, true) ?: [] as $r) {
-            if (!preg_match('/^v\d+\.\d+\.\d+$/', $r['tag_name'] ?? '') || !empty($r['draft'])) {
-                continue;
+        $xml = @simplexml_load_string($data);
+        foreach ($xml ? $xml->entry : [] as $e) {
+            $href = (string) $e->link['href'];
+            if (!preg_match('#/releases/tag/(v\d+\.\d+\.\d+)$#', $href, $m)) {
+                continue; // „karten“, „meshtastic“ usw.
             }
-            $list[] = ['tag' => $r['tag_name'], 'date' => substr($r['published_at'] ?? '', 0, 10), 'prerelease' => !empty($r['prerelease'])];
+            $list[] = ['tag' => $m[1], 'date' => substr((string) $e->updated, 0, 10)];
         }
         return json_encode($list);
     };
@@ -126,7 +129,6 @@ if (!is_file($cacheFile) || filemtime($cacheFile) < time() - $ttl) {
         CURLOPT_MAXREDIRS => 5,
         CURLOPT_TIMEOUT => 60,
         CURLOPT_USERAGENT => 'ThinkKira-Flasher',
-        CURLOPT_HTTPHEADER => ['Accept: application/vnd.github+json'],
     ]);
     $data = curl_exec($ch);
     $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
