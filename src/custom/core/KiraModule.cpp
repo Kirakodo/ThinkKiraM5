@@ -68,7 +68,7 @@ void KiraModule::handleLocal(char *cmd)
     else if (!strcmp(cmd, "wpl"))
         sendWaypoints();
     else if (!strncmp(cmd, "wpa|", 4) || !strncmp(cmd, "wpr|", 4) || !strncmp(cmd, "wpd|", 4) || !strncmp(cmd, "wps|", 4) ||
-             !strncmp(cmd, "wpg|", 4))
+             !strncmp(cmd, "wpg|", 4) || !strncmp(cmd, "wpq|", 4))
         waypointCommand(cmd);
     else if (!strcmp(cmd, "trk"))
         sendTrack();
@@ -179,7 +179,7 @@ void KiraModule::sendWaypoints()
     reply(b);
 }
 
-// wpa|name|lat|lon (anlegen) · wpr|i|name (umbenennen) · wpd|i (löschen) · wps|i (ins Mesh senden) · wpg|i (als Ziel)
+// wpa|name|lat|lon (anlegen) · wpq|name|lat|lon (anlegen ohne Antwort) · wpr|i|name (umbenennen) · wpd|i (löschen) · wps|i (ins Mesh senden) · wpg|i (als Ziel)
 void KiraModule::waypointCommand(char *cmd)
 {
     if (!kiraNav)
@@ -195,6 +195,10 @@ void KiraModule::waypointCommand(char *cmd)
     bool ok = false;
     size_t idx = f[0] ? strtoul(f[0], nullptr, 10) : 0;
     switch (cmd[2]) {
+    case 'q': // wie wpa, aber ohne Liste als Antwort (viele Wegpunkte auf einmal, danach wpl)
+        if (f[2] && kiraNav->addWaypoint(f[0], strtol(f[1], nullptr, 10), strtol(f[2], nullptr, 10), getValidTime(RTCQualityDevice)))
+            return;
+        return reply("err|Wegpunkt: nicht gespeichert (voll oder ungültig)");
     case 'a':
         ok = f[2] && kiraNav->addWaypoint(f[0], strtol(f[1], nullptr, 10), strtol(f[2], nullptr, 10), getValidTime(RTCQualityDevice));
         break;

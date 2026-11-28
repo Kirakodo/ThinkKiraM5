@@ -79,6 +79,10 @@ class FakePort {
       }
       this.wps ??= [{ name: "Haus", lat: 523906000, lon: 130645000 }];
       const f = cmd.split("|");
+      if (f[0] === "wpq") {
+        this.wps.push({ name: f[1], lat: +f[2], lon: +f[3] });
+        return;
+      }
       if (f[0] === "wpa") this.wps.push({ name: f[1], lat: +f[2], lon: +f[3] });
       if (f[0] === "wpr") this.wps[+f[1]].name = f[2];
       if (f[0] === "wpd") this.wps.splice(+f[1], 1);
@@ -143,7 +147,7 @@ class FakePort {
         trk: ["t|523906000,130645000,1764300000\n523910000,130650000,1764300010\n", "t|end|2"],
         ui: [this.ui ?? "u|012345|63|cbgsknm|OK;Ja;Nein;Bin unterwegs"],
         wifiscan: ["w|-55|0|Heimnetz", "w|-78|1|Cafe Gast", "w|end|2"],
-        get: ["m|meshtastic|0.5.0", "W|1|1|192.168.178.40", "B|Watchdog (Task)|5400|180"],
+        get: ["m|meshtastic|0.5.1", "W|1|1|192.168.178.40", "B|Watchdog (Task)|5400|180"],
         info: ["i|0.2.1|v2|4096|4096|2244|2368|120|8|0|180|87|4012|1", "f|1024"],
         stats: ["s|12|1|5|2|1|1", "h|0a0b0c0d|-91|5.5|12", "r|1|0a0b0c0d|-95|4.0|-93|5.0|30", "s|end"],
         ping: ["r|2|0a0b0c0d|-96|3.5|-94|4.5|0"],
