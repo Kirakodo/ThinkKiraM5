@@ -12918,6 +12918,15 @@ async function og() {
 }
 async function sg(e, t) {
 	if (!q.device) return Q("Bitte zuerst das Gerät verbinden.", !0);
+	if (q.status !== "verbunden") return Q("Das Gerät verbindet sich noch. Bitte warten, bis oben „verbunden“ steht.", !0);
+	if (!q.kira) {
+		await ng(["get"]).catch(() => {});
+		for (let e = 0; e < 25 && !q.kira; e++) await new Promise((e) => setTimeout(e, 200));
+		if (!q.kira) {
+			let e = q.device.queue;
+			return q.mapLogText = `ThinkKira antwortet nicht (get). Status ${q.status}, über ${q.transportKind ?? "?"}, Warteschlange ${e?.queue?.length ?? "?"}, gesperrt ${e?.lock ?? "?"}`, $(), Q("ThinkKira im Gerät antwortet nicht. Bitte Gerät neu starten (Taste lang drücken oder USB kurz trennen), neu verbinden und 10 Sekunden warten.", !0);
+		}
+	}
 	if (e.length < 40 || new TextDecoder().decode(e.subarray(0, 4)) !== "TKM1") return Q("Das ist keine ThinkKira-Kartendatei (.tkm).", !0);
 	let n = (q.kira?.version ?? "0").split(".").map(Number);
 	if (n[0] === 0 && (n[1] < 4 || n[1] === 4 && (n[2] || 0) < 1)) return Q("Auf dem Gerät läuft ThinkKira " + (q.kira?.version ?? "?") + ". Für Karten bitte zuerst im Loader die neueste Version installieren.", !0);
@@ -12926,7 +12935,7 @@ async function sg(e, t) {
 		sent: 0,
 		label: t,
 		cancel: !1
-	}, q.mapLogText = null, ig.length = 0, ag = Date.now(), Y("Start", t, e.length, "Byte, Gerät", q.kira?.version ?? "?", "über", q.transportKind ?? "?"), $();
+	}, q.mapLogText = null, ig.length = 0, ag = Date.now(), Y("Start", t, e.length, "Byte, Gerät", q.kira?.version ?? "?", "über", q.transportKind ?? "?", "Warteschlange", q.device.queue?.queue?.length ?? "?", "gesperrt", q.device.queue?.lock ?? "?"), $();
 	let r = (e) => Math.round(e / 1024);
 	try {
 		let n = 0, i = await og();

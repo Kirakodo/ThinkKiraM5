@@ -395,6 +395,18 @@ async function mapQuery() {
 
 async function uploadMap(bytes, label) {
   if (!state.device) return toast("Bitte zuerst das Gerät verbinden.", true);
+  if (state.status !== "verbunden") return toast("Das Gerät verbindet sich noch. Bitte warten, bis oben „verbunden“ steht.", true);
+  if (!state.kira) {
+    // ThinkKira hat sich nach dem Verbinden nicht gemeldet: einmal direkt nachfragen
+    await fastSend(["get"]).catch(() => {});
+    for (let i = 0; i < 25 && !state.kira; i++) await new Promise((r) => setTimeout(r, 200));
+    if (!state.kira) {
+      const q = state.device.queue;
+      state.mapLogText = `ThinkKira antwortet nicht (get). Status ${state.status}, über ${state.transportKind ?? "?"}, Warteschlange ${q?.queue?.length ?? "?"}, gesperrt ${q?.lock ?? "?"}`;
+      render();
+      return toast("ThinkKira im Gerät antwortet nicht. Bitte Gerät neu starten (Taste lang drücken oder USB kurz trennen), neu verbinden und 10 Sekunden warten.", true);
+    }
+  }
   if (bytes.length < 40 || new TextDecoder().decode(bytes.subarray(0, 4)) !== "TKM1") return toast("Das ist keine ThinkKira-Kartendatei (.tkm).", true);
   const v = (state.kira?.version ?? "0").split(".").map(Number);
   if (v[0] === 0 && (v[1] < 4 || (v[1] === 4 && (v[2] || 0) < 1)))
@@ -403,7 +415,7 @@ async function uploadMap(bytes, label) {
   state.mapLogText = null;
   mapLog.length = 0;
   mapT0 = Date.now();
-  mlog("Start", label, bytes.length, "Byte, Gerät", state.kira?.version ?? "?", "über", state.transportKind ?? "?");
+  mlog("Start", label, bytes.length, "Byte, Gerät", state.kira?.version ?? "?", "über", state.transportKind ?? "?", "Warteschlange", state.device.queue?.queue?.length ?? "?", "gesperrt", state.device.queue?.lock ?? "?");
   render();
   const kb = (n) => Math.round(n / 1024);
   try {
