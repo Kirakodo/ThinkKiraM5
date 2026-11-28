@@ -32,15 +32,22 @@ for name, title, lat, lon, f in DETAIL:
     h, w = 0.23 * f / 2, 0.36 * f / 2
     out.append({"name": name, "title": title, "bbox": [round(lat - h, 3), round(lon - w, 3), round(lat + h, 3), round(lon + w, 3)], "kind": "region"})
 
-# Raster: 0,45° × 0,75° (≈ 50 × 50 km), 0,02° Überlappung; leere Felder (Meer, Ausland) lässt batch.py weg
+# Raster: 0,45° × 0,75° (≈ 50 × 50 km), 0,02° Überlappung; leere Felder (Meer, Ausland) lässt batch.py weg.
+# Zu dichte Felder (über 700 KB selbst in Notstufe 0, Rhein-Ruhr) werden in West-/Osthälfte -w/-o geteilt.
+SPLIT = {"de-raster-08-01", "de-raster-09-01"}
 S, N, W, E, DLAT, DLON, OV = 47.25, 55.10, 5.85, 15.05, 0.45, 0.75, 0.02
 row = 0
 lat = S
 while lat < N:
     col, lon = 0, W
     while lon < E:
-        out.append({"name": f"de-raster-{row:02d}-{col:02d}", "bbox": [round(lat - OV, 3), round(lon - OV, 3), round(lat + DLAT + OV, 3), round(lon + DLON + OV, 3)],
-                    "kind": "raster", "minLevel": 0})
+        name = f"de-raster-{row:02d}-{col:02d}"
+        parts = [(name, lon, lon + DLON)]
+        if name in SPLIT:
+            parts = [(name + "-w", lon, lon + DLON / 2), (name + "-o", lon + DLON / 2, lon + DLON)]
+        for n, w, e in parts:
+            out.append({"name": n, "bbox": [round(lat - OV, 3), round(w - OV, 3), round(lat + DLAT + OV, 3), round(e + OV, 3)],
+                        "kind": "raster", "minLevel": 0})
         col, lon = col + 1, lon + DLON
     row, lat = row + 1, lat + DLAT
 print(json.dumps(out, ensure_ascii=False, indent=1))
