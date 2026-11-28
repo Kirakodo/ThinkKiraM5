@@ -170,16 +170,44 @@ function renderSoon() {
 
 async function withEdit(fn) {
   const d = state.device;
-  if (!d) return;
+  if (!d) return toast("Bitte zuerst das Gerät verbinden.", true);
+  // Rückmeldung direkt am Knopf und als Meldung unten rechts (auch wenn die Seite weit gescrollt ist)
+  const b = document.activeElement?.tagName === "BUTTON" ? document.activeElement : null;
+  const label = b?.innerHTML;
+  if (b) {
+    b.disabled = true;
+    b.replaceChildren(el("span", { class: "spinner-border spinner-border-sm me-1", "aria-hidden": "true" }), "Speichere …");
+  }
+  toast("Speichere …");
   try {
-    await d.beginEditSettings?.();
-    await fn(d);
-    await d.commitEditSettings();
-    toast("Gespeichert. Das Gerät startet ggf. neu.");
+    // Nicht auf die Bestätigungen (ACK) warten: die kommen vom Gerät nicht immer, dann hinge das Speichern ewig.
+    // Die Befehle werden in Reihenfolge in die Sendewarteschlange gelegt; fertig, wenn alle zum Gerät geschrieben sind.
+    const quiet = (pr) => pr?.catch?.((e) => console.warn("Speichern:", e));
+    quiet(d.beginEditSettings?.());
+    quiet(fn(d));
+    quiet(d.commitEditSettings());
+    const t0 = Date.now();
+    while (d.queue?.queue?.some((q) => !q.sent)) {
+      if (Date.now() - t0 > 15000) throw deFehler("Das Gerät nimmt keine Daten an.");
+      await new Promise((r) => setTimeout(r, 100));
+    }
+    toast("Gespeichert und ans Gerät übertragen. Es übernimmt die Einstellungen (startet ggf. neu).");
     state.dirty = false;
+    if (b) {
+      b.replaceChildren(icon("fa-check"), "Gespeichert");
+      b.classList.add("btn-success");
+    }
   } catch (e) {
     console.error(e);
     toast("Fehler beim Speichern: " + fehlerText(e), true);
+    if (b) b.replaceChildren(icon("fa-exclamation-triangle"), "Fehler");
+  } finally {
+    if (b)
+      setTimeout(() => {
+        b.disabled = false;
+        b.classList.remove("btn-success");
+        b.innerHTML = label;
+      }, 3000);
   }
 }
 
@@ -213,11 +241,14 @@ function downloadBackup() {
 async function restoreBackup(file) {
   const data = JSON.parse(await file.text());
   if (!data.config) return toast("Keine gültige Sicherung", true);
-  await withEdit(async (d) => {
-    for (const j of Object.values(data.config)) await d.setConfig(fromJson(P.Config.ConfigSchema, j));
-    for (const j of Object.values(data.moduleConfig ?? {})) await d.setModuleConfig(fromJson(P.ModuleConfig.ModuleConfigSchema, j));
-    for (const j of data.channels ?? []) await d.setChannel(fromJson(P.Channel.ChannelSchema, j));
-    if (data.owner) await d.setOwner(fromJson(P.Mesh.UserSchema, data.owner));
+  await withEdit((d) => {
+    // ohne await: Reihenfolge bleibt über die Sendewarteschlange erhalten (siehe withEdit)
+    const all = [];
+    for (const j of Object.values(data.config)) all.push(d.setConfig(fromJson(P.Config.ConfigSchema, j)));
+    for (const j of Object.values(data.moduleConfig ?? {})) all.push(d.setModuleConfig(fromJson(P.ModuleConfig.ModuleConfigSchema, j)));
+    for (const j of data.channels ?? []) all.push(d.setChannel(fromJson(P.Channel.ChannelSchema, j)));
+    if (data.owner) all.push(d.setOwner(fromJson(P.Mesh.UserSchema, data.owner)));
+    return Promise.all(all);
   });
 }
 
@@ -328,12 +359,23 @@ const firmwareUrl = () => root?.dataset.firmware || "/_scripts/php/keylink/think
 async function uploadMap(bytes, label) {
   if (!state.device) return toast("Bitte zuerst das Gerät verbinden.", true);
   if (bytes.length < 40 || new TextDecoder().decode(bytes.subarray(0, 4)) !== "TKM1") return toast("Das ist keine ThinkKira-Kartendatei (.tkm).", true);
+  const v = (state.kira?.version ?? "0").split(".").map(Number);
+  if (v[0] === 0 && (v[1] < 4 || (v[1] === 4 && (v[2] || 0) < 1)))
+    return toast("Auf dem Gerät läuft ThinkKira " + (state.kira?.version ?? "?") + ". Für Karten bitte zuerst im Loader die neueste Version installieren.", true);
   state.mapUp = { total: bytes.length, sent: 0, label, cancel: false };
   render();
   try {
-    const ready = waitDevice(10000, "Das Gerät antwortet nicht.");
-    kiraSend("mapb|" + bytes.length);
-    await ready;
+    // Start ankündigen; das Gerät legt die Datei an (kann bei voller Karte etwas dauern) – bis zu 3 Versuche
+    for (let i = 0; ; i++) {
+      const ready = waitDevice(10000, "Das Gerät antwortet nicht auf den Kartenstart. Bitte Gerät neu starten und erneut verbinden.");
+      kiraSend("mapb|" + bytes.length);
+      try {
+        await ready;
+        break;
+      } catch (e) {
+        if (i >= 2 || state.mapUp.cancel) throw e;
+      }
+    }
     // 162 Byte → 216 Zeichen Base64; mit „mapd|offset|“ höchstens 228 Byte (Meshtastic erlaubt 233 je Paket)
     const CH = 162;
     // Stop-and-Wait: ein Stück senden, Gerät quittiert mit seinem Stand (k|a|bytes), dort weitermachen.
@@ -1093,7 +1135,7 @@ let toastTimer;
 function toast(text, bad = false) {
   const t = root.querySelector(".tk-msg");
   if (!t) return;
-  t.replaceChildren(el("div", { class: "alert py-2 mb-3 " + (bad ? "alert-danger" : "alert-success") }, text));
+  t.replaceChildren(el("div", { class: "alert shadow py-2 mb-0 " + (bad ? "alert-danger" : "alert-success") }, text));
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.replaceChildren(), 5000);
 }
@@ -1114,7 +1156,7 @@ function render() {
     el("span", { class: "badge " + (ok ? "text-bg-success" : "text-bg-secondary") }, connected ? state.status : state.status === "getrennt" ? "nicht verbunden" : state.status),
   );
 
-  const kids = [bar, root.querySelector(".tk-msg") ?? el("div", { class: "tk-msg" })];
+  const kids = [bar, root.querySelector(".tk-msg") ?? el("div", { class: "tk-msg position-fixed bottom-0 end-0 p-3 z-3", role: "status", "aria-live": "polite" })];
 
   if (!hasSerial && !hasBle)
     kids.push(el("div", { class: "alert alert-warning" }, "Dein Browser kann nicht auf USB oder Bluetooth zugreifen. Bitte Chrome oder Edge am Computer verwenden."));

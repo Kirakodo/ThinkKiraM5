@@ -19,6 +19,10 @@
 #include "custom/features.h"
 #include "gps/GeoCoord.h"
 #include "main.h"
+#if HAS_WIFI
+#include "mesh/wifi/WiFiAPClient.h"
+#include <WiFi.h>
+#endif
 #include "mesh/MeshService.h"
 #include "modules/PositionModule.h"
 #include <Arduino.h>
@@ -253,6 +257,8 @@ int32_t Shell::runOnce()
         } else if (page == P_START && minute != lastMinute) {
             lastMinute = minute;
             redraw();
+        } else if (!(page == P_MAP && mapPan) && barSig() != lastBarSig) {
+            redraw(); // Uhrzeit, Akku, GPS, WLAN, Bluetooth in der Statuszeile
         } else if (kiraNav && (page == P_NAV || page == P_START || (page == P_MAP && !mapPan))) {
             // Navigation: nur neu zeichnen, wenn sich die Anzeige sichtbar ändert (höchstens 1×/s)
             const NavInfo &n = kiraNav->info();
@@ -886,20 +892,157 @@ Shell::Menu Shell::menuNode(uint32_t num)
 
 // ---------------------------------------------------------------- Zeichnen
 
+// Zustand der Statussymbole
+static bool gpsOn() { return config.position.gps_mode == meshtastic_Config_PositionConfig_GpsMode_ENABLED; }
+static bool gpsFix() { return gpsStatus && gpsStatus->getHasLock(); }
+static bool wifiOn() { return config.network.wifi_enabled; }
+static bool wifiConnected()
+{
+#if HAS_WIFI
+    return wifiOn() && WiFi.status() == WL_CONNECTED;
+#else
+    return false;
+#endif
+}
+static bool btOn() { return config.bluetooth.enabled; }
+static bool btConnected() { return nimbleBluetooth && nimbleBluetooth->isConnected(); }
+
+uint32_t Shell::barSig()
+{
+    const char *b = ThinkKira::settings().bar;
+    uint32_t sig = 0;
+    if (strchr(b, 'c'))
+        sig ^= getValidTime(RTCQualityDevice, true) / 60;
+    if (powerStatus && (strchr(b, 'b') || strchr(b, 'B')))
+        sig ^= ((uint32_t)(powerStatus->getBatteryChargePercent() / 5) << 20) ^ ((uint32_t)powerStatus->getHasUSB() << 27);
+    sig ^= ((uint32_t)gpsFix() << 28) ^ ((uint32_t)wifiConnected() << 29) ^ ((uint32_t)btConnected() << 30);
+    if (strchr(b, 'k'))
+        sig ^= (uint32_t)nodeDB->getNumOnlineMeshNodes() << 12;
+    if (strchr(b, 'm') && kiraMessages)
+        sig ^= (uint32_t)kiraMessages->unread() << 16;
+    return sig;
+}
+
+// Zeichnet einen Baustein der Statuszeile; x ist die linke (oder bei fromRight die rechte) Kante. Gibt die Breite zurück.
+int16_t Shell::drawBarItem(char c, int16_t x, bool fromRight, const std::string &title, int16_t h)
+{
+    const int16_t cy = h / 2; // Mitte der Zeile
+    auto text = [&](const std::string &t) -> int16_t {
+        std::string p = parse(t);
+        int16_t w = getTextWidth(p);
+        printAt(fromRight ? x - w : x, 2, p);
+        return w;
+    };
+    auto L = [&](int16_t w) { return fromRight ? x - w : x; }; // linke Kante eines Symbols der Breite w
+    char b[24];
+    switch (c) {
+    case 'n':
+        return text(title);
+    case 'f':
+        return text("ThinkKira");
+    case 'c':
+        return getValidTime(RTCQualityDevice) ? text(getTimeString()) : 0;
+    case 'b':
+        if (!powerStatus)
+            return 0;
+        snprintf(b, sizeof(b), "%u%%", powerStatus->getBatteryChargePercent());
+        return text(b);
+    case 'B': { // Akku-Symbol, gefüllt nach Ladestand; Blitz-Strich bei USB
+        if (!powerStatus)
+            return 0;
+        const int16_t w = 16, hh = 8, l = L(w), t = cy - hh / 2;
+        drawRect(l, t, w - 2, hh, BLACK);
+        fillRect(l + w - 2, t + 2, 2, hh - 4, BLACK);
+        int fill = (w - 6) * powerStatus->getBatteryChargePercent() / 100;
+        fillRect(l + 2, t + 2, fill, hh - 4, BLACK);
+        if (powerStatus->getHasUSB()) // weißer Strich als „lädt“-Zeichen
+            drawLine(l + 4, t + hh - 2, l + w - 7, t + 1, fill > 6 ? WHITE : BLACK);
+        return w;
+    }
+    case 'g': { // GPS: Stecknadel; voll = Position, hohl = sucht
+        if (!gpsOn())
+            return 0;
+        const int16_t w = 7, l = L(w), t = cy - 5;
+        if (gpsFix()) {
+            fillCircle(l + 3, t + 3, 3, BLACK);
+            fillTriangle(l, t + 4, l + 6, t + 4, l + 3, t + 10, BLACK);
+            drawPixel(l + 3, t + 3, WHITE);
+        } else {
+            drawCircle(l + 3, t + 3, 3, BLACK);
+            drawLine(l + 1, t + 5, l + 3, t + 10, BLACK);
+            drawLine(l + 5, t + 5, l + 3, t + 10, BLACK);
+        }
+        return w;
+    }
+    case 'w': { // WLAN: drei Balken; voll = verbunden, hohl = an, nicht verbunden
+        if (!wifiOn())
+            return 0;
+        const int16_t w = 10, l = L(w), base = cy + 5;
+        for (int i = 0; i < 3; i++) {
+            int16_t bh = 4 + 3 * i, bx = l + i * 4;
+            if (wifiConnected())
+                fillRect(bx, base - bh, 2, bh, BLACK);
+            else
+                drawRect(bx, base - bh, 2, bh, BLACK);
+        }
+        return w;
+    }
+    case 'l': { // Bluetooth-Rune; Punkt darunter = verbunden
+        if (!btOn())
+            return 0;
+        const int16_t w = 7, l = L(w), t = cy - 5, m = l + 3;
+        drawLine(m, t, m, t + 10, BLACK);
+        drawLine(m, t, m + 3, t + 3, BLACK);
+        drawLine(m + 3, t + 3, l, t + 7, BLACK);
+        drawLine(m, t + 10, m + 3, t + 7, BLACK);
+        drawLine(m + 3, t + 7, l, t + 3, BLACK);
+        if (btConnected())
+            fillRect(l + 5, t + 9, 2, 2, BLACK);
+        return w;
+    }
+    case 'k': {
+        snprintf(b, sizeof(b), "%uK", (unsigned)nodeDB->getNumOnlineMeshNodes());
+        return text(b);
+    }
+    case 'm': { // Brief mit Anzahl, nur wenn ungelesen
+        int u = kiraMessages ? kiraMessages->unread() : 0;
+        if (!u)
+            return 0;
+        snprintf(b, sizeof(b), "%d", u);
+        std::string t = parse(b);
+        const int16_t ew = 10, tw = getTextWidth(t), w = ew + 2 + tw, l = L(w), et = cy - 4;
+        drawRect(l, et, ew, 8, BLACK);
+        drawLine(l, et, l + ew / 2, et + 4, BLACK);
+        drawLine(l + ew - 1, et, l + ew / 2, et + 4, BLACK);
+        printAt(l + ew + 2, 2, t);
+        return w;
+    }
+    case 'r':
+        return text(ThinkKira::settings().radioMode == ThinkKira::RADIO_KIRA ? "K" : "M");
+    }
+    return 0;
+}
+
 void Shell::drawTopBar(const std::string &title)
 {
     setFont(fontSmall);
     const int16_t h = fontSmall.lineHeight() + 4;
-    printAt(2, 2, parse(title));
-    char b[24];
-    std::string right;
-    if (powerStatus) {
-        snprintf(b, sizeof(b), "%u%%%s", powerStatus->getBatteryChargePercent(), powerStatus->getHasUSB() ? "+" : "");
-        right = b;
+    const char *bar = ThinkKira::settings().bar;
+    const char *sep = strchr(bar, '|');
+    std::string left(bar, sep ? sep - bar : strlen(bar)), right(sep ? sep + 1 : "");
+    int16_t x = 2;
+    for (char c : left) {
+        int16_t w = drawBarItem(c, x, false, title, h);
+        if (w)
+            x += w + 4;
     }
-    if (getValidTime(RTCQualityDevice))
-        right = getTimeString() + "  " + right;
-    printAt(width() - 2, 2, right, RIGHT);
+    int16_t r = width() - 2;
+    for (auto it = right.rbegin(); it != right.rend(); ++it) {
+        int16_t w = drawBarItem(*it, r, true, title, h);
+        if (w)
+            r -= w + 4;
+    }
+    lastBarSig = barSig();
     drawLine(0, h, width() - 1, h, BLACK);
 }
 

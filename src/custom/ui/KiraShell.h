@@ -72,6 +72,8 @@ class Shell : public NicheGraphics::InkHUD::Applet, private concurrency::OSThrea
 
     // Zeichnen
     void drawTopBar(const std::string &title);
+    int16_t drawBarItem(char c, int16_t x, bool fromRight, const std::string &title, int16_t h); // Breite des Bausteins
+    uint32_t barSig();                                                                          // ändert sich, wenn die Statuszeile neu muss
     void drawPageDots();
     void drawStart();
     void drawMessages();
@@ -121,6 +123,7 @@ class Shell : public NicheGraphics::InkHUD::Applet, private concurrency::OSThrea
     int lastUnread = -1;
     uint8_t lastUiRev = 0;
     uint32_t lastNavSig = 0;
+    uint32_t lastBarSig = 0;
     // Karte
     uint8_t mapZoom = 0, mapDir = 0;
     bool mapFree = false, mapPan = false, mapCourseUp = false;

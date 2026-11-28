@@ -40,6 +40,8 @@ static void parseLine(char *s)
         current.arrive = (uint16_t)std::max(5, std::min(500, atoi(val)));
     else if (!strcmp(key, "keys"))
         setKeys(val);
+    else if (!strcmp(key, "bar"))
+        setBar(val);
 }
 
 bool setOrder(const char *o)
@@ -66,6 +68,24 @@ bool setStart(const char *st)
         if (!strchr("cbgsknmpt", st[i]))
             return false;
     memcpy(current.start, st, n + 1);
+    return true;
+}
+
+bool setBar(const char *b)
+{
+    size_t n = strlen(b);
+    if (n >= sizeof(current.bar))
+        return false;
+    int bars = 0;
+    for (size_t i = 0; i < n; i++) {
+        if (b[i] == '|')
+            bars++;
+        else if (!strchr("nfcbBgwlkmr", b[i]))
+            return false;
+    }
+    if (bars > 1)
+        return false;
+    memcpy(current.bar, b, n + 1);
     return true;
 }
 
@@ -137,6 +157,7 @@ bool saveSettings()
     }
     f.printf("radio=%s\n", current.radioMode == RADIO_KIRA ? "kira" : "meshtastic");
     f.printf("light=%u\nleds=%u\npages=%u\n", (unsigned)current.light, current.leds ? 1u : 0u, (unsigned)current.pages);
+    f.printf("bar=%s\n", current.bar);
     f.printf("order=%s\nstart=%s\nreplies=%s\nkeys=%s\narrive=%u\n", current.order, current.start, current.replies, current.keys,
              (unsigned)current.arrive);
     f.close();

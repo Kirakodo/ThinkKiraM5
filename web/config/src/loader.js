@@ -274,8 +274,11 @@ function readDevice() {
       showInfo(rt, true);
       setStatus("Gerät ausgelesen. Nichts wurde verändert.", "ok");
     } else {
-      showInfo([["Laufende Firmware", [["Status", "keine Antwort – keine Meshtastic-/ThinkKira-Firmware aktiv"]]]], true);
-      setStatus("Chip und Speicher ausgelesen. Die Firmware hat nicht geantwortet (leer oder fremde Firmware). Nichts wurde verändert.", "ok");
+      showInfo([["Laufende Firmware", [["Status", "hat beim Auslesen nicht geantwortet"]]]], true);
+      setStatus(
+        "Chip und Speicher ausgelesen, nichts wurde verändert. Die laufende Firmware hat nach dem Neustart nicht rechtzeitig geantwortet. Das heißt nicht, dass keine Firmware drauf ist: Zeigt das Display die ThinkKira-Oberfläche, ist alles in Ordnung. Die genaue Version steht im Konfigurator unter ThinkKira.",
+        "ok",
+      );
     }
   });
 }

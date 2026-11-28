@@ -99,7 +99,7 @@ function timeout(ms, text) {
 
 // Verbindet sich nach dem Neustart mit der laufenden Firmware und fragt alles ab.
 // Gibt null zurück, wenn keine Meshtastic-/ThinkKira-Firmware antwortet.
-export async function readRuntimeInfo(port, onStatus = () => {}, waitMs = 6000) {
+export async function readRuntimeInfo(port, onStatus = () => {}, waitMs = 9000) {
   onStatus("Warte auf den Start der Firmware …");
   await new Promise((r) => setTimeout(r, waitMs));
   onStatus("Frage die laufende Firmware ab …");
@@ -125,7 +125,7 @@ export async function readRuntimeInfo(port, onStatus = () => {}, waitMs = 6000) 
   try {
     const configured = new Promise((res) => ev.onDeviceStatus.subscribe((st) => st === 7 && res()));
     device.configure().catch(() => {}); // löst erst spät auf – wir warten auf den Status „konfiguriert“
-    await Promise.race([configured, timeout(20000, "Keine Antwort von der Firmware.")]);
+    await Promise.race([configured, timeout(30000, "Keine Antwort von der Firmware.")]);
     const send = (t) => device.sendPacket(new TextEncoder().encode(t), KIRA_PORT, "self", 0, false, false).catch(() => {});
     send("get");
     send("info");

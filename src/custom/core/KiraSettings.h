@@ -25,6 +25,9 @@ struct Settings {
     char start[12] = "cbtgsknm"; // c Uhr, b Akku, t Ziel, g GPS, s Signal, k Knoten, n Nachrichten, m Funkmodus, p Position
     uint16_t arrive = 20; // Ankunftsradius in m
     char keys[7] = "nmphos"; // Tastenbelegung, siehe KiraShell.cpp
+    // Statuszeile oben: links|rechts. n Seitenname, f ThinkKira, c Uhrzeit, b Akku %, B Akku-Symbol, g GPS, w WLAN,
+    // l Bluetooth, k Knoten online, m ungelesene Nachrichten, r Funkmodus
+    char bar[16] = "n|mgwlcB";
     uint8_t uiRev = 0; // wird bei Designer-Änderung erhöht, die Oberfläche zeichnet dann neu (nicht gespeichert)
     char replies[170] = "OK;Ja;Nein;Bin unterwegs;Komme gleich;Alles gut;Wo bist du?;Brauche Hilfe";
 };
@@ -34,6 +37,7 @@ bool setOrder(const char *order);
 bool setStart(const char *start);
 bool setReplies(const char *replies);
 bool setKeys(const char *keys);
+bool setBar(const char *bar);
 
 Settings &settings();   // lädt beim ersten Aufruf aus dem Dateisystem
 bool saveSettings();    // schreibt die aktuelle Einstellung

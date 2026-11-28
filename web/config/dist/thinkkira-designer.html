@@ -160,7 +160,26 @@ var m = [
 	n: "Ungelesen: 2",
 	m: "Funk: Meshtastic",
 	p: "52.3906 N  13.0645 O"
-}, v = 169, y = {
+}, v = {
+	n: "Seitenname",
+	f: "Schriftzug „ThinkKira“",
+	c: "Uhrzeit",
+	B: "Akku-Symbol",
+	b: "Akku in %",
+	g: "GPS-Symbol (voll = Position)",
+	w: "WLAN-Symbol (voll = verbunden)",
+	l: "Bluetooth-Symbol (Punkt = verbunden)",
+	m: "Ungelesene Nachrichten (Brief)",
+	k: "Knoten online",
+	r: "Funkmodus (M/K)"
+}, y = "n|mgwlcB", b = 15, x = (e) => {
+	let [t, n = ""] = (e ?? "n|mgwlcB").split("|");
+	return [t, n];
+};
+function S(e) {
+	return typeof e != "string" || e.length > b || e.split("|").length > 2 || [...e.replace("|", "")].some((e) => !v[e]) ? "Die Statuszeile ist ungültig." : null;
+}
+var C = 169, w = {
 	order: "012345",
 	pages: 63,
 	start: "cbtgsknm",
@@ -175,36 +194,39 @@ var m = [
 		"Brauche Hilfe"
 	],
 	keys: l,
+	bar: y,
 	menus: a(i)
-}, b = (e) => ({
+}, T = (e) => ({
 	order: e.order,
 	pages: e.pages,
 	start: e.start,
 	replies: [...e.replies],
 	keys: e.keys ?? "nmphos",
-	menus: c(e.menus ?? y.menus)
+	bar: e.bar ?? "n|mgwlcB",
+	menus: c(e.menus ?? w.menus)
 });
-function x(e) {
-	let t = b(e);
+function E(e) {
+	let t = T(e);
 	return {
 		format: "thinkkira-design",
-		version: 2,
+		version: 3,
 		order: t.order,
 		pages: t.pages,
 		start: t.start,
 		replies: t.replies,
 		keys: t.keys,
+		bar: t.bar,
 		menu: s(t.menus).split("\n").filter(Boolean)
 	};
 }
-function S(e, n = "thinkkira-design.json") {
-	let r = JSON.stringify(x(e), null, 2), i = t("a", {
+function D(e, n = "thinkkira-design.json") {
+	let r = JSON.stringify(E(e), null, 2), i = t("a", {
 		href: URL.createObjectURL(new Blob([r], { type: "application/json" })),
 		download: n
 	});
 	i.click(), setTimeout(() => URL.revokeObjectURL(i.href), 1e3);
 }
-function C(e) {
+function O(e) {
 	let t;
 	try {
 		t = JSON.parse(e);
@@ -217,20 +239,22 @@ function C(e) {
 	let r = String(t.start ?? "");
 	if (r.length > 11 || [...r].some((e) => !g[e])) throw Error("Die Startseiten-Bausteine in der Datei sind ungültig.");
 	let o = (Array.isArray(t.replies) ? t.replies : []).map((e) => String(e).replace(/[;|\n]/g, "").trim()).filter(Boolean);
-	if (!o.length || o.join(";").length > v) throw Error("Die Schnellantworten in der Datei fehlen oder sind zu lang.");
+	if (!o.length || o.join(";").length > C) throw Error("Die Schnellantworten in der Datei fehlen oder sind zu lang.");
 	let s = t.keys ?? "nmphos", c = p(s);
 	if (c) throw Error(c);
-	let l = t.menu ? a(Array.isArray(t.menu) ? t.menu.join("\n") : t.menu) : a(i);
+	let l = t.menu ? a(Array.isArray(t.menu) ? t.menu.join("\n") : t.menu) : a(i), u = t.bar ?? "n|mgwlcB", d = S(u);
+	if (d) throw Error(d);
 	return {
 		order: n,
 		pages: t.pages & 63 | 33,
 		start: r,
 		replies: o,
 		keys: s,
+		bar: u,
 		menus: l
 	};
 }
-function w(e = ".json,application/json") {
+function k(e = ".json,application/json") {
 	return new Promise((n) => {
 		let r = t("input", {
 			type: "file",
@@ -239,15 +263,15 @@ function w(e = ".json,application/json") {
 		r.addEventListener("change", () => n(r.files[0] ?? null)), r.click();
 	});
 }
-function T(e) {
-	return e.replies = e.replies.map((e) => e.trim()).filter(Boolean), e.replies.length ? e.replies.join(";").length > v ? "Die Schnellantworten sind zusammen zu lang. Bitte kürzen." : p(e.keys) || (e.menus[5].length ? e.menus.some((e) => e.some((e) => e.sub && !e.sub.length)) ? "Ein Untermenü ist leer. Bitte Einträge hinzufügen oder es löschen." : s(e.menus).length > 3e3 ? "Die Menüs sind zu groß. Bitte Einträge entfernen." : null : "Das Menü der Einstellungen darf nicht leer sein.") : "Mindestens eine Schnellantwort wird gebraucht.";
+function A(e) {
+	return e.replies = e.replies.map((e) => e.trim()).filter(Boolean), e.replies.length ? e.replies.join(";").length > C ? "Die Schnellantworten sind zusammen zu lang. Bitte kürzen." : p(e.keys) || S(e.bar ?? "n|mgwlcB") || (e.menus[5].length ? e.menus.some((e) => e.some((e) => e.sub && !e.sub.length)) ? "Ein Untermenü ist leer. Bitte Einträge hinzufügen oder es löschen." : s(e.menus).length > 3e3 ? "Die Menüs sind zu groß. Bitte Einträge entfernen." : null : "Das Menü der Einstellungen darf nicht leer sein.") : "Mindestens eine Schnellantwort wird gebraucht.";
 }
-var E = (e, t, n) => {
+var j = (e, t, n) => {
 	let r = t + n;
 	if (r < 0 || r >= e.length) return e;
 	let i = [...e];
 	return [i[t], i[r]] = [i[r], i[t]], i;
-}, D = (e, n, r, i) => t("button", {
+}, M = (e, n, r, i) => t("button", {
 	type: "button",
 	class: "btn btn-sm btn-outline-secondary",
 	title: n,
@@ -255,20 +279,20 @@ var E = (e, t, n) => {
 	onclick: r,
 	disabled: i ? "" : null
 }, t("i", { class: "fas " + e }));
-function O(e) {
+function N(e) {
 	return e.sub ? e.label || "Untermenü" : e.label || r[e.action][1];
 }
-function k(e, t, n, r) {
+function P(e, t, n, r) {
 	let i = e.getContext("2d");
 	i.setTransform(2, 0, 0, 2, 0, 0), i.fillStyle = "#fff", i.fillRect(0, 0, 200, 200), i.fillStyle = "#000", i.strokeStyle = "#000", i.lineWidth = 1, i.textBaseline = "top";
 	let a = +t.order[n];
-	i.font = "9px sans-serif", i.fillText(a === 0 ? "ThinkKira" : m[a], 2, 2), i.textAlign = "right", i.fillText("12:34  87%", 198, 2), i.textAlign = "left", i.beginPath(), i.moveTo(0, 14.5), i.lineTo(200, 14.5), i.stroke();
+	i.font = "9px sans-serif", F(i, t.bar ?? "n|mgwlcB", a === 0 ? "ThinkKira" : m[a]), i.beginPath(), i.moveTo(0, 14.5), i.lineTo(200, 14.5), i.stroke();
 	let o = 20;
 	if (r) {
 		let e = t.menus[a];
 		i.font = "13px sans-serif", i.textBaseline = "middle", e.slice(0, 8).forEach((e, t) => {
 			let n = 16 + t * 22;
-			t === 0 && (i.fillRect(0, n, 200, 22), i.fillStyle = "#fff"), i.fillText(O(e) + (e.sub ? "  ›" : ""), 6, n + 11), i.fillStyle = "#000";
+			t === 0 && (i.fillRect(0, n, 200, 22), i.fillStyle = "#fff"), i.fillText(N(e) + (e.sub ? "  ›" : ""), 6, n + 11), i.fillStyle = "#000";
 		}), e.length || i.fillText("(kein Menü)", 6, 30);
 		return;
 	}
@@ -280,7 +304,48 @@ function k(e, t, n, r) {
 	let s = [...t.order].map(Number).filter((e) => t.pages & 1 << e || h.includes(e)), c = 100 - (s.length - 1) * 12 / 2;
 	for (let e of s) i.beginPath(), i.arc(c, 194, 3, 0, Math.PI * 2), e === a ? i.fill() : i.stroke(), c += 12;
 }
-function A(e) {
+function F(e, t, n) {
+	let [r, i] = x(t), a = (t, r, i) => {
+		let a = (e) => i ? r - e : r, o = (t) => {
+			let n = e.measureText(t).width;
+			return e.fillText(t, a(n), 3), n;
+		};
+		switch (t) {
+			case "n": return o(n);
+			case "f": return o("ThinkKira");
+			case "c": return o("12:34");
+			case "b": return o("87%");
+			case "k": return o("4K");
+			case "r": return o("M");
+			case "B": {
+				let t = a(16);
+				return e.strokeRect(t + .5, 3.5, 13, 7), e.fillRect(t + 14, 5.5, 2, 3), e.fillRect(t + 2, 5.5, 9, 4), 16;
+			}
+			case "g": {
+				let t = a(7);
+				return e.beginPath(), e.arc(t + 3.5, 5.5, 3, 0, Math.PI * 2), e.fill(), e.beginPath(), e.moveTo(t + .5, 7), e.lineTo(t + 6.5, 7), e.lineTo(t + 3.5, 12.5), e.fill(), 7;
+			}
+			case "w": {
+				let t = a(10);
+				for (let n = 0; n < 3; n++) e.fillRect(t + n * 4, 12 - (4 + 3 * n), 2, 4 + 3 * n);
+				return 10;
+			}
+			case "l": {
+				let t = a(7), n = t + 3.5;
+				return e.beginPath(), e.moveTo(n, 2), e.lineTo(n, 12), e.lineTo(n + 3, 9), e.lineTo(t, 5), e.moveTo(n, 2), e.lineTo(n + 3, 5), e.lineTo(t, 9), e.stroke(), 7;
+			}
+			case "m": {
+				let t = a(12 + e.measureText("2").width);
+				return e.strokeRect(t + .5, 3.5, 9, 7), e.beginPath(), e.moveTo(t + .5, 3.5), e.lineTo(t + 5, 7), e.lineTo(t + 9.5, 3.5), e.stroke(), e.fillText("2", t + 12, 3), 12 + e.measureText("2").width;
+			}
+		}
+		return 0;
+	}, o = 2;
+	for (let e of r) o += a(e, o, !1) + 4;
+	let s = 198;
+	for (let e of [...i].reverse()) s -= a(e, s, !0) + 4;
+}
+function I(e) {
 	let { d: i, changed: a, hint: o } = e, s = { uiPreview: e.preview }, c = [...i.order].map((n, r) => {
 		let o = +n, c = h.includes(o), l = t("input", {
 			type: "checkbox",
@@ -293,30 +358,42 @@ function A(e) {
 		}), t("li", { class: "list-group-item d-flex align-items-center gap-2 py-1" + (r === s.uiPreview ? " active" : "") }, t("span", { class: "badge text-bg-secondary" }, String(r + 1)), t("div", { class: "form-check form-switch mb-0 flex-grow-1" }, l, t("label", {
 			class: "form-check-label",
 			for: "tk-pg" + o
-		}, m[o] + (c ? " (immer an)" : ""))), D("fa-eye", "Vorschau", () => e.setPreview(r)), D("fa-arrow-up", "Nach oben", () => {
-			i.order = E([...i.order], r, -1).join(""), a();
-		}, r === 0), D("fa-arrow-down", "Nach unten", () => {
-			i.order = E([...i.order], r, 1).join(""), a();
+		}, m[o] + (c ? " (immer an)" : ""))), M("fa-eye", "Vorschau", () => e.setPreview(r)), M("fa-arrow-up", "Nach oben", () => {
+			i.order = j([...i.order], r, -1).join(""), a();
+		}, r === 0), M("fa-arrow-down", "Nach unten", () => {
+			i.order = j([...i.order], r, 1).join(""), a();
 		}, r === 5));
-	}), l = n("Seiten & Reihenfolge", o("Mit „Weiter“ blätterst du in dieser Reihenfolge, mit „Zurück“ rückwärts (Tasten siehe unten)."), t("ul", { class: "list-group mb-0" }, ...c)), _ = [...i.start].map((e, n) => t("li", { class: "list-group-item d-flex align-items-center gap-2 py-1" }, t("span", { class: "flex-grow-1" }, g[e]), D("fa-arrow-up", "Nach oben", () => {
-		i.start = E([...i.start], n, -1).join(""), a();
-	}, n === 0), D("fa-arrow-down", "Nach unten", () => {
-		i.start = E([...i.start], n, 1).join(""), a();
-	}, n === i.start.length - 1), D("fa-trash", "Entfernen", () => {
+	}), l = n("Seiten & Reihenfolge", o("Mit „Weiter“ blätterst du in dieser Reihenfolge, mit „Zurück“ rückwärts (Tasten siehe unten)."), t("ul", { class: "list-group mb-0" }, ...c)), _ = [...i.start].map((e, n) => t("li", { class: "list-group-item d-flex align-items-center gap-2 py-1" }, t("span", { class: "flex-grow-1" }, g[e]), M("fa-arrow-up", "Nach oben", () => {
+		i.start = j([...i.start], n, -1).join(""), a();
+	}, n === 0), M("fa-arrow-down", "Nach unten", () => {
+		i.start = j([...i.start], n, 1).join(""), a();
+	}, n === i.start.length - 1), M("fa-trash", "Entfernen", () => {
 		i.start = i.start.slice(0, n) + i.start.slice(n + 1), a();
-	}))), y = Object.keys(g).filter((e) => !i.start.includes(e)), b = t("select", {
+	}))), S = Object.keys(g).filter((e) => !i.start.includes(e)), w = t("select", {
 		class: "form-select form-select-sm",
 		"aria-label": "Baustein hinzufügen"
-	}, t("option", { value: "" }, "Baustein hinzufügen …"), ...y.map((e) => t("option", { value: e }, g[e])));
-	b.addEventListener("change", () => {
-		b.value && (i.start += b.value, a());
+	}, t("option", { value: "" }, "Baustein hinzufügen …"), ...S.map((e) => t("option", { value: e }, g[e])));
+	w.addEventListener("change", () => {
+		w.value && (i.start += w.value, a());
 	});
-	let x = n("Startseite", o("Was auf der Startseite steht, von oben nach unten. Was nicht mehr auf den Bildschirm passt, wird weggelassen."), t("ul", { class: "list-group mb-2" }, ..._.length ? _ : [t("li", { class: "list-group-item text-muted" }, "Keine Bausteine")]), y.length ? b : null), S = () => i.replies.join(";").length, C = t("div", { class: "form-text" }), w = () => {
-		let e = S();
-		C.textContent = e + " von 169 Zeichen", C.className = "form-text" + (e > v ? " text-danger" : "");
+	let T = n("Startseite", o("Was auf der Startseite steht, von oben nach unten. Was nicht mehr auf den Bildschirm passt, wird weggelassen."), t("ul", { class: "list-group mb-2" }, ..._.length ? _ : [t("li", { class: "list-group-item text-muted" }, "Keine Bausteine")]), S.length ? w : null), [E, D] = x(i.bar), O = (e, t) => {
+		i.bar = e + "|" + t, a();
+	}, k = (e) => {
+		let n = e === 0 ? E : D, r = (t) => e === 0 ? O(t, D) : O(E, t);
+		return [...n].map((i, a) => t("li", { class: "list-group-item d-flex align-items-center gap-2 py-1" }, t("span", { class: "flex-grow-1" }, v[i]), M("fa-arrow-up", "Nach vorne", () => r(j([...n], a, -1).join("")), a === 0), M("fa-arrow-down", "Nach hinten", () => r(j([...n], a, 1).join("")), a === n.length - 1), M("fa-exchange-alt", e === 0 ? "Nach rechts" : "Nach links", () => e === 0 ? O(E.slice(0, a) + E.slice(a + 1), i + D) : O(E + i, D.slice(0, a) + D.slice(a + 1))), M("fa-trash", "Entfernen", () => r(n.slice(0, a) + n.slice(a + 1)))));
+	}, A = Object.keys(v).filter((e) => !i.bar.includes(e)), N = t("select", {
+		class: "form-select form-select-sm",
+		"aria-label": "Statuszeile: hinzufügen"
+	}, t("option", { value: "" }, "Hinzufügen (rechts) …"), ...A.map((e) => t("option", { value: e }, v[e])));
+	N.addEventListener("change", () => {
+		N.value && O(E, D + N.value);
+	});
+	let F = t("li", { class: "list-group-item text-muted py-1" }, "leer"), I = n("Statuszeile oben", o("Steht auf jeder Seite ganz oben. Symbole erscheinen nur, wenn die Funktion eingeschaltet ist (z. B. WLAN aus = kein WLAN-Symbol)."), t("div", { class: "small fw-semibold mb-1" }, "Links"), t("ul", { class: "list-group mb-2" }, ...E ? k(0) : [F.cloneNode(!0)]), t("div", { class: "small fw-semibold mb-1" }, "Rechts"), t("ul", { class: "list-group mb-2" }, ...D ? k(1) : [F.cloneNode(!0)]), A.length && i.bar.length < b ? N : null, t("div", {}, M("fa-undo", "Standard", () => (i.bar = y, a())))), L = () => i.replies.join(";").length, R = t("div", { class: "form-text" }), z = () => {
+		let e = L();
+		R.textContent = e + " von 169 Zeichen", R.className = "form-text" + (e > C ? " text-danger" : "");
 	};
-	w();
-	let T = i.replies.map((n, r) => {
+	z();
+	let B = i.replies.map((n, r) => {
 		let o = t("input", {
 			type: "text",
 			class: "form-control form-control-sm",
@@ -325,28 +402,28 @@ function A(e) {
 			"aria-label": "Schnellantwort " + (r + 1)
 		});
 		return o.addEventListener("input", () => {
-			i.replies[r] = o.value.replace(/[;|]/g, ""), e.typed?.(), w();
-		}), t("div", { class: "input-group input-group-sm mb-1" }, o, D("fa-arrow-up", "Nach oben", () => {
-			i.replies = E(i.replies, r, -1), a();
-		}, r === 0), D("fa-arrow-down", "Nach unten", () => {
-			i.replies = E(i.replies, r, 1), a();
-		}, r === i.replies.length - 1), D("fa-trash", "Löschen", () => {
+			i.replies[r] = o.value.replace(/[;|]/g, ""), e.typed?.(), z();
+		}), t("div", { class: "input-group input-group-sm mb-1" }, o, M("fa-arrow-up", "Nach oben", () => {
+			i.replies = j(i.replies, r, -1), a();
+		}, r === 0), M("fa-arrow-down", "Nach unten", () => {
+			i.replies = j(i.replies, r, 1), a();
+		}, r === i.replies.length - 1), M("fa-trash", "Löschen", () => {
 			i.replies.splice(r, 1), a();
 		}));
-	}), O = n("Schnellantworten", o("Erscheinen auf dem Gerät unter Nachrichten → Antworten. Zeichen ; und | sind nicht erlaubt."), ...T, C, i.replies.length < 12 ? t("button", {
+	}), V = n("Schnellantworten", o("Erscheinen auf dem Gerät unter Nachrichten → Antworten. Zeichen ; und | sind nicht erlaubt."), ...B, R, i.replies.length < 12 ? t("button", {
 		type: "button",
 		class: "btn btn-sm btn-outline-secondary mt-2",
 		onclick: () => {
 			i.replies.push("Neue Antwort"), a();
 		}
-	}, t("i", { class: "fas fa-plus me-1" }), "Antwort hinzufügen") : null), A = +i.order[s.uiPreview], j = i.menus[A], M = (e, n, i) => {
+	}, t("i", { class: "fas fa-plus me-1" }), "Antwort hinzufügen") : null), H = +i.order[s.uiPreview], U = i.menus[H], W = (e, n, i) => {
 		let a = t("select", {
 			class: "form-select form-select-sm",
 			"aria-label": i
 		});
 		for (let [e, [n]] of Object.entries(r)) a.append(t("option", { value: e }, n));
 		return a.value = e, a.addEventListener("change", () => n(a.value)), a;
-	}, N = (n, r, i) => {
+	}, G = (n, r, i) => {
 		let a = t("input", {
 			type: "text",
 			class: "form-control form-control-sm",
@@ -358,25 +435,25 @@ function A(e) {
 		return a.addEventListener("input", () => {
 			n.label = a.value.replace(/[|\n]/g, ""), e.typed?.();
 		}), a;
-	}, P = (e, n, i) => {
+	}, K = (e, n, i) => {
 		let o = e[n], s = [
-			D("fa-arrow-up", "Nach oben", () => {
+			M("fa-arrow-up", "Nach oben", () => {
 				e.splice(n - 1, 0, ...e.splice(n, 1)), a();
 			}, n === 0),
-			D("fa-arrow-down", "Nach unten", () => {
+			M("fa-arrow-down", "Nach unten", () => {
 				e.splice(n + 1, 0, ...e.splice(n, 1)), a();
 			}, n === e.length - 1),
-			D("fa-trash", "Löschen", () => {
+			M("fa-trash", "Löschen", () => {
 				e.splice(n, 1), a();
 			})
 		];
-		if (o.sub) return t("li", { class: "list-group-item py-2" }, t("div", { class: "input-group input-group-sm mb-2" }, t("span", { class: "input-group-text" }, t("i", { class: "fas fa-folder" })), N(o, "Untermenü", "Name des Untermenüs"), ...s), t("ul", { class: "list-group ms-4" }, ...o.sub.map((e, t) => P(o.sub, t, 2))), F(o.sub, 2));
+		if (o.sub) return t("li", { class: "list-group-item py-2" }, t("div", { class: "input-group input-group-sm mb-2" }, t("span", { class: "input-group-text" }, t("i", { class: "fas fa-folder" })), G(o, "Untermenü", "Name des Untermenüs"), ...s), t("ul", { class: "list-group ms-4" }, ...o.sub.map((e, t) => K(o.sub, t, 2))), q(o.sub, 2));
 		let c = r[o.action][1];
-		return t("li", { class: "list-group-item py-1" }, t("div", { class: "input-group input-group-sm" }, N(o, c === o.action ? r[o.action][0] : c + " (automatisch)", "Text des Eintrags"), M(o.action, (e) => {
+		return t("li", { class: "list-group-item py-1" }, t("div", { class: "input-group input-group-sm" }, G(o, c === o.action ? r[o.action][0] : c + " (automatisch)", "Text des Eintrags"), W(o.action, (e) => {
 			o.action = e, a();
 		}, "Aktion"), ...s));
 	};
-	function F(e, n) {
+	function q(e, n) {
 		let r = [t("button", {
 			type: "button",
 			class: "btn btn-sm btn-outline-secondary me-2 mt-1",
@@ -401,7 +478,7 @@ function A(e) {
 			}
 		}, t("i", { class: "fas fa-folder-plus me-1" }), "Untermenü")), t("div", { class: n === 2 ? "ms-4" : "" }, ...r);
 	}
-	let I = n("Menü der Seite „" + m[A] + "“", o("Gilt für die Seite in der Vorschau (Auge-Symbol links wählt die Seite). Leerer Text = Standardtext; Schalter zeigen dann automatisch ihren Zustand. Höchstens 2 Ebenen."), t("ul", { class: "list-group mb-2" }, ...j.length ? j.map((e, t) => P(j, t, 1)) : [t("li", { class: "list-group-item text-muted" }, "Kein Menü – langes Drücken zeigt dann einen Hinweis")]), F(j, 1)), L = u.map((e, n) => {
+	let J = n("Menü der Seite „" + m[H] + "“", o("Gilt für die Seite in der Vorschau (Auge-Symbol links wählt die Seite). Leerer Text = Standardtext; Schalter zeigen dann automatisch ihren Zustand. Höchstens 2 Ebenen."), t("ul", { class: "list-group mb-2" }, ...U.length ? U.map((e, t) => K(U, t, 1)) : [t("li", { class: "list-group-item text-muted" }, "Kein Menü – langes Drücken zeigt dann einen Hinweis")]), q(U, 1)), Y = u.map((e, n) => {
 		let r = n < 4 ? d : f, o = t("select", {
 			class: "form-select form-select-sm",
 			id: "tk-key" + n
@@ -413,14 +490,14 @@ function A(e) {
 			class: "col-6 col-form-label col-form-label-sm",
 			for: "tk-key" + n
 		}, e), t("div", { class: "col-6" }, o));
-	}), R = p(i.keys), z = n("Tasten", o("Auf den Seiten und in den Menüs gleich: Weiter = nächste Seite bzw. nächster Eintrag, Zurück = vorige Seite bzw. eine Ebene zurück."), ...L, R ? t("div", { class: "alert alert-danger py-1 px-2 mt-2 mb-0 small" }, R) : null), B = t("canvas", {
+	}), X = p(i.keys), Z = n("Tasten", o("Auf den Seiten und in den Menüs gleich: Weiter = nächste Seite bzw. nächster Eintrag, Zurück = vorige Seite bzw. eine Ebene zurück."), ...Y, X ? t("div", { class: "alert alert-danger py-1 px-2 mt-2 mb-0 small" }, X) : null), Q = t("canvas", {
 		width: "400",
 		height: "400",
 		class: "border rounded d-block mx-auto mw-100",
 		"aria-label": "Vorschau des Bildschirms"
 	});
-	k(B, i, s.uiPreview, e.previewMenu);
-	let V = n("Vorschau", B, t("div", { class: "form-text text-center mb-2" }, "Seite " + (s.uiPreview + 1) + ": " + m[+i.order[s.uiPreview]] + (e.previewMenu ? " – Menü" : " – Beispielwerte")), t("div", {
+	P(Q, i, s.uiPreview, e.previewMenu);
+	let $ = n("Vorschau", Q, t("div", { class: "form-text text-center mb-2" }, "Seite " + (s.uiPreview + 1) + ": " + m[+i.order[s.uiPreview]] + (e.previewMenu ? " – Menü" : " – Beispielwerte")), t("div", {
 		class: "btn-group btn-group-sm d-flex mb-1",
 		role: "group"
 	}, t("button", {
@@ -432,72 +509,72 @@ function A(e) {
 		class: "btn " + (e.previewMenu ? "btn-secondary" : "btn-outline-secondary"),
 		onclick: () => e.setPreviewMenu(!0)
 	}, "Menü")), ...e.actions ?? []);
-	return t("div", {}, t("div", { class: "row g-3 mb-3" }, t("div", { class: "col-lg-6" }, l), t("div", { class: "col-lg-6" }, V)), t("div", { class: "row g-3 mb-3" }, t("div", { class: "col-lg-6" }, I), t("div", { class: "col-lg-6" }, z)), t("div", { class: "row g-3 mb-3" }, t("div", { class: "col-lg-6" }, x), t("div", { class: "col-lg-6" }, O)));
+	return t("div", {}, t("div", { class: "row g-3 mb-3" }, t("div", { class: "col-lg-6" }, l), t("div", { class: "col-lg-6" }, $)), t("div", { class: "row g-3 mb-3" }, t("div", { class: "col-lg-6" }, J), t("div", { class: "col-lg-6" }, Z)), t("div", { class: "row g-3 mb-3" }, t("div", { class: "col-lg-6" }, T), t("div", { class: "col-lg-6" }, I)), t("div", { class: "row g-3 mb-3" }, t("div", { class: "col-lg-6" }, V)));
 }
 // src/designer-main.js
-var j = "thinkkira-design", M, N, P = 0, F = !1, I;
-function L() {
+var L = "thinkkira-design", R, z, B = 0, V = !1, H;
+function U() {
 	try {
-		let e = localStorage.getItem(j);
-		if (e) return C(e);
+		let e = localStorage.getItem(L);
+		if (e) return O(e);
 	} catch {}
-	return b(y);
+	return T(w);
 }
-function R() {
+function W() {
 	try {
-		localStorage.setItem(j, JSON.stringify(x(N)));
+		localStorage.setItem(L, JSON.stringify(E(z)));
 	} catch {}
 }
-function z(e, n = !1) {
-	let r = M.querySelector(".tk-msg");
-	r.replaceChildren(t("div", { class: "alert py-2 mb-3 " + (n ? "alert-danger" : "alert-success") }, e)), clearTimeout(I), I = setTimeout(() => r.replaceChildren(), 5e3);
+function G(e, n = !1) {
+	let r = R.querySelector(".tk-msg");
+	r.replaceChildren(t("div", { class: "alert py-2 mb-3 " + (n ? "alert-danger" : "alert-success") }, e)), clearTimeout(H), H = setTimeout(() => r.replaceChildren(), 5e3);
 }
-var B = (e, n, r, i) => t("button", {
+var K = (e, n, r, i) => t("button", {
 	type: "button",
 	class: "btn btn-sm btn-" + r + " me-2 mt-2",
 	onclick: i
 }, t("i", { class: "fas " + n + " me-1" }), e);
-function V() {
-	let e = A({
-		d: N,
-		preview: P,
+function q() {
+	let e = I({
+		d: z,
+		preview: B,
 		hint: (e) => t("div", { class: "form-text mb-2" }, e),
 		changed: () => {
-			R(), V();
+			W(), q();
 		},
-		typed: R,
+		typed: W,
 		setPreview: (e) => {
-			P = e, V();
+			B = e, q();
 		},
-		previewMenu: F,
+		previewMenu: V,
 		setPreviewMenu: (e) => {
-			F = e, V();
+			V = e, q();
 		},
 		actions: [
-			B("Design herunterladen", "fa-download", "primary", () => {
-				let e = T(N);
-				if (e) return z(e, !0);
-				R(), S(N), z("Design-Datei gespeichert. Übertragen: Konfigurator → ThinkKira → „Design-Datei ans Gerät übertragen“.");
+			K("Design herunterladen", "fa-download", "primary", () => {
+				let e = A(z);
+				if (e) return G(e, !0);
+				W(), D(z), G("Design-Datei gespeichert. Übertragen: Konfigurator → ThinkKira → „Design-Datei ans Gerät übertragen“.");
 			}),
-			B("Design hochladen (weiter bearbeiten)", "fa-upload", "outline-secondary", async () => {
-				let e = await w();
+			K("Design hochladen (weiter bearbeiten)", "fa-upload", "outline-secondary", async () => {
+				let e = await k();
 				if (e) try {
-					N = C(await e.text()), P = 0, R(), V(), z("Design „" + e.name + "“ geladen.");
+					z = O(await e.text()), B = 0, W(), q(), G("Design „" + e.name + "“ geladen.");
 				} catch (e) {
-					z(e.message, !0);
+					G(e.message, !0);
 				}
 			}),
-			B("Standard", "fa-magic", "outline-secondary", () => {
-				N = b(y), P = 0, R(), V();
+			K("Standard", "fa-magic", "outline-secondary", () => {
+				z = T(w), B = 0, W(), q();
 			})
 		]
 	});
-	M.replaceChildren(t("p", { class: "text-muted" }, "Hier stellst du die Oberfläche des ThinkKira ein – ganz ohne Gerät. Der Entwurf bleibt in diesem Browser gespeichert."), t("div", { class: "tk-msg" }), e);
+	R.replaceChildren(t("p", { class: "text-muted" }, "Hier stellst du die Oberfläche des ThinkKira ein – ganz ohne Gerät. Der Entwurf bleibt in diesem Browser gespeichert."), t("div", { class: "tk-msg" }), e);
 }
-function H() {
-	M = document.getElementById("tk-designer"), M && (N = L(), V());
+function J() {
+	R = document.getElementById("tk-designer"), R && (z = U(), q());
 }
-document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", H) : H();
+document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", J) : J();
 
 </script>
 </body>

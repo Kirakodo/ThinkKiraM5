@@ -1,6 +1,6 @@
 // ThinkKira Designer – Bausteine für die Bildschirm-Oberfläche:
 // Seiten-Reihenfolge und an/aus, Bausteine der Startseite, Schnellantworten, mit Vorschau (200×200 E-Ink).
-// Design-Datei (JSON): { format: "thinkkira-design", version: 1, order, pages, start, replies[] }.
+// Design-Datei (JSON): { format: "thinkkira-design", version: 3, order, pages, start, replies[], keys, bar, menu[] }.
 // Gerätebefehle auf Port 287: "ui" → "u|reihenfolge|seitenbits|bausteine|antwort;antwort;…", "ui|…" setzt.
 // SPDX-License-Identifier: GPL-3.0-only
 import { el, group } from "./form.js";
@@ -29,6 +29,31 @@ const SAMPLE = {
   m: "Funk: Meshtastic",
   p: "52.3906 N  13.0645 O",
 };
+// Statuszeile oben: "links|rechts", je Zeichen ein Baustein (muss zu setBar in KiraSettings.cpp passen)
+export const BAR_ITEMS = {
+  n: "Seitenname",
+  f: "Schriftzug „ThinkKira“",
+  c: "Uhrzeit",
+  B: "Akku-Symbol",
+  b: "Akku in %",
+  g: "GPS-Symbol (voll = Position)",
+  w: "WLAN-Symbol (voll = verbunden)",
+  l: "Bluetooth-Symbol (Punkt = verbunden)",
+  m: "Ungelesene Nachrichten (Brief)",
+  k: "Knoten online",
+  r: "Funkmodus (M/K)",
+};
+export const DEFAULT_BAR = "n|mgwlcB";
+const MAX_BAR = 15;
+const splitBar = (b) => {
+  const [l, r = ""] = (b ?? DEFAULT_BAR).split("|");
+  return [l, r];
+};
+export function checkBar(b) {
+  if (typeof b !== "string" || b.length > MAX_BAR || b.split("|").length > 2 || [...b.replace("|", "")].some((c) => !BAR_ITEMS[c]))
+    return "Die Statuszeile ist ungültig.";
+  return null;
+}
 const MAX_REPLIES_LEN = 169;
 export const MAX_LEN = 169;
 export const DEFAULT_UI = {
@@ -37,17 +62,18 @@ export const DEFAULT_UI = {
   start: "cbtgsknm",
   replies: ["OK", "Ja", "Nein", "Bin unterwegs", "Komme gleich", "Alles gut", "Wo bist du?", "Brauche Hilfe"],
   keys: DEFAULT_KEYS,
+  bar: DEFAULT_BAR,
   menus: parseMenu(DEFAULT_MENU_TEXT),
 };
 
 // "u|…"-Antwort vom Gerät lesen
 export function parseUi(fields) {
-  const [order, pages, start, replies, keys] = fields;
-  return { order, pages: +pages, start: start ?? "", replies: (replies ?? "").split(";").filter(Boolean), keys: keys || DEFAULT_KEYS };
+  const [order, pages, start, replies, keys, bar] = fields;
+  return { order, pages: +pages, start: start ?? "", replies: (replies ?? "").split(";").filter(Boolean), keys: keys || DEFAULT_KEYS, bar: bar || DEFAULT_BAR };
 }
 
 export function uiCommand(d) {
-  return ["ui", d.order, String(d.pages | 0x21), d.start, d.replies.join(";"), d.keys].join("|");
+  return ["ui", d.order, String(d.pages | 0x21), d.start, d.replies.join(";"), d.keys, d.bar ?? DEFAULT_BAR].join("|");
 }
 
 // Befehle, um das Menü in Stücken zu übertragen (eine Nachricht höchstens ~230 Byte)
@@ -65,12 +91,13 @@ export const copy = (u) => ({
   start: u.start,
   replies: [...u.replies],
   keys: u.keys ?? DEFAULT_KEYS,
+  bar: u.bar ?? DEFAULT_BAR,
   menus: cloneMenus(u.menus ?? DEFAULT_UI.menus),
 });
 
 export function designJson(d) {
   const c = copy(d);
-  return { format: "thinkkira-design", version: 2, order: c.order, pages: c.pages, start: c.start, replies: c.replies, keys: c.keys, menu: menuToText(c.menus).split("\n").filter(Boolean) };
+  return { format: "thinkkira-design", version: 3, order: c.order, pages: c.pages, start: c.start, replies: c.replies, keys: c.keys, bar: c.bar, menu: menuToText(c.menus).split("\n").filter(Boolean) };
 }
 
 export function exportDesign(d, name = "thinkkira-design.json") {
@@ -99,7 +126,10 @@ export function parseDesign(text) {
   const kErr = checkKeys(keys);
   if (kErr) throw new Error(kErr);
   const menus = j.menu ? parseMenu(Array.isArray(j.menu) ? j.menu.join("\n") : j.menu) : parseMenu(DEFAULT_MENU_TEXT);
-  return { order, pages: (+j.pages & 63) | 0x21, start, replies, keys, menus };
+  const bar = j.bar ?? DEFAULT_BAR;
+  const bErr = checkBar(bar);
+  if (bErr) throw new Error(bErr);
+  return { order, pages: (+j.pages & 63) | 0x21, start, replies, keys, bar, menus };
 }
 
 export function pickFile(accept = ".json,application/json") {
@@ -117,6 +147,8 @@ export function checkDesign(d) {
   if (d.replies.join(";").length > MAX_REPLIES_LEN) return "Die Schnellantworten sind zusammen zu lang. Bitte kürzen.";
   const kErr = checkKeys(d.keys);
   if (kErr) return kErr;
+  const bErr = checkBar(d.bar ?? DEFAULT_BAR);
+  if (bErr) return bErr;
   if (!d.menus[5].length) return "Das Menü der Einstellungen darf nicht leer sein.";
   if (d.menus.some((m) => m.some((e) => e.sub && !e.sub.length))) return "Ein Untermenü ist leer. Bitte Einträge hinzufügen oder es löschen.";
   if (menuToText(d.menus).length > MENU_MAX_TEXT) return "Die Menüs sind zu groß. Bitte Einträge entfernen.";
@@ -150,10 +182,7 @@ function drawPreview(canvas, d, pageIdx, menu) {
   c.textBaseline = "top";
   const page = +d.order[pageIdx];
   c.font = "9px sans-serif";
-  c.fillText(page === 0 ? "ThinkKira" : PAGES[page], 2, 2);
-  c.textAlign = "right";
-  c.fillText("12:34  87%", 198, 2);
-  c.textAlign = "left";
+  drawBar(c, d.bar ?? DEFAULT_BAR, page === 0 ? "ThinkKira" : PAGES[page]);
   c.beginPath();
   c.moveTo(0, 14.5);
   c.lineTo(200, 14.5);
@@ -207,6 +236,89 @@ function drawPreview(canvas, d, pageIdx, menu) {
     p === page ? c.fill() : c.stroke();
     x += 12;
   }
+}
+
+// Statuszeile wie auf dem Gerät (Beispielwerte: GPS mit Position, WLAN verbunden, Bluetooth an, 2 ungelesen)
+function drawBar(c, bar, title) {
+  const [left, right] = splitBar(bar);
+  const item = (ch, x, fromRight) => {
+    const L = (w) => (fromRight ? x - w : x);
+    const text = (t) => {
+      const w = c.measureText(t).width;
+      c.fillText(t, L(w), 3);
+      return w;
+    };
+    const cy = 7;
+    switch (ch) {
+      case "n":
+        return text(title);
+      case "f":
+        return text("ThinkKira");
+      case "c":
+        return text("12:34");
+      case "b":
+        return text("87%");
+      case "k":
+        return text("4K");
+      case "r":
+        return text("M");
+      case "B": {
+        const l = L(16);
+        c.strokeRect(l + 0.5, cy - 3.5, 13, 7);
+        c.fillRect(l + 14, cy - 1.5, 2, 3);
+        c.fillRect(l + 2, cy - 1.5, 9, 4);
+        return 16;
+      }
+      case "g": {
+        const l = L(7);
+        c.beginPath();
+        c.arc(l + 3.5, cy - 1.5, 3, 0, Math.PI * 2);
+        c.fill();
+        c.beginPath();
+        c.moveTo(l + 0.5, cy);
+        c.lineTo(l + 6.5, cy);
+        c.lineTo(l + 3.5, cy + 5.5);
+        c.fill();
+        return 7;
+      }
+      case "w": {
+        const l = L(10);
+        for (let i = 0; i < 3; i++) c.fillRect(l + i * 4, cy + 5 - (4 + 3 * i), 2, 4 + 3 * i);
+        return 10;
+      }
+      case "l": {
+        const l = L(7),
+          m = l + 3.5,
+          t = cy - 5;
+        c.beginPath();
+        c.moveTo(m, t);
+        c.lineTo(m, t + 10);
+        c.lineTo(m + 3, t + 7);
+        c.lineTo(l, t + 3);
+        c.moveTo(m, t);
+        c.lineTo(m + 3, t + 3);
+        c.lineTo(l, t + 7);
+        c.stroke();
+        return 7;
+      }
+      case "m": {
+        const l = L(10 + 2 + c.measureText("2").width);
+        c.strokeRect(l + 0.5, cy - 3.5, 9, 7);
+        c.beginPath();
+        c.moveTo(l + 0.5, cy - 3.5);
+        c.lineTo(l + 5, cy);
+        c.lineTo(l + 9.5, cy - 3.5);
+        c.stroke();
+        c.fillText("2", l + 12, 3);
+        return 12 + c.measureText("2").width;
+      }
+    }
+    return 0;
+  };
+  let x = 2;
+  for (const ch of left) x += item(ch, x, false) + 4;
+  let r = 198;
+  for (const ch of [...right].reverse()) r -= item(ch, r, true) + 4;
 }
 
 // Baut die Designer-Ansicht. v: { d (Entwurf, wird direkt geändert), preview (Seitenindex), changed(), setPreview(i),
@@ -279,6 +391,52 @@ export function designerView(v) {
     hint("Was auf der Startseite steht, von oben nach unten. Was nicht mehr auf den Bildschirm passt, wird weggelassen."),
     el("ul", { class: "list-group mb-2" }, ...(startRows.length ? startRows : [el("li", { class: "list-group-item text-muted" }, "Keine Bausteine")])),
     unused.length ? addSel : null,
+  );
+
+  // --- Statuszeile
+  const [bl, br] = splitBar(d.bar);
+  const setBar = (l, r) => {
+    d.bar = l + "|" + r;
+    changed();
+  };
+  const barRows = (side) => {
+    const str = side === 0 ? bl : br;
+    const put = (s2) => (side === 0 ? setBar(s2, br) : setBar(bl, s2));
+    return [...str].map((ch, i) =>
+      el(
+        "li",
+        { class: "list-group-item d-flex align-items-center gap-2 py-1" },
+        el("span", { class: "flex-grow-1" }, BAR_ITEMS[ch]),
+        smallBtn("fa-arrow-up", "Nach vorne", () => put(move([...str], i, -1).join("")), i === 0),
+        smallBtn("fa-arrow-down", "Nach hinten", () => put(move([...str], i, 1).join("")), i === str.length - 1),
+        smallBtn("fa-exchange-alt", side === 0 ? "Nach rechts" : "Nach links", () =>
+          side === 0 ? setBar(bl.slice(0, i) + bl.slice(i + 1), ch + br) : setBar(bl + ch, br.slice(0, i) + br.slice(i + 1)),
+        ),
+        smallBtn("fa-trash", "Entfernen", () => put(str.slice(0, i) + str.slice(i + 1))),
+      ),
+    );
+  };
+  const barUnused = Object.keys(BAR_ITEMS).filter((ch) => !d.bar.includes(ch));
+  const barAdd = el(
+    "select",
+    { class: "form-select form-select-sm", "aria-label": "Statuszeile: hinzufügen" },
+    el("option", { value: "" }, "Hinzufügen (rechts) …"),
+    ...barUnused.map((ch) => el("option", { value: ch }, BAR_ITEMS[ch])),
+  );
+  barAdd.addEventListener("change", () => {
+    if (!barAdd.value) return;
+    setBar(bl, br + barAdd.value);
+  });
+  const emptyRow = el("li", { class: "list-group-item text-muted py-1" }, "leer");
+  const barBox = group(
+    "Statuszeile oben",
+    hint("Steht auf jeder Seite ganz oben. Symbole erscheinen nur, wenn die Funktion eingeschaltet ist (z. B. WLAN aus = kein WLAN-Symbol)."),
+    el("div", { class: "small fw-semibold mb-1" }, "Links"),
+    el("ul", { class: "list-group mb-2" }, ...(bl ? barRows(0) : [emptyRow.cloneNode(true)])),
+    el("div", { class: "small fw-semibold mb-1" }, "Rechts"),
+    el("ul", { class: "list-group mb-2" }, ...(br ? barRows(1) : [emptyRow.cloneNode(true)])),
+    barUnused.length && d.bar.length < MAX_BAR ? barAdd : null,
+    el("div", {}, smallBtn("fa-undo", "Standard", () => ((d.bar = DEFAULT_BAR), changed()))),
   );
 
   // --- Schnellantworten
@@ -470,6 +628,7 @@ export function designerView(v) {
     {},
     el("div", { class: "row g-3 mb-3" }, el("div", { class: "col-lg-6" }, pagesBox), el("div", { class: "col-lg-6" }, previewBox)),
     el("div", { class: "row g-3 mb-3" }, el("div", { class: "col-lg-6" }, menuBox), el("div", { class: "col-lg-6" }, keysBox)),
-    el("div", { class: "row g-3 mb-3" }, el("div", { class: "col-lg-6" }, startBox), el("div", { class: "col-lg-6" }, repliesBox)),
+    el("div", { class: "row g-3 mb-3" }, el("div", { class: "col-lg-6" }, startBox), el("div", { class: "col-lg-6" }, barBox)),
+    el("div", { class: "row g-3 mb-3" }, el("div", { class: "col-lg-6" }, repliesBox)),
   );
 }

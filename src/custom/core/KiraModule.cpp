@@ -94,10 +94,10 @@ void KiraModule::handleLocal(char *cmd)
             reply(("err|Menü: " + err).c_str());
     }
     else if (!strncmp(cmd, "ui|", 3)) {
-        // ui|reihenfolge|seitenbits|startbausteine|antworten|tasten (leere Felder bleiben unverändert)
-        char *f[5] = {nullptr};
+        // ui|reihenfolge|seitenbits|startbausteine|antworten|tasten|statuszeile (leere Felder bleiben unverändert)
+        char *f[6] = {nullptr};
         char *p = cmd + 3;
-        for (int i = 0; i < 5 && p; i++) {
+        for (int i = 0; i < 6 && p; i++) {
             f[i] = p;
             p = strchr(p, '|');
             if (p)
@@ -115,6 +115,8 @@ void KiraModule::handleLocal(char *cmd)
             ok &= setReplies(f[3]);
         if (f[4] && *f[4])
             ok &= setKeys(f[4]);
+        if (f[5] && *f[5])
+            ok &= setBar(f[5]);
         s.uiRev++;
         saveSettings();
         if (!ok)
@@ -265,7 +267,7 @@ void KiraModule::sendUi()
 {
     const Settings &s = settings();
     char out[240];
-    snprintf(out, sizeof(out), "u|%s|%u|%s|%s|%s", s.order, (unsigned)s.pages, s.start, s.replies, s.keys);
+    snprintf(out, sizeof(out), "u|%s|%u|%s|%s|%s|%s", s.order, (unsigned)s.pages, s.start, s.replies, s.keys, s.bar);
     reply(out);
 }
 

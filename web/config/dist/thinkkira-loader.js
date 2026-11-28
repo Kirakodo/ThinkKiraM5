@@ -11523,7 +11523,7 @@ async function q_(e) {
 function J_(e, t) {
 	return new Promise((n, r) => setTimeout(() => r(Object.assign(Error(t), { de: !0 })), e));
 }
-async function Y_(e, t = () => {}, n = 6e3) {
+async function Y_(e, t = () => {}, n = 9e3) {
 	t("Warte auf den Start der Firmware …"), await new Promise((e) => setTimeout(e, n)), t("Frage die laufende Firmware ab …");
 	let r = new P_(await F_.createFromPort(e, 115200)), i = {
 		config: {},
@@ -11544,7 +11544,7 @@ async function Y_(e, t = () => {}, n = 6e3) {
 	});
 	try {
 		let e = new Promise((e) => a.onDeviceStatus.subscribe((t) => t === 7 && e()));
-		r.configure().catch(() => {}), await Promise.race([e, J_(2e4, "Keine Antwort von der Firmware.")]);
+		r.configure().catch(() => {}), await Promise.race([e, J_(3e4, "Keine Antwort von der Firmware.")]);
 		let t = (e) => r.sendPacket(new TextEncoder().encode(e), I_, "self", 0, !1, !1).catch(() => {});
 		t("get"), t("info"), await new Promise((e) => setTimeout(e, 2500));
 	} catch {
@@ -11743,7 +11743,7 @@ function b1() {
 		let t = e(await l1());
 		$("Lese Chip, Speicher und installierte Firmware …"), r1(30), o1((await q_(t.loader)).sections), r1(50), await t.loader.after(), await t.transport.disconnect().catch(() => {}), e(null);
 		let n = await Y_(t.port, (e) => $(e));
-		r1(100, !0), n ? (o1(n, !0), $("Gerät ausgelesen. Nichts wurde verändert.", "ok")) : (o1([["Laufende Firmware", [["Status", "keine Antwort – keine Meshtastic-/ThinkKira-Firmware aktiv"]]]], !0), $("Chip und Speicher ausgelesen. Die Firmware hat nicht geantwortet (leer oder fremde Firmware). Nichts wurde verändert.", "ok"));
+		r1(100, !0), n ? (o1(n, !0), $("Gerät ausgelesen. Nichts wurde verändert.", "ok")) : (o1([["Laufende Firmware", [["Status", "hat beim Auslesen nicht geantwortet"]]]], !0), $("Chip und Speicher ausgelesen, nichts wurde verändert. Die laufende Firmware hat nach dem Neustart nicht rechtzeitig geantwortet. Das heißt nicht, dass keine Firmware drauf ist: Zeigt das Display die ThinkKira-Oberfläche, ist alles in Ordnung. Die genaue Version steht im Konfigurator unter ThinkKira.", "ok"));
 	});
 }
 function x1() {
