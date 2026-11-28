@@ -142,8 +142,26 @@ async function writeImage(loader, data, address, erase) {
     reportProgress: (_i, written, total) => setProgress(Math.round((written / total) * 100)),
   });
   setStatus("Neustart …");
-  await loader.after();
+  await rebootToFirmware(loader);
   setProgress(100, true);
+}
+
+// Neustart in die Firmware. Der übliche Weg (RTS-Leitung) lässt den ESP32-S3 über die eingebaute USB-Schnittstelle
+// manchmal im Bootmodus hängen. Wie esptool: „Bootmodus erzwingen“ löschen und per RTC-Watchdog neu starten.
+async function rebootToFirmware(loader) {
+  const RTC = 0x60008000;
+  try {
+    await loader.writeReg(RTC + 0x12c, 0, 0x1); // RTC_CNTL_OPTION1: FORCE_DOWNLOAD_BOOT aus
+    await loader.writeReg(RTC + 0xb0, 0x50d83aa1); // Watchdog entsperren
+    await loader.writeReg(RTC + 0x9c, 2000); // Zeit bis zum Auslösen
+    await loader.writeReg(RTC + 0x98, (1 << 31) | (5 << 28) | (1 << 8) | 2); // einschalten: Systemneustart
+    await loader.writeReg(RTC + 0xb0, 0); // sperren
+    await new Promise((r) => setTimeout(r, 300));
+  } catch (e) {
+    // Gerät ist schon weg (Neustart läuft) oder kein ESP32-S3: klassischer Weg
+    console.warn("Watchdog-Neustart:", e);
+    await loader.after().catch(() => {});
+  }
 }
 
 // Firmware-Quellen für die Auswahl: neueste/ältere ThinkKira-Versionen, Meshtastic-Original, eigene Datei
@@ -250,7 +268,7 @@ function backup() {
       image.set(await loader.readFlash(addr, len), addr);
       setProgress(Math.round(((addr + len) / total) * 100));
     }
-    await loader.after();
+    await rebootToFirmware(loader);
     setProgress(100, true);
     const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-");
     download(image, "thinkkira-backup-" + stamp + ".bin");
@@ -265,7 +283,7 @@ function readDevice() {
     setProgress(30);
     showInfo((await readBootInfo(conn.loader)).sections);
     setProgress(50);
-    await conn.loader.after(); // Neustart in die Firmware
+    await rebootToFirmware(conn.loader); // Neustart in die Firmware
     await conn.transport.disconnect().catch(() => {});
     keep(null);
     const rt = await readRuntimeInfo(conn.port, (t) => setStatus(t));
