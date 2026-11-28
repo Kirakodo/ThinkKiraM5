@@ -35,6 +35,7 @@ class KiraModule : public SinglePortModule
     void handleLocal(char *cmd);
     void handleRemote(const meshtastic_MeshPacket &mp, char *cmd);
     void reply(const char *text);
+    void replyNow(const char *text); // nur für die Warteschlange
     void sendRadio(uint32_t to, const char *text);
     void wifiScan();
     void sendStats();
@@ -42,6 +43,9 @@ class KiraModule : public SinglePortModule
     void sendInfo();
     void sendUi();
     void sendMenu();
+    void sendWaypoints();
+    void waypointCommand(char *cmd);
+    void sendTrack();
     std::string menuUpload; // Designer-Menü wird in Stücken übertragen
     uint32_t lastPongMs = 0;
     bool pingFromClient = false;

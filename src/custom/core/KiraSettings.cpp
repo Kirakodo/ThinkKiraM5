@@ -5,6 +5,7 @@
 #include "SPILock.h"
 #include "configuration.h"
 #include <stdlib.h>
+#include <algorithm>
 #include <string.h>
 
 namespace ThinkKira
@@ -35,6 +36,8 @@ static void parseLine(char *s)
         setStart(val);
     else if (!strcmp(key, "replies"))
         setReplies(val);
+    else if (!strcmp(key, "arrive"))
+        current.arrive = (uint16_t)std::max(5, std::min(500, atoi(val)));
     else if (!strcmp(key, "keys"))
         setKeys(val);
 }
@@ -134,7 +137,8 @@ bool saveSettings()
     }
     f.printf("radio=%s\n", current.radioMode == RADIO_KIRA ? "kira" : "meshtastic");
     f.printf("light=%u\nleds=%u\npages=%u\n", (unsigned)current.light, current.leds ? 1u : 0u, (unsigned)current.pages);
-    f.printf("order=%s\nstart=%s\nreplies=%s\nkeys=%s\n", current.order, current.start, current.replies, current.keys);
+    f.printf("order=%s\nstart=%s\nreplies=%s\nkeys=%s\narrive=%u\n", current.order, current.start, current.replies, current.keys,
+             (unsigned)current.arrive);
     f.close();
     return true;
 #else

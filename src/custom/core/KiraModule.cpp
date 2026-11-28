@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #ifdef THINKKIRA
 #include "KiraModule.h"
+#include "RTC.h"
+#include <algorithm>
+#include <deque>
 #include "KiraMenu.h"
 #include "KiraMessages.h"
+#include "KiraNav.h"
 #include "KiraRadio.h"
 #include "KiraSettings.h"
 #include "KiraSystem.h"
@@ -52,7 +56,24 @@ void KiraModule::handleLocal(char *cmd)
             reply("err|Ping konnte nicht gesendet werden");
     } else if (!strcmp(cmd, "ui"))
         sendUi();
-    else if (!strcmp(cmd, "mg"))
+    else if (!strcmp(cmd, "wpl"))
+        sendWaypoints();
+    else if (!strncmp(cmd, "wpa|", 4) || !strncmp(cmd, "wpr|", 4) || !strncmp(cmd, "wpd|", 4) || !strncmp(cmd, "wps|", 4) ||
+             !strncmp(cmd, "wpg|", 4))
+        waypointCommand(cmd);
+    else if (!strcmp(cmd, "trk"))
+        sendTrack();
+    else if (!strcmp(cmd, "trc")) {
+        if (kiraNav)
+            kiraNav->clearTrack();
+        reply("t|cleared");
+    } else if (!strncmp(cmd, "arrive|", 7)) {
+        settings().arrive = (uint16_t)std::max(5, std::min(500, atoi(cmd + 7)));
+        if (kiraNav)
+            kiraNav->arrivalRadius = settings().arrive;
+        saveSettings();
+        sendWaypoints();
+    } else if (!strcmp(cmd, "mg"))
         sendMenu();
     else if (!strcmp(cmd, "mb"))
         menuUpload.clear();
@@ -107,6 +128,82 @@ void KiraModule::handleLocal(char *cmd)
         sendMode();
     } else
         reply("err|unbekannter Befehl");
+}
+
+// p|index|name|lat|lon|zeit … p|end|anzahl|ankunftsradius|ziel
+void KiraModule::sendWaypoints()
+{
+    if (!kiraNav)
+        return reply("err|Navigation nicht verfügbar");
+    const auto &w = kiraNav->waypoints();
+    char b[96];
+    for (size_t i = 0; i < w.size(); i++) {
+        snprintf(b, sizeof(b), "p|%u|%s|%ld|%ld|%lu", (unsigned)i, w[i].name, (long)w[i].lat, (long)w[i].lon, (unsigned long)w[i].time);
+        reply(b);
+    }
+    snprintf(b, sizeof(b), "p|end|%u|%u|%s", (unsigned)w.size(), (unsigned)settings().arrive,
+             kiraNav->target().kind == TARGET_NONE ? "" : kiraNav->target().name);
+    reply(b);
+}
+
+// wpa|name|lat|lon (anlegen) · wpr|i|name (umbenennen) · wpd|i (löschen) · wps|i (ins Mesh senden) · wpg|i (als Ziel)
+void KiraModule::waypointCommand(char *cmd)
+{
+    if (!kiraNav)
+        return reply("err|Navigation nicht verfügbar");
+    char *f[3] = {nullptr};
+    char *p = cmd + 4;
+    for (int i = 0; i < 3 && p; i++) {
+        f[i] = p;
+        p = strchr(p, '|');
+        if (p)
+            *p++ = 0;
+    }
+    bool ok = false;
+    size_t idx = f[0] ? strtoul(f[0], nullptr, 10) : 0;
+    switch (cmd[2]) {
+    case 'a':
+        ok = f[2] && kiraNav->addWaypoint(f[0], strtol(f[1], nullptr, 10), strtol(f[2], nullptr, 10), getValidTime(RTCQualityDevice));
+        break;
+    case 'r':
+        ok = f[1] && kiraNav->renameWaypoint(idx, f[1]);
+        break;
+    case 'd':
+        ok = kiraNav->removeWaypoint(idx);
+        break;
+    case 's':
+        ok = kiraNav->sendWaypointToMesh(idx);
+        break;
+    case 'g':
+        if (idx < kiraNav->waypoints().size()) {
+            const Waypoint &w = kiraNav->waypoints()[idx];
+            Target t;
+            t.kind = TARGET_POINT;
+            strncpy(t.name, w.name, sizeof(t.name) - 1);
+            t.lat = w.lat;
+            t.lon = w.lon;
+            kiraNav->setTarget(t);
+            ok = true;
+        }
+        break;
+    }
+    if (!ok)
+        reply("err|Wegpunkt: Aktion nicht möglich (voll, ungültig oder nicht gefunden)");
+    sendWaypoints();
+}
+
+// t|<stück> … t|end|punkte — Inhalt: lat_i,lon_i,zeit je Zeile
+void KiraModule::sendTrack()
+{
+    if (!kiraNav)
+        return reply("err|Navigation nicht verfügbar");
+    for (size_t off = 0, n = 0; n < 2000; off += 200, n++) {
+        std::string c = kiraNav->trackChunk(off, 200);
+        if (c.empty())
+            break;
+        reply(("t|" + c).c_str());
+    }
+    reply(("t|end|" + std::to_string(kiraNav->trackPoints())).c_str());
 }
 
 void KiraModule::sendMenu()
@@ -201,7 +298,41 @@ void KiraModule::sendRadio(uint32_t to, const char *text)
     service->sendToMesh(p, RX_SRC_LOCAL, false);
 }
 
+// Antworten ans Handy/den Konfigurator laufen über eine Warteschlange: lange Listen (Menü, Wegpunkte, Track)
+// würden sonst die kleine Meshtastic-Warteschlange zum Handy überlaufen lassen.
+class KiraOutbox : public concurrency::OSThread
+{
+  public:
+    KiraOutbox() : OSThread("KiraOutbox") {}
+    std::deque<std::string> q;
+    void push(const char *t)
+    {
+        if (q.size() < 400)
+            q.emplace_back(t);
+        setIntervalFromNow(0);
+    }
+
+  protected:
+    int32_t runOnce() override
+    {
+        // je Durchlauf 2 Antworten, dann 50 ms Pause: so kommt die Verbindung zum Handy hinterher
+        for (int i = 0; i < 2 && !q.empty() && kiraModule; i++) {
+            kiraModule->replyNow(q.front().c_str());
+            q.pop_front();
+        }
+        return q.empty() ? INT32_MAX : 50;
+    }
+};
+static KiraOutbox *outbox = nullptr;
+
 void KiraModule::reply(const char *text)
+{
+    if (!outbox)
+        outbox = new KiraOutbox();
+    outbox->push(text);
+}
+
+void KiraModule::replyNow(const char *text)
 {
     meshtastic_MeshPacket *p = allocDataPacket();
     if (!p)
@@ -304,6 +435,8 @@ void setupModule()
 #if defined(MESHTASTIC_INCLUDE_INKHUD)
     kiraMessages = new KiraMessageModule();
 #endif
+    new KiraNav();
+    new KiraWaypointRx();
 }
 
 } // namespace ThinkKira
