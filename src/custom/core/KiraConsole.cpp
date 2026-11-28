@@ -4,6 +4,9 @@
 
 #include "KiraConsole.h"
 #include "GPSStatus.h"
+#include "KiraModule.h"
+#include "KiraRadio.h"
+#include "KiraSettings.h"
 #include "KiraSystem.h"
 #include "PowerStatus.h"
 #include "configuration.h"
@@ -29,6 +32,9 @@ static void cmdHelp()
     LOG_INFO("[Kira]   kira gps     - GPS-Status");
     LOG_INFO("[Kira]   kira power   - Akku und USB");
     LOG_INFO("[Kira]   kira nodes   - Anzahl Knoten");
+    LOG_INFO("[Kira]   kira mode    - Funkmodus anzeigen; 'kira mode kira|meshtastic' wechselt (Neustart)");
+    LOG_INFO("[Kira]   kira stats   - Funk-Statistik (Zaehler, letzte Pakete, Reichweitentest)");
+    LOG_INFO("[Kira]   kira ping    - Reichweitentest an direkte Nachbarn (ThinkKira-Geraete)");
     LOG_INFO("[Kira]   kira reboot  - Neustart");
 }
 
@@ -56,6 +62,53 @@ static void cmdPower()
              powerStatus->getIsCharging() ? "ja" : "nein");
 }
 
+static void cmdMode(const char *arg)
+{
+    if (!*arg) {
+        LOG_INFO("[Kira] Funkmodus: %s (Sync-Word 0x%02x)", radioModeName(settings().radioMode), radioSyncWord());
+        return;
+    }
+    RadioMode want;
+    if (!strcmp(arg, "kira"))
+        want = RADIO_KIRA;
+    else if (!strcmp(arg, "meshtastic"))
+        want = RADIO_MESHTASTIC;
+    else {
+        LOG_INFO("[Kira] Erlaubt: kira mode kira | kira mode meshtastic");
+        return;
+    }
+    if (want == settings().radioMode) {
+        LOG_INFO("[Kira] Funkmodus ist schon %s", radioModeName(want));
+        return;
+    }
+    settings().radioMode = want;
+    saveSettings();
+    LOG_INFO("[Kira] Funkmodus -> %s, Neustart in 2 s", radioModeName(want));
+    rebootAtMsec = millis() + 2000;
+}
+
+static void cmdStats()
+{
+    RadioCounters c = radioCounters();
+    RadioStats &s = radioStats();
+    LOG_INFO("[Kira] Funk: %s, RX gut %lu, RX Fehler %lu, TX %lu, weitergeleitet %lu", radioModeName(settings().radioMode),
+             (unsigned long)c.rxGood, (unsigned long)c.rxBad, (unsigned long)c.txGood, (unsigned long)c.txRelay);
+    uint32_t now = millis();
+    for (const HeardPacket &h : s.heard) {
+        if (!h.atMs)
+            break;
+        LOG_INFO("[Kira]   gehoert !%08x: %d dBm, SNR %.1f dB, vor %lu s", h.from, h.rssi, h.snr,
+                 (unsigned long)((now - h.atMs) / 1000));
+    }
+    LOG_INFO("[Kira] Reichweitentest: %lu Pings, %lu Antworten", (unsigned long)s.pingsSent, (unsigned long)s.pongsReceived);
+    for (const RangeResult &r : s.range) {
+        if (!r.atMs)
+            break;
+        LOG_INFO("[Kira]   #%lu !%08x: dort %d dBm/%.1f dB, hier %d dBm/%.1f dB", (unsigned long)r.seq, r.from, r.rssiThem,
+                 r.snrThem, r.rssiUs, r.snrUs);
+    }
+}
+
 static void handleLine(char *s)
 {
     // führende Leerzeichen weg
@@ -80,7 +133,14 @@ static void handleLine(char *s)
     else if (!strcmp(s, "nodes"))
         LOG_INFO("[Kira] Knoten: %u bekannt, %u online", (unsigned)nodeDB->getNumMeshNodes(),
                  (unsigned)nodeDB->getNumOnlineMeshNodes());
-    else if (!strcmp(s, "reboot")) {
+    else if (!strncmp(s, "mode", 4) && (s[4] == 0 || s[4] == ' '))
+        cmdMode(s[4] ? s + 5 : "");
+    else if (!strcmp(s, "stats"))
+        cmdStats();
+    else if (!strcmp(s, "ping")) {
+        if (!kiraModule || !kiraModule->sendPing())
+            LOG_INFO("[Kira] Ping nicht moeglich");
+    } else if (!strcmp(s, "reboot")) {
         LOG_INFO("[Kira] Neustart in 1 s");
         rebootAtMsec = millis() + 1000;
     } else

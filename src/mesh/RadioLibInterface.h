@@ -1,5 +1,12 @@
 #pragma once
 
+#ifdef THINKKIRA
+namespace ThinkKira
+{
+uint8_t radioSyncWord(); // THINKKIRA: src/custom/core/KiraSettings.cpp
+}
+#endif
+
 #include "MeshPacketQueue.h"
 #include "RadioInterface.h"
 #include "concurrency/NotifiedWorkerThread.h"
@@ -138,7 +145,11 @@ class RadioLibInterface : public RadioInterface, protected concurrency::Notified
      * We now use 0x2b (so that someday we can possibly use NOT 2b - because that would be funny pun).  We will be staying with
      * this code for a long time.
      */
+#ifdef THINKKIRA
+    const uint8_t syncWord = ThinkKira::radioSyncWord(); // THINKKIRA: 0x2B (Meshtastic) oder 0x24 (Kira-Funk)
+#else
     const uint8_t syncWord = 0x2b;
+#endif
 
     float currentLimit = 100; // 100mA OCP - Should be acceptable for RFM95/SX127x chipset.
 

@@ -3,6 +3,7 @@
 #ifdef THINKKIRA
 
 #include "KiraSystem.h"
+#include "KiraSettings.h"
 #include "FSCommon.h"
 #include "concurrency/OSThread.h"
 #include "configuration.h"
@@ -80,6 +81,7 @@ void logSystemReport()
     collectSystemInfo(i);
     LOG_INFO("[Kira] ThinkKira %s (Meshtastic %s)", THINKKIRA_VERSION, optstr(APP_VERSION));
     LOG_INFO("[Kira] GPS-Hardware: %s", gpsVersionText(i.gpsV2));
+    LOG_INFO("[Kira] Funkmodus: %s (Sync-Word 0x%02x)", radioModeName(settings().radioMode), radioSyncWord());
     LOG_INFO("[Kira] Flash-Chip: %u KB (Firmware gebaut fuer %u KB)", (unsigned)(i.flashPhysical / 1024),
              (unsigned)(i.flashConfigured / 1024));
     LOG_INFO("[Kira] Firmware: %u KB von %u KB App-Partition (frei %u KB)", (unsigned)(i.appUsed / 1024),

@@ -26,6 +26,9 @@
 #if CUSTOM_FEATURE_STATUS_PAGE
 #include "custom/ui/KiraStatusApplet.h"
 #endif
+#if CUSTOM_FEATURE_RADIO_STATS
+#include "custom/ui/KiraRadioApplet.h"
+#endif
 
 // Shared NicheGraphics components
 // --------------------------------
@@ -83,6 +86,9 @@ void setupNicheGraphics()
     // Pick applets
 #if CUSTOM_FEATURE_STATUS_PAGE
     inkhud->addApplet("ThinkKira Status", new ThinkKira::StatusApplet, true, false, 0); // Activated, default on tile 0
+#if CUSTOM_FEATURE_RADIO_STATS
+    inkhud->addApplet("ThinkKira Funk", new ThinkKira::RadioApplet, true); // Activated
+#endif
 #endif
     // Note: order of applets determines priority of "auto-show" feature
     inkhud->addApplet("All Messages", new InkHUD::AllMessageApplet, true, true);      // Activated, autoshown

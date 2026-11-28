@@ -25,8 +25,8 @@ Stand: 27.11.2026 · Gerät: Elecrow ThinkNode M5 · Basis: `meshtastic/firmware
 | Flash-Aufteilung | Eigene Partitionstabelle `partitions-thinkkira.csv`. Größen erst nach Messung in Phase 1 festlegen | Meshtastic-Standard: App 2,3 MB, OTA-Loader 640 KB, Dateisystem 1 MB. Die 1 MB werden schon für Einstellungen/Knoten genutzt, Karte passt da nicht mit rein. |
 | Karte | Eigene Datenpartition `map` (Ziel 1 MB, Rohdaten, kein Dateisystem) | Schnelles Lesen per `esp_partition_read`, kein LittleFS-Overhead |
 | Wegpunkte, Tracks | LittleFS (`/kira/wp.json`, `/kira/tracks/*.gpx`) | wie im Prompt |
-| Eigene Einstellungen | Eigenes Protobuf `thinkkira.proto`, PortNum **287** (privater Bereich 256–511), gespeichert in LittleFS | Keine Meshtastic-Felder zweckentfremden |
-| Eigenes LoRa-Protokoll | Gleicher SX1262-Treiber (RadioLib), anderes Sync-Word (`0x12` statt `0x2B`) und eigene Frequenz innerhalb EU_868 | stört das Meshtastic-Netz nicht |
+| Eigene Einstellungen | Textdatei `/kira/settings.txt` (schluessel=wert) in LittleFS; Befehlskanal PortNum **287** (privater Bereich 256–511) mit Textbefehlen, Protokoll in `src/custom/core/KiraModule.h` | Keine Meshtastic-Felder zweckentfremden; einfacher als eigenes Protobuf |
+| Eigenes LoRa-Protokoll | Gleicher Meshtastic-Stack, nur anderes Sync-Word (`0x24` statt `0x2B`), Frequenz/Kanäle bleiben | stört das Meshtastic-Netz nicht; `0x12` verworfen, weil MeshCore und viele LoRa-Bastelprojekte es nutzen |
 | GitHub Actions | Die ~30 Meshtastic-Workflows werden gelöscht, dafür eine eigene Action `thinkkira.yml` (Build der eigenen Env, später Release + Web) | Die Upstream-Matrix baut >100 Boards bei jedem PR und braucht Secrets |
 | Branches | Je Phase ein PR nach `main` (Branch `claude/project-thread-ltxbnh`, nach jedem Merge neu ab `main`) | |
 
@@ -40,7 +40,7 @@ Stand: 27.11.2026 · Gerät: Elecrow ThinkNode M5 · Basis: `meshtastic/firmware
 5. Flash messen → Partitionsgrößen festlegen.
 **Test am Gerät:** flashen, Boot-Log lesen (PSRAM, GPS-Version), Statusseite anschauen, Meshtastic-App verbindet.
 
-### Phase 2 – Funk & Mesh
+### Phase 2 – Funk & Mesh (umgesetzt 28.11.2026, Test offen)
 - Meshtastic-Modus = Standard (Relay, AES unverändert aus Meshtastic).
 - Eigener Modus „Kira-Funk“ umschaltbar (Reboot beim Wechsel), eigener Sync-Word/Kanal.
 - Funk-Statistik: RSSI/SNR letzter Pakete, Zähler RX/TX/Fehler, Reichweitentest (Ping/Pong mit Zähler).

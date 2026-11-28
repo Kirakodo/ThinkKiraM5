@@ -2,7 +2,7 @@
 
 Eigene Firmware für das **Elecrow ThinkNode M5**, aufgebaut als Fork der [Meshtastic-Firmware](https://github.com/meshtastic/firmware).
 
-> **Status: Phase 1 (Grundlage).** Meshtastic-Basis mit Statusseite und USB-Befehlen. Plan: [docs/PLAN.md](docs/PLAN.md)
+> **Status: Phase 2 (Funk & Mesh).** Meshtastic-Basis mit Statusseite, USB-Befehlen, umschaltbarem Kira-Funk, Funk-Statistik und Reichweitentest. Plan: [docs/PLAN.md](docs/PLAN.md)
 
 ## Idee
 
@@ -92,14 +92,14 @@ Der Quellcode der Webseite kommt in den Ordner `web/`.
 
 | Phase | Inhalt | Status |
 |---|---|---|
-| 1 | Grundlage: Fork, Build, GPS-Versionserkennung, USB-Logs | in Arbeit |
-| 2 | Funk & Mesh: Meshtastic-Modus, eigener Modus, Statistik | geplant |
+| 1 | Grundlage: Fork, Build, GPS-Versionserkennung, USB-Logs | fertig, Test am Gerät offen |
+| 2 | Funk & Mesh: Meshtastic-Modus, eigener Modus, Statistik | in Arbeit |
 | 3 | Eigene E-Ink-Oberfläche mit 6 Seiten | geplant |
 | 4 | GPS: Kompass, Track, Wegpunkt-Navigation, Offline-Karte | geplant |
 | 5 | Verbindungen: Bluetooth, WLAN, OTA, MQTT | geplant |
 | 6 | Strom: Tiefschlaf, Energieprofile | geplant |
 | 7 | Extras: SOS, Sensoren, Wecker | geplant |
-| 8 | Webseite, Web-Flasher, Configurator | geplant |
+| 8 | Webseite, Loader, Konfigurator | Loader und Konfigurator laufen, Ausbau je Phase |
 
 ## Installation
 
@@ -136,6 +136,9 @@ Im seriellen Monitor (115200 Baud) `kira help` eingeben und Enter drücken:
 | `kira gps` | GPS-Status und Position |
 | `kira power` | Akku und USB |
 | `kira nodes` | Anzahl Knoten |
+| `kira mode` | Funkmodus anzeigen; `kira mode kira` bzw. `kira mode meshtastic` wechselt (Neustart) |
+| `kira stats` | Funk-Statistik: Zähler, zuletzt gehörte Pakete (RSSI/SNR), Reichweitentest |
+| `kira ping` | Reichweitentest an direkt erreichbare ThinkKira-Geräte |
 | `kira reboot` | Neustart |
 
 ### Meshtastic-Updates übernehmen

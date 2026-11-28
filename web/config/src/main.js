@@ -26,6 +26,9 @@ const state = {
   waypoints: new Map(),
   wifiNets: null, // Ergebnis der WLAN-Suche: [{ ssid, rssi, open }]
   wifiScanning: false,
+  kira: null, // { mode, version } vom Gerät
+  kiraStats: null, // { counters, heard: [], range: [] }
+  kiraPending: null, // gesammelte Antwortzeilen von "stats"
   page: "device",
   dirty: false,
 };
@@ -44,9 +47,16 @@ async function connect(kind) {
     state.moduleConfig = {};
     state.channels = [];
     state.nodes.clear();
+    state.kira = null;
+    state.kiraStats = null;
+    state.kiraStatsAsked = false;
+    state.wifiNets = null;
 
     device.events.onDeviceStatus.subscribe((s) => {
-      if (s === STATUS_CONFIGURED) setStatus("verbunden");
+      if (s === STATUS_CONFIGURED) {
+        setStatus("verbunden");
+        kiraSend("get");
+      }
       else if (s === 2) setStatus("getrennt");
       else if (s === 6) setStatus("lese Einstellungen …");
     });
@@ -203,6 +213,42 @@ function onKiraPacket(p) {
   if (!d || d.portnum !== KIRA_PORT) return;
   const text = new TextDecoder().decode(d.payload);
   const [kind, a, b, ...rest] = text.split("|");
+  if (kind === "m") {
+    state.kira = { mode: a, version: b };
+    renderSoon();
+    return;
+  }
+  if (kind === "s" && a !== "end") {
+    const n = [a, b, ...rest].map((x) => parseInt(x, 10));
+    state.kiraPending = { counters: { rxGood: n[0], rxBad: n[1], tx: n[2], relay: n[3], pings: n[4], pongs: n[5] }, heard: [], range: [] };
+    return;
+  }
+  if (kind === "h" && state.kiraPending) {
+    state.kiraPending.heard.push({ from: a, rssi: +b, snr: +rest[0], ago: +rest[1] });
+    return;
+  }
+  if (kind === "r") {
+    const r = { seq: +a, from: b, rssiThem: +rest[0], snrThem: +rest[1], rssiUs: +rest[2], snrUs: +rest[3], ago: +rest[4] };
+    if (state.kiraPending) state.kiraPending.range.push(r);
+    else {
+      // Live-Antwort auf einen Ping aus dem Konfigurator
+      state.kiraStats ??= { counters: null, heard: [], range: [] };
+      state.kiraStats.range.unshift(r);
+      render();
+      toast("Antwort von " + nodeName(b) + ": " + r.rssiUs + " dBm");
+    }
+    return;
+  }
+  if (kind === "s" && a === "end") {
+    state.kiraStats = state.kiraPending;
+    state.kiraPending = null;
+    render();
+    return;
+  }
+  if (kind === "err") {
+    toast("Gerät meldet: " + a, true);
+    return;
+  }
   if (kind !== "w") return;
   if (a === "end") {
     clearTimeout(scanTimer);
@@ -215,6 +261,22 @@ function onKiraPacket(p) {
   }
   const ssid = rest.join("|");
   if (state.wifiNets && !state.wifiNets.some((n) => n.ssid === ssid)) state.wifiNets.push({ ssid, rssi: parseInt(a, 10), open: b === "1" });
+}
+
+async function kiraSend(cmd) {
+  if (!state.device) return false;
+  try {
+    await state.device.sendPacket(new TextEncoder().encode(cmd), KIRA_PORT, "self", 0, false, false);
+    return true;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+}
+
+function nodeName(hex) {
+  const n = state.nodes.get(parseInt(hex, 16));
+  return n?.user?.shortName || n?.user?.longName || "!" + hex;
 }
 
 async function wifiScan() {
@@ -449,9 +511,89 @@ function pageCanned() {
 }
 
 function pageThinkKira() {
-  const items = [
-    ["Funkmodus Meshtastic / ThinkKira-Funk", 2],
-    ["Funk-Statistik & Reichweitentest", 2],
+  const k = state.kira;
+  // Funkmodus
+  let modeBox;
+  if (!k) {
+    modeBox = group(
+      "Funkmodus",
+      el("div", { class: "alert alert-warning mb-0" }, "Keine Antwort vom ThinkKira-Modul. Bitte die neueste ThinkKira-Firmware über den Loader aufspielen."),
+    );
+  } else {
+    const sel = el("select", { id: "tk-mode", class: "form-select form-select-sm" });
+    sel.append(el("option", { value: "meshtastic" }, "Meshtastic (Standard, kompatibel mit allen Meshtastic-Geräten)"));
+    sel.append(el("option", { value: "kira" }, "Kira-Funk (eigenes Netz, nur ThinkKira-Geräte)"));
+    sel.value = k.mode;
+    modeBox = group(
+      "Funkmodus",
+      el("div", { class: "mb-2" }, el("label", { class: "form-label small mb-1", for: "tk-mode" }, "Modus"), sel),
+      hint(
+        "Kira-Funk nutzt ein eigenes Sync-Word: Die Geräte hören nur noch andere ThinkKira-Geräte im Kira-Funk, nicht mehr das Meshtastic-Netz. Kanäle und Verschlüsselung bleiben gleich. Beim Wechsel startet das Gerät neu.",
+      ),
+      btn(
+        "Modus speichern",
+        async () => {
+          if (sel.value === k.mode) return toast("Der Modus ist schon eingestellt.");
+          if (await kiraSend("mode|" + sel.value)) toast("Gespeichert. Das Gerät startet neu – danach bitte neu verbinden.");
+        },
+        "primary",
+        "fa-save",
+      ),
+      el("div", { class: "small text-muted mt-2" }, "ThinkKira " + k.version),
+    );
+  }
+
+  // Statistik
+  const st = state.kiraStats;
+  const statKids = [];
+  if (st?.counters) {
+    const c = st.counters;
+    const item = (label, v) => el("div", { class: "col-6 col-md-4" }, el("div", { class: "small text-muted" }, label), el("div", { class: "fw-bold" }, String(v)));
+    statKids.push(
+      el("div", { class: "row g-2 mb-3" }, item("Empfangen", c.rxGood), item("Empfangsfehler", c.rxBad), item("Gesendet", c.tx), item("Weitergeleitet", c.relay), item("Pings", c.pings), item("Antworten", c.pongs)),
+    );
+  }
+  if (st?.heard?.length) {
+    statKids.push(el("div", { class: "fw-bold small mb-1" }, "Zuletzt gehört"));
+    statKids.push(
+      table(
+        ["Knoten", "RSSI", "SNR", "vor"],
+        st.heard.map((h) => [nodeName(h.from), h.rssi + " dBm", h.snr.toFixed(1) + " dB", h.ago + " s"]),
+      ),
+    );
+  }
+  if (!st) statKids.push(hint("Noch keine Werte geladen."));
+  const statBox = group(
+    "Funk-Statistik",
+    ...statKids,
+    btn("Aktualisieren", () => kiraSend("stats"), "outline-secondary", "fa-sync"),
+  );
+
+  // Reichweitentest
+  const rangeKids = [
+    hint("Sendet einen Ping an alle direkt erreichbaren ThinkKira-Geräte (ohne Weiterleitung). Jede Antwort zeigt, wie gut beide Seiten sich hören."),
+  ];
+  if (st?.range?.length)
+    rangeKids.push(
+      table(
+        ["#", "Gerät", "dort gehört", "hier gehört"],
+        st.range.map((r) => [String(r.seq), nodeName(r.from), r.rssiThem + " dBm / " + r.snrThem.toFixed(1) + " dB", r.rssiUs + " dBm / " + r.snrUs.toFixed(1) + " dB"]),
+      ),
+    );
+  const rangeBox = group(
+    "Reichweitentest",
+    ...rangeKids,
+    btn(
+      "Ping senden",
+      async () => {
+        if (await kiraSend("ping")) toast("Ping gesendet. Antworten erscheinen hier.");
+      },
+      "primary",
+      "fa-satellite-dish",
+    ),
+  );
+
+  const later = [
     ["Seiten ein/aus, Licht, Buzzer, LEDs", 3],
     ["Tastenbelegung", 3],
     ["Kompass, Ankunftsradius, Track", 4],
@@ -462,9 +604,26 @@ function pageThinkKira() {
     ["Wecker & Erinnerungen", 7],
   ];
   const ul = el("ul", { class: "list-group list-group-flush" });
-  for (const [t, ph] of items)
+  for (const [t, ph] of later)
     ul.append(el("li", { class: "list-group-item px-0 d-flex justify-content-between align-items-center gap-2" }, t, el("span", { class: "badge text-bg-secondary" }, `ab Phase ${ph}`)));
-  return grid(group("ThinkKira-Funktionen", hint("Werden über ein eigenes ThinkKira-Modul eingestellt und freigeschaltet, sobald die Firmware-Phase fertig ist."), ul));
+  if (state.device && k && !st && !state.kiraStatsAsked) {
+    state.kiraStatsAsked = true;
+    setTimeout(() => kiraSend("stats"), 0);
+  }
+  return el("div", {}, grid(modeBox, statBox), grid(rangeBox, group("Kommt noch", ul)));
+}
+
+function table(head, rows) {
+  return el(
+    "div",
+    { class: "table-responsive" },
+    el(
+      "table",
+      { class: "table table-sm table-striped mb-2" },
+      el("thead", {}, el("tr", {}, ...head.map((h) => el("th", {}, h)))),
+      el("tbody", {}, ...rows.map((r) => el("tr", {}, ...r.map((c) => el("td", {}, c))))),
+    ),
+  );
 }
 
 function pageSystem() {
