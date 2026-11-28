@@ -6,7 +6,28 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 const TK_REPO = 'Kirakodo/ThinkKiraM5';
-const TK_CACHE_SECONDS = 600;
+const TK_CACHE_SECONDS = 600;     // Karten, Meshtastic-Original
+const TK_LATEST_SECONDS = 60;     // wie oft nach einem neuen Release geschaut wird
+const TK_FIXED_SECONDS = 604800;  // Dateien einer bestimmten Version ändern sich nicht
+
+// Tag des neuesten Releases (z. B. v0.4.1), ohne API-Limit über die Weiterleitung von /releases/latest
+function tk_latest_tag($dir)
+{
+    $f = $dir . '/latest-tag';
+    if (is_file($f) && filemtime($f) >= time() - TK_LATEST_SECONDS) {
+        return trim(file_get_contents($f));
+    }
+    $ch = curl_init('https://github.com/' . TK_REPO . '/releases/latest');
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_NOBODY => true, CURLOPT_FOLLOWLOCATION => false, CURLOPT_TIMEOUT => 15, CURLOPT_USERAGENT => 'ThinkKira-Flasher']);
+    curl_exec($ch);
+    $loc = (string) curl_getinfo($ch, CURLINFO_REDIRECT_URL);
+    curl_close($ch);
+    if (preg_match('#/releases/tag/(v\d+\.\d+\.\d+)$#', $loc, $m)) {
+        file_put_contents($f, $m[1]);
+        return $m[1];
+    }
+    return is_file($f) ? trim(file_get_contents($f)) : null; // GitHub nicht erreichbar: letzter bekannter Stand
+}
 const TK_ASSETS = [
     'manifest.json'          => 'application/json',
     'thinkkira-m5.factory.bin' => 'application/octet-stream',
@@ -24,11 +45,17 @@ $release = 'latest/download';
 $url = null;       // abweichende Quelle (GitHub-API)
 $transform = null; // Antwort vor dem Zwischenspeichern umbauen
 $cacheKey = null;
+$ttl = TK_CACHE_SECONDS;
+$cacheDir = sys_get_temp_dir() . '/thinkkira-fw';
+if (!is_dir($cacheDir)) {
+    @mkdir($cacheDir, 0700, true);
+}
 if (isset($_GET['releases'])) {
     // Liste der ThinkKira-Versionen für die Auswahl im Loader (ohne die Sammel-Releases „karten“ und „meshtastic“)
     $asset = 'releases.json';
     $url = 'https://api.github.com/repos/' . TK_REPO . '/releases?per_page=40';
     $mime = 'application/json; charset=utf-8';
+    $ttl = TK_LATEST_SECONDS * 2;
     $transform = function ($data) {
         $list = [];
         foreach (json_decode($data, true) ?: [] as $r) {
@@ -59,6 +86,7 @@ if (isset($_GET['releases'])) {
     $release = 'download/' . $_GET['tag'];
     $mime = TK_ASSETS[$asset];
     $cacheKey = $_GET['tag'] . '-' . $asset;
+    $ttl = TK_FIXED_SECONDS;
 } elseif (isset($_GET['maps'])) {
     // Verzeichnis aller Offline-Karten (Name, Titel, Gebiet, Größe) für den Konfigurator
     $asset = 'karten.json';
@@ -74,19 +102,22 @@ if (isset($_GET['releases'])) {
     $release = 'download/karten';
     $mime = 'application/octet-stream';
 } elseif (array_key_exists($asset, TK_ASSETS)) {
+    // immer die Dateien des aktuell neuesten Releases: Version und Firmware passen so garantiert zusammen
     $mime = TK_ASSETS[$asset];
+    $tag = tk_latest_tag($cacheDir);
+    if ($tag) {
+        $release = 'download/' . $tag;
+        $cacheKey = $tag . '-' . $asset;
+        $ttl = TK_FIXED_SECONDS;
+    }
 } else {
     http_response_code(404);
     exit('unbekannte Datei');
 }
 
-$cacheDir = sys_get_temp_dir() . '/thinkkira-fw';
-if (!is_dir($cacheDir)) {
-    @mkdir($cacheDir, 0700, true);
-}
 $cacheFile = $cacheDir . '/' . ($cacheKey ?? $asset);
 
-if (!is_file($cacheFile) || filemtime($cacheFile) < time() - TK_CACHE_SECONDS) {
+if (!is_file($cacheFile) || filemtime($cacheFile) < time() - $ttl) {
     $url = $url ?? 'https://github.com/' . TK_REPO . '/releases/' . $release . '/' . rawurlencode($asset);
     $ch = curl_init($url);
     curl_setopt_array($ch, [
