@@ -31,8 +31,8 @@ class Shell : public NicheGraphics::InkHUD::Applet, private concurrency::OSThrea
     void auxLong();                     // Zweittaste lang
     void keyDown();                     // jede Taste gedrückt (Licht, Halten messen)
 
-  private:
     enum Page : uint8_t { P_START, P_MSG, P_NAV, P_MAP, P_NODES, P_SET, P_COUNT };
+  private:
     struct Item {
         std::string label;
         std::function<void()> action;
@@ -114,6 +114,7 @@ class Shell : public NicheGraphics::InkHUD::Applet, private concurrency::OSThrea
     uint32_t lastMinute = 0;
     int lastMsgCount = -1;
     int lastUnread = -1;
+    uint8_t lastUiRev = 0;
 };
 
 } // namespace ThinkKira

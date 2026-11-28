@@ -20,7 +20,17 @@ struct Settings {
     LightMode light = LIGHT_ON_KEY; // Hintergrundlicht
     bool leds = true;               // LED-Hinweise (blaue LED bei Nachricht)
     uint8_t pages = 0x3F;           // Seiten ein/aus (Bit 0 = Start … Bit 5 = Einstellungen)
+    // Designer (Konfigurator): Reihenfolge der Seiten als Ziffern 0–5, Bausteine der Startseite, Schnellantworten
+    char order[7] = "012345";
+    char start[12] = "cbgsknm"; // c Uhr, b Akku, g GPS, s Signal, k Knoten, n Nachrichten, m Funkmodus, p Position
+    uint8_t uiRev = 0; // wird bei Designer-Änderung erhöht, die Oberfläche zeichnet dann neu (nicht gespeichert)
+    char replies[170] = "OK;Ja;Nein;Bin unterwegs;Komme gleich;Alles gut;Wo bist du?;Brauche Hilfe";
 };
+
+// Prüft und übernimmt Designer-Werte; false, wenn etwas ungültig ist
+bool setOrder(const char *order);
+bool setStart(const char *start);
+bool setReplies(const char *replies);
 
 Settings &settings();   // lädt beim ersten Aufruf aus dem Dateisystem
 bool saveSettings();    // schreibt die aktuelle Einstellung

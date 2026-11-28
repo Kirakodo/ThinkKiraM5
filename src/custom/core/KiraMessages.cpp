@@ -14,8 +14,6 @@ namespace ThinkKira
 
 KiraMessageModule *kiraMessages = nullptr;
 
-const char *const QUICK_REPLIES[] = {"OK", "Ja", "Nein", "Bin unterwegs", "Komme gleich", "Alles gut", "Wo bist du?", "Brauche Hilfe"};
-const int QUICK_REPLY_COUNT = sizeof(QUICK_REPLIES) / sizeof(QUICK_REPLIES[0]);
 
 KiraMessageModule::KiraMessageModule() : SinglePortModule("kiramsg", meshtastic_PortNum_TEXT_MESSAGE_APP)
 {

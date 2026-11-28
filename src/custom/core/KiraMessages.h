@@ -43,7 +43,5 @@ class KiraMessageModule : public SinglePortModule
 extern KiraMessageModule *kiraMessages;
 
 // Feste Schnellantworten (später im Konfigurator einstellbar)
-extern const char *const QUICK_REPLIES[];
-extern const int QUICK_REPLY_COUNT;
 
 } // namespace ThinkKira

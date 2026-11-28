@@ -29,6 +29,48 @@ static void parseLine(char *s)
         current.leds = atoi(val) != 0;
     else if (!strcmp(key, "pages"))
         current.pages = (uint8_t)(atoi(val) | 0x21); // Start und Einstellungen immer an
+    else if (!strcmp(key, "order"))
+        setOrder(val);
+    else if (!strcmp(key, "start"))
+        setStart(val);
+    else if (!strcmp(key, "replies"))
+        setReplies(val);
+}
+
+bool setOrder(const char *o)
+{
+    // genau die Ziffern 0–5, jede einmal
+    if (strlen(o) != 6)
+        return false;
+    uint8_t seen = 0;
+    for (int i = 0; i < 6; i++) {
+        if (o[i] < '0' || o[i] > '5' || (seen & (1 << (o[i] - '0'))))
+            return false;
+        seen |= 1 << (o[i] - '0');
+    }
+    memcpy(current.order, o, 7);
+    return true;
+}
+
+bool setStart(const char *st)
+{
+    size_t n = strlen(st);
+    if (n >= sizeof(current.start))
+        return false;
+    for (size_t i = 0; i < n; i++)
+        if (!strchr("cbgsknmp", st[i]))
+            return false;
+    memcpy(current.start, st, n + 1);
+    return true;
+}
+
+bool setReplies(const char *r)
+{
+    size_t n = strlen(r);
+    if (!n || n >= sizeof(current.replies) || strchr(r, '|') || strchr(r, '\n'))
+        return false;
+    memcpy(current.replies, r, n + 1);
+    return true;
 }
 
 Settings &settings()
@@ -40,7 +82,7 @@ Settings &settings()
     concurrency::LockGuard g(spiLock);
     File f = FSCom.open(PATH, FILE_O_READ);
     if (f) {
-        char line[64];
+        char line[256];
         size_t n = 0;
         while (f.available()) {
             int c = f.read();
@@ -74,6 +116,7 @@ bool saveSettings()
     }
     f.printf("radio=%s\n", current.radioMode == RADIO_KIRA ? "kira" : "meshtastic");
     f.printf("light=%u\nleds=%u\npages=%u\n", (unsigned)current.light, current.leds ? 1u : 0u, (unsigned)current.pages);
+    f.printf("order=%s\nstart=%s\nreplies=%s\n", current.order, current.start, current.replies);
     f.close();
     return true;
 #else

@@ -39,6 +39,7 @@ class KiraModule : public SinglePortModule
     void sendStats();
     void sendMode();
     void sendInfo();
+    void sendUi();
     uint32_t lastPongMs = 0;
     bool pingFromClient = false;
 };

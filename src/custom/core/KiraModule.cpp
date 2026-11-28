@@ -24,7 +24,7 @@ KiraModule *kiraModule = nullptr;
 
 ProcessMessage KiraModule::handleReceived(const meshtastic_MeshPacket &mp)
 {
-    char cmd[48] = {0};
+    char cmd[240] = {0};
     size_t n = mp.decoded.payload.size < sizeof(cmd) - 1 ? mp.decoded.payload.size : sizeof(cmd) - 1;
     memcpy(cmd, mp.decoded.payload.bytes, n);
 
@@ -49,6 +49,33 @@ void KiraModule::handleLocal(char *cmd)
         pingFromClient = true;
         if (!sendPing())
             reply("err|Ping konnte nicht gesendet werden");
+    } else if (!strcmp(cmd, "ui"))
+        sendUi();
+    else if (!strncmp(cmd, "ui|", 3)) {
+        // ui|reihenfolge|seitenbits|startbausteine|antworten (leere Felder bleiben unverändert)
+        char *f[4] = {nullptr};
+        char *p = cmd + 3;
+        for (int i = 0; i < 4 && p; i++) {
+            f[i] = p;
+            p = strchr(p, '|');
+            if (p)
+                *p++ = 0;
+        }
+        Settings &s = settings();
+        bool ok = true;
+        if (f[0] && *f[0])
+            ok &= setOrder(f[0]);
+        if (f[1] && *f[1])
+            s.pages = (uint8_t)(atoi(f[1]) | 0x21);
+        if (f[2])
+            ok &= setStart(f[2]);
+        if (f[3] && *f[3])
+            ok &= setReplies(f[3]);
+        s.uiRev++;
+        saveSettings();
+        if (!ok)
+            reply("err|Designer: ungültiger Wert, Rest übernommen");
+        sendUi();
     } else if (!strncmp(cmd, "mode|", 5)) {
         RadioMode want = !strcmp(cmd + 5, "kira") ? RADIO_KIRA : RADIO_MESHTASTIC;
         if (want != settings().radioMode) {
@@ -60,6 +87,14 @@ void KiraModule::handleLocal(char *cmd)
         sendMode();
     } else
         reply("err|unbekannter Befehl");
+}
+
+void KiraModule::sendUi()
+{
+    const Settings &s = settings();
+    char out[240];
+    snprintf(out, sizeof(out), "u|%s|%u|%s|%s", s.order, (unsigned)s.pages, s.start, s.replies);
+    reply(out);
 }
 
 void KiraModule::handleRemote(const meshtastic_MeshPacket &mp, char *cmd)

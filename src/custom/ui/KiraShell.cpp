@@ -197,6 +197,13 @@ int32_t Shell::runOnce()
     }
 
     // Inhalte aktualisieren (nur wenn sich etwas geändert hat; E-Ink schonen)
+    if (s.uiRev != lastUiRev) {
+        lastUiRev = s.uiRev;
+        if (!(s.pages & (1 << page)))
+            page = P_START;
+        redraw(true);
+    }
+
     if (isForeground() && stack.empty() && !infoOpen && !screenOff && sos == SOS_OFF) {
         int cnt = kiraMessages ? kiraMessages->count() : 0, unread = kiraMessages ? kiraMessages->unread() : 0;
         uint32_t minute = getValidTime(RTCQualityDevice, true) / 60;
@@ -219,11 +226,24 @@ void Shell::redraw(bool full)
     requestUpdate(full ? Drivers::EInk::UpdateTypes::FULL : Drivers::EInk::UpdateTypes::FAST);
 }
 
+// Seitenreihenfolge aus dem Designer (Ziffern 0–5); ausgeschaltete Seiten werden übersprungen
+static int orderPos(Shell::Page p)
+{
+    const char *o = ThinkKira::settings().order;
+    for (int i = 0; i < 6; i++)
+        if (o[i] - '0' == p)
+            return i;
+    return 0;
+}
+
 void Shell::changePage(int dir)
 {
     uint8_t mask = ThinkKira::settings().pages | 0x21;
+    const char *o = ThinkKira::settings().order;
+    int pos = orderPos(page);
     for (int i = 0; i < P_COUNT; i++) {
-        page = (Page)((page + dir + P_COUNT) % P_COUNT);
+        pos = (pos + dir + P_COUNT) % P_COUNT;
+        page = (Page)(o[pos] - '0');
         if (mask & (1 << page))
             break;
     }
@@ -418,10 +438,18 @@ Shell::Menu Shell::menuStart()
 Shell::Menu Shell::menuQuickReplies(uint32_t to, uint8_t channel, const std::string &title)
 {
     Menu m{title, {}};
-    for (int i = 0; i < QUICK_REPLY_COUNT; i++) {
-        const char *t = QUICK_REPLIES[i];
+    std::string all = ThinkKira::settings().replies;
+    size_t a = 0;
+    while (a <= all.size()) {
+        size_t b = all.find(';', a);
+        if (b == std::string::npos)
+            b = all.size();
+        std::string t = all.substr(a, b - a);
+        a = b + 1;
+        if (t.empty())
+            continue;
         m.items.push_back({t, [this, t, to, channel]() {
-                               bool ok = kiraMessages && kiraMessages->send(t, to, channel);
+                               bool ok = kiraMessages && kiraMessages->send(t.c_str(), to, channel);
                                closeMenus();
                                toast(ok ? "Gesendet" : "Senden fehlgeschlagen");
                            }});
@@ -699,7 +727,9 @@ void Shell::drawPageDots()
             count++;
     const int16_t gap = 12, r = 3, y = height() - 6;
     int16_t x = width() / 2 - (count - 1) * gap / 2;
-    for (int p = 0; p < P_COUNT; p++) {
+    const char *o = ThinkKira::settings().order;
+    for (int i = 0; i < P_COUNT; i++) {
+        int p = o[i] - '0';
         if (!(mask & (1 << p)))
             continue;
         if (p == page)
@@ -761,52 +791,69 @@ void Shell::onRender(bool)
 void Shell::drawStart()
 {
     drawTopBar("ThinkKira");
-    uint32_t t = getValidTime(RTCQualityDevice, true);
-    setFont(fontLarge);
     int16_t y = fontSmall.lineHeight() + 10;
-    if (t) {
-        char b[24];
-        snprintf(b, sizeof(b), "%02u:%02u", (unsigned)((t / 3600) % 24), (unsigned)((t / 60) % 60));
-        printThick(width() / 2, y + fontLarge.lineHeight() / 2 + 4, b, 2, 2);
-        y += fontLarge.lineHeight() + 12;
-    } else {
-        printAt(width() / 2, y, "--:--", CENTER);
-        y += fontLarge.lineHeight() + 8;
-    }
-
-    setFont(fontMedium);
     const int16_t lh = fontMedium.lineHeight() + 3;
     char b[48];
-    if (powerStatus) {
-        snprintf(b, sizeof(b), "Akku %u%%%s", powerStatus->getBatteryChargePercent(), powerStatus->getHasUSB() ? " (USB)" : "");
-        printAt(4, y, b);
-        y += lh;
-    }
-    if (gpsStatus) {
-        if (gpsStatus->getHasLock())
-            snprintf(b, sizeof(b), "GPS: Fix, %u Sat.", (unsigned)gpsStatus->getNumSatellites());
-        else
-            snprintf(b, sizeof(b), "GPS: %s", gpsStatus->getIsConnected() ? "sucht …" : "aus");
+    // Bausteine in der Reihenfolge aus dem Designer
+    for (const char *w = ThinkKira::settings().start; *w && y < height() - 16; w++) {
+        setFont(fontMedium);
+        switch (*w) {
+        case 'c': { // Uhr groß
+            uint32_t t = getValidTime(RTCQualityDevice, true);
+            setFont(fontLarge);
+            if (t) {
+                snprintf(b, sizeof(b), "%02u:%02u", (unsigned)((t / 3600) % 24), (unsigned)((t / 60) % 60));
+                printThick(width() / 2, y + fontLarge.lineHeight() / 2 + 4, b, 2, 2);
+                y += fontLarge.lineHeight() + 12;
+            } else {
+                printAt(width() / 2, y, "--:--", CENTER);
+                y += fontLarge.lineHeight() + 8;
+            }
+            continue;
+        }
+        case 'b':
+            if (!powerStatus)
+                continue;
+            snprintf(b, sizeof(b), "Akku %u%%%s", powerStatus->getBatteryChargePercent(), powerStatus->getHasUSB() ? " (USB)" : "");
+            break;
+        case 'g':
+            if (!gpsStatus)
+                continue;
+            if (gpsStatus->getHasLock())
+                snprintf(b, sizeof(b), "GPS: Fix, %u Sat.", (unsigned)gpsStatus->getNumSatellites());
+            else
+                snprintf(b, sizeof(b), "GPS: %s", gpsStatus->getIsConnected() ? "sucht …" : "aus");
+            break;
+        case 's': {
+            const RadioStats &rs = radioStats();
+            if (rs.heard[0].atMs)
+                snprintf(b, sizeof(b), "Signal: %d dBm (vor %s)", rs.heard[0].rssi, ago(millis() - rs.heard[0].atMs).c_str());
+            else
+                snprintf(b, sizeof(b), "Signal: noch nichts gehört");
+            break;
+        }
+        case 'k':
+            snprintf(b, sizeof(b), "Knoten online: %u", (unsigned)nodeDB->getNumOnlineMeshNodes());
+            break;
+        case 'n': {
+            int unread = kiraMessages ? kiraMessages->unread() : 0;
+            snprintf(b, sizeof(b), unread ? "Ungelesen: %d" : "Keine neuen Nachrichten", unread);
+            break;
+        }
+        case 'm':
+            snprintf(b, sizeof(b), "Funk: %s", radioModeName(ThinkKira::settings().radioMode));
+            break;
+        case 'p':
+            if (localPosition.latitude_i || localPosition.longitude_i)
+                snprintf(b, sizeof(b), "%.4f N  %.4f O", localPosition.latitude_i * 1e-7, localPosition.longitude_i * 1e-7);
+            else
+                snprintf(b, sizeof(b), "Position: unbekannt");
+            break;
+        default:
+            continue;
+        }
         printAt(4, y, parse(b));
         y += lh;
-    }
-    const RadioStats &rs = radioStats();
-    if (rs.heard[0].atMs)
-        snprintf(b, sizeof(b), "Signal: %d dBm (vor %s)", rs.heard[0].rssi, ago(millis() - rs.heard[0].atMs).c_str());
-    else
-        snprintf(b, sizeof(b), "Signal: noch nichts gehört");
-    printAt(4, y, parse(b));
-    y += lh;
-    snprintf(b, sizeof(b), "Knoten online: %u", (unsigned)nodeDB->getNumOnlineMeshNodes());
-    printAt(4, y, b);
-    y += lh;
-    int unread = kiraMessages ? kiraMessages->unread() : 0;
-    snprintf(b, sizeof(b), unread ? "Ungelesen: %d" : "Keine neuen Nachrichten", unread);
-    printAt(4, y, b);
-    y += lh;
-    if (ThinkKira::settings().radioMode == RADIO_KIRA) {
-        setFont(fontSmall);
-        printAt(4, y, "Modus: Kira-Funk");
     }
 }
 
