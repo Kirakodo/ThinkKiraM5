@@ -4,6 +4,9 @@
 #include "FSCommon.h"
 #include "SPILock.h"
 #include "configuration.h"
+#ifndef FILE_O_APPEND
+#define FILE_O_APPEND "a"
+#endif
 #include <string.h>
 #if defined(ARCH_ESP32)
 #include "mbedtls/base64.h"

@@ -830,7 +830,7 @@ function it(e, t) {
 			return r.get(e);
 		},
 		add(e) {
-			Et(e.proto.options?.mapEntry === !0), r.set(e.typeName, e);
+			g(e.proto.options?.mapEntry === !0), r.set(e.typeName, e);
 		}
 	};
 	for (let r of e.enumType) st(r, n, void 0, t);
@@ -949,7 +949,7 @@ function ut(e, t, n) {
 	let r;
 	r = e.clientStreaming && e.serverStreaming ? "bidi_streaming" : e.clientStreaming ? "client_streaming" : e.serverStreaming ? "server_streaming" : "unary";
 	let i = n.getMessage(vt(e.inputType)), a = n.getMessage(vt(e.outputType));
-	Et(i, `invalid MethodDescriptorProto: input_type ${e.inputType} not found`), Et(a, `invalid MethodDescriptorProto: output_type ${e.inputType} not found`);
+	g(i, `invalid MethodDescriptorProto: input_type ${e.inputType} not found`), g(a, `invalid MethodDescriptorProto: output_type ${e.inputType} not found`);
 	let o = e.name;
 	return {
 		kind: "rpc",
@@ -1004,10 +1004,10 @@ function ft(e, t, n, r, i) {
 		let r = t.kind == "file" ? t : t.file, i = t.kind == "file" ? void 0 : t, a = _t(e, i, r);
 		o.kind = "extension", o.file = r, o.parent = i, o.oneof = void 0, o.typeName = a, o.jsonName = `[${a}]`, o.toString = () => `extension ${a}`;
 		let s = n.getMessage(vt(e.extendee));
-		Et(s, `invalid FieldDescriptorProto: extendee ${e.extendee} not found`), o.extendee = s;
+		g(s, `invalid FieldDescriptorProto: extendee ${e.extendee} not found`), o.extendee = s;
 	} else {
 		let n = t;
-		Et(n.kind == "message"), o.parent = n, o.oneof = r, o.localName = r ? ae(e.name) : se(ae(e.name)), o.jsonName = e.jsonName, o.toString = () => `field ${n.typeName}.${e.name}`;
+		g(n.kind == "message"), o.parent = n, o.oneof = r, o.localName = r ? ae(e.name) : se(ae(e.name)), o.jsonName = e.jsonName, o.toString = () => `field ${n.typeName}.${e.name}`;
 	}
 	let s = e.label, c = e.type, l = e.options?.jstype;
 	if (s === qe) {
@@ -1020,10 +1020,10 @@ function ft(e, t, n, r, i) {
 		switch (o.fieldKind = "list", c) {
 			case We:
 			case Ue:
-				o.listKind = "message", o.message = n.getMessage(vt(e.typeName)), Et(o.message), o.delimitedEncoding = wt(e, t);
+				o.listKind = "message", o.message = n.getMessage(vt(e.typeName)), g(o.message), o.delimitedEncoding = wt(e, t);
 				break;
 			case Ke:
-				o.listKind = "enum", o.enum = n.getEnum(vt(e.typeName)), Et(o.enum);
+				o.listKind = "enum", o.enum = n.getEnum(vt(e.typeName)), g(o.enum);
 				break;
 			default: o.listKind = "scalar", o.scalar = c, o.longAsString = l == Ye;
 		}
@@ -1032,11 +1032,11 @@ function ft(e, t, n, r, i) {
 	switch (c) {
 		case We:
 		case Ue:
-			o.fieldKind = "message", o.message = n.getMessage(vt(e.typeName)), Et(o.message, `invalid FieldDescriptorProto: type_name ${e.typeName} not found`), o.delimitedEncoding = wt(e, t), o.getDefaultValue = () => void 0;
+			o.fieldKind = "message", o.message = n.getMessage(vt(e.typeName)), g(o.message, `invalid FieldDescriptorProto: type_name ${e.typeName} not found`), o.delimitedEncoding = wt(e, t), o.getDefaultValue = () => void 0;
 			break;
 		case Ke: {
 			let t = n.getEnum(vt(e.typeName));
-			Et(t !== void 0, `invalid FieldDescriptorProto: type_name ${e.typeName} not found`), o.fieldKind = "enum", o.enum = n.getEnum(vt(e.typeName)), o.getDefaultValue = () => ke(e, "defaultValue") ? Pe(t, e.defaultValue) : void 0;
+			g(t !== void 0, `invalid FieldDescriptorProto: type_name ${e.typeName} not found`), o.fieldKind = "enum", o.enum = n.getEnum(vt(e.typeName)), o.getDefaultValue = () => ke(e, "defaultValue") ? Pe(t, e.defaultValue) : void 0;
 			break;
 		}
 		default: o.fieldKind = "scalar", o.scalar = c, o.longAsString = l == Ye, o.getDefaultValue = () => ke(e, "defaultValue") ? Fe(c, e.defaultValue) : void 0;
@@ -1083,7 +1083,7 @@ function vt(e) {
 function yt(e, t) {
 	if (!ke(e, "oneofIndex") || e.proto3Optional) return;
 	let n = t[e.oneofIndex];
-	return Et(n, `invalid FieldDescriptorProto: oneof #${e.oneofIndex} for field #${e.number} not found`), n;
+	return g(n, `invalid FieldDescriptorProto: oneof #${e.oneofIndex} for field #${e.number} not found`), n;
 }
 function bt(e, t, n, r) {
 	if (e.label == Je) return $e;
@@ -1111,7 +1111,7 @@ function xt(e, t) {
 }
 function St(e) {
 	let t = e.fields.find((e) => e.number === 1), n = e.fields.find((e) => e.number === 2);
-	return Et(t && t.fieldKind == "scalar" && t.scalar != h.BYTES && t.scalar != h.FLOAT && t.scalar != h.DOUBLE && n && n.fieldKind != "list" && n.fieldKind != "map"), {
+	return g(t && t.fieldKind == "scalar" && t.scalar != h.BYTES && t.scalar != h.FLOAT && t.scalar != h.DOUBLE && n && n.fieldKind != "list" && n.fieldKind != "map"), {
 		key: t,
 		value: n
 	};
@@ -1142,14 +1142,14 @@ function Tt(e, t) {
 	}
 	return Tt(e, t.parent);
 }
-function Et(e, t) {
+function g(e, t) {
 	if (!e) throw Error(t);
 }
-function Dt(e) {
-	let t = Ot(e);
+function Et(e) {
+	let t = Dt(e);
 	return t.messageType.forEach(Ne), Re(t, () => void 0).getFile(t.name);
 }
-function Ot(e) {
+function Dt(e) {
 	return Object.assign(Object.create({
 		syntax: "",
 		edition: 0
@@ -1162,25 +1162,25 @@ function Ot(e) {
 		service: [],
 		extension: []
 	}, e), {
-		messageType: e.messageType.map(kt),
-		enumType: e.enumType.map(Mt)
+		messageType: e.messageType.map(Ot),
+		enumType: e.enumType.map(jt)
 	}));
 }
-function kt(e) {
+function Ot(e) {
 	return Object.assign(Object.create({ visibility: 0 }), {
 		$typeName: "google.protobuf.DescriptorProto",
 		name: e.name,
-		field: e.field?.map(At) ?? [],
+		field: e.field?.map(kt) ?? [],
 		extension: [],
-		nestedType: e.nestedType?.map(kt) ?? [],
-		enumType: e.enumType?.map(Mt) ?? [],
+		nestedType: e.nestedType?.map(Ot) ?? [],
+		enumType: e.enumType?.map(jt) ?? [],
 		extensionRange: e.extensionRange?.map((e) => Object.assign({ $typeName: "google.protobuf.DescriptorProto.ExtensionRange" }, e)) ?? [],
 		oneofDecl: [],
 		reservedRange: [],
 		reservedName: []
 	});
 }
-function At(e) {
+function kt(e) {
 	return Object.assign(Object.create({
 		label: 1,
 		typeName: "",
@@ -1189,9 +1189,9 @@ function At(e) {
 		oneofIndex: 0,
 		jsonName: "",
 		proto3Optional: !1
-	}), Object.assign(Object.assign({ $typeName: "google.protobuf.FieldDescriptorProto" }, e), { options: e.options ? jt(e.options) : void 0 }));
+	}), Object.assign(Object.assign({ $typeName: "google.protobuf.FieldDescriptorProto" }, e), { options: e.options ? At(e.options) : void 0 }));
 }
-function jt(e) {
+function At(e) {
 	return Object.assign(Object.create({
 		ctype: 0,
 		packed: !1,
@@ -1208,7 +1208,7 @@ function jt(e) {
 		uninterpretedOption: []
 	}));
 }
-function Mt(e) {
+function jt(e) {
 	return Object.assign(Object.create({ visibility: 0 }), {
 		$typeName: "google.protobuf.EnumDescriptorProto",
 		name: e.name,
@@ -1217,8 +1217,8 @@ function Mt(e) {
 		value: e.value.map((e) => Object.assign({ $typeName: "google.protobuf.EnumValueDescriptorProto" }, e))
 	});
 }
-function Nt(e) {
-	let t = Rt(), n = e.length * 3 / 4;
+function Mt(e) {
+	let t = Lt(), n = e.length * 3 / 4;
 	e[e.length - 2] == "=" ? n -= 2 : e[e.length - 1] == "=" && --n;
 	let r = new Uint8Array(n), i = 0, a = 0, o, s = 0;
 	for (let n = 0; n < e.length; n++) {
@@ -1246,32 +1246,32 @@ function Nt(e) {
 	if (a == 1) throw Error("invalid base64 string");
 	return r.subarray(0, i);
 }
-var Pt, Ft, It;
-function Lt(e) {
-	return Pt || (Pt = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".split(""), Ft = Pt.slice(0, -2).concat("-", "_")), e == "url" ? Ft : Pt;
+var Nt, Pt, Ft;
+function It(e) {
+	return Nt || (Nt = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".split(""), Pt = Nt.slice(0, -2).concat("-", "_")), e == "url" ? Pt : Nt;
 }
-function Rt() {
-	if (!It) {
-		It = [];
-		let e = Lt("std");
-		for (let t = 0; t < e.length; t++) It[e[t].charCodeAt(0)] = t;
-		It[45] = e.indexOf("+"), It[95] = e.indexOf("/");
+function Lt() {
+	if (!Ft) {
+		Ft = [];
+		let e = It("std");
+		for (let t = 0; t < e.length; t++) Ft[e[t].charCodeAt(0)] = t;
+		Ft[45] = e.indexOf("+"), Ft[95] = e.indexOf("/");
 	}
-	return It;
+	return Ft;
 }
-function zt(e, t) {
+function Rt(e, t) {
 	return typeof e == "object" && e && "$typeName" in e && typeof e.$typeName == "string" ? t === void 0 || t.typeName === e.$typeName : !1;
 }
-var Bt = class extends Error {
+var zt = class extends Error {
 	constructor(e, t, n = "FieldValueInvalidError") {
 		super(t), this.name = n, this.field = () => e;
 	}
 };
-function Vt(e) {
+function Bt(e) {
 	return typeof e == "object" && !!e && !Array.isArray(e);
 }
-function Ht(e, t) {
-	if (Vt(e) && Ee in e && "add" in e && "field" in e && typeof e.field == "function") {
+function Vt(e, t) {
+	if (Bt(e) && Ee in e && "add" in e && "field" in e && typeof e.field == "function") {
 		if (t !== void 0) {
 			let n = t, r = e.field();
 			return n.listKind == r.listKind && n.scalar === r.scalar && n.message?.typeName === r.message?.typeName && n.enum?.typeName === r.enum?.typeName;
@@ -1280,8 +1280,8 @@ function Ht(e, t) {
 	}
 	return !1;
 }
-function Ut(e, t) {
-	if (Vt(e) && Ee in e && "has" in e && "field" in e && typeof e.field == "function") {
+function Ht(e, t) {
+	if (Bt(e) && Ee in e && "has" in e && "field" in e && typeof e.field == "function") {
 		if (t !== void 0) {
 			let n = t, r = e.field();
 			return n.mapKey === r.mapKey && n.mapKind == r.mapKind && n.scalar === r.scalar && n.message?.typeName === r.message?.typeName && n.enum?.typeName === r.enum?.typeName;
@@ -1290,14 +1290,14 @@ function Ut(e, t) {
 	}
 	return !1;
 }
-function Wt(e, t) {
-	return Vt(e) && Ee in e && "desc" in e && Vt(e.desc) && e.desc.kind === "message" && (t === void 0 || e.desc.typeName == t.typeName);
+function Ut(e, t) {
+	return Bt(e) && Ee in e && "desc" in e && Bt(e.desc) && e.desc.kind === "message" && (t === void 0 || e.desc.typeName == t.typeName);
 }
-var Gt = Symbol.for("@bufbuild/protobuf/text-encoding");
-function Kt() {
-	if (globalThis[Gt] == null) {
+var Wt = Symbol.for("@bufbuild/protobuf/text-encoding");
+function Gt() {
+	if (globalThis[Wt] == null) {
 		let e = new globalThis.TextEncoder(), t = new globalThis.TextDecoder();
-		globalThis[Gt] = {
+		globalThis[Wt] = {
 			encodeUtf8(t) {
 				return e.encode(t);
 			},
@@ -1313,14 +1313,14 @@ function Kt() {
 			}
 		};
 	}
-	return globalThis[Gt];
+	return globalThis[Wt];
 }
-var g;
+var _;
 (function(e) {
 	e[e.Varint = 0] = "Varint", e[e.Bit64 = 1] = "Bit64", e[e.LengthDelimited = 2] = "LengthDelimited", e[e.StartGroup = 3] = "StartGroup", e[e.EndGroup = 4] = "EndGroup", e[e.Bit32 = 5] = "Bit32";
-})(g ||= {});
-var qt = 34028234663852886e22, Jt = -34028234663852886e22, Yt = 0xffffffff, Xt = 0x7fffffff, Zt = -0x80000000, Qt = class {
-	constructor(e = Kt().encodeUtf8) {
+})(_ ||= {});
+var Kt = 34028234663852886e22, qt = -34028234663852886e22, Jt = 0xffffffff, Yt = 0x7fffffff, Xt = -0x80000000, Zt = class {
+	constructor(e = Gt().encodeUtf8) {
 		this.encodeUtf8 = e, this.stack = [], this.chunks = [], this.buf = [];
 	}
 	finish() {
@@ -1349,11 +1349,11 @@ var qt = 34028234663852886e22, Jt = -34028234663852886e22, Yt = 0xffffffff, Xt =
 		return this.buf.length && (this.chunks.push(new Uint8Array(this.buf)), this.buf = []), this.chunks.push(e), this;
 	}
 	uint32(e) {
-		for (tn(e); e > 127;) this.buf.push(e & 127 | 128), e >>>= 7;
+		for (en(e); e > 127;) this.buf.push(e & 127 | 128), e >>>= 7;
 		return this.buf.push(e), this;
 	}
 	int32(e) {
-		return en(e), ve(e, this.buf), this;
+		return $t(e), ve(e, this.buf), this;
 	}
 	bool(e) {
 		return this.buf.push(+!!e), this;
@@ -1366,7 +1366,7 @@ var qt = 34028234663852886e22, Jt = -34028234663852886e22, Yt = 0xffffffff, Xt =
 		return this.uint32(t.byteLength), this.raw(t);
 	}
 	float(e) {
-		nn(e);
+		tn(e);
 		let t = /* @__PURE__ */ new Uint8Array(4);
 		return new DataView(t.buffer).setFloat32(0, e, !0), this.raw(t);
 	}
@@ -1375,17 +1375,17 @@ var qt = 34028234663852886e22, Jt = -34028234663852886e22, Yt = 0xffffffff, Xt =
 		return new DataView(t.buffer).setFloat64(0, e, !0), this.raw(t);
 	}
 	fixed32(e) {
-		tn(e);
+		en(e);
 		let t = /* @__PURE__ */ new Uint8Array(4);
 		return new DataView(t.buffer).setUint32(0, e, !0), this.raw(t);
 	}
 	sfixed32(e) {
-		en(e);
+		$t(e);
 		let t = /* @__PURE__ */ new Uint8Array(4);
 		return new DataView(t.buffer).setInt32(0, e, !0), this.raw(t);
 	}
 	sint32(e) {
-		return en(e), e = (e << 1 ^ e >> 31) >>> 0, ve(e, this.buf), this;
+		return $t(e), e = (e << 1 ^ e >> 31) >>> 0, ve(e, this.buf), this;
 	}
 	sfixed64(e) {
 		let t = /* @__PURE__ */ new Uint8Array(8), n = new DataView(t.buffer), r = m.enc(e);
@@ -1407,8 +1407,8 @@ var qt = 34028234663852886e22, Jt = -34028234663852886e22, Yt = 0xffffffff, Xt =
 		let t = m.uEnc(e);
 		return le(t.lo, t.hi, this.buf), this;
 	}
-}, $t = class {
-	constructor(e, t = Kt().decodeUtf8) {
+}, Qt = class {
+	constructor(e, t = Gt().decodeUtf8) {
 		this.decodeUtf8 = t, this.varint64 = ce, this.uint32 = ye, this.buf = e, this.len = e.length, this.pos = 0, this.view = new DataView(e.buffer, e.byteOffset, e.byteLength);
 	}
 	tag() {
@@ -1419,21 +1419,21 @@ var qt = 34028234663852886e22, Jt = -34028234663852886e22, Yt = 0xffffffff, Xt =
 	skip(e, t) {
 		let n = this.pos;
 		switch (e) {
-			case g.Varint:
+			case _.Varint:
 				for (; this.buf[this.pos++] & 128;);
 				break;
-			case g.Bit64: this.pos += 4;
-			case g.Bit32:
+			case _.Bit64: this.pos += 4;
+			case _.Bit32:
 				this.pos += 4;
 				break;
-			case g.LengthDelimited:
+			case _.LengthDelimited:
 				let n = this.uint32();
 				this.pos += n;
 				break;
-			case g.StartGroup:
+			case _.StartGroup:
 				for (;;) {
 					let [e, n] = this.tag();
-					if (n === g.EndGroup) {
+					if (n === _.EndGroup) {
 						if (t !== void 0 && e !== t) throw Error("invalid end group tag");
 						break;
 					}
@@ -1494,62 +1494,62 @@ var qt = 34028234663852886e22, Jt = -34028234663852886e22, Yt = 0xffffffff, Xt =
 		return this.decodeUtf8(this.bytes());
 	}
 };
-function en(e) {
+function $t(e) {
 	if (typeof e == "string") e = Number(e);
 	else if (typeof e != "number") throw Error("invalid int32: " + typeof e);
-	if (!Number.isInteger(e) || e > Xt || e < Zt) throw Error("invalid int32: " + e);
+	if (!Number.isInteger(e) || e > Yt || e < Xt) throw Error("invalid int32: " + e);
 }
-function tn(e) {
+function en(e) {
 	if (typeof e == "string") e = Number(e);
 	else if (typeof e != "number") throw Error("invalid uint32: " + typeof e);
-	if (!Number.isInteger(e) || e > Yt || e < 0) throw Error("invalid uint32: " + e);
+	if (!Number.isInteger(e) || e > Jt || e < 0) throw Error("invalid uint32: " + e);
 }
-function nn(e) {
+function tn(e) {
 	if (typeof e == "string") {
 		let t = e;
 		if (e = Number(e), Number.isNaN(e) && t !== "NaN") throw Error("invalid float32: " + t);
 	} else if (typeof e != "number") throw Error("invalid float32: " + typeof e);
-	if (Number.isFinite(e) && (e > qt || e < Jt)) throw Error("invalid float32: " + e);
+	if (Number.isFinite(e) && (e > Kt || e < qt)) throw Error("invalid float32: " + e);
 }
-function rn(e, t) {
-	let n = e.fieldKind == "list" ? Ht(t, e) : e.fieldKind == "map" ? Ut(t, e) : sn(e, t);
+function nn(e, t) {
+	let n = e.fieldKind == "list" ? Vt(t, e) : e.fieldKind == "map" ? Ht(t, e) : on(e, t);
 	if (n === !0) return;
 	let r;
 	switch (e.fieldKind) {
 		case "list":
-			r = `expected ${fn(e)}, got ${un(t)}`;
+			r = `expected ${dn(e)}, got ${ln(t)}`;
 			break;
 		case "map":
-			r = `expected ${pn(e)}, got ${un(t)}`;
+			r = `expected ${fn(e)}, got ${ln(t)}`;
 			break;
-		default: r = ln(e, t, n);
+		default: r = cn(e, t, n);
 	}
-	return new Bt(e, r);
+	return new zt(e, r);
+}
+function rn(e, t, n) {
+	let r = on(e, n);
+	if (r !== !0) return new zt(e, `list item #${t + 1}: ${cn(e, n, r)}`);
 }
 function an(e, t, n) {
-	let r = sn(e, n);
-	if (r !== !0) return new Bt(e, `list item #${t + 1}: ${ln(e, n, r)}`);
+	let r = sn(t, e.mapKey);
+	if (r !== !0) return new zt(e, `invalid map key: ${cn({ scalar: e.mapKey }, t, r)}`);
+	let i = on(e, n);
+	if (i !== !0) return new zt(e, `map entry ${ln(t)}: ${cn(e, n, i)}`);
 }
-function on(e, t, n) {
-	let r = cn(t, e.mapKey);
-	if (r !== !0) return new Bt(e, `invalid map key: ${ln({ scalar: e.mapKey }, t, r)}`);
-	let i = sn(e, n);
-	if (i !== !0) return new Bt(e, `map entry ${un(t)}: ${ln(e, n, i)}`);
+function on(e, t) {
+	return e.scalar === void 0 ? e.enum === void 0 ? Ut(t, e.message) : e.enum.open ? Number.isInteger(t) : e.enum.values.some((e) => e.number === t) : sn(t, e.scalar);
 }
 function sn(e, t) {
-	return e.scalar === void 0 ? e.enum === void 0 ? Wt(t, e.message) : e.enum.open ? Number.isInteger(t) : e.enum.values.some((e) => e.number === t) : cn(t, e.scalar);
-}
-function cn(e, t) {
 	switch (t) {
 		case h.DOUBLE: return typeof e == "number";
-		case h.FLOAT: return typeof e == "number" ? Number.isNaN(e) || !Number.isFinite(e) ? !0 : e > qt || e < Jt ? `${e.toFixed()} out of range` : !0 : !1;
+		case h.FLOAT: return typeof e == "number" ? Number.isNaN(e) || !Number.isFinite(e) ? !0 : e > Kt || e < qt ? `${e.toFixed()} out of range` : !0 : !1;
 		case h.INT32:
 		case h.SFIXED32:
-		case h.SINT32: return typeof e != "number" || !Number.isInteger(e) ? !1 : e > Xt || e < Zt ? `${e.toFixed()} out of range` : !0;
+		case h.SINT32: return typeof e != "number" || !Number.isInteger(e) ? !1 : e > Yt || e < Xt ? `${e.toFixed()} out of range` : !0;
 		case h.FIXED32:
-		case h.UINT32: return typeof e != "number" || !Number.isInteger(e) ? !1 : e > Yt || e < 0 ? `${e.toFixed()} out of range` : !0;
+		case h.UINT32: return typeof e != "number" || !Number.isInteger(e) ? !1 : e > Jt || e < 0 ? `${e.toFixed()} out of range` : !0;
 		case h.BOOL: return typeof e == "boolean";
-		case h.STRING: return typeof e == "string" ? Kt().checkUtf8(e) || "invalid UTF8" : !1;
+		case h.STRING: return typeof e == "string" ? Gt().checkUtf8(e) || "invalid UTF8" : !1;
 		case h.BYTES: return e instanceof Uint8Array;
 		case h.INT64:
 		case h.SFIXED64:
@@ -1570,12 +1570,12 @@ function cn(e, t) {
 			return !1;
 	}
 }
-function ln(e, t, n) {
-	return n = typeof n == "string" ? `: ${n}` : `, got ${un(t)}`, e.scalar === void 0 ? e.enum === void 0 ? `expected ${dn(e.message)}` + n : `expected ${e.enum.toString()}` + n : `expected ${mn(e.scalar)}` + n;
+function cn(e, t, n) {
+	return n = typeof n == "string" ? `: ${n}` : `, got ${ln(t)}`, e.scalar === void 0 ? e.enum === void 0 ? `expected ${un(e.message)}` + n : `expected ${e.enum.toString()}` + n : `expected ${pn(e.scalar)}` + n;
 }
-function un(e) {
+function ln(e) {
 	switch (typeof e) {
-		case "object": return e === null ? "null" : e instanceof Uint8Array ? `Uint8Array(${e.length})` : Array.isArray(e) ? `Array(${e.length})` : Ht(e) ? fn(e.field()) : Ut(e) ? pn(e.field()) : Wt(e) ? dn(e.desc) : zt(e) ? `message ${e.$typeName}` : "object";
+		case "object": return e === null ? "null" : e instanceof Uint8Array ? `Uint8Array(${e.length})` : Array.isArray(e) ? `Array(${e.length})` : Vt(e) ? dn(e.field()) : Ht(e) ? fn(e.field()) : Ut(e) ? un(e.desc) : Rt(e) ? `message ${e.$typeName}` : "object";
 		case "string": return e.length > 30 ? "string" : `"${e.split("\"").join("\\\"")}"`;
 		case "boolean":
 		case "number": return String(e);
@@ -1583,24 +1583,24 @@ function un(e) {
 		default: return typeof e;
 	}
 }
-function dn(e) {
+function un(e) {
 	return `ReflectMessage (${e.typeName})`;
 }
-function fn(e) {
+function dn(e) {
 	switch (e.listKind) {
 		case "message": return `ReflectList (${e.message.toString()})`;
 		case "enum": return `ReflectList (${e.enum.toString()})`;
 		case "scalar": return `ReflectList (${h[e.scalar]})`;
 	}
 }
-function pn(e) {
+function fn(e) {
 	switch (e.mapKind) {
 		case "message": return `ReflectMap (${h[e.mapKey]}, ${e.message.toString()})`;
 		case "enum": return `ReflectMap (${h[e.mapKey]}, ${e.enum.toString()})`;
 		case "scalar": return `ReflectMap (${h[e.mapKey]}, ${h[e.scalar]})`;
 	}
 }
-function mn(e) {
+function pn(e) {
 	switch (e) {
 		case h.STRING: return "string";
 		case h.BOOL: return "boolean";
@@ -1619,14 +1619,14 @@ function mn(e) {
 		case h.SINT32: return "number (int32)";
 	}
 }
+function mn(e) {
+	return gn(e.$typeName);
+}
 function hn(e) {
-	return _n(e.$typeName);
+	let t = e.fields[0];
+	return gn(e.typeName) && t !== void 0 && t.fieldKind == "scalar" && t.name == "value" && t.number == 1;
 }
 function gn(e) {
-	let t = e.fields[0];
-	return _n(e.typeName) && t !== void 0 && t.fieldKind == "scalar" && t.name == "value" && t.number == 1;
-}
-function _n(e) {
 	return e.startsWith("google.protobuf.") && [
 		"DoubleValue",
 		"FloatValue",
@@ -1639,13 +1639,13 @@ function _n(e) {
 		"BytesValue"
 	].includes(e.substring(16));
 }
-var vn = 999, yn = 998, bn = 2;
-function _(e, t) {
-	if (zt(t, e)) return t;
-	let n = An(e);
-	return t !== void 0 && xn(e, n, t), n;
+var _n = 999, vn = 998, yn = 2;
+function v(e, t) {
+	if (Rt(t, e)) return t;
+	let n = kn(e);
+	return t !== void 0 && bn(e, n, t), n;
 }
-function xn(e, t, n) {
+function bn(e, t, n) {
 	for (let r of e.members) {
 		let e = n[r.localName];
 		if (e == null) continue;
@@ -1657,134 +1657,134 @@ function xn(e, t, n) {
 		} else i = r;
 		switch (i.fieldKind) {
 			case "message":
-				e = Tn(i, e);
-				break;
-			case "scalar":
-				e = Sn(i, e);
-				break;
-			case "list":
 				e = wn(i, e);
 				break;
-			case "map": e = Cn(i, e);
+			case "scalar":
+				e = xn(i, e);
+				break;
+			case "list":
+				e = Cn(i, e);
+				break;
+			case "map": e = Sn(i, e);
 		}
 		je(t, i, e);
 	}
 	return t;
 }
+function xn(e, t) {
+	return e.scalar == h.BYTES ? Tn(t) : t;
+}
 function Sn(e, t) {
-	return e.scalar == h.BYTES ? En(t) : t;
+	if (Bt(t)) {
+		if (e.scalar == h.BYTES) return En(t, Tn);
+		if (e.mapKind == "message") return En(t, (t) => wn(e, t));
+	}
+	return t;
 }
 function Cn(e, t) {
-	if (Vt(t)) {
-		if (e.scalar == h.BYTES) return Dn(t, En);
-		if (e.mapKind == "message") return Dn(t, (t) => Tn(e, t));
+	if (Array.isArray(t)) {
+		if (e.scalar == h.BYTES) return t.map(Tn);
+		if (e.listKind == "message") return t.map((t) => wn(e, t));
 	}
 	return t;
 }
 function wn(e, t) {
-	if (Array.isArray(t)) {
-		if (e.scalar == h.BYTES) return t.map(En);
-		if (e.listKind == "message") return t.map((t) => Tn(e, t));
-	}
-	return t;
-}
-function Tn(e, t) {
-	if (e.fieldKind == "message" && !e.oneof && gn(e.message)) return Sn(e.message.fields[0], t);
-	if (Vt(t)) {
+	if (e.fieldKind == "message" && !e.oneof && hn(e.message)) return xn(e.message.fields[0], t);
+	if (Bt(t)) {
 		if (e.message.typeName == "google.protobuf.Struct" && e.parent.typeName !== "google.protobuf.Value") return t;
-		if (!zt(t, e.message)) return _(e.message, t);
+		if (!Rt(t, e.message)) return v(e.message, t);
 	}
 	return t;
 }
-function En(e) {
+function Tn(e) {
 	return Array.isArray(e) ? new Uint8Array(e) : e;
 }
-function Dn(e, t) {
+function En(e, t) {
 	let n = {};
 	for (let r of Object.entries(e)) n[r[0]] = t(r[1]);
 	return n;
 }
-var On = Symbol(), kn = /* @__PURE__ */ new WeakMap();
-function An(e) {
+var Dn = Symbol(), On = /* @__PURE__ */ new WeakMap();
+function kn(e) {
 	let t;
-	if (jn(e)) {
-		let n = kn.get(e), r, i;
+	if (An(e)) {
+		let n = On.get(e), r, i;
 		if (n) ({prototype: r, members: i} = n);
 		else {
 			r = {}, i = /* @__PURE__ */ new Set();
-			for (let t of e.members) t.kind != "oneof" && (t.fieldKind == "scalar" || t.fieldKind == "enum") && t.presence != bn && (i.add(t), r[t.localName] = Mn(t));
-			kn.set(e, {
+			for (let t of e.members) t.kind != "oneof" && (t.fieldKind == "scalar" || t.fieldKind == "enum") && t.presence != yn && (i.add(t), r[t.localName] = jn(t));
+			On.set(e, {
 				prototype: r,
 				members: i
 			});
 		}
 		t = Object.create(r), t.$typeName = e.typeName;
-		for (let n of e.members) i.has(n) || (n.kind != "field" || n.fieldKind != "message" && (n.fieldKind != "scalar" && n.fieldKind != "enum" || n.presence == bn)) && (t[n.localName] = Mn(n));
+		for (let n of e.members) i.has(n) || (n.kind != "field" || n.fieldKind != "message" && (n.fieldKind != "scalar" && n.fieldKind != "enum" || n.presence == yn)) && (t[n.localName] = jn(n));
 	} else {
 		t = { $typeName: e.typeName };
-		for (let n of e.members) (n.kind == "oneof" || n.presence == bn) && (t[n.localName] = Mn(n));
+		for (let n of e.members) (n.kind == "oneof" || n.presence == yn) && (t[n.localName] = jn(n));
 	}
 	return t;
 }
-function jn(e) {
+function An(e) {
 	switch (e.file.edition) {
-		case vn: return !1;
-		case yn: return !0;
-		default: return e.fields.some((e) => e.presence != bn && e.fieldKind != "message" && !e.oneof);
+		case _n: return !1;
+		case vn: return !0;
+		default: return e.fields.some((e) => e.presence != yn && e.fieldKind != "message" && !e.oneof);
 	}
 }
-function Mn(e) {
+function jn(e) {
 	if (e.kind == "oneof") return { case: void 0 };
 	if (e.fieldKind == "list") return [];
 	if (e.fieldKind == "map") return {};
-	if (e.fieldKind == "message") return On;
+	if (e.fieldKind == "message") return Dn;
 	let t = e.getDefaultValue();
 	return t === void 0 ? e.fieldKind == "scalar" ? Ce(e.scalar, e.longAsString) : e.enum.values[0].number : e.fieldKind == "scalar" && e.longAsString ? t.toString() : t;
 }
-function Nn(e, t, n = !0) {
-	return new Pn(e, t, n);
+function Mn(e, t, n = !0) {
+	return new Nn(e, t, n);
 }
-var Pn = class {
+var Nn = class {
 	get sortedFields() {
 		return this._sortedFields ??= this.desc.fields.concat().sort((e, t) => e.number - t.number);
 	}
 	constructor(e, t, n = !0) {
-		this.lists = /* @__PURE__ */ new Map(), this.maps = /* @__PURE__ */ new Map(), this.check = n, this.desc = e, this.message = this[Ee] = t ?? _(e), this.fields = e.fields, this.oneofs = e.oneofs, this.members = e.members;
+		this.lists = /* @__PURE__ */ new Map(), this.maps = /* @__PURE__ */ new Map(), this.check = n, this.desc = e, this.message = this[Ee] = t ?? v(e), this.fields = e.fields, this.oneofs = e.oneofs, this.members = e.members;
 	}
 	findNumber(e) {
 		return this._fieldsByNumber ||= new Map(this.desc.fields.map((e) => [e.number, e])), this._fieldsByNumber.get(e);
 	}
 	oneofCase(e) {
-		return Fn(this.message, e), De(this.message, e);
+		return Pn(this.message, e), De(this.message, e);
 	}
 	isSet(e) {
-		return Fn(this.message, e), Oe(this.message, e);
+		return Pn(this.message, e), Oe(this.message, e);
 	}
 	clear(e) {
-		Fn(this.message, e), Me(this.message, e);
+		Pn(this.message, e), Me(this.message, e);
 	}
 	get(e) {
-		Fn(this.message, e);
+		Pn(this.message, e);
 		let t = Ae(this.message, e);
 		switch (e.fieldKind) {
 			case "list":
 				let n = this.lists.get(e);
-				return n && n[Ee] === t || this.lists.set(e, n = new In(e, t, this.check)), n;
+				return n && n[Ee] === t || this.lists.set(e, n = new Fn(e, t, this.check)), n;
 			case "map":
 				let r = this.maps.get(e);
-				return r && r[Ee] === t || this.maps.set(e, r = new Ln(e, t, this.check)), r;
-			case "message": return zn(e, t, this.check);
-			case "scalar": return t === void 0 ? Ce(e.scalar, !1) : Kn(e, t);
+				return r && r[Ee] === t || this.maps.set(e, r = new In(e, t, this.check)), r;
+			case "message": return Rn(e, t, this.check);
+			case "scalar": return t === void 0 ? Ce(e.scalar, !1) : Gn(e, t);
 			case "enum": return t ?? e.enum.values[0].number;
 		}
 	}
 	set(e, t) {
-		if (Fn(this.message, e), this.check) {
-			let n = rn(e, t);
+		if (Pn(this.message, e), this.check) {
+			let n = nn(e, t);
 			if (n) throw n;
 		}
 		let n;
-		n = e.fieldKind == "message" ? Rn(e, t) : Ut(t) || Ht(t) ? t[Ee] : qn(e, t), je(this.message, e, n);
+		n = e.fieldKind == "message" ? Ln(e, t) : Ht(t) || Vt(t) ? t[Ee] : Kn(e, t), je(this.message, e, n);
 	}
 	getUnknown() {
 		return this.message.$unknown;
@@ -1793,10 +1793,10 @@ var Pn = class {
 		this.message.$unknown = e;
 	}
 };
-function Fn(e, t) {
-	if (t.parent.typeName !== e.$typeName) throw new Bt(t, `cannot use ${t.toString()} with message ${e.$typeName}`, "ForeignFieldError");
+function Pn(e, t) {
+	if (t.parent.typeName !== e.$typeName) throw new zt(t, `cannot use ${t.toString()} with message ${e.$typeName}`, "ForeignFieldError");
 }
-var In = class {
+var Fn = class {
 	field() {
 		return this._field;
 	}
@@ -1808,22 +1808,22 @@ var In = class {
 	}
 	get(e) {
 		let t = this._arr[e];
-		return t === void 0 ? void 0 : Vn(this._field, t, this.check);
+		return t === void 0 ? void 0 : Bn(this._field, t, this.check);
 	}
 	set(e, t) {
-		if (e < 0 || e >= this._arr.length) throw new Bt(this._field, `list item #${e + 1}: out of range`);
+		if (e < 0 || e >= this._arr.length) throw new zt(this._field, `list item #${e + 1}: out of range`);
 		if (this.check) {
-			let n = an(this._field, e, t);
+			let n = rn(this._field, e, t);
 			if (n) throw n;
 		}
-		this._arr[e] = Bn(this._field, t);
+		this._arr[e] = zn(this._field, t);
 	}
 	add(e) {
 		if (this.check) {
-			let t = an(this._field, this._arr.length, e);
+			let t = rn(this._field, this._arr.length, e);
 			if (t) throw t;
 		}
-		this._arr.push(Bn(this._field, e));
+		this._arr.push(zn(this._field, e));
 	}
 	clear() {
 		this._arr.splice(0, this._arr.length);
@@ -1835,12 +1835,12 @@ var In = class {
 		return this._arr.keys();
 	}
 	*values() {
-		for (let e of this._arr) yield Vn(this._field, e, this.check);
+		for (let e of this._arr) yield Bn(this._field, e, this.check);
 	}
 	*entries() {
-		for (let e = 0; e < this._arr.length; e++) yield [e, Vn(this._field, this._arr[e], this.check)];
+		for (let e = 0; e < this._arr.length; e++) yield [e, Bn(this._field, this._arr[e], this.check)];
 	}
-}, Ln = class {
+}, In = class {
 	constructor(e, t, n = !0) {
 		this.obj = this[Ee] = t ?? {}, this.check = n, this._field = e;
 	}
@@ -1849,30 +1849,30 @@ var In = class {
 	}
 	set(e, t) {
 		if (this.check) {
-			let n = on(this._field, e, t);
+			let n = an(this._field, e, t);
 			if (n) throw n;
 		}
-		return this.obj[Wn(e)] = Hn(this._field, t), this;
+		return this.obj[Un(e)] = Vn(this._field, t), this;
 	}
 	delete(e) {
-		let t = Wn(e), n = Object.prototype.hasOwnProperty.call(this.obj, t);
+		let t = Un(e), n = Object.prototype.hasOwnProperty.call(this.obj, t);
 		return n && delete this.obj[t], n;
 	}
 	clear() {
 		for (let e of Object.keys(this.obj)) delete this.obj[e];
 	}
 	get(e) {
-		let t = this.obj[Wn(e)];
-		return t !== void 0 && (t = Un(this._field, t, this.check)), t;
+		let t = this.obj[Un(e)];
+		return t !== void 0 && (t = Hn(this._field, t, this.check)), t;
 	}
 	has(e) {
-		return Object.prototype.hasOwnProperty.call(this.obj, Wn(e));
+		return Object.prototype.hasOwnProperty.call(this.obj, Un(e));
 	}
 	*keys() {
-		for (let e of Object.keys(this.obj)) yield Gn(e, this._field.mapKey);
+		for (let e of Object.keys(this.obj)) yield Wn(e, this._field.mapKey);
 	}
 	*entries() {
-		for (let e of Object.entries(this.obj)) yield [Gn(e[0], this._field.mapKey), Un(this._field, e[1], this.check)];
+		for (let e of Object.entries(this.obj)) yield [Wn(e[0], this._field.mapKey), Hn(this._field, e[1], this.check)];
 	}
 	[Symbol.iterator]() {
 		return this.entries();
@@ -1881,37 +1881,37 @@ var In = class {
 		return Object.keys(this.obj).length;
 	}
 	*values() {
-		for (let e of Object.values(this.obj)) yield Un(this._field, e, this.check);
+		for (let e of Object.values(this.obj)) yield Hn(this._field, e, this.check);
 	}
 	forEach(e, t) {
 		for (let n of this.entries()) e.call(t, n[1], n[0], this);
 	}
 };
-function Rn(e, t) {
-	return Wt(t) ? hn(t.message) && !e.oneof && e.fieldKind == "message" ? t.message.value : t.desc.typeName == "google.protobuf.Struct" && e.parent.typeName != "google.protobuf.Value" ? Yn(t.message) : t.message : t;
+function Ln(e, t) {
+	return Ut(t) ? mn(t.message) && !e.oneof && e.fieldKind == "message" ? t.message.value : t.desc.typeName == "google.protobuf.Struct" && e.parent.typeName != "google.protobuf.Value" ? Jn(t.message) : t.message : t;
 }
-function zn(e, t, n) {
-	return t !== void 0 && (gn(e.message) && !e.oneof && e.fieldKind == "message" ? t = {
+function Rn(e, t, n) {
+	return t !== void 0 && (hn(e.message) && !e.oneof && e.fieldKind == "message" ? t = {
 		$typeName: e.message.typeName,
-		value: Kn(e.message.fields[0], t)
-	} : e.message.typeName == "google.protobuf.Struct" && e.parent.typeName != "google.protobuf.Value" && Vt(t) && (t = Jn(t))), new Pn(e.message, t, n);
+		value: Gn(e.message.fields[0], t)
+	} : e.message.typeName == "google.protobuf.Struct" && e.parent.typeName != "google.protobuf.Value" && Bt(t) && (t = qn(t))), new Nn(e.message, t, n);
 }
-function Bn(e, t) {
-	return e.listKind == "message" ? Rn(e, t) : qn(e, t);
+function zn(e, t) {
+	return e.listKind == "message" ? Ln(e, t) : Kn(e, t);
 }
-function Vn(e, t, n) {
-	return e.listKind == "message" ? zn(e, t, n) : Kn(e, t);
+function Bn(e, t, n) {
+	return e.listKind == "message" ? Rn(e, t, n) : Gn(e, t);
 }
-function Hn(e, t) {
-	return e.mapKind == "message" ? Rn(e, t) : qn(e, t);
+function Vn(e, t) {
+	return e.mapKind == "message" ? Ln(e, t) : Kn(e, t);
 }
-function Un(e, t, n) {
-	return e.mapKind == "message" ? zn(e, t, n) : t;
+function Hn(e, t, n) {
+	return e.mapKind == "message" ? Rn(e, t, n) : t;
 }
-function Wn(e) {
+function Un(e) {
 	return typeof e == "string" || typeof e == "number" ? e : String(e);
 }
-function Gn(e, t) {
+function Wn(e, t) {
 	switch (t) {
 		case h.STRING: return e;
 		case h.INT32:
@@ -1941,7 +1941,7 @@ function Gn(e, t) {
 	}
 	return e;
 }
-function Kn(e, t) {
+function Gn(e, t) {
 	switch (e.scalar) {
 		case h.INT64:
 		case h.SFIXED64:
@@ -1953,7 +1953,7 @@ function Kn(e, t) {
 	}
 	return t;
 }
-function qn(e, t) {
+function Kn(e, t) {
 	switch (e.scalar) {
 		case h.INT64:
 		case h.SFIXED64:
@@ -1965,29 +1965,29 @@ function qn(e, t) {
 	}
 	return t;
 }
-function Jn(e) {
+function qn(e) {
 	let t = {
 		$typeName: "google.protobuf.Struct",
 		fields: {}
 	};
-	if (Vt(e)) for (let [n, r] of Object.entries(e)) t.fields[n] = Zn(r);
+	if (Bt(e)) for (let [n, r] of Object.entries(e)) t.fields[n] = Xn(r);
+	return t;
+}
+function Jn(e) {
+	let t = {};
+	for (let [n, r] of Object.entries(e.fields)) t[n] = Yn(r);
 	return t;
 }
 function Yn(e) {
-	let t = {};
-	for (let [n, r] of Object.entries(e.fields)) t[n] = Xn(r);
-	return t;
-}
-function Xn(e) {
 	switch (e.kind.case) {
-		case "structValue": return Yn(e.kind.value);
-		case "listValue": return e.kind.value.values.map(Xn);
+		case "structValue": return Jn(e.kind.value);
+		case "listValue": return e.kind.value.values.map(Yn);
 		case "nullValue":
 		case void 0: return null;
 		default: return e.kind.value;
 	}
 }
-function Zn(e) {
+function Xn(e) {
 	let t = {
 		$typeName: "google.protobuf.Value",
 		kind: { case: void 0 }
@@ -2020,76 +2020,76 @@ function Zn(e) {
 				$typeName: "google.protobuf.ListValue",
 				values: []
 			};
-			if (Array.isArray(e)) for (let t of e) n.values.push(Zn(t));
+			if (Array.isArray(e)) for (let t of e) n.values.push(Xn(t));
 			t.kind = {
 				case: "listValue",
 				value: n
 			};
 		} else t.kind = {
 			case: "structValue",
-			value: Jn(e)
+			value: qn(e)
 		};
 	}
 	return t;
 }
-var Qn = 3, $n = { writeUnknownFields: !0 };
-function er(e) {
-	return e ? Object.assign(Object.assign({}, $n), e) : $n;
+var Zn = 3, Qn = { writeUnknownFields: !0 };
+function $n(e) {
+	return e ? Object.assign(Object.assign({}, Qn), e) : Qn;
 }
-function v(e, t, n) {
-	return tr(new Qt(), er(n), Nn(e, t)).finish();
+function y(e, t, n) {
+	return er(new Zt(), $n(n), Mn(e, t)).finish();
 }
-function tr(e, t, n) {
-	for (let r of n.sortedFields) if (n.isSet(r)) nr(e, t, n, r);
-	else if (r.presence == Qn) throw Error(`cannot encode ${r} to binary: required field not set`);
+function er(e, t, n) {
+	for (let r of n.sortedFields) if (n.isSet(r)) tr(e, t, n, r);
+	else if (r.presence == Zn) throw Error(`cannot encode ${r} to binary: required field not set`);
 	if (t.writeUnknownFields) for (let { no: t, wireType: r, data: i } of n.getUnknown() ?? []) e.tag(t, r).raw(i);
 	return e;
 }
-function nr(e, t, n, r) {
+function tr(e, t, n, r) {
 	switch (r.fieldKind) {
 		case "scalar":
 		case "enum":
-			rr(e, n.desc.typeName, r.name, r.scalar ?? h.INT32, r.number, n.get(r));
+			nr(e, n.desc.typeName, r.name, r.scalar ?? h.INT32, r.number, n.get(r));
 			break;
 		case "list":
-			ar(e, t, r, n.get(r));
-			break;
-		case "message":
 			ir(e, t, r, n.get(r));
 			break;
-		case "map": for (let [i, a] of n.get(r)) or(e, t, r, i, a);
+		case "message":
+			rr(e, t, r, n.get(r));
+			break;
+		case "map": for (let [i, a] of n.get(r)) ar(e, t, r, i, a);
 	}
 }
-function rr(e, t, n, r, i, a) {
-	sr(e.tag(i, cr(r)), t, n, r, a);
+function nr(e, t, n, r, i, a) {
+	or(e.tag(i, sr(r)), t, n, r, a);
+}
+function rr(e, t, n, r) {
+	n.delimitedEncoding ? er(e.tag(n.number, _.StartGroup), t, r).tag(n.number, _.EndGroup) : er(e.tag(n.number, _.LengthDelimited).fork(), t, r).join();
 }
 function ir(e, t, n, r) {
-	n.delimitedEncoding ? tr(e.tag(n.number, g.StartGroup), t, r).tag(n.number, g.EndGroup) : tr(e.tag(n.number, g.LengthDelimited).fork(), t, r).join();
-}
-function ar(e, t, n, r) {
 	if (n.listKind == "message") {
-		for (let i of r) ir(e, t, n, i);
+		for (let i of r) rr(e, t, n, i);
 		return;
 	}
 	let i = n.scalar ?? h.INT32;
 	if (n.packed) {
 		if (!r.size) return;
-		e.tag(n.number, g.LengthDelimited).fork();
-		for (let t of r) sr(e, n.parent.typeName, n.name, i, t);
+		e.tag(n.number, _.LengthDelimited).fork();
+		for (let t of r) or(e, n.parent.typeName, n.name, i, t);
 		e.join();
-	} else for (let t of r) rr(e, n.parent.typeName, n.name, i, n.number, t);
+	} else for (let t of r) nr(e, n.parent.typeName, n.name, i, n.number, t);
 }
-function or(e, t, n, r, i) {
-	switch (e.tag(n.number, g.LengthDelimited).fork(), rr(e, n.parent.typeName, n.name, n.mapKey, 1, r), n.mapKind) {
+function ar(e, t, n, r, i) {
+	switch (e.tag(n.number, _.LengthDelimited).fork(), nr(e, n.parent.typeName, n.name, n.mapKey, 1, r), n.mapKind) {
 		case "scalar":
 		case "enum":
-			rr(e, n.parent.typeName, n.name, n.scalar ?? h.INT32, 2, i);
+			nr(e, n.parent.typeName, n.name, n.scalar ?? h.INT32, 2, i);
 			break;
-		case "message": tr(e.tag(2, g.LengthDelimited).fork(), t, i).join();
+		case "message": er(e.tag(2, _.LengthDelimited).fork(), t, i).join();
 	}
 	e.join();
 }
-function sr(e, t, n, r, i) {
+function or(e, t, n, r, i) {
 	try {
 		switch (r) {
 			case h.STRING:
@@ -2140,23 +2140,23 @@ function sr(e, t, n, r, i) {
 		throw e instanceof Error ? Error(`cannot encode field ${t}.${n} to binary: ${e.message}`) : e;
 	}
 }
-function cr(e) {
+function sr(e) {
 	switch (e) {
 		case h.BYTES:
-		case h.STRING: return g.LengthDelimited;
+		case h.STRING: return _.LengthDelimited;
 		case h.DOUBLE:
 		case h.FIXED64:
-		case h.SFIXED64: return g.Bit64;
+		case h.SFIXED64: return _.Bit64;
 		case h.FIXED32:
 		case h.SFIXED32:
-		case h.FLOAT: return g.Bit32;
-		default: return g.Varint;
+		case h.FLOAT: return _.Bit32;
+		default: return _.Varint;
 	}
 }
-function lr(e, t, ...n) {
+function cr(e, t, ...n) {
 	return n.reduce((e, t) => e.nestedMessages[t], e.messages[t]);
 }
-var ur = /* @__PURE__ */ lr(/* @__PURE__ */ Dt({
+var lr = /* @__PURE__ */ cr(/* @__PURE__ */ Et({
 	name: "google/protobuf/descriptor.proto",
 	package: "google.protobuf",
 	messageType: [
@@ -4105,104 +4105,104 @@ var ur = /* @__PURE__ */ lr(/* @__PURE__ */ Dt({
 			}
 		]
 	}]
-}), 1), dr;
+}), 1), ur;
 (function(e) {
 	e[e.DECLARATION = 0] = "DECLARATION", e[e.UNVERIFIED = 1] = "UNVERIFIED";
+})(ur ||= {});
+var dr;
+(function(e) {
+	e[e.DOUBLE = 1] = "DOUBLE", e[e.FLOAT = 2] = "FLOAT", e[e.INT64 = 3] = "INT64", e[e.UINT64 = 4] = "UINT64", e[e.INT32 = 5] = "INT32", e[e.FIXED64 = 6] = "FIXED64", e[e.FIXED32 = 7] = "FIXED32", e[e.BOOL = 8] = "BOOL", e[e.STRING = 9] = "STRING", e[e.GROUP = 10] = "GROUP", e[e.MESSAGE = 11] = "MESSAGE", e[e.BYTES = 12] = "BYTES", e[e.UINT32 = 13] = "UINT32", e[e.ENUM = 14] = "ENUM", e[e.SFIXED32 = 15] = "SFIXED32", e[e.SFIXED64 = 16] = "SFIXED64", e[e.SINT32 = 17] = "SINT32", e[e.SINT64 = 18] = "SINT64";
 })(dr ||= {});
 var fr;
 (function(e) {
-	e[e.DOUBLE = 1] = "DOUBLE", e[e.FLOAT = 2] = "FLOAT", e[e.INT64 = 3] = "INT64", e[e.UINT64 = 4] = "UINT64", e[e.INT32 = 5] = "INT32", e[e.FIXED64 = 6] = "FIXED64", e[e.FIXED32 = 7] = "FIXED32", e[e.BOOL = 8] = "BOOL", e[e.STRING = 9] = "STRING", e[e.GROUP = 10] = "GROUP", e[e.MESSAGE = 11] = "MESSAGE", e[e.BYTES = 12] = "BYTES", e[e.UINT32 = 13] = "UINT32", e[e.ENUM = 14] = "ENUM", e[e.SFIXED32 = 15] = "SFIXED32", e[e.SFIXED64 = 16] = "SFIXED64", e[e.SINT32 = 17] = "SINT32", e[e.SINT64 = 18] = "SINT64";
+	e[e.OPTIONAL = 1] = "OPTIONAL", e[e.REPEATED = 3] = "REPEATED", e[e.REQUIRED = 2] = "REQUIRED";
 })(fr ||= {});
 var pr;
 (function(e) {
-	e[e.OPTIONAL = 1] = "OPTIONAL", e[e.REPEATED = 3] = "REPEATED", e[e.REQUIRED = 2] = "REQUIRED";
+	e[e.SPEED = 1] = "SPEED", e[e.CODE_SIZE = 2] = "CODE_SIZE", e[e.LITE_RUNTIME = 3] = "LITE_RUNTIME";
 })(pr ||= {});
 var mr;
 (function(e) {
-	e[e.SPEED = 1] = "SPEED", e[e.CODE_SIZE = 2] = "CODE_SIZE", e[e.LITE_RUNTIME = 3] = "LITE_RUNTIME";
+	e[e.STRING = 0] = "STRING", e[e.CORD = 1] = "CORD", e[e.STRING_PIECE = 2] = "STRING_PIECE";
 })(mr ||= {});
 var hr;
 (function(e) {
-	e[e.STRING = 0] = "STRING", e[e.CORD = 1] = "CORD", e[e.STRING_PIECE = 2] = "STRING_PIECE";
+	e[e.JS_NORMAL = 0] = "JS_NORMAL", e[e.JS_STRING = 1] = "JS_STRING", e[e.JS_NUMBER = 2] = "JS_NUMBER";
 })(hr ||= {});
 var gr;
 (function(e) {
-	e[e.JS_NORMAL = 0] = "JS_NORMAL", e[e.JS_STRING = 1] = "JS_STRING", e[e.JS_NUMBER = 2] = "JS_NUMBER";
+	e[e.RETENTION_UNKNOWN = 0] = "RETENTION_UNKNOWN", e[e.RETENTION_RUNTIME = 1] = "RETENTION_RUNTIME", e[e.RETENTION_SOURCE = 2] = "RETENTION_SOURCE";
 })(gr ||= {});
 var _r;
 (function(e) {
-	e[e.RETENTION_UNKNOWN = 0] = "RETENTION_UNKNOWN", e[e.RETENTION_RUNTIME = 1] = "RETENTION_RUNTIME", e[e.RETENTION_SOURCE = 2] = "RETENTION_SOURCE";
+	e[e.TARGET_TYPE_UNKNOWN = 0] = "TARGET_TYPE_UNKNOWN", e[e.TARGET_TYPE_FILE = 1] = "TARGET_TYPE_FILE", e[e.TARGET_TYPE_EXTENSION_RANGE = 2] = "TARGET_TYPE_EXTENSION_RANGE", e[e.TARGET_TYPE_MESSAGE = 3] = "TARGET_TYPE_MESSAGE", e[e.TARGET_TYPE_FIELD = 4] = "TARGET_TYPE_FIELD", e[e.TARGET_TYPE_ONEOF = 5] = "TARGET_TYPE_ONEOF", e[e.TARGET_TYPE_ENUM = 6] = "TARGET_TYPE_ENUM", e[e.TARGET_TYPE_ENUM_ENTRY = 7] = "TARGET_TYPE_ENUM_ENTRY", e[e.TARGET_TYPE_SERVICE = 8] = "TARGET_TYPE_SERVICE", e[e.TARGET_TYPE_METHOD = 9] = "TARGET_TYPE_METHOD";
 })(_r ||= {});
 var vr;
 (function(e) {
-	e[e.TARGET_TYPE_UNKNOWN = 0] = "TARGET_TYPE_UNKNOWN", e[e.TARGET_TYPE_FILE = 1] = "TARGET_TYPE_FILE", e[e.TARGET_TYPE_EXTENSION_RANGE = 2] = "TARGET_TYPE_EXTENSION_RANGE", e[e.TARGET_TYPE_MESSAGE = 3] = "TARGET_TYPE_MESSAGE", e[e.TARGET_TYPE_FIELD = 4] = "TARGET_TYPE_FIELD", e[e.TARGET_TYPE_ONEOF = 5] = "TARGET_TYPE_ONEOF", e[e.TARGET_TYPE_ENUM = 6] = "TARGET_TYPE_ENUM", e[e.TARGET_TYPE_ENUM_ENTRY = 7] = "TARGET_TYPE_ENUM_ENTRY", e[e.TARGET_TYPE_SERVICE = 8] = "TARGET_TYPE_SERVICE", e[e.TARGET_TYPE_METHOD = 9] = "TARGET_TYPE_METHOD";
+	e[e.IDEMPOTENCY_UNKNOWN = 0] = "IDEMPOTENCY_UNKNOWN", e[e.NO_SIDE_EFFECTS = 1] = "NO_SIDE_EFFECTS", e[e.IDEMPOTENT = 2] = "IDEMPOTENT";
 })(vr ||= {});
 var yr;
 (function(e) {
-	e[e.IDEMPOTENCY_UNKNOWN = 0] = "IDEMPOTENCY_UNKNOWN", e[e.NO_SIDE_EFFECTS = 1] = "NO_SIDE_EFFECTS", e[e.IDEMPOTENT = 2] = "IDEMPOTENT";
+	e[e.DEFAULT_SYMBOL_VISIBILITY_UNKNOWN = 0] = "DEFAULT_SYMBOL_VISIBILITY_UNKNOWN", e[e.EXPORT_ALL = 1] = "EXPORT_ALL", e[e.EXPORT_TOP_LEVEL = 2] = "EXPORT_TOP_LEVEL", e[e.LOCAL_ALL = 3] = "LOCAL_ALL", e[e.STRICT = 4] = "STRICT";
 })(yr ||= {});
 var br;
 (function(e) {
-	e[e.DEFAULT_SYMBOL_VISIBILITY_UNKNOWN = 0] = "DEFAULT_SYMBOL_VISIBILITY_UNKNOWN", e[e.EXPORT_ALL = 1] = "EXPORT_ALL", e[e.EXPORT_TOP_LEVEL = 2] = "EXPORT_TOP_LEVEL", e[e.LOCAL_ALL = 3] = "LOCAL_ALL", e[e.STRICT = 4] = "STRICT";
+	e[e.FIELD_PRESENCE_UNKNOWN = 0] = "FIELD_PRESENCE_UNKNOWN", e[e.EXPLICIT = 1] = "EXPLICIT", e[e.IMPLICIT = 2] = "IMPLICIT", e[e.LEGACY_REQUIRED = 3] = "LEGACY_REQUIRED";
 })(br ||= {});
 var xr;
 (function(e) {
-	e[e.FIELD_PRESENCE_UNKNOWN = 0] = "FIELD_PRESENCE_UNKNOWN", e[e.EXPLICIT = 1] = "EXPLICIT", e[e.IMPLICIT = 2] = "IMPLICIT", e[e.LEGACY_REQUIRED = 3] = "LEGACY_REQUIRED";
+	e[e.ENUM_TYPE_UNKNOWN = 0] = "ENUM_TYPE_UNKNOWN", e[e.OPEN = 1] = "OPEN", e[e.CLOSED = 2] = "CLOSED";
 })(xr ||= {});
 var Sr;
 (function(e) {
-	e[e.ENUM_TYPE_UNKNOWN = 0] = "ENUM_TYPE_UNKNOWN", e[e.OPEN = 1] = "OPEN", e[e.CLOSED = 2] = "CLOSED";
+	e[e.REPEATED_FIELD_ENCODING_UNKNOWN = 0] = "REPEATED_FIELD_ENCODING_UNKNOWN", e[e.PACKED = 1] = "PACKED", e[e.EXPANDED = 2] = "EXPANDED";
 })(Sr ||= {});
 var Cr;
 (function(e) {
-	e[e.REPEATED_FIELD_ENCODING_UNKNOWN = 0] = "REPEATED_FIELD_ENCODING_UNKNOWN", e[e.PACKED = 1] = "PACKED", e[e.EXPANDED = 2] = "EXPANDED";
+	e[e.UTF8_VALIDATION_UNKNOWN = 0] = "UTF8_VALIDATION_UNKNOWN", e[e.VERIFY = 2] = "VERIFY", e[e.NONE = 3] = "NONE";
 })(Cr ||= {});
 var wr;
 (function(e) {
-	e[e.UTF8_VALIDATION_UNKNOWN = 0] = "UTF8_VALIDATION_UNKNOWN", e[e.VERIFY = 2] = "VERIFY", e[e.NONE = 3] = "NONE";
+	e[e.MESSAGE_ENCODING_UNKNOWN = 0] = "MESSAGE_ENCODING_UNKNOWN", e[e.LENGTH_PREFIXED = 1] = "LENGTH_PREFIXED", e[e.DELIMITED = 2] = "DELIMITED";
 })(wr ||= {});
 var Tr;
 (function(e) {
-	e[e.MESSAGE_ENCODING_UNKNOWN = 0] = "MESSAGE_ENCODING_UNKNOWN", e[e.LENGTH_PREFIXED = 1] = "LENGTH_PREFIXED", e[e.DELIMITED = 2] = "DELIMITED";
+	e[e.JSON_FORMAT_UNKNOWN = 0] = "JSON_FORMAT_UNKNOWN", e[e.ALLOW = 1] = "ALLOW", e[e.LEGACY_BEST_EFFORT = 2] = "LEGACY_BEST_EFFORT";
 })(Tr ||= {});
 var Er;
 (function(e) {
-	e[e.JSON_FORMAT_UNKNOWN = 0] = "JSON_FORMAT_UNKNOWN", e[e.ALLOW = 1] = "ALLOW", e[e.LEGACY_BEST_EFFORT = 2] = "LEGACY_BEST_EFFORT";
+	e[e.ENFORCE_NAMING_STYLE_UNKNOWN = 0] = "ENFORCE_NAMING_STYLE_UNKNOWN", e[e.STYLE2024 = 1] = "STYLE2024", e[e.STYLE_LEGACY = 2] = "STYLE_LEGACY";
 })(Er ||= {});
 var Dr;
 (function(e) {
-	e[e.ENFORCE_NAMING_STYLE_UNKNOWN = 0] = "ENFORCE_NAMING_STYLE_UNKNOWN", e[e.STYLE2024 = 1] = "STYLE2024", e[e.STYLE_LEGACY = 2] = "STYLE_LEGACY";
+	e[e.NONE = 0] = "NONE", e[e.SET = 1] = "SET", e[e.ALIAS = 2] = "ALIAS";
 })(Dr ||= {});
 var Or;
 (function(e) {
-	e[e.NONE = 0] = "NONE", e[e.SET = 1] = "SET", e[e.ALIAS = 2] = "ALIAS";
+	e[e.EDITION_UNKNOWN = 0] = "EDITION_UNKNOWN", e[e.EDITION_LEGACY = 900] = "EDITION_LEGACY", e[e.EDITION_PROTO2 = 998] = "EDITION_PROTO2", e[e.EDITION_PROTO3 = 999] = "EDITION_PROTO3", e[e.EDITION_2023 = 1e3] = "EDITION_2023", e[e.EDITION_2024 = 1001] = "EDITION_2024", e[e.EDITION_1_TEST_ONLY = 1] = "EDITION_1_TEST_ONLY", e[e.EDITION_2_TEST_ONLY = 2] = "EDITION_2_TEST_ONLY", e[e.EDITION_99997_TEST_ONLY = 99997] = "EDITION_99997_TEST_ONLY", e[e.EDITION_99998_TEST_ONLY = 99998] = "EDITION_99998_TEST_ONLY", e[e.EDITION_99999_TEST_ONLY = 99999] = "EDITION_99999_TEST_ONLY", e[e.EDITION_MAX = 0x7fffffff] = "EDITION_MAX";
 })(Or ||= {});
 var kr;
 (function(e) {
-	e[e.EDITION_UNKNOWN = 0] = "EDITION_UNKNOWN", e[e.EDITION_LEGACY = 900] = "EDITION_LEGACY", e[e.EDITION_PROTO2 = 998] = "EDITION_PROTO2", e[e.EDITION_PROTO3 = 999] = "EDITION_PROTO3", e[e.EDITION_2023 = 1e3] = "EDITION_2023", e[e.EDITION_2024 = 1001] = "EDITION_2024", e[e.EDITION_1_TEST_ONLY = 1] = "EDITION_1_TEST_ONLY", e[e.EDITION_2_TEST_ONLY = 2] = "EDITION_2_TEST_ONLY", e[e.EDITION_99997_TEST_ONLY = 99997] = "EDITION_99997_TEST_ONLY", e[e.EDITION_99998_TEST_ONLY = 99998] = "EDITION_99998_TEST_ONLY", e[e.EDITION_99999_TEST_ONLY = 99999] = "EDITION_99999_TEST_ONLY", e[e.EDITION_MAX = 0x7fffffff] = "EDITION_MAX";
-})(kr ||= {});
-var Ar;
-(function(e) {
 	e[e.VISIBILITY_UNSET = 0] = "VISIBILITY_UNSET", e[e.VISIBILITY_LOCAL = 1] = "VISIBILITY_LOCAL", e[e.VISIBILITY_EXPORT = 2] = "VISIBILITY_EXPORT";
-})(Ar ||= {});
-function y(e, t, ...n) {
+})(kr ||= {});
+function b(e, t, ...n) {
 	if (n.length == 0) return e.enums[t];
 	let r = n.pop();
 	return n.reduce((e, t) => e.nestedMessages[t], e.messages[t]).nestedEnums[r];
 }
-var jr = { readUnknownFields: !0 };
-function Mr(e) {
-	return e ? Object.assign(Object.assign({}, jr), e) : jr;
+var Ar = { readUnknownFields: !0 };
+function jr(e) {
+	return e ? Object.assign(Object.assign({}, Ar), e) : Ar;
 }
-function b(e, t, n) {
-	let r = Nn(e, void 0, !1);
-	return Nr(r, new $t(t), Mr(n), !1, t.byteLength), r.message;
+function x(e, t, n) {
+	let r = Mn(e, void 0, !1);
+	return Mr(r, new Qt(t), jr(n), !1, t.byteLength), r.message;
 }
-function Nr(e, t, n, r, i) {
+function Mr(e, t, n, r, i) {
 	let a = r ? t.len : t.pos + i, o, s, c = e.getUnknown() ?? [];
-	for (; t.pos < a && ([o, s] = t.tag(), !(r && s == g.EndGroup));) {
+	for (; t.pos < a && ([o, s] = t.tag(), !(r && s == _.EndGroup));) {
 		let r = e.findNumber(o);
-		if (r) Pr(e, t, r, s, n);
+		if (r) Nr(e, t, r, s, n);
 		else {
 			let e = t.skip(s, o);
 			n.readUnknownFields && c.push({
@@ -4212,16 +4212,16 @@ function Nr(e, t, n, r, i) {
 			});
 		}
 	}
-	if (r && (s != g.EndGroup || o !== i)) throw Error("invalid end group tag");
+	if (r && (s != _.EndGroup || o !== i)) throw Error("invalid end group tag");
 	c.length > 0 && e.setUnknown(c);
 }
-function Pr(e, t, n, r, i) {
+function Nr(e, t, n, r, i) {
 	switch (n.fieldKind) {
 		case "scalar":
-			e.set(n, Rr(t, n.scalar));
+			e.set(n, Lr(t, n.scalar));
 			break;
 		case "enum":
-			let a = Rr(t, h.INT32);
+			let a = Lr(t, h.INT32);
 			if (n.enum.open) e.set(n, a);
 			else if (n.enum.values.some((e) => e.number === a)) e.set(n, a);
 			else if (i.readUnknownFields) {
@@ -4236,30 +4236,30 @@ function Pr(e, t, n, r, i) {
 			}
 			break;
 		case "message":
-			e.set(n, Lr(t, i, n, e.get(n)));
+			e.set(n, Ir(t, i, n, e.get(n)));
 			break;
 		case "list":
-			Ir(t, r, e.get(n), i);
+			Fr(t, r, e.get(n), i);
 			break;
-		case "map": Fr(t, e.get(n), i);
+		case "map": Pr(t, e.get(n), i);
 	}
 }
-function Fr(e, t, n) {
+function Pr(e, t, n) {
 	let r = t.field(), i, a, o = e.uint32(), s = e.pos + o;
 	for (; e.pos < s;) {
 		let [t] = e.tag();
 		switch (t) {
 			case 1:
-				i = Rr(e, r.mapKey);
+				i = Lr(e, r.mapKey);
 				break;
 			case 2: switch (r.mapKind) {
 				case "scalar":
-					a = Rr(e, r.scalar);
+					a = Lr(e, r.scalar);
 					break;
 				case "enum":
 					a = e.int32();
 					break;
-				case "message": a = Lr(e, n, r);
+				case "message": a = Ir(e, n, r);
 			}
 		}
 	}
@@ -4270,29 +4270,29 @@ function Fr(e, t, n) {
 		case "enum":
 			a = r.enum.values[0].number;
 			break;
-		case "message": a = Nn(r.message, void 0, !1);
+		case "message": a = Mn(r.message, void 0, !1);
 	}
 	t.set(i, a);
 }
-function Ir(e, t, n, r) {
+function Fr(e, t, n, r) {
 	let i = n.field();
 	if (i.listKind === "message") {
-		n.add(Lr(e, r, i));
+		n.add(Ir(e, r, i));
 		return;
 	}
 	let a = i.scalar ?? h.INT32;
-	if (t != g.LengthDelimited || a == h.STRING || a == h.BYTES) {
-		n.add(Rr(e, a));
+	if (t != _.LengthDelimited || a == h.STRING || a == h.BYTES) {
+		n.add(Lr(e, a));
 		return;
 	}
 	let o = e.uint32() + e.pos;
-	for (; e.pos < o;) n.add(Rr(e, a));
+	for (; e.pos < o;) n.add(Lr(e, a));
 }
-function Lr(e, t, n, r) {
-	let i = n.delimitedEncoding, a = r ?? Nn(n.message, void 0, !1);
-	return Nr(a, e, t, i, i ? n.number : e.uint32()), a;
+function Ir(e, t, n, r) {
+	let i = n.delimitedEncoding, a = r ?? Mn(n.message, void 0, !1);
+	return Mr(a, e, t, i, i ? n.number : e.uint32()), a;
 }
-function Rr(e, t) {
+function Lr(e, t) {
 	switch (t) {
 		case h.STRING: return e.string();
 		case h.BOOL: return e.bool();
@@ -4311,378 +4311,378 @@ function Rr(e, t) {
 		case h.SINT32: return e.sint32();
 	}
 }
-function x(e, t) {
-	let n = b(ur, Nt(e));
+function S(e, t) {
+	let n = x(lr, Mt(e));
 	return n.messageType.forEach(Ne), n.dependency = t?.map((e) => e.proto.name) ?? [], Re(n, (e) => t?.find((t) => t.proto.name === e)).getFile(n.name);
 }
-function S(e, t, ...n) {
+function C(e, t, ...n) {
 	return n.reduce((e, t) => e.nestedMessages[t], e.messages[t]);
 }
-var zr = s({
-	ATAK: () => $o,
-	Admin: () => A,
-	AppOnly: () => Xo,
-	CannedMessages: () => ds,
-	Channel: () => Br,
-	ClientOnly: () => vs,
-	Config: () => Jr,
-	ConnectionStatus: () => Ii,
-	LocalOnly: () => ms,
-	Mesh: () => O,
-	ModuleConfig: () => Wi,
-	Mqtt: () => xs,
-	PaxCount: () => Ts,
-	Portnums: () => T,
-	PowerMon: () => Os,
-	RemoteHardware: () => Is,
-	Rtttl: () => Vs,
-	StoreForward: () => Ws,
-	Telemetry: () => Sa,
-	Xmodem: () => D
-}), Br = p({
-	ChannelSchema: () => Wr,
-	ChannelSettingsSchema: () => Hr,
-	Channel_Role: () => Gr,
-	Channel_RoleSchema: () => Kr,
-	ModuleSettingsSchema: () => Ur,
-	file_channel: () => Vr
-}), Vr = /* @__PURE__ */ x("Cg1jaGFubmVsLnByb3RvEgptZXNodGFzdGljIrgBCg9DaGFubmVsU2V0dGluZ3MSFwoLY2hhbm5lbF9udW0YASABKA1CAhgBEgsKA3BzaxgCIAEoDBIMCgRuYW1lGAMgASgJEgoKAmlkGAQgASgHEhYKDnVwbGlua19lbmFibGVkGAUgASgIEhgKEGRvd25saW5rX2VuYWJsZWQYBiABKAgSMwoPbW9kdWxlX3NldHRpbmdzGAcgASgLMhoubWVzaHRhc3RpYy5Nb2R1bGVTZXR0aW5ncyJFCg5Nb2R1bGVTZXR0aW5ncxIaChJwb3NpdGlvbl9wcmVjaXNpb24YASABKA0SFwoPaXNfY2xpZW50X211dGVkGAIgASgIIqEBCgdDaGFubmVsEg0KBWluZGV4GAEgASgFEi0KCHNldHRpbmdzGAIgASgLMhsubWVzaHRhc3RpYy5DaGFubmVsU2V0dGluZ3MSJgoEcm9sZRgDIAEoDjIYLm1lc2h0YXN0aWMuQ2hhbm5lbC5Sb2xlIjAKBFJvbGUSDAoIRElTQUJMRUQQABILCgdQUklNQVJZEAESDQoJU0VDT05EQVJZEAJCYgoTY29tLmdlZWtzdmlsbGUubWVzaEINQ2hhbm5lbFByb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM"), Hr = /* @__PURE__ */ S(Vr, 0), Ur = /* @__PURE__ */ S(Vr, 1), Wr = /* @__PURE__ */ S(Vr, 2), Gr = /* @__PURE__ */ function(e) {
+var Rr = s({
+	ATAK: () => Qo,
+	Admin: () => j,
+	AppOnly: () => Yo,
+	CannedMessages: () => us,
+	Channel: () => zr,
+	ClientOnly: () => _s,
+	Config: () => qr,
+	ConnectionStatus: () => Fi,
+	LocalOnly: () => ps,
+	Mesh: () => k,
+	ModuleConfig: () => Ui,
+	Mqtt: () => bs,
+	PaxCount: () => ws,
+	Portnums: () => E,
+	PowerMon: () => Ds,
+	RemoteHardware: () => Fs,
+	Rtttl: () => Bs,
+	StoreForward: () => Us,
+	Telemetry: () => xa,
+	Xmodem: () => O
+}), zr = p({
+	ChannelSchema: () => Ur,
+	ChannelSettingsSchema: () => Vr,
+	Channel_Role: () => Wr,
+	Channel_RoleSchema: () => Gr,
+	ModuleSettingsSchema: () => Hr,
+	file_channel: () => Br
+}), Br = /* @__PURE__ */ S("Cg1jaGFubmVsLnByb3RvEgptZXNodGFzdGljIrgBCg9DaGFubmVsU2V0dGluZ3MSFwoLY2hhbm5lbF9udW0YASABKA1CAhgBEgsKA3BzaxgCIAEoDBIMCgRuYW1lGAMgASgJEgoKAmlkGAQgASgHEhYKDnVwbGlua19lbmFibGVkGAUgASgIEhgKEGRvd25saW5rX2VuYWJsZWQYBiABKAgSMwoPbW9kdWxlX3NldHRpbmdzGAcgASgLMhoubWVzaHRhc3RpYy5Nb2R1bGVTZXR0aW5ncyJFCg5Nb2R1bGVTZXR0aW5ncxIaChJwb3NpdGlvbl9wcmVjaXNpb24YASABKA0SFwoPaXNfY2xpZW50X211dGVkGAIgASgIIqEBCgdDaGFubmVsEg0KBWluZGV4GAEgASgFEi0KCHNldHRpbmdzGAIgASgLMhsubWVzaHRhc3RpYy5DaGFubmVsU2V0dGluZ3MSJgoEcm9sZRgDIAEoDjIYLm1lc2h0YXN0aWMuQ2hhbm5lbC5Sb2xlIjAKBFJvbGUSDAoIRElTQUJMRUQQABILCgdQUklNQVJZEAESDQoJU0VDT05EQVJZEAJCYgoTY29tLmdlZWtzdmlsbGUubWVzaEINQ2hhbm5lbFByb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM"), Vr = /* @__PURE__ */ C(Br, 0), Hr = /* @__PURE__ */ C(Br, 1), Ur = /* @__PURE__ */ C(Br, 2), Wr = /* @__PURE__ */ function(e) {
 	return e[e.DISABLED = 0] = "DISABLED", e[e.PRIMARY = 1] = "PRIMARY", e[e.SECONDARY = 2] = "SECONDARY", e;
-}({}), Kr = /* @__PURE__ */ y(Vr, 2, 0), qr = /* @__PURE__ */ x("Cg9kZXZpY2VfdWkucHJvdG8SCm1lc2h0YXN0aWMivgMKDkRldmljZVVJQ29uZmlnEg8KB3ZlcnNpb24YASABKA0SGQoRc2NyZWVuX2JyaWdodG5lc3MYAiABKA0SFgoOc2NyZWVuX3RpbWVvdXQYAyABKA0SEwoLc2NyZWVuX2xvY2sYBCABKAgSFQoNc2V0dGluZ3NfbG9jaxgFIAEoCBIQCghwaW5fY29kZRgGIAEoDRIgCgV0aGVtZRgHIAEoDjIRLm1lc2h0YXN0aWMuVGhlbWUSFQoNYWxlcnRfZW5hYmxlZBgIIAEoCBIWCg5iYW5uZXJfZW5hYmxlZBgJIAEoCBIUCgxyaW5nX3RvbmVfaWQYCiABKA0SJgoIbGFuZ3VhZ2UYCyABKA4yFC5tZXNodGFzdGljLkxhbmd1YWdlEisKC25vZGVfZmlsdGVyGAwgASgLMhYubWVzaHRhc3RpYy5Ob2RlRmlsdGVyEjEKDm5vZGVfaGlnaGxpZ2h0GA0gASgLMhkubWVzaHRhc3RpYy5Ob2RlSGlnaGxpZ2h0EhgKEGNhbGlicmF0aW9uX2RhdGEYDiABKAwSIQoIbWFwX2RhdGEYDyABKAsyDy5tZXNodGFzdGljLk1hcCKnAQoKTm9kZUZpbHRlchIWCg51bmtub3duX3N3aXRjaBgBIAEoCBIWCg5vZmZsaW5lX3N3aXRjaBgCIAEoCBIZChFwdWJsaWNfa2V5X3N3aXRjaBgDIAEoCBIRCglob3BzX2F3YXkYBCABKAUSFwoPcG9zaXRpb25fc3dpdGNoGAUgASgIEhEKCW5vZGVfbmFtZRgGIAEoCRIPCgdjaGFubmVsGAcgASgFIn4KDU5vZGVIaWdobGlnaHQSEwoLY2hhdF9zd2l0Y2gYASABKAgSFwoPcG9zaXRpb25fc3dpdGNoGAIgASgIEhgKEHRlbGVtZXRyeV9zd2l0Y2gYAyABKAgSEgoKaWFxX3N3aXRjaBgEIAEoCBIRCglub2RlX25hbWUYBSABKAkiPQoIR2VvUG9pbnQSDAoEem9vbRgBIAEoBRIQCghsYXRpdHVkZRgCIAEoBRIRCglsb25naXR1ZGUYAyABKAUiTAoDTWFwEiIKBGhvbWUYASABKAsyFC5tZXNodGFzdGljLkdlb1BvaW50Eg0KBXN0eWxlGAIgASgJEhIKCmZvbGxvd19ncHMYAyABKAgqJQoFVGhlbWUSCAoEREFSSxAAEgkKBUxJR0hUEAESBwoDUkVEEAIqqQIKCExhbmd1YWdlEgsKB0VOR0xJU0gQABIKCgZGUkVOQ0gQARIKCgZHRVJNQU4QAhILCgdJVEFMSUFOEAMSDgoKUE9SVFVHVUVTRRAEEgsKB1NQQU5JU0gQBRILCgdTV0VESVNIEAYSCwoHRklOTklTSBAHEgoKBlBPTElTSBAIEgsKB1RVUktJU0gQCRILCgdTRVJCSUFOEAoSCwoHUlVTU0lBThALEgkKBURVVENIEAwSCQoFR1JFRUsQDRINCglOT1JXRUdJQU4QDhINCglTTE9WRU5JQU4QDxINCglVS1JBSU5JQU4QEBINCglCVUxHQVJJQU4QERIWChJTSU1QTElGSUVEX0NISU5FU0UQHhIXChNUUkFESVRJT05BTF9DSElORVNFEB9CYwoTY29tLmdlZWtzdmlsbGUubWVzaEIORGV2aWNlVUlQcm90b3NaImdpdGh1Yi5jb20vbWVzaHRhc3RpYy9nby9nZW5lcmF0ZWSqAhRNZXNodGFzdGljLlByb3RvYnVmc7oCAGIGcHJvdG8z"), Jr = p({
-	ConfigSchema: () => Yr,
-	Config_BluetoothConfigSchema: () => ji,
-	Config_BluetoothConfig_PairingMode: () => Mi,
-	Config_BluetoothConfig_PairingModeSchema: () => Ni,
-	Config_DeviceConfigSchema: () => Xr,
-	Config_DeviceConfig_BuzzerMode: () => ti,
-	Config_DeviceConfig_BuzzerModeSchema: () => ni,
-	Config_DeviceConfig_RebroadcastMode: () => $r,
-	Config_DeviceConfig_RebroadcastModeSchema: () => ei,
-	Config_DeviceConfig_Role: () => Zr,
-	Config_DeviceConfig_RoleSchema: () => Qr,
-	Config_DisplayConfigSchema: () => hi,
-	Config_DisplayConfig_CompassOrientation: () => wi,
-	Config_DisplayConfig_CompassOrientationSchema: () => Ti,
-	Config_DisplayConfig_DisplayMode: () => Si,
-	Config_DisplayConfig_DisplayModeSchema: () => Ci,
-	Config_DisplayConfig_DisplayUnits: () => vi,
-	Config_DisplayConfig_DisplayUnitsSchema: () => yi,
-	Config_DisplayConfig_GpsCoordinateFormat: () => gi,
-	Config_DisplayConfig_GpsCoordinateFormatSchema: () => _i,
-	Config_DisplayConfig_OledType: () => bi,
-	Config_DisplayConfig_OledTypeSchema: () => xi,
-	Config_LoRaConfigSchema: () => Ei,
-	Config_LoRaConfig_ModemPreset: () => ki,
-	Config_LoRaConfig_ModemPresetSchema: () => Ai,
-	Config_LoRaConfig_RegionCode: () => Di,
-	Config_LoRaConfig_RegionCodeSchema: () => Oi,
-	Config_NetworkConfigSchema: () => li,
-	Config_NetworkConfig_AddressMode: () => di,
-	Config_NetworkConfig_AddressModeSchema: () => fi,
-	Config_NetworkConfig_IpV4ConfigSchema: () => ui,
-	Config_NetworkConfig_ProtocolFlags: () => pi,
-	Config_NetworkConfig_ProtocolFlagsSchema: () => mi,
-	Config_PositionConfigSchema: () => ri,
-	Config_PositionConfig_GpsMode: () => oi,
-	Config_PositionConfig_GpsModeSchema: () => si,
-	Config_PositionConfig_PositionFlags: () => ii,
-	Config_PositionConfig_PositionFlagsSchema: () => ai,
-	Config_PowerConfigSchema: () => ci,
-	Config_SecurityConfigSchema: () => Pi,
-	Config_SessionkeyConfigSchema: () => Fi,
-	file_config: () => C
-}), C = /* @__PURE__ */ x("Cgxjb25maWcucHJvdG8SCm1lc2h0YXN0aWMipigKBkNvbmZpZxIxCgZkZXZpY2UYASABKAsyHy5tZXNodGFzdGljLkNvbmZpZy5EZXZpY2VDb25maWdIABI1Cghwb3NpdGlvbhgCIAEoCzIhLm1lc2h0YXN0aWMuQ29uZmlnLlBvc2l0aW9uQ29uZmlnSAASLwoFcG93ZXIYAyABKAsyHi5tZXNodGFzdGljLkNvbmZpZy5Qb3dlckNvbmZpZ0gAEjMKB25ldHdvcmsYBCABKAsyIC5tZXNodGFzdGljLkNvbmZpZy5OZXR3b3JrQ29uZmlnSAASMwoHZGlzcGxheRgFIAEoCzIgLm1lc2h0YXN0aWMuQ29uZmlnLkRpc3BsYXlDb25maWdIABItCgRsb3JhGAYgASgLMh0ubWVzaHRhc3RpYy5Db25maWcuTG9SYUNvbmZpZ0gAEjcKCWJsdWV0b290aBgHIAEoCzIiLm1lc2h0YXN0aWMuQ29uZmlnLkJsdWV0b290aENvbmZpZ0gAEjUKCHNlY3VyaXR5GAggASgLMiEubWVzaHRhc3RpYy5Db25maWcuU2VjdXJpdHlDb25maWdIABI5CgpzZXNzaW9ua2V5GAkgASgLMiMubWVzaHRhc3RpYy5Db25maWcuU2Vzc2lvbmtleUNvbmZpZ0gAEi8KCWRldmljZV91aRgKIAEoCzIaLm1lc2h0YXN0aWMuRGV2aWNlVUlDb25maWdIABrMBgoMRGV2aWNlQ29uZmlnEjIKBHJvbGUYASABKA4yJC5tZXNodGFzdGljLkNvbmZpZy5EZXZpY2VDb25maWcuUm9sZRIaCg5zZXJpYWxfZW5hYmxlZBgCIAEoCEICGAESEwoLYnV0dG9uX2dwaW8YBCABKA0SEwoLYnV6emVyX2dwaW8YBSABKA0SSQoQcmVicm9hZGNhc3RfbW9kZRgGIAEoDjIvLm1lc2h0YXN0aWMuQ29uZmlnLkRldmljZUNvbmZpZy5SZWJyb2FkY2FzdE1vZGUSIAoYbm9kZV9pbmZvX2Jyb2FkY2FzdF9zZWNzGAcgASgNEiIKGmRvdWJsZV90YXBfYXNfYnV0dG9uX3ByZXNzGAggASgIEhYKCmlzX21hbmFnZWQYCSABKAhCAhgBEhwKFGRpc2FibGVfdHJpcGxlX2NsaWNrGAogASgIEg0KBXR6ZGVmGAsgASgJEh4KFmxlZF9oZWFydGJlYXRfZGlzYWJsZWQYDCABKAgSPwoLYnV6emVyX21vZGUYDSABKA4yKi5tZXNodGFzdGljLkNvbmZpZy5EZXZpY2VDb25maWcuQnV6emVyTW9kZSK/AQoEUm9sZRIKCgZDTElFTlQQABIPCgtDTElFTlRfTVVURRABEgoKBlJPVVRFUhACEhUKDVJPVVRFUl9DTElFTlQQAxoCCAESDAoIUkVQRUFURVIQBBILCgdUUkFDS0VSEAUSCgoGU0VOU09SEAYSBwoDVEFLEAcSEQoNQ0xJRU5UX0hJRERFThAIEhIKDkxPU1RfQU5EX0ZPVU5EEAkSDwoLVEFLX1RSQUNLRVIQChIPCgtST1VURVJfTEFURRALInMKD1JlYnJvYWRjYXN0TW9kZRIHCgNBTEwQABIVChFBTExfU0tJUF9ERUNPRElORxABEg4KCkxPQ0FMX09OTFkQAhIOCgpLTk9XTl9PTkxZEAMSCAoETk9ORRAEEhYKEkNPUkVfUE9SVE5VTVNfT05MWRAFIlQKCkJ1enplck1vZGUSDwoLQUxMX0VOQUJMRUQQABIMCghESVNBQkxFRBABEhYKEk5PVElGSUNBVElPTlNfT05MWRACEg8KC1NZU1RFTV9PTkxZEAMakQUKDlBvc2l0aW9uQ29uZmlnEh8KF3Bvc2l0aW9uX2Jyb2FkY2FzdF9zZWNzGAEgASgNEigKIHBvc2l0aW9uX2Jyb2FkY2FzdF9zbWFydF9lbmFibGVkGAIgASgIEhYKDmZpeGVkX3Bvc2l0aW9uGAMgASgIEhcKC2dwc19lbmFibGVkGAQgASgIQgIYARIbChNncHNfdXBkYXRlX2ludGVydmFsGAUgASgNEhwKEGdwc19hdHRlbXB0X3RpbWUYBiABKA1CAhgBEhYKDnBvc2l0aW9uX2ZsYWdzGAcgASgNEg8KB3J4X2dwaW8YCCABKA0SDwoHdHhfZ3BpbxgJIAEoDRIoCiBicm9hZGNhc3Rfc21hcnRfbWluaW11bV9kaXN0YW5jZRgKIAEoDRItCiVicm9hZGNhc3Rfc21hcnRfbWluaW11bV9pbnRlcnZhbF9zZWNzGAsgASgNEhMKC2dwc19lbl9ncGlvGAwgASgNEjsKCGdwc19tb2RlGA0gASgOMikubWVzaHRhc3RpYy5Db25maWcuUG9zaXRpb25Db25maWcuR3BzTW9kZSKrAQoNUG9zaXRpb25GbGFncxIJCgVVTlNFVBAAEgwKCEFMVElUVURFEAESEAoMQUxUSVRVREVfTVNMEAISFgoSR0VPSURBTF9TRVBBUkFUSU9OEAQSBwoDRE9QEAgSCQoFSFZET1AQEBINCglTQVRJTlZJRVcQIBIKCgZTRVFfTk8QQBIOCglUSU1FU1RBTVAQgAESDAoHSEVBRElORxCAAhIKCgVTUEVFRBCABCI1CgdHcHNNb2RlEgwKCERJU0FCTEVEEAASCwoHRU5BQkxFRBABEg8KC05PVF9QUkVTRU5UEAIahAIKC1Bvd2VyQ29uZmlnEhcKD2lzX3Bvd2VyX3NhdmluZxgBIAEoCBImCh5vbl9iYXR0ZXJ5X3NodXRkb3duX2FmdGVyX3NlY3MYAiABKA0SHwoXYWRjX211bHRpcGxpZXJfb3ZlcnJpZGUYAyABKAISGwoTd2FpdF9ibHVldG9vdGhfc2VjcxgEIAEoDRIQCghzZHNfc2VjcxgGIAEoDRIPCgdsc19zZWNzGAcgASgNEhUKDW1pbl93YWtlX3NlY3MYCCABKA0SIgoaZGV2aWNlX2JhdHRlcnlfaW5hX2FkZHJlc3MYCSABKA0SGAoQcG93ZXJtb25fZW5hYmxlcxggIAEoBBrlAwoNTmV0d29ya0NvbmZpZxIUCgx3aWZpX2VuYWJsZWQYASABKAgSEQoJd2lmaV9zc2lkGAMgASgJEhAKCHdpZmlfcHNrGAQgASgJEhIKCm50cF9zZXJ2ZXIYBSABKAkSEwoLZXRoX2VuYWJsZWQYBiABKAgSQgoMYWRkcmVzc19tb2RlGAcgASgOMiwubWVzaHRhc3RpYy5Db25maWcuTmV0d29ya0NvbmZpZy5BZGRyZXNzTW9kZRJACgtpcHY0X2NvbmZpZxgIIAEoCzIrLm1lc2h0YXN0aWMuQ29uZmlnLk5ldHdvcmtDb25maWcuSXBWNENvbmZpZxIWCg5yc3lzbG9nX3NlcnZlchgJIAEoCRIZChFlbmFibGVkX3Byb3RvY29scxgKIAEoDRIUCgxpcHY2X2VuYWJsZWQYCyABKAgaRgoKSXBWNENvbmZpZxIKCgJpcBgBIAEoBxIPCgdnYXRld2F5GAIgASgHEg4KBnN1Ym5ldBgDIAEoBxILCgNkbnMYBCABKAciIwoLQWRkcmVzc01vZGUSCAoEREhDUBAAEgoKBlNUQVRJQxABIjQKDVByb3RvY29sRmxhZ3MSEAoMTk9fQlJPQURDQVNUEAASEQoNVURQX0JST0FEQ0FTVBABGvwHCg1EaXNwbGF5Q29uZmlnEhYKDnNjcmVlbl9vbl9zZWNzGAEgASgNEkgKCmdwc19mb3JtYXQYAiABKA4yNC5tZXNodGFzdGljLkNvbmZpZy5EaXNwbGF5Q29uZmlnLkdwc0Nvb3JkaW5hdGVGb3JtYXQSIQoZYXV0b19zY3JlZW5fY2Fyb3VzZWxfc2VjcxgDIAEoDRIZChFjb21wYXNzX25vcnRoX3RvcBgEIAEoCBITCgtmbGlwX3NjcmVlbhgFIAEoCBI8CgV1bml0cxgGIAEoDjItLm1lc2h0YXN0aWMuQ29uZmlnLkRpc3BsYXlDb25maWcuRGlzcGxheVVuaXRzEjcKBG9sZWQYByABKA4yKS5tZXNodGFzdGljLkNvbmZpZy5EaXNwbGF5Q29uZmlnLk9sZWRUeXBlEkEKC2Rpc3BsYXltb2RlGAggASgOMiwubWVzaHRhc3RpYy5Db25maWcuRGlzcGxheUNvbmZpZy5EaXNwbGF5TW9kZRIUCgxoZWFkaW5nX2JvbGQYCSABKAgSHQoVd2FrZV9vbl90YXBfb3JfbW90aW9uGAogASgIElAKE2NvbXBhc3Nfb3JpZW50YXRpb24YCyABKA4yMy5tZXNodGFzdGljLkNvbmZpZy5EaXNwbGF5Q29uZmlnLkNvbXBhc3NPcmllbnRhdGlvbhIVCg11c2VfMTJoX2Nsb2NrGAwgASgIIk0KE0dwc0Nvb3JkaW5hdGVGb3JtYXQSBwoDREVDEAASBwoDRE1TEAESBwoDVVRNEAISCAoETUdSUxADEgcKA09MQxAEEggKBE9TR1IQBSIoCgxEaXNwbGF5VW5pdHMSCgoGTUVUUklDEAASDAoISU1QRVJJQUwQASJlCghPbGVkVHlwZRINCglPTEVEX0FVVE8QABIQCgxPTEVEX1NTRDEzMDYQARIPCgtPTEVEX1NIMTEwNhACEg8KC09MRURfU0gxMTA3EAMSFgoST0xFRF9TSDExMDdfMTI4XzY0EAQiQQoLRGlzcGxheU1vZGUSCwoHREVGQVVMVBAAEgwKCFRXT0NPTE9SEAESDAoISU5WRVJURUQQAhIJCgVDT0xPUhADIroBChJDb21wYXNzT3JpZW50YXRpb24SDQoJREVHUkVFU18wEAASDgoKREVHUkVFU185MBABEg8KC0RFR1JFRVNfMTgwEAISDwoLREVHUkVFU18yNzAQAxIWChJERUdSRUVTXzBfSU5WRVJURUQQBBIXChNERUdSRUVTXzkwX0lOVkVSVEVEEAUSGAoUREVHUkVFU18xODBfSU5WRVJURUQQBhIYChRERUdSRUVTXzI3MF9JTlZFUlRFRBAHGqoHCgpMb1JhQ29uZmlnEhIKCnVzZV9wcmVzZXQYASABKAgSPwoMbW9kZW1fcHJlc2V0GAIgASgOMikubWVzaHRhc3RpYy5Db25maWcuTG9SYUNvbmZpZy5Nb2RlbVByZXNldBIRCgliYW5kd2lkdGgYAyABKA0SFQoNc3ByZWFkX2ZhY3RvchgEIAEoDRITCgtjb2RpbmdfcmF0ZRgFIAEoDRIYChBmcmVxdWVuY3lfb2Zmc2V0GAYgASgCEjgKBnJlZ2lvbhgHIAEoDjIoLm1lc2h0YXN0aWMuQ29uZmlnLkxvUmFDb25maWcuUmVnaW9uQ29kZRIRCglob3BfbGltaXQYCCABKA0SEgoKdHhfZW5hYmxlZBgJIAEoCBIQCgh0eF9wb3dlchgKIAEoBRITCgtjaGFubmVsX251bRgLIAEoDRIbChNvdmVycmlkZV9kdXR5X2N5Y2xlGAwgASgIEh4KFnN4MTI2eF9yeF9ib29zdGVkX2dhaW4YDSABKAgSGgoSb3ZlcnJpZGVfZnJlcXVlbmN5GA4gASgCEhcKD3BhX2Zhbl9kaXNhYmxlZBgPIAEoCBIXCg9pZ25vcmVfaW5jb21pbmcYZyADKA0SEwoLaWdub3JlX21xdHQYaCABKAgSGQoRY29uZmlnX29rX3RvX21xdHQYaSABKAgi/gEKClJlZ2lvbkNvZGUSCQoFVU5TRVQQABIGCgJVUxABEgoKBkVVXzQzMxACEgoKBkVVXzg2OBADEgYKAkNOEAQSBgoCSlAQBRIHCgNBTloQBhIGCgJLUhAHEgYKAlRXEAgSBgoCUlUQCRIGCgJJThAKEgoKBk5aXzg2NRALEgYKAlRIEAwSCwoHTE9SQV8yNBANEgoKBlVBXzQzMxAOEgoKBlVBXzg2OBAPEgoKBk1ZXzQzMxAQEgoKBk1ZXzkxORAREgoKBlNHXzkyMxASEgoKBlBIXzQzMxATEgoKBlBIXzg2OBAUEgoKBlBIXzkxNRAVEgsKB0FOWl80MzMQFiKpAQoLTW9kZW1QcmVzZXQSDQoJTE9OR19GQVNUEAASDQoJTE9OR19TTE9XEAESFgoOVkVSWV9MT05HX1NMT1cQAhoCCAESDwoLTUVESVVNX1NMT1cQAxIPCgtNRURJVU1fRkFTVBAEEg4KClNIT1JUX1NMT1cQBRIOCgpTSE9SVF9GQVNUEAYSEQoNTE9OR19NT0RFUkFURRAHEg8KC1NIT1JUX1RVUkJPEAgarQEKD0JsdWV0b290aENvbmZpZxIPCgdlbmFibGVkGAEgASgIEjwKBG1vZGUYAiABKA4yLi5tZXNodGFzdGljLkNvbmZpZy5CbHVldG9vdGhDb25maWcuUGFpcmluZ01vZGUSEQoJZml4ZWRfcGluGAMgASgNIjgKC1BhaXJpbmdNb2RlEg4KClJBTkRPTV9QSU4QABINCglGSVhFRF9QSU4QARIKCgZOT19QSU4QAhq2AQoOU2VjdXJpdHlDb25maWcSEgoKcHVibGljX2tleRgBIAEoDBITCgtwcml2YXRlX2tleRgCIAEoDBIRCglhZG1pbl9rZXkYAyADKAwSEgoKaXNfbWFuYWdlZBgEIAEoCBIWCg5zZXJpYWxfZW5hYmxlZBgFIAEoCBIdChVkZWJ1Z19sb2dfYXBpX2VuYWJsZWQYBiABKAgSHQoVYWRtaW5fY2hhbm5lbF9lbmFibGVkGAggASgIGhIKEFNlc3Npb25rZXlDb25maWdCEQoPcGF5bG9hZF92YXJpYW50QmEKE2NvbS5nZWVrc3ZpbGxlLm1lc2hCDENvbmZpZ1Byb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM", [qr]), Yr = /* @__PURE__ */ S(C, 0), Xr = /* @__PURE__ */ S(C, 0, 0), Zr = /* @__PURE__ */ function(e) {
+}({}), Gr = /* @__PURE__ */ b(Br, 2, 0), Kr = /* @__PURE__ */ S("Cg9kZXZpY2VfdWkucHJvdG8SCm1lc2h0YXN0aWMivgMKDkRldmljZVVJQ29uZmlnEg8KB3ZlcnNpb24YASABKA0SGQoRc2NyZWVuX2JyaWdodG5lc3MYAiABKA0SFgoOc2NyZWVuX3RpbWVvdXQYAyABKA0SEwoLc2NyZWVuX2xvY2sYBCABKAgSFQoNc2V0dGluZ3NfbG9jaxgFIAEoCBIQCghwaW5fY29kZRgGIAEoDRIgCgV0aGVtZRgHIAEoDjIRLm1lc2h0YXN0aWMuVGhlbWUSFQoNYWxlcnRfZW5hYmxlZBgIIAEoCBIWCg5iYW5uZXJfZW5hYmxlZBgJIAEoCBIUCgxyaW5nX3RvbmVfaWQYCiABKA0SJgoIbGFuZ3VhZ2UYCyABKA4yFC5tZXNodGFzdGljLkxhbmd1YWdlEisKC25vZGVfZmlsdGVyGAwgASgLMhYubWVzaHRhc3RpYy5Ob2RlRmlsdGVyEjEKDm5vZGVfaGlnaGxpZ2h0GA0gASgLMhkubWVzaHRhc3RpYy5Ob2RlSGlnaGxpZ2h0EhgKEGNhbGlicmF0aW9uX2RhdGEYDiABKAwSIQoIbWFwX2RhdGEYDyABKAsyDy5tZXNodGFzdGljLk1hcCKnAQoKTm9kZUZpbHRlchIWCg51bmtub3duX3N3aXRjaBgBIAEoCBIWCg5vZmZsaW5lX3N3aXRjaBgCIAEoCBIZChFwdWJsaWNfa2V5X3N3aXRjaBgDIAEoCBIRCglob3BzX2F3YXkYBCABKAUSFwoPcG9zaXRpb25fc3dpdGNoGAUgASgIEhEKCW5vZGVfbmFtZRgGIAEoCRIPCgdjaGFubmVsGAcgASgFIn4KDU5vZGVIaWdobGlnaHQSEwoLY2hhdF9zd2l0Y2gYASABKAgSFwoPcG9zaXRpb25fc3dpdGNoGAIgASgIEhgKEHRlbGVtZXRyeV9zd2l0Y2gYAyABKAgSEgoKaWFxX3N3aXRjaBgEIAEoCBIRCglub2RlX25hbWUYBSABKAkiPQoIR2VvUG9pbnQSDAoEem9vbRgBIAEoBRIQCghsYXRpdHVkZRgCIAEoBRIRCglsb25naXR1ZGUYAyABKAUiTAoDTWFwEiIKBGhvbWUYASABKAsyFC5tZXNodGFzdGljLkdlb1BvaW50Eg0KBXN0eWxlGAIgASgJEhIKCmZvbGxvd19ncHMYAyABKAgqJQoFVGhlbWUSCAoEREFSSxAAEgkKBUxJR0hUEAESBwoDUkVEEAIqqQIKCExhbmd1YWdlEgsKB0VOR0xJU0gQABIKCgZGUkVOQ0gQARIKCgZHRVJNQU4QAhILCgdJVEFMSUFOEAMSDgoKUE9SVFVHVUVTRRAEEgsKB1NQQU5JU0gQBRILCgdTV0VESVNIEAYSCwoHRklOTklTSBAHEgoKBlBPTElTSBAIEgsKB1RVUktJU0gQCRILCgdTRVJCSUFOEAoSCwoHUlVTU0lBThALEgkKBURVVENIEAwSCQoFR1JFRUsQDRINCglOT1JXRUdJQU4QDhINCglTTE9WRU5JQU4QDxINCglVS1JBSU5JQU4QEBINCglCVUxHQVJJQU4QERIWChJTSU1QTElGSUVEX0NISU5FU0UQHhIXChNUUkFESVRJT05BTF9DSElORVNFEB9CYwoTY29tLmdlZWtzdmlsbGUubWVzaEIORGV2aWNlVUlQcm90b3NaImdpdGh1Yi5jb20vbWVzaHRhc3RpYy9nby9nZW5lcmF0ZWSqAhRNZXNodGFzdGljLlByb3RvYnVmc7oCAGIGcHJvdG8z"), qr = p({
+	ConfigSchema: () => Jr,
+	Config_BluetoothConfigSchema: () => Ai,
+	Config_BluetoothConfig_PairingMode: () => ji,
+	Config_BluetoothConfig_PairingModeSchema: () => Mi,
+	Config_DeviceConfigSchema: () => Yr,
+	Config_DeviceConfig_BuzzerMode: () => ei,
+	Config_DeviceConfig_BuzzerModeSchema: () => ti,
+	Config_DeviceConfig_RebroadcastMode: () => Qr,
+	Config_DeviceConfig_RebroadcastModeSchema: () => $r,
+	Config_DeviceConfig_Role: () => Xr,
+	Config_DeviceConfig_RoleSchema: () => Zr,
+	Config_DisplayConfigSchema: () => mi,
+	Config_DisplayConfig_CompassOrientation: () => Ci,
+	Config_DisplayConfig_CompassOrientationSchema: () => wi,
+	Config_DisplayConfig_DisplayMode: () => xi,
+	Config_DisplayConfig_DisplayModeSchema: () => Si,
+	Config_DisplayConfig_DisplayUnits: () => _i,
+	Config_DisplayConfig_DisplayUnitsSchema: () => vi,
+	Config_DisplayConfig_GpsCoordinateFormat: () => hi,
+	Config_DisplayConfig_GpsCoordinateFormatSchema: () => gi,
+	Config_DisplayConfig_OledType: () => yi,
+	Config_DisplayConfig_OledTypeSchema: () => bi,
+	Config_LoRaConfigSchema: () => Ti,
+	Config_LoRaConfig_ModemPreset: () => Oi,
+	Config_LoRaConfig_ModemPresetSchema: () => ki,
+	Config_LoRaConfig_RegionCode: () => Ei,
+	Config_LoRaConfig_RegionCodeSchema: () => Di,
+	Config_NetworkConfigSchema: () => ci,
+	Config_NetworkConfig_AddressMode: () => ui,
+	Config_NetworkConfig_AddressModeSchema: () => di,
+	Config_NetworkConfig_IpV4ConfigSchema: () => li,
+	Config_NetworkConfig_ProtocolFlags: () => fi,
+	Config_NetworkConfig_ProtocolFlagsSchema: () => pi,
+	Config_PositionConfigSchema: () => ni,
+	Config_PositionConfig_GpsMode: () => ai,
+	Config_PositionConfig_GpsModeSchema: () => oi,
+	Config_PositionConfig_PositionFlags: () => ri,
+	Config_PositionConfig_PositionFlagsSchema: () => ii,
+	Config_PowerConfigSchema: () => si,
+	Config_SecurityConfigSchema: () => Ni,
+	Config_SessionkeyConfigSchema: () => Pi,
+	file_config: () => w
+}), w = /* @__PURE__ */ S("Cgxjb25maWcucHJvdG8SCm1lc2h0YXN0aWMipigKBkNvbmZpZxIxCgZkZXZpY2UYASABKAsyHy5tZXNodGFzdGljLkNvbmZpZy5EZXZpY2VDb25maWdIABI1Cghwb3NpdGlvbhgCIAEoCzIhLm1lc2h0YXN0aWMuQ29uZmlnLlBvc2l0aW9uQ29uZmlnSAASLwoFcG93ZXIYAyABKAsyHi5tZXNodGFzdGljLkNvbmZpZy5Qb3dlckNvbmZpZ0gAEjMKB25ldHdvcmsYBCABKAsyIC5tZXNodGFzdGljLkNvbmZpZy5OZXR3b3JrQ29uZmlnSAASMwoHZGlzcGxheRgFIAEoCzIgLm1lc2h0YXN0aWMuQ29uZmlnLkRpc3BsYXlDb25maWdIABItCgRsb3JhGAYgASgLMh0ubWVzaHRhc3RpYy5Db25maWcuTG9SYUNvbmZpZ0gAEjcKCWJsdWV0b290aBgHIAEoCzIiLm1lc2h0YXN0aWMuQ29uZmlnLkJsdWV0b290aENvbmZpZ0gAEjUKCHNlY3VyaXR5GAggASgLMiEubWVzaHRhc3RpYy5Db25maWcuU2VjdXJpdHlDb25maWdIABI5CgpzZXNzaW9ua2V5GAkgASgLMiMubWVzaHRhc3RpYy5Db25maWcuU2Vzc2lvbmtleUNvbmZpZ0gAEi8KCWRldmljZV91aRgKIAEoCzIaLm1lc2h0YXN0aWMuRGV2aWNlVUlDb25maWdIABrMBgoMRGV2aWNlQ29uZmlnEjIKBHJvbGUYASABKA4yJC5tZXNodGFzdGljLkNvbmZpZy5EZXZpY2VDb25maWcuUm9sZRIaCg5zZXJpYWxfZW5hYmxlZBgCIAEoCEICGAESEwoLYnV0dG9uX2dwaW8YBCABKA0SEwoLYnV6emVyX2dwaW8YBSABKA0SSQoQcmVicm9hZGNhc3RfbW9kZRgGIAEoDjIvLm1lc2h0YXN0aWMuQ29uZmlnLkRldmljZUNvbmZpZy5SZWJyb2FkY2FzdE1vZGUSIAoYbm9kZV9pbmZvX2Jyb2FkY2FzdF9zZWNzGAcgASgNEiIKGmRvdWJsZV90YXBfYXNfYnV0dG9uX3ByZXNzGAggASgIEhYKCmlzX21hbmFnZWQYCSABKAhCAhgBEhwKFGRpc2FibGVfdHJpcGxlX2NsaWNrGAogASgIEg0KBXR6ZGVmGAsgASgJEh4KFmxlZF9oZWFydGJlYXRfZGlzYWJsZWQYDCABKAgSPwoLYnV6emVyX21vZGUYDSABKA4yKi5tZXNodGFzdGljLkNvbmZpZy5EZXZpY2VDb25maWcuQnV6emVyTW9kZSK/AQoEUm9sZRIKCgZDTElFTlQQABIPCgtDTElFTlRfTVVURRABEgoKBlJPVVRFUhACEhUKDVJPVVRFUl9DTElFTlQQAxoCCAESDAoIUkVQRUFURVIQBBILCgdUUkFDS0VSEAUSCgoGU0VOU09SEAYSBwoDVEFLEAcSEQoNQ0xJRU5UX0hJRERFThAIEhIKDkxPU1RfQU5EX0ZPVU5EEAkSDwoLVEFLX1RSQUNLRVIQChIPCgtST1VURVJfTEFURRALInMKD1JlYnJvYWRjYXN0TW9kZRIHCgNBTEwQABIVChFBTExfU0tJUF9ERUNPRElORxABEg4KCkxPQ0FMX09OTFkQAhIOCgpLTk9XTl9PTkxZEAMSCAoETk9ORRAEEhYKEkNPUkVfUE9SVE5VTVNfT05MWRAFIlQKCkJ1enplck1vZGUSDwoLQUxMX0VOQUJMRUQQABIMCghESVNBQkxFRBABEhYKEk5PVElGSUNBVElPTlNfT05MWRACEg8KC1NZU1RFTV9PTkxZEAMakQUKDlBvc2l0aW9uQ29uZmlnEh8KF3Bvc2l0aW9uX2Jyb2FkY2FzdF9zZWNzGAEgASgNEigKIHBvc2l0aW9uX2Jyb2FkY2FzdF9zbWFydF9lbmFibGVkGAIgASgIEhYKDmZpeGVkX3Bvc2l0aW9uGAMgASgIEhcKC2dwc19lbmFibGVkGAQgASgIQgIYARIbChNncHNfdXBkYXRlX2ludGVydmFsGAUgASgNEhwKEGdwc19hdHRlbXB0X3RpbWUYBiABKA1CAhgBEhYKDnBvc2l0aW9uX2ZsYWdzGAcgASgNEg8KB3J4X2dwaW8YCCABKA0SDwoHdHhfZ3BpbxgJIAEoDRIoCiBicm9hZGNhc3Rfc21hcnRfbWluaW11bV9kaXN0YW5jZRgKIAEoDRItCiVicm9hZGNhc3Rfc21hcnRfbWluaW11bV9pbnRlcnZhbF9zZWNzGAsgASgNEhMKC2dwc19lbl9ncGlvGAwgASgNEjsKCGdwc19tb2RlGA0gASgOMikubWVzaHRhc3RpYy5Db25maWcuUG9zaXRpb25Db25maWcuR3BzTW9kZSKrAQoNUG9zaXRpb25GbGFncxIJCgVVTlNFVBAAEgwKCEFMVElUVURFEAESEAoMQUxUSVRVREVfTVNMEAISFgoSR0VPSURBTF9TRVBBUkFUSU9OEAQSBwoDRE9QEAgSCQoFSFZET1AQEBINCglTQVRJTlZJRVcQIBIKCgZTRVFfTk8QQBIOCglUSU1FU1RBTVAQgAESDAoHSEVBRElORxCAAhIKCgVTUEVFRBCABCI1CgdHcHNNb2RlEgwKCERJU0FCTEVEEAASCwoHRU5BQkxFRBABEg8KC05PVF9QUkVTRU5UEAIahAIKC1Bvd2VyQ29uZmlnEhcKD2lzX3Bvd2VyX3NhdmluZxgBIAEoCBImCh5vbl9iYXR0ZXJ5X3NodXRkb3duX2FmdGVyX3NlY3MYAiABKA0SHwoXYWRjX211bHRpcGxpZXJfb3ZlcnJpZGUYAyABKAISGwoTd2FpdF9ibHVldG9vdGhfc2VjcxgEIAEoDRIQCghzZHNfc2VjcxgGIAEoDRIPCgdsc19zZWNzGAcgASgNEhUKDW1pbl93YWtlX3NlY3MYCCABKA0SIgoaZGV2aWNlX2JhdHRlcnlfaW5hX2FkZHJlc3MYCSABKA0SGAoQcG93ZXJtb25fZW5hYmxlcxggIAEoBBrlAwoNTmV0d29ya0NvbmZpZxIUCgx3aWZpX2VuYWJsZWQYASABKAgSEQoJd2lmaV9zc2lkGAMgASgJEhAKCHdpZmlfcHNrGAQgASgJEhIKCm50cF9zZXJ2ZXIYBSABKAkSEwoLZXRoX2VuYWJsZWQYBiABKAgSQgoMYWRkcmVzc19tb2RlGAcgASgOMiwubWVzaHRhc3RpYy5Db25maWcuTmV0d29ya0NvbmZpZy5BZGRyZXNzTW9kZRJACgtpcHY0X2NvbmZpZxgIIAEoCzIrLm1lc2h0YXN0aWMuQ29uZmlnLk5ldHdvcmtDb25maWcuSXBWNENvbmZpZxIWCg5yc3lzbG9nX3NlcnZlchgJIAEoCRIZChFlbmFibGVkX3Byb3RvY29scxgKIAEoDRIUCgxpcHY2X2VuYWJsZWQYCyABKAgaRgoKSXBWNENvbmZpZxIKCgJpcBgBIAEoBxIPCgdnYXRld2F5GAIgASgHEg4KBnN1Ym5ldBgDIAEoBxILCgNkbnMYBCABKAciIwoLQWRkcmVzc01vZGUSCAoEREhDUBAAEgoKBlNUQVRJQxABIjQKDVByb3RvY29sRmxhZ3MSEAoMTk9fQlJPQURDQVNUEAASEQoNVURQX0JST0FEQ0FTVBABGvwHCg1EaXNwbGF5Q29uZmlnEhYKDnNjcmVlbl9vbl9zZWNzGAEgASgNEkgKCmdwc19mb3JtYXQYAiABKA4yNC5tZXNodGFzdGljLkNvbmZpZy5EaXNwbGF5Q29uZmlnLkdwc0Nvb3JkaW5hdGVGb3JtYXQSIQoZYXV0b19zY3JlZW5fY2Fyb3VzZWxfc2VjcxgDIAEoDRIZChFjb21wYXNzX25vcnRoX3RvcBgEIAEoCBITCgtmbGlwX3NjcmVlbhgFIAEoCBI8CgV1bml0cxgGIAEoDjItLm1lc2h0YXN0aWMuQ29uZmlnLkRpc3BsYXlDb25maWcuRGlzcGxheVVuaXRzEjcKBG9sZWQYByABKA4yKS5tZXNodGFzdGljLkNvbmZpZy5EaXNwbGF5Q29uZmlnLk9sZWRUeXBlEkEKC2Rpc3BsYXltb2RlGAggASgOMiwubWVzaHRhc3RpYy5Db25maWcuRGlzcGxheUNvbmZpZy5EaXNwbGF5TW9kZRIUCgxoZWFkaW5nX2JvbGQYCSABKAgSHQoVd2FrZV9vbl90YXBfb3JfbW90aW9uGAogASgIElAKE2NvbXBhc3Nfb3JpZW50YXRpb24YCyABKA4yMy5tZXNodGFzdGljLkNvbmZpZy5EaXNwbGF5Q29uZmlnLkNvbXBhc3NPcmllbnRhdGlvbhIVCg11c2VfMTJoX2Nsb2NrGAwgASgIIk0KE0dwc0Nvb3JkaW5hdGVGb3JtYXQSBwoDREVDEAASBwoDRE1TEAESBwoDVVRNEAISCAoETUdSUxADEgcKA09MQxAEEggKBE9TR1IQBSIoCgxEaXNwbGF5VW5pdHMSCgoGTUVUUklDEAASDAoISU1QRVJJQUwQASJlCghPbGVkVHlwZRINCglPTEVEX0FVVE8QABIQCgxPTEVEX1NTRDEzMDYQARIPCgtPTEVEX1NIMTEwNhACEg8KC09MRURfU0gxMTA3EAMSFgoST0xFRF9TSDExMDdfMTI4XzY0EAQiQQoLRGlzcGxheU1vZGUSCwoHREVGQVVMVBAAEgwKCFRXT0NPTE9SEAESDAoISU5WRVJURUQQAhIJCgVDT0xPUhADIroBChJDb21wYXNzT3JpZW50YXRpb24SDQoJREVHUkVFU18wEAASDgoKREVHUkVFU185MBABEg8KC0RFR1JFRVNfMTgwEAISDwoLREVHUkVFU18yNzAQAxIWChJERUdSRUVTXzBfSU5WRVJURUQQBBIXChNERUdSRUVTXzkwX0lOVkVSVEVEEAUSGAoUREVHUkVFU18xODBfSU5WRVJURUQQBhIYChRERUdSRUVTXzI3MF9JTlZFUlRFRBAHGqoHCgpMb1JhQ29uZmlnEhIKCnVzZV9wcmVzZXQYASABKAgSPwoMbW9kZW1fcHJlc2V0GAIgASgOMikubWVzaHRhc3RpYy5Db25maWcuTG9SYUNvbmZpZy5Nb2RlbVByZXNldBIRCgliYW5kd2lkdGgYAyABKA0SFQoNc3ByZWFkX2ZhY3RvchgEIAEoDRITCgtjb2RpbmdfcmF0ZRgFIAEoDRIYChBmcmVxdWVuY3lfb2Zmc2V0GAYgASgCEjgKBnJlZ2lvbhgHIAEoDjIoLm1lc2h0YXN0aWMuQ29uZmlnLkxvUmFDb25maWcuUmVnaW9uQ29kZRIRCglob3BfbGltaXQYCCABKA0SEgoKdHhfZW5hYmxlZBgJIAEoCBIQCgh0eF9wb3dlchgKIAEoBRITCgtjaGFubmVsX251bRgLIAEoDRIbChNvdmVycmlkZV9kdXR5X2N5Y2xlGAwgASgIEh4KFnN4MTI2eF9yeF9ib29zdGVkX2dhaW4YDSABKAgSGgoSb3ZlcnJpZGVfZnJlcXVlbmN5GA4gASgCEhcKD3BhX2Zhbl9kaXNhYmxlZBgPIAEoCBIXCg9pZ25vcmVfaW5jb21pbmcYZyADKA0SEwoLaWdub3JlX21xdHQYaCABKAgSGQoRY29uZmlnX29rX3RvX21xdHQYaSABKAgi/gEKClJlZ2lvbkNvZGUSCQoFVU5TRVQQABIGCgJVUxABEgoKBkVVXzQzMxACEgoKBkVVXzg2OBADEgYKAkNOEAQSBgoCSlAQBRIHCgNBTloQBhIGCgJLUhAHEgYKAlRXEAgSBgoCUlUQCRIGCgJJThAKEgoKBk5aXzg2NRALEgYKAlRIEAwSCwoHTE9SQV8yNBANEgoKBlVBXzQzMxAOEgoKBlVBXzg2OBAPEgoKBk1ZXzQzMxAQEgoKBk1ZXzkxORAREgoKBlNHXzkyMxASEgoKBlBIXzQzMxATEgoKBlBIXzg2OBAUEgoKBlBIXzkxNRAVEgsKB0FOWl80MzMQFiKpAQoLTW9kZW1QcmVzZXQSDQoJTE9OR19GQVNUEAASDQoJTE9OR19TTE9XEAESFgoOVkVSWV9MT05HX1NMT1cQAhoCCAESDwoLTUVESVVNX1NMT1cQAxIPCgtNRURJVU1fRkFTVBAEEg4KClNIT1JUX1NMT1cQBRIOCgpTSE9SVF9GQVNUEAYSEQoNTE9OR19NT0RFUkFURRAHEg8KC1NIT1JUX1RVUkJPEAgarQEKD0JsdWV0b290aENvbmZpZxIPCgdlbmFibGVkGAEgASgIEjwKBG1vZGUYAiABKA4yLi5tZXNodGFzdGljLkNvbmZpZy5CbHVldG9vdGhDb25maWcuUGFpcmluZ01vZGUSEQoJZml4ZWRfcGluGAMgASgNIjgKC1BhaXJpbmdNb2RlEg4KClJBTkRPTV9QSU4QABINCglGSVhFRF9QSU4QARIKCgZOT19QSU4QAhq2AQoOU2VjdXJpdHlDb25maWcSEgoKcHVibGljX2tleRgBIAEoDBITCgtwcml2YXRlX2tleRgCIAEoDBIRCglhZG1pbl9rZXkYAyADKAwSEgoKaXNfbWFuYWdlZBgEIAEoCBIWCg5zZXJpYWxfZW5hYmxlZBgFIAEoCBIdChVkZWJ1Z19sb2dfYXBpX2VuYWJsZWQYBiABKAgSHQoVYWRtaW5fY2hhbm5lbF9lbmFibGVkGAggASgIGhIKEFNlc3Npb25rZXlDb25maWdCEQoPcGF5bG9hZF92YXJpYW50QmEKE2NvbS5nZWVrc3ZpbGxlLm1lc2hCDENvbmZpZ1Byb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM", [Kr]), Jr = /* @__PURE__ */ C(w, 0), Yr = /* @__PURE__ */ C(w, 0, 0), Xr = /* @__PURE__ */ function(e) {
 	return e[e.CLIENT = 0] = "CLIENT", e[e.CLIENT_MUTE = 1] = "CLIENT_MUTE", e[e.ROUTER = 2] = "ROUTER", e[e.ROUTER_CLIENT = 3] = "ROUTER_CLIENT", e[e.REPEATER = 4] = "REPEATER", e[e.TRACKER = 5] = "TRACKER", e[e.SENSOR = 6] = "SENSOR", e[e.TAK = 7] = "TAK", e[e.CLIENT_HIDDEN = 8] = "CLIENT_HIDDEN", e[e.LOST_AND_FOUND = 9] = "LOST_AND_FOUND", e[e.TAK_TRACKER = 10] = "TAK_TRACKER", e[e.ROUTER_LATE = 11] = "ROUTER_LATE", e;
-}({}), Qr = /* @__PURE__ */ y(C, 0, 0, 0), $r = /* @__PURE__ */ function(e) {
+}({}), Zr = /* @__PURE__ */ b(w, 0, 0, 0), Qr = /* @__PURE__ */ function(e) {
 	return e[e.ALL = 0] = "ALL", e[e.ALL_SKIP_DECODING = 1] = "ALL_SKIP_DECODING", e[e.LOCAL_ONLY = 2] = "LOCAL_ONLY", e[e.KNOWN_ONLY = 3] = "KNOWN_ONLY", e[e.NONE = 4] = "NONE", e[e.CORE_PORTNUMS_ONLY = 5] = "CORE_PORTNUMS_ONLY", e;
-}({}), ei = /* @__PURE__ */ y(C, 0, 0, 1), ti = /* @__PURE__ */ function(e) {
+}({}), $r = /* @__PURE__ */ b(w, 0, 0, 1), ei = /* @__PURE__ */ function(e) {
 	return e[e.ALL_ENABLED = 0] = "ALL_ENABLED", e[e.DISABLED = 1] = "DISABLED", e[e.NOTIFICATIONS_ONLY = 2] = "NOTIFICATIONS_ONLY", e[e.SYSTEM_ONLY = 3] = "SYSTEM_ONLY", e;
-}({}), ni = /* @__PURE__ */ y(C, 0, 0, 2), ri = /* @__PURE__ */ S(C, 0, 1), ii = /* @__PURE__ */ function(e) {
+}({}), ti = /* @__PURE__ */ b(w, 0, 0, 2), ni = /* @__PURE__ */ C(w, 0, 1), ri = /* @__PURE__ */ function(e) {
 	return e[e.UNSET = 0] = "UNSET", e[e.ALTITUDE = 1] = "ALTITUDE", e[e.ALTITUDE_MSL = 2] = "ALTITUDE_MSL", e[e.GEOIDAL_SEPARATION = 4] = "GEOIDAL_SEPARATION", e[e.DOP = 8] = "DOP", e[e.HVDOP = 16] = "HVDOP", e[e.SATINVIEW = 32] = "SATINVIEW", e[e.SEQ_NO = 64] = "SEQ_NO", e[e.TIMESTAMP = 128] = "TIMESTAMP", e[e.HEADING = 256] = "HEADING", e[e.SPEED = 512] = "SPEED", e;
-}({}), ai = /* @__PURE__ */ y(C, 0, 1, 0), oi = /* @__PURE__ */ function(e) {
+}({}), ii = /* @__PURE__ */ b(w, 0, 1, 0), ai = /* @__PURE__ */ function(e) {
 	return e[e.DISABLED = 0] = "DISABLED", e[e.ENABLED = 1] = "ENABLED", e[e.NOT_PRESENT = 2] = "NOT_PRESENT", e;
-}({}), si = /* @__PURE__ */ y(C, 0, 1, 1), ci = /* @__PURE__ */ S(C, 0, 2), li = /* @__PURE__ */ S(C, 0, 3), ui = /* @__PURE__ */ S(C, 0, 3, 0), di = /* @__PURE__ */ function(e) {
+}({}), oi = /* @__PURE__ */ b(w, 0, 1, 1), si = /* @__PURE__ */ C(w, 0, 2), ci = /* @__PURE__ */ C(w, 0, 3), li = /* @__PURE__ */ C(w, 0, 3, 0), ui = /* @__PURE__ */ function(e) {
 	return e[e.DHCP = 0] = "DHCP", e[e.STATIC = 1] = "STATIC", e;
-}({}), fi = /* @__PURE__ */ y(C, 0, 3, 0), pi = /* @__PURE__ */ function(e) {
+}({}), di = /* @__PURE__ */ b(w, 0, 3, 0), fi = /* @__PURE__ */ function(e) {
 	return e[e.NO_BROADCAST = 0] = "NO_BROADCAST", e[e.UDP_BROADCAST = 1] = "UDP_BROADCAST", e;
-}({}), mi = /* @__PURE__ */ y(C, 0, 3, 1), hi = /* @__PURE__ */ S(C, 0, 4), gi = /* @__PURE__ */ function(e) {
+}({}), pi = /* @__PURE__ */ b(w, 0, 3, 1), mi = /* @__PURE__ */ C(w, 0, 4), hi = /* @__PURE__ */ function(e) {
 	return e[e.DEC = 0] = "DEC", e[e.DMS = 1] = "DMS", e[e.UTM = 2] = "UTM", e[e.MGRS = 3] = "MGRS", e[e.OLC = 4] = "OLC", e[e.OSGR = 5] = "OSGR", e;
-}({}), _i = /* @__PURE__ */ y(C, 0, 4, 0), vi = /* @__PURE__ */ function(e) {
+}({}), gi = /* @__PURE__ */ b(w, 0, 4, 0), _i = /* @__PURE__ */ function(e) {
 	return e[e.METRIC = 0] = "METRIC", e[e.IMPERIAL = 1] = "IMPERIAL", e;
-}({}), yi = /* @__PURE__ */ y(C, 0, 4, 1), bi = /* @__PURE__ */ function(e) {
+}({}), vi = /* @__PURE__ */ b(w, 0, 4, 1), yi = /* @__PURE__ */ function(e) {
 	return e[e.OLED_AUTO = 0] = "OLED_AUTO", e[e.OLED_SSD1306 = 1] = "OLED_SSD1306", e[e.OLED_SH1106 = 2] = "OLED_SH1106", e[e.OLED_SH1107 = 3] = "OLED_SH1107", e[e.OLED_SH1107_128_64 = 4] = "OLED_SH1107_128_64", e;
-}({}), xi = /* @__PURE__ */ y(C, 0, 4, 2), Si = /* @__PURE__ */ function(e) {
+}({}), bi = /* @__PURE__ */ b(w, 0, 4, 2), xi = /* @__PURE__ */ function(e) {
 	return e[e.DEFAULT = 0] = "DEFAULT", e[e.TWOCOLOR = 1] = "TWOCOLOR", e[e.INVERTED = 2] = "INVERTED", e[e.COLOR = 3] = "COLOR", e;
-}({}), Ci = /* @__PURE__ */ y(C, 0, 4, 3), wi = /* @__PURE__ */ function(e) {
+}({}), Si = /* @__PURE__ */ b(w, 0, 4, 3), Ci = /* @__PURE__ */ function(e) {
 	return e[e.DEGREES_0 = 0] = "DEGREES_0", e[e.DEGREES_90 = 1] = "DEGREES_90", e[e.DEGREES_180 = 2] = "DEGREES_180", e[e.DEGREES_270 = 3] = "DEGREES_270", e[e.DEGREES_0_INVERTED = 4] = "DEGREES_0_INVERTED", e[e.DEGREES_90_INVERTED = 5] = "DEGREES_90_INVERTED", e[e.DEGREES_180_INVERTED = 6] = "DEGREES_180_INVERTED", e[e.DEGREES_270_INVERTED = 7] = "DEGREES_270_INVERTED", e;
-}({}), Ti = /* @__PURE__ */ y(C, 0, 4, 4), Ei = /* @__PURE__ */ S(C, 0, 5), Di = /* @__PURE__ */ function(e) {
+}({}), wi = /* @__PURE__ */ b(w, 0, 4, 4), Ti = /* @__PURE__ */ C(w, 0, 5), Ei = /* @__PURE__ */ function(e) {
 	return e[e.UNSET = 0] = "UNSET", e[e.US = 1] = "US", e[e.EU_433 = 2] = "EU_433", e[e.EU_868 = 3] = "EU_868", e[e.CN = 4] = "CN", e[e.JP = 5] = "JP", e[e.ANZ = 6] = "ANZ", e[e.KR = 7] = "KR", e[e.TW = 8] = "TW", e[e.RU = 9] = "RU", e[e.IN = 10] = "IN", e[e.NZ_865 = 11] = "NZ_865", e[e.TH = 12] = "TH", e[e.LORA_24 = 13] = "LORA_24", e[e.UA_433 = 14] = "UA_433", e[e.UA_868 = 15] = "UA_868", e[e.MY_433 = 16] = "MY_433", e[e.MY_919 = 17] = "MY_919", e[e.SG_923 = 18] = "SG_923", e[e.PH_433 = 19] = "PH_433", e[e.PH_868 = 20] = "PH_868", e[e.PH_915 = 21] = "PH_915", e[e.ANZ_433 = 22] = "ANZ_433", e;
-}({}), Oi = /* @__PURE__ */ y(C, 0, 5, 0), ki = /* @__PURE__ */ function(e) {
+}({}), Di = /* @__PURE__ */ b(w, 0, 5, 0), Oi = /* @__PURE__ */ function(e) {
 	return e[e.LONG_FAST = 0] = "LONG_FAST", e[e.LONG_SLOW = 1] = "LONG_SLOW", e[e.VERY_LONG_SLOW = 2] = "VERY_LONG_SLOW", e[e.MEDIUM_SLOW = 3] = "MEDIUM_SLOW", e[e.MEDIUM_FAST = 4] = "MEDIUM_FAST", e[e.SHORT_SLOW = 5] = "SHORT_SLOW", e[e.SHORT_FAST = 6] = "SHORT_FAST", e[e.LONG_MODERATE = 7] = "LONG_MODERATE", e[e.SHORT_TURBO = 8] = "SHORT_TURBO", e;
-}({}), Ai = /* @__PURE__ */ y(C, 0, 5, 1), ji = /* @__PURE__ */ S(C, 0, 6), Mi = /* @__PURE__ */ function(e) {
+}({}), ki = /* @__PURE__ */ b(w, 0, 5, 1), Ai = /* @__PURE__ */ C(w, 0, 6), ji = /* @__PURE__ */ function(e) {
 	return e[e.RANDOM_PIN = 0] = "RANDOM_PIN", e[e.FIXED_PIN = 1] = "FIXED_PIN", e[e.NO_PIN = 2] = "NO_PIN", e;
-}({}), Ni = /* @__PURE__ */ y(C, 0, 6, 0), Pi = /* @__PURE__ */ S(C, 0, 7), Fi = /* @__PURE__ */ S(C, 0, 8), Ii = p({
-	BluetoothConnectionStatusSchema: () => Hi,
-	DeviceConnectionStatusSchema: () => Ri,
-	EthernetConnectionStatusSchema: () => Bi,
-	NetworkConnectionStatusSchema: () => Vi,
-	SerialConnectionStatusSchema: () => Ui,
-	WifiConnectionStatusSchema: () => zi,
-	file_connection_status: () => Li
-}), Li = /* @__PURE__ */ x("Chdjb25uZWN0aW9uX3N0YXR1cy5wcm90bxIKbWVzaHRhc3RpYyKxAgoWRGV2aWNlQ29ubmVjdGlvblN0YXR1cxIzCgR3aWZpGAEgASgLMiAubWVzaHRhc3RpYy5XaWZpQ29ubmVjdGlvblN0YXR1c0gAiAEBEjsKCGV0aGVybmV0GAIgASgLMiQubWVzaHRhc3RpYy5FdGhlcm5ldENvbm5lY3Rpb25TdGF0dXNIAYgBARI9CglibHVldG9vdGgYAyABKAsyJS5tZXNodGFzdGljLkJsdWV0b290aENvbm5lY3Rpb25TdGF0dXNIAogBARI3CgZzZXJpYWwYBCABKAsyIi5tZXNodGFzdGljLlNlcmlhbENvbm5lY3Rpb25TdGF0dXNIA4gBAUIHCgVfd2lmaUILCglfZXRoZXJuZXRCDAoKX2JsdWV0b290aEIJCgdfc2VyaWFsImcKFFdpZmlDb25uZWN0aW9uU3RhdHVzEjMKBnN0YXR1cxgBIAEoCzIjLm1lc2h0YXN0aWMuTmV0d29ya0Nvbm5lY3Rpb25TdGF0dXMSDAoEc3NpZBgCIAEoCRIMCgRyc3NpGAMgASgFIk8KGEV0aGVybmV0Q29ubmVjdGlvblN0YXR1cxIzCgZzdGF0dXMYASABKAsyIy5tZXNodGFzdGljLk5ldHdvcmtDb25uZWN0aW9uU3RhdHVzInsKF05ldHdvcmtDb25uZWN0aW9uU3RhdHVzEhIKCmlwX2FkZHJlc3MYASABKAcSFAoMaXNfY29ubmVjdGVkGAIgASgIEhkKEWlzX21xdHRfY29ubmVjdGVkGAMgASgIEhsKE2lzX3N5c2xvZ19jb25uZWN0ZWQYBCABKAgiTAoZQmx1ZXRvb3RoQ29ubmVjdGlvblN0YXR1cxILCgNwaW4YASABKA0SDAoEcnNzaRgCIAEoBRIUCgxpc19jb25uZWN0ZWQYAyABKAgiPAoWU2VyaWFsQ29ubmVjdGlvblN0YXR1cxIMCgRiYXVkGAEgASgNEhQKDGlzX2Nvbm5lY3RlZBgCIAEoCEJlChNjb20uZ2Vla3N2aWxsZS5tZXNoQhBDb25uU3RhdHVzUHJvdG9zWiJnaXRodWIuY29tL21lc2h0YXN0aWMvZ28vZ2VuZXJhdGVkqgIUTWVzaHRhc3RpYy5Qcm90b2J1ZnO6AgBiBnByb3RvMw"), Ri = /* @__PURE__ */ S(Li, 0), zi = /* @__PURE__ */ S(Li, 1), Bi = /* @__PURE__ */ S(Li, 2), Vi = /* @__PURE__ */ S(Li, 3), Hi = /* @__PURE__ */ S(Li, 4), Ui = /* @__PURE__ */ S(Li, 5), Wi = p({
-	ModuleConfigSchema: () => Gi,
-	ModuleConfig_AmbientLightingConfigSchema: () => ha,
-	ModuleConfig_AudioConfigSchema: () => $i,
-	ModuleConfig_AudioConfig_Audio_Baud: () => ea,
-	ModuleConfig_AudioConfig_Audio_BaudSchema: () => ta,
-	ModuleConfig_CannedMessageConfigSchema: () => fa,
-	ModuleConfig_CannedMessageConfig_InputEventChar: () => pa,
-	ModuleConfig_CannedMessageConfig_InputEventCharSchema: () => ma,
-	ModuleConfig_DetectionSensorConfigSchema: () => Xi,
-	ModuleConfig_DetectionSensorConfig_TriggerType: () => Zi,
-	ModuleConfig_DetectionSensorConfig_TriggerTypeSchema: () => Qi,
-	ModuleConfig_ExternalNotificationConfigSchema: () => ca,
-	ModuleConfig_MQTTConfigSchema: () => Ki,
-	ModuleConfig_MapReportSettingsSchema: () => qi,
-	ModuleConfig_NeighborInfoConfigSchema: () => Yi,
-	ModuleConfig_PaxcounterConfigSchema: () => na,
-	ModuleConfig_RangeTestConfigSchema: () => ua,
-	ModuleConfig_RemoteHardwareConfigSchema: () => Ji,
-	ModuleConfig_SerialConfigSchema: () => ra,
-	ModuleConfig_SerialConfig_Serial_Baud: () => ia,
-	ModuleConfig_SerialConfig_Serial_BaudSchema: () => aa,
-	ModuleConfig_SerialConfig_Serial_Mode: () => oa,
-	ModuleConfig_SerialConfig_Serial_ModeSchema: () => sa,
-	ModuleConfig_StoreForwardConfigSchema: () => la,
-	ModuleConfig_TelemetryConfigSchema: () => da,
-	RemoteHardwarePinSchema: () => ga,
-	RemoteHardwarePinType: () => _a,
-	RemoteHardwarePinTypeSchema: () => va,
-	file_module_config: () => w
-}), w = /* @__PURE__ */ x("ChNtb2R1bGVfY29uZmlnLnByb3RvEgptZXNodGFzdGljIuMlCgxNb2R1bGVDb25maWcSMwoEbXF0dBgBIAEoCzIjLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLk1RVFRDb25maWdIABI3CgZzZXJpYWwYAiABKAsyJS5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5TZXJpYWxDb25maWdIABJUChVleHRlcm5hbF9ub3RpZmljYXRpb24YAyABKAsyMy5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5FeHRlcm5hbE5vdGlmaWNhdGlvbkNvbmZpZ0gAEkQKDXN0b3JlX2ZvcndhcmQYBCABKAsyKy5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5TdG9yZUZvcndhcmRDb25maWdIABI+CgpyYW5nZV90ZXN0GAUgASgLMigubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuUmFuZ2VUZXN0Q29uZmlnSAASPQoJdGVsZW1ldHJ5GAYgASgLMigubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuVGVsZW1ldHJ5Q29uZmlnSAASRgoOY2FubmVkX21lc3NhZ2UYByABKAsyLC5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5DYW5uZWRNZXNzYWdlQ29uZmlnSAASNQoFYXVkaW8YCCABKAsyJC5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5BdWRpb0NvbmZpZ0gAEkgKD3JlbW90ZV9oYXJkd2FyZRgJIAEoCzItLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLlJlbW90ZUhhcmR3YXJlQ29uZmlnSAASRAoNbmVpZ2hib3JfaW5mbxgKIAEoCzIrLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLk5laWdoYm9ySW5mb0NvbmZpZ0gAEkoKEGFtYmllbnRfbGlnaHRpbmcYCyABKAsyLi5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5BbWJpZW50TGlnaHRpbmdDb25maWdIABJKChBkZXRlY3Rpb25fc2Vuc29yGAwgASgLMi4ubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuRGV0ZWN0aW9uU2Vuc29yQ29uZmlnSAASPwoKcGF4Y291bnRlchgNIAEoCzIpLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLlBheGNvdW50ZXJDb25maWdIABqwAgoKTVFUVENvbmZpZxIPCgdlbmFibGVkGAEgASgIEg8KB2FkZHJlc3MYAiABKAkSEAoIdXNlcm5hbWUYAyABKAkSEAoIcGFzc3dvcmQYBCABKAkSGgoSZW5jcnlwdGlvbl9lbmFibGVkGAUgASgIEhQKDGpzb25fZW5hYmxlZBgGIAEoCBITCgt0bHNfZW5hYmxlZBgHIAEoCBIMCgRyb290GAggASgJEh8KF3Byb3h5X3RvX2NsaWVudF9lbmFibGVkGAkgASgIEh0KFW1hcF9yZXBvcnRpbmdfZW5hYmxlZBgKIAEoCBJHChNtYXBfcmVwb3J0X3NldHRpbmdzGAsgASgLMioubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuTWFwUmVwb3J0U2V0dGluZ3MabgoRTWFwUmVwb3J0U2V0dGluZ3MSHQoVcHVibGlzaF9pbnRlcnZhbF9zZWNzGAEgASgNEhoKEnBvc2l0aW9uX3ByZWNpc2lvbhgCIAEoDRIeChZzaG91bGRfcmVwb3J0X2xvY2F0aW9uGAMgASgIGoIBChRSZW1vdGVIYXJkd2FyZUNvbmZpZxIPCgdlbmFibGVkGAEgASgIEiIKGmFsbG93X3VuZGVmaW5lZF9waW5fYWNjZXNzGAIgASgIEjUKDmF2YWlsYWJsZV9waW5zGAMgAygLMh0ubWVzaHRhc3RpYy5SZW1vdGVIYXJkd2FyZVBpbhpaChJOZWlnaGJvckluZm9Db25maWcSDwoHZW5hYmxlZBgBIAEoCBIXCg91cGRhdGVfaW50ZXJ2YWwYAiABKA0SGgoSdHJhbnNtaXRfb3Zlcl9sb3JhGAMgASgIGpcDChVEZXRlY3Rpb25TZW5zb3JDb25maWcSDwoHZW5hYmxlZBgBIAEoCBIeChZtaW5pbXVtX2Jyb2FkY2FzdF9zZWNzGAIgASgNEhwKFHN0YXRlX2Jyb2FkY2FzdF9zZWNzGAMgASgNEhEKCXNlbmRfYmVsbBgEIAEoCBIMCgRuYW1lGAUgASgJEhMKC21vbml0b3JfcGluGAYgASgNEloKFmRldGVjdGlvbl90cmlnZ2VyX3R5cGUYByABKA4yOi5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5EZXRlY3Rpb25TZW5zb3JDb25maWcuVHJpZ2dlclR5cGUSEgoKdXNlX3B1bGx1cBgIIAEoCCKIAQoLVHJpZ2dlclR5cGUSDQoJTE9HSUNfTE9XEAASDgoKTE9HSUNfSElHSBABEhAKDEZBTExJTkdfRURHRRACEg8KC1JJU0lOR19FREdFEAMSGgoWRUlUSEVSX0VER0VfQUNUSVZFX0xPVxAEEhsKF0VJVEhFUl9FREdFX0FDVElWRV9ISUdIEAUa5AIKC0F1ZGlvQ29uZmlnEhYKDmNvZGVjMl9lbmFibGVkGAEgASgIEg8KB3B0dF9waW4YAiABKA0SQAoHYml0cmF0ZRgDIAEoDjIvLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLkF1ZGlvQ29uZmlnLkF1ZGlvX0JhdWQSDgoGaTJzX3dzGAQgASgNEg4KBmkyc19zZBgFIAEoDRIPCgdpMnNfZGluGAYgASgNEg8KB2kyc19zY2sYByABKA0ipwEKCkF1ZGlvX0JhdWQSEgoOQ09ERUMyX0RFRkFVTFQQABIPCgtDT0RFQzJfMzIwMBABEg8KC0NPREVDMl8yNDAwEAISDwoLQ09ERUMyXzE2MDAQAxIPCgtDT0RFQzJfMTQwMBAEEg8KC0NPREVDMl8xMzAwEAUSDwoLQ09ERUMyXzEyMDAQBhIOCgpDT0RFQzJfNzAwEAcSDwoLQ09ERUMyXzcwMEIQCBp2ChBQYXhjb3VudGVyQ29uZmlnEg8KB2VuYWJsZWQYASABKAgSIgoacGF4Y291bnRlcl91cGRhdGVfaW50ZXJ2YWwYAiABKA0SFgoOd2lmaV90aHJlc2hvbGQYAyABKAUSFQoNYmxlX3RocmVzaG9sZBgEIAEoBRr9BAoMU2VyaWFsQ29uZmlnEg8KB2VuYWJsZWQYASABKAgSDAoEZWNobxgCIAEoCBILCgNyeGQYAyABKA0SCwoDdHhkGAQgASgNEj8KBGJhdWQYBSABKA4yMS5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5TZXJpYWxDb25maWcuU2VyaWFsX0JhdWQSDwoHdGltZW91dBgGIAEoDRI/CgRtb2RlGAcgASgOMjEubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuU2VyaWFsQ29uZmlnLlNlcmlhbF9Nb2RlEiQKHG92ZXJyaWRlX2NvbnNvbGVfc2VyaWFsX3BvcnQYCCABKAgiigIKC1NlcmlhbF9CYXVkEhAKDEJBVURfREVGQVVMVBAAEgwKCEJBVURfMTEwEAESDAoIQkFVRF8zMDAQAhIMCghCQVVEXzYwMBADEg0KCUJBVURfMTIwMBAEEg0KCUJBVURfMjQwMBAFEg0KCUJBVURfNDgwMBAGEg0KCUJBVURfOTYwMBAHEg4KCkJBVURfMTkyMDAQCBIOCgpCQVVEXzM4NDAwEAkSDgoKQkFVRF81NzYwMBAKEg8KC0JBVURfMTE1MjAwEAsSDwoLQkFVRF8yMzA0MDAQDBIPCgtCQVVEXzQ2MDgwMBANEg8KC0JBVURfNTc2MDAwEA4SDwoLQkFVRF85MjE2MDAQDyJuCgtTZXJpYWxfTW9kZRILCgdERUZBVUxUEAASCgoGU0lNUExFEAESCQoFUFJPVE8QAhILCgdURVhUTVNHEAMSCAoETk1FQRAEEgsKB0NBTFRPUE8QBRIICgRXUzg1EAYSDQoJVkVfRElSRUNUEAca6QIKGkV4dGVybmFsTm90aWZpY2F0aW9uQ29uZmlnEg8KB2VuYWJsZWQYASABKAgSEQoJb3V0cHV0X21zGAIgASgNEg4KBm91dHB1dBgDIAEoDRIUCgxvdXRwdXRfdmlicmEYCCABKA0SFQoNb3V0cHV0X2J1enplchgJIAEoDRIOCgZhY3RpdmUYBCABKAgSFQoNYWxlcnRfbWVzc2FnZRgFIAEoCBIbChNhbGVydF9tZXNzYWdlX3ZpYnJhGAogASgIEhwKFGFsZXJ0X21lc3NhZ2VfYnV6emVyGAsgASgIEhIKCmFsZXJ0X2JlbGwYBiABKAgSGAoQYWxlcnRfYmVsbF92aWJyYRgMIAEoCBIZChFhbGVydF9iZWxsX2J1enplchgNIAEoCBIPCgd1c2VfcHdtGAcgASgIEhMKC25hZ190aW1lb3V0GA4gASgNEhkKEXVzZV9pMnNfYXNfYnV6emVyGA8gASgIGpcBChJTdG9yZUZvcndhcmRDb25maWcSDwoHZW5hYmxlZBgBIAEoCBIRCgloZWFydGJlYXQYAiABKAgSDwoHcmVjb3JkcxgDIAEoDRIaChJoaXN0b3J5X3JldHVybl9tYXgYBCABKA0SHQoVaGlzdG9yeV9yZXR1cm5fd2luZG93GAUgASgNEhEKCWlzX3NlcnZlchgGIAEoCBpACg9SYW5nZVRlc3RDb25maWcSDwoHZW5hYmxlZBgBIAEoCBIOCgZzZW5kZXIYAiABKA0SDAoEc2F2ZRgDIAEoCBrJAwoPVGVsZW1ldHJ5Q29uZmlnEh4KFmRldmljZV91cGRhdGVfaW50ZXJ2YWwYASABKA0SIwobZW52aXJvbm1lbnRfdXBkYXRlX2ludGVydmFsGAIgASgNEicKH2Vudmlyb25tZW50X21lYXN1cmVtZW50X2VuYWJsZWQYAyABKAgSIgoaZW52aXJvbm1lbnRfc2NyZWVuX2VuYWJsZWQYBCABKAgSJgoeZW52aXJvbm1lbnRfZGlzcGxheV9mYWhyZW5oZWl0GAUgASgIEhsKE2Fpcl9xdWFsaXR5X2VuYWJsZWQYBiABKAgSHAoUYWlyX3F1YWxpdHlfaW50ZXJ2YWwYByABKA0SIQoZcG93ZXJfbWVhc3VyZW1lbnRfZW5hYmxlZBgIIAEoCBIdChVwb3dlcl91cGRhdGVfaW50ZXJ2YWwYCSABKA0SHAoUcG93ZXJfc2NyZWVuX2VuYWJsZWQYCiABKAgSIgoaaGVhbHRoX21lYXN1cmVtZW50X2VuYWJsZWQYCyABKAgSHgoWaGVhbHRoX3VwZGF0ZV9pbnRlcnZhbBgMIAEoDRIdChVoZWFsdGhfc2NyZWVuX2VuYWJsZWQYDSABKAga1gQKE0Nhbm5lZE1lc3NhZ2VDb25maWcSFwoPcm90YXJ5MV9lbmFibGVkGAEgASgIEhkKEWlucHV0YnJva2VyX3Bpbl9hGAIgASgNEhkKEWlucHV0YnJva2VyX3Bpbl9iGAMgASgNEh0KFWlucHV0YnJva2VyX3Bpbl9wcmVzcxgEIAEoDRJZChRpbnB1dGJyb2tlcl9ldmVudF9jdxgFIAEoDjI7Lm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLkNhbm5lZE1lc3NhZ2VDb25maWcuSW5wdXRFdmVudENoYXISWgoVaW5wdXRicm9rZXJfZXZlbnRfY2N3GAYgASgOMjsubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuQ2FubmVkTWVzc2FnZUNvbmZpZy5JbnB1dEV2ZW50Q2hhchJcChdpbnB1dGJyb2tlcl9ldmVudF9wcmVzcxgHIAEoDjI7Lm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLkNhbm5lZE1lc3NhZ2VDb25maWcuSW5wdXRFdmVudENoYXISFwoPdXBkb3duMV9lbmFibGVkGAggASgIEg8KB2VuYWJsZWQYCSABKAgSGgoSYWxsb3dfaW5wdXRfc291cmNlGAogASgJEhEKCXNlbmRfYmVsbBgLIAEoCCJjCg5JbnB1dEV2ZW50Q2hhchIICgROT05FEAASBgoCVVAQERIICgRET1dOEBISCAoETEVGVBATEgkKBVJJR0hUEBQSCgoGU0VMRUNUEAoSCAoEQkFDSxAbEgoKBkNBTkNFTBAYGmUKFUFtYmllbnRMaWdodGluZ0NvbmZpZxIRCglsZWRfc3RhdGUYASABKAgSDwoHY3VycmVudBgCIAEoDRILCgNyZWQYAyABKA0SDQoFZ3JlZW4YBCABKA0SDAoEYmx1ZRgFIAEoDUIRCg9wYXlsb2FkX3ZhcmlhbnQiZAoRUmVtb3RlSGFyZHdhcmVQaW4SEAoIZ3Bpb19waW4YASABKA0SDAoEbmFtZRgCIAEoCRIvCgR0eXBlGAMgASgOMiEubWVzaHRhc3RpYy5SZW1vdGVIYXJkd2FyZVBpblR5cGUqSQoVUmVtb3RlSGFyZHdhcmVQaW5UeXBlEgsKB1VOS05PV04QABIQCgxESUdJVEFMX1JFQUQQARIRCg1ESUdJVEFMX1dSSVRFEAJCZwoTY29tLmdlZWtzdmlsbGUubWVzaEISTW9kdWxlQ29uZmlnUHJvdG9zWiJnaXRodWIuY29tL21lc2h0YXN0aWMvZ28vZ2VuZXJhdGVkqgIUTWVzaHRhc3RpYy5Qcm90b2J1ZnO6AgBiBnByb3RvMw"), Gi = /* @__PURE__ */ S(w, 0), Ki = /* @__PURE__ */ S(w, 0, 0), qi = /* @__PURE__ */ S(w, 0, 1), Ji = /* @__PURE__ */ S(w, 0, 2), Yi = /* @__PURE__ */ S(w, 0, 3), Xi = /* @__PURE__ */ S(w, 0, 4), Zi = /* @__PURE__ */ function(e) {
+}({}), Mi = /* @__PURE__ */ b(w, 0, 6, 0), Ni = /* @__PURE__ */ C(w, 0, 7), Pi = /* @__PURE__ */ C(w, 0, 8), Fi = p({
+	BluetoothConnectionStatusSchema: () => Vi,
+	DeviceConnectionStatusSchema: () => Li,
+	EthernetConnectionStatusSchema: () => zi,
+	NetworkConnectionStatusSchema: () => Bi,
+	SerialConnectionStatusSchema: () => Hi,
+	WifiConnectionStatusSchema: () => Ri,
+	file_connection_status: () => Ii
+}), Ii = /* @__PURE__ */ S("Chdjb25uZWN0aW9uX3N0YXR1cy5wcm90bxIKbWVzaHRhc3RpYyKxAgoWRGV2aWNlQ29ubmVjdGlvblN0YXR1cxIzCgR3aWZpGAEgASgLMiAubWVzaHRhc3RpYy5XaWZpQ29ubmVjdGlvblN0YXR1c0gAiAEBEjsKCGV0aGVybmV0GAIgASgLMiQubWVzaHRhc3RpYy5FdGhlcm5ldENvbm5lY3Rpb25TdGF0dXNIAYgBARI9CglibHVldG9vdGgYAyABKAsyJS5tZXNodGFzdGljLkJsdWV0b290aENvbm5lY3Rpb25TdGF0dXNIAogBARI3CgZzZXJpYWwYBCABKAsyIi5tZXNodGFzdGljLlNlcmlhbENvbm5lY3Rpb25TdGF0dXNIA4gBAUIHCgVfd2lmaUILCglfZXRoZXJuZXRCDAoKX2JsdWV0b290aEIJCgdfc2VyaWFsImcKFFdpZmlDb25uZWN0aW9uU3RhdHVzEjMKBnN0YXR1cxgBIAEoCzIjLm1lc2h0YXN0aWMuTmV0d29ya0Nvbm5lY3Rpb25TdGF0dXMSDAoEc3NpZBgCIAEoCRIMCgRyc3NpGAMgASgFIk8KGEV0aGVybmV0Q29ubmVjdGlvblN0YXR1cxIzCgZzdGF0dXMYASABKAsyIy5tZXNodGFzdGljLk5ldHdvcmtDb25uZWN0aW9uU3RhdHVzInsKF05ldHdvcmtDb25uZWN0aW9uU3RhdHVzEhIKCmlwX2FkZHJlc3MYASABKAcSFAoMaXNfY29ubmVjdGVkGAIgASgIEhkKEWlzX21xdHRfY29ubmVjdGVkGAMgASgIEhsKE2lzX3N5c2xvZ19jb25uZWN0ZWQYBCABKAgiTAoZQmx1ZXRvb3RoQ29ubmVjdGlvblN0YXR1cxILCgNwaW4YASABKA0SDAoEcnNzaRgCIAEoBRIUCgxpc19jb25uZWN0ZWQYAyABKAgiPAoWU2VyaWFsQ29ubmVjdGlvblN0YXR1cxIMCgRiYXVkGAEgASgNEhQKDGlzX2Nvbm5lY3RlZBgCIAEoCEJlChNjb20uZ2Vla3N2aWxsZS5tZXNoQhBDb25uU3RhdHVzUHJvdG9zWiJnaXRodWIuY29tL21lc2h0YXN0aWMvZ28vZ2VuZXJhdGVkqgIUTWVzaHRhc3RpYy5Qcm90b2J1ZnO6AgBiBnByb3RvMw"), Li = /* @__PURE__ */ C(Ii, 0), Ri = /* @__PURE__ */ C(Ii, 1), zi = /* @__PURE__ */ C(Ii, 2), Bi = /* @__PURE__ */ C(Ii, 3), Vi = /* @__PURE__ */ C(Ii, 4), Hi = /* @__PURE__ */ C(Ii, 5), Ui = p({
+	ModuleConfigSchema: () => Wi,
+	ModuleConfig_AmbientLightingConfigSchema: () => ma,
+	ModuleConfig_AudioConfigSchema: () => Qi,
+	ModuleConfig_AudioConfig_Audio_Baud: () => $i,
+	ModuleConfig_AudioConfig_Audio_BaudSchema: () => ea,
+	ModuleConfig_CannedMessageConfigSchema: () => da,
+	ModuleConfig_CannedMessageConfig_InputEventChar: () => fa,
+	ModuleConfig_CannedMessageConfig_InputEventCharSchema: () => pa,
+	ModuleConfig_DetectionSensorConfigSchema: () => Yi,
+	ModuleConfig_DetectionSensorConfig_TriggerType: () => Xi,
+	ModuleConfig_DetectionSensorConfig_TriggerTypeSchema: () => Zi,
+	ModuleConfig_ExternalNotificationConfigSchema: () => sa,
+	ModuleConfig_MQTTConfigSchema: () => Gi,
+	ModuleConfig_MapReportSettingsSchema: () => Ki,
+	ModuleConfig_NeighborInfoConfigSchema: () => Ji,
+	ModuleConfig_PaxcounterConfigSchema: () => ta,
+	ModuleConfig_RangeTestConfigSchema: () => la,
+	ModuleConfig_RemoteHardwareConfigSchema: () => qi,
+	ModuleConfig_SerialConfigSchema: () => na,
+	ModuleConfig_SerialConfig_Serial_Baud: () => ra,
+	ModuleConfig_SerialConfig_Serial_BaudSchema: () => ia,
+	ModuleConfig_SerialConfig_Serial_Mode: () => aa,
+	ModuleConfig_SerialConfig_Serial_ModeSchema: () => oa,
+	ModuleConfig_StoreForwardConfigSchema: () => ca,
+	ModuleConfig_TelemetryConfigSchema: () => ua,
+	RemoteHardwarePinSchema: () => ha,
+	RemoteHardwarePinType: () => ga,
+	RemoteHardwarePinTypeSchema: () => _a,
+	file_module_config: () => T
+}), T = /* @__PURE__ */ S("ChNtb2R1bGVfY29uZmlnLnByb3RvEgptZXNodGFzdGljIuMlCgxNb2R1bGVDb25maWcSMwoEbXF0dBgBIAEoCzIjLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLk1RVFRDb25maWdIABI3CgZzZXJpYWwYAiABKAsyJS5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5TZXJpYWxDb25maWdIABJUChVleHRlcm5hbF9ub3RpZmljYXRpb24YAyABKAsyMy5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5FeHRlcm5hbE5vdGlmaWNhdGlvbkNvbmZpZ0gAEkQKDXN0b3JlX2ZvcndhcmQYBCABKAsyKy5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5TdG9yZUZvcndhcmRDb25maWdIABI+CgpyYW5nZV90ZXN0GAUgASgLMigubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuUmFuZ2VUZXN0Q29uZmlnSAASPQoJdGVsZW1ldHJ5GAYgASgLMigubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuVGVsZW1ldHJ5Q29uZmlnSAASRgoOY2FubmVkX21lc3NhZ2UYByABKAsyLC5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5DYW5uZWRNZXNzYWdlQ29uZmlnSAASNQoFYXVkaW8YCCABKAsyJC5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5BdWRpb0NvbmZpZ0gAEkgKD3JlbW90ZV9oYXJkd2FyZRgJIAEoCzItLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLlJlbW90ZUhhcmR3YXJlQ29uZmlnSAASRAoNbmVpZ2hib3JfaW5mbxgKIAEoCzIrLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLk5laWdoYm9ySW5mb0NvbmZpZ0gAEkoKEGFtYmllbnRfbGlnaHRpbmcYCyABKAsyLi5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5BbWJpZW50TGlnaHRpbmdDb25maWdIABJKChBkZXRlY3Rpb25fc2Vuc29yGAwgASgLMi4ubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuRGV0ZWN0aW9uU2Vuc29yQ29uZmlnSAASPwoKcGF4Y291bnRlchgNIAEoCzIpLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLlBheGNvdW50ZXJDb25maWdIABqwAgoKTVFUVENvbmZpZxIPCgdlbmFibGVkGAEgASgIEg8KB2FkZHJlc3MYAiABKAkSEAoIdXNlcm5hbWUYAyABKAkSEAoIcGFzc3dvcmQYBCABKAkSGgoSZW5jcnlwdGlvbl9lbmFibGVkGAUgASgIEhQKDGpzb25fZW5hYmxlZBgGIAEoCBITCgt0bHNfZW5hYmxlZBgHIAEoCBIMCgRyb290GAggASgJEh8KF3Byb3h5X3RvX2NsaWVudF9lbmFibGVkGAkgASgIEh0KFW1hcF9yZXBvcnRpbmdfZW5hYmxlZBgKIAEoCBJHChNtYXBfcmVwb3J0X3NldHRpbmdzGAsgASgLMioubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuTWFwUmVwb3J0U2V0dGluZ3MabgoRTWFwUmVwb3J0U2V0dGluZ3MSHQoVcHVibGlzaF9pbnRlcnZhbF9zZWNzGAEgASgNEhoKEnBvc2l0aW9uX3ByZWNpc2lvbhgCIAEoDRIeChZzaG91bGRfcmVwb3J0X2xvY2F0aW9uGAMgASgIGoIBChRSZW1vdGVIYXJkd2FyZUNvbmZpZxIPCgdlbmFibGVkGAEgASgIEiIKGmFsbG93X3VuZGVmaW5lZF9waW5fYWNjZXNzGAIgASgIEjUKDmF2YWlsYWJsZV9waW5zGAMgAygLMh0ubWVzaHRhc3RpYy5SZW1vdGVIYXJkd2FyZVBpbhpaChJOZWlnaGJvckluZm9Db25maWcSDwoHZW5hYmxlZBgBIAEoCBIXCg91cGRhdGVfaW50ZXJ2YWwYAiABKA0SGgoSdHJhbnNtaXRfb3Zlcl9sb3JhGAMgASgIGpcDChVEZXRlY3Rpb25TZW5zb3JDb25maWcSDwoHZW5hYmxlZBgBIAEoCBIeChZtaW5pbXVtX2Jyb2FkY2FzdF9zZWNzGAIgASgNEhwKFHN0YXRlX2Jyb2FkY2FzdF9zZWNzGAMgASgNEhEKCXNlbmRfYmVsbBgEIAEoCBIMCgRuYW1lGAUgASgJEhMKC21vbml0b3JfcGluGAYgASgNEloKFmRldGVjdGlvbl90cmlnZ2VyX3R5cGUYByABKA4yOi5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5EZXRlY3Rpb25TZW5zb3JDb25maWcuVHJpZ2dlclR5cGUSEgoKdXNlX3B1bGx1cBgIIAEoCCKIAQoLVHJpZ2dlclR5cGUSDQoJTE9HSUNfTE9XEAASDgoKTE9HSUNfSElHSBABEhAKDEZBTExJTkdfRURHRRACEg8KC1JJU0lOR19FREdFEAMSGgoWRUlUSEVSX0VER0VfQUNUSVZFX0xPVxAEEhsKF0VJVEhFUl9FREdFX0FDVElWRV9ISUdIEAUa5AIKC0F1ZGlvQ29uZmlnEhYKDmNvZGVjMl9lbmFibGVkGAEgASgIEg8KB3B0dF9waW4YAiABKA0SQAoHYml0cmF0ZRgDIAEoDjIvLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLkF1ZGlvQ29uZmlnLkF1ZGlvX0JhdWQSDgoGaTJzX3dzGAQgASgNEg4KBmkyc19zZBgFIAEoDRIPCgdpMnNfZGluGAYgASgNEg8KB2kyc19zY2sYByABKA0ipwEKCkF1ZGlvX0JhdWQSEgoOQ09ERUMyX0RFRkFVTFQQABIPCgtDT0RFQzJfMzIwMBABEg8KC0NPREVDMl8yNDAwEAISDwoLQ09ERUMyXzE2MDAQAxIPCgtDT0RFQzJfMTQwMBAEEg8KC0NPREVDMl8xMzAwEAUSDwoLQ09ERUMyXzEyMDAQBhIOCgpDT0RFQzJfNzAwEAcSDwoLQ09ERUMyXzcwMEIQCBp2ChBQYXhjb3VudGVyQ29uZmlnEg8KB2VuYWJsZWQYASABKAgSIgoacGF4Y291bnRlcl91cGRhdGVfaW50ZXJ2YWwYAiABKA0SFgoOd2lmaV90aHJlc2hvbGQYAyABKAUSFQoNYmxlX3RocmVzaG9sZBgEIAEoBRr9BAoMU2VyaWFsQ29uZmlnEg8KB2VuYWJsZWQYASABKAgSDAoEZWNobxgCIAEoCBILCgNyeGQYAyABKA0SCwoDdHhkGAQgASgNEj8KBGJhdWQYBSABKA4yMS5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5TZXJpYWxDb25maWcuU2VyaWFsX0JhdWQSDwoHdGltZW91dBgGIAEoDRI/CgRtb2RlGAcgASgOMjEubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuU2VyaWFsQ29uZmlnLlNlcmlhbF9Nb2RlEiQKHG92ZXJyaWRlX2NvbnNvbGVfc2VyaWFsX3BvcnQYCCABKAgiigIKC1NlcmlhbF9CYXVkEhAKDEJBVURfREVGQVVMVBAAEgwKCEJBVURfMTEwEAESDAoIQkFVRF8zMDAQAhIMCghCQVVEXzYwMBADEg0KCUJBVURfMTIwMBAEEg0KCUJBVURfMjQwMBAFEg0KCUJBVURfNDgwMBAGEg0KCUJBVURfOTYwMBAHEg4KCkJBVURfMTkyMDAQCBIOCgpCQVVEXzM4NDAwEAkSDgoKQkFVRF81NzYwMBAKEg8KC0JBVURfMTE1MjAwEAsSDwoLQkFVRF8yMzA0MDAQDBIPCgtCQVVEXzQ2MDgwMBANEg8KC0JBVURfNTc2MDAwEA4SDwoLQkFVRF85MjE2MDAQDyJuCgtTZXJpYWxfTW9kZRILCgdERUZBVUxUEAASCgoGU0lNUExFEAESCQoFUFJPVE8QAhILCgdURVhUTVNHEAMSCAoETk1FQRAEEgsKB0NBTFRPUE8QBRIICgRXUzg1EAYSDQoJVkVfRElSRUNUEAca6QIKGkV4dGVybmFsTm90aWZpY2F0aW9uQ29uZmlnEg8KB2VuYWJsZWQYASABKAgSEQoJb3V0cHV0X21zGAIgASgNEg4KBm91dHB1dBgDIAEoDRIUCgxvdXRwdXRfdmlicmEYCCABKA0SFQoNb3V0cHV0X2J1enplchgJIAEoDRIOCgZhY3RpdmUYBCABKAgSFQoNYWxlcnRfbWVzc2FnZRgFIAEoCBIbChNhbGVydF9tZXNzYWdlX3ZpYnJhGAogASgIEhwKFGFsZXJ0X21lc3NhZ2VfYnV6emVyGAsgASgIEhIKCmFsZXJ0X2JlbGwYBiABKAgSGAoQYWxlcnRfYmVsbF92aWJyYRgMIAEoCBIZChFhbGVydF9iZWxsX2J1enplchgNIAEoCBIPCgd1c2VfcHdtGAcgASgIEhMKC25hZ190aW1lb3V0GA4gASgNEhkKEXVzZV9pMnNfYXNfYnV6emVyGA8gASgIGpcBChJTdG9yZUZvcndhcmRDb25maWcSDwoHZW5hYmxlZBgBIAEoCBIRCgloZWFydGJlYXQYAiABKAgSDwoHcmVjb3JkcxgDIAEoDRIaChJoaXN0b3J5X3JldHVybl9tYXgYBCABKA0SHQoVaGlzdG9yeV9yZXR1cm5fd2luZG93GAUgASgNEhEKCWlzX3NlcnZlchgGIAEoCBpACg9SYW5nZVRlc3RDb25maWcSDwoHZW5hYmxlZBgBIAEoCBIOCgZzZW5kZXIYAiABKA0SDAoEc2F2ZRgDIAEoCBrJAwoPVGVsZW1ldHJ5Q29uZmlnEh4KFmRldmljZV91cGRhdGVfaW50ZXJ2YWwYASABKA0SIwobZW52aXJvbm1lbnRfdXBkYXRlX2ludGVydmFsGAIgASgNEicKH2Vudmlyb25tZW50X21lYXN1cmVtZW50X2VuYWJsZWQYAyABKAgSIgoaZW52aXJvbm1lbnRfc2NyZWVuX2VuYWJsZWQYBCABKAgSJgoeZW52aXJvbm1lbnRfZGlzcGxheV9mYWhyZW5oZWl0GAUgASgIEhsKE2Fpcl9xdWFsaXR5X2VuYWJsZWQYBiABKAgSHAoUYWlyX3F1YWxpdHlfaW50ZXJ2YWwYByABKA0SIQoZcG93ZXJfbWVhc3VyZW1lbnRfZW5hYmxlZBgIIAEoCBIdChVwb3dlcl91cGRhdGVfaW50ZXJ2YWwYCSABKA0SHAoUcG93ZXJfc2NyZWVuX2VuYWJsZWQYCiABKAgSIgoaaGVhbHRoX21lYXN1cmVtZW50X2VuYWJsZWQYCyABKAgSHgoWaGVhbHRoX3VwZGF0ZV9pbnRlcnZhbBgMIAEoDRIdChVoZWFsdGhfc2NyZWVuX2VuYWJsZWQYDSABKAga1gQKE0Nhbm5lZE1lc3NhZ2VDb25maWcSFwoPcm90YXJ5MV9lbmFibGVkGAEgASgIEhkKEWlucHV0YnJva2VyX3Bpbl9hGAIgASgNEhkKEWlucHV0YnJva2VyX3Bpbl9iGAMgASgNEh0KFWlucHV0YnJva2VyX3Bpbl9wcmVzcxgEIAEoDRJZChRpbnB1dGJyb2tlcl9ldmVudF9jdxgFIAEoDjI7Lm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLkNhbm5lZE1lc3NhZ2VDb25maWcuSW5wdXRFdmVudENoYXISWgoVaW5wdXRicm9rZXJfZXZlbnRfY2N3GAYgASgOMjsubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuQ2FubmVkTWVzc2FnZUNvbmZpZy5JbnB1dEV2ZW50Q2hhchJcChdpbnB1dGJyb2tlcl9ldmVudF9wcmVzcxgHIAEoDjI7Lm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLkNhbm5lZE1lc3NhZ2VDb25maWcuSW5wdXRFdmVudENoYXISFwoPdXBkb3duMV9lbmFibGVkGAggASgIEg8KB2VuYWJsZWQYCSABKAgSGgoSYWxsb3dfaW5wdXRfc291cmNlGAogASgJEhEKCXNlbmRfYmVsbBgLIAEoCCJjCg5JbnB1dEV2ZW50Q2hhchIICgROT05FEAASBgoCVVAQERIICgRET1dOEBISCAoETEVGVBATEgkKBVJJR0hUEBQSCgoGU0VMRUNUEAoSCAoEQkFDSxAbEgoKBkNBTkNFTBAYGmUKFUFtYmllbnRMaWdodGluZ0NvbmZpZxIRCglsZWRfc3RhdGUYASABKAgSDwoHY3VycmVudBgCIAEoDRILCgNyZWQYAyABKA0SDQoFZ3JlZW4YBCABKA0SDAoEYmx1ZRgFIAEoDUIRCg9wYXlsb2FkX3ZhcmlhbnQiZAoRUmVtb3RlSGFyZHdhcmVQaW4SEAoIZ3Bpb19waW4YASABKA0SDAoEbmFtZRgCIAEoCRIvCgR0eXBlGAMgASgOMiEubWVzaHRhc3RpYy5SZW1vdGVIYXJkd2FyZVBpblR5cGUqSQoVUmVtb3RlSGFyZHdhcmVQaW5UeXBlEgsKB1VOS05PV04QABIQCgxESUdJVEFMX1JFQUQQARIRCg1ESUdJVEFMX1dSSVRFEAJCZwoTY29tLmdlZWtzdmlsbGUubWVzaEISTW9kdWxlQ29uZmlnUHJvdG9zWiJnaXRodWIuY29tL21lc2h0YXN0aWMvZ28vZ2VuZXJhdGVkqgIUTWVzaHRhc3RpYy5Qcm90b2J1ZnO6AgBiBnByb3RvMw"), Wi = /* @__PURE__ */ C(T, 0), Gi = /* @__PURE__ */ C(T, 0, 0), Ki = /* @__PURE__ */ C(T, 0, 1), qi = /* @__PURE__ */ C(T, 0, 2), Ji = /* @__PURE__ */ C(T, 0, 3), Yi = /* @__PURE__ */ C(T, 0, 4), Xi = /* @__PURE__ */ function(e) {
 	return e[e.LOGIC_LOW = 0] = "LOGIC_LOW", e[e.LOGIC_HIGH = 1] = "LOGIC_HIGH", e[e.FALLING_EDGE = 2] = "FALLING_EDGE", e[e.RISING_EDGE = 3] = "RISING_EDGE", e[e.EITHER_EDGE_ACTIVE_LOW = 4] = "EITHER_EDGE_ACTIVE_LOW", e[e.EITHER_EDGE_ACTIVE_HIGH = 5] = "EITHER_EDGE_ACTIVE_HIGH", e;
-}({}), Qi = /* @__PURE__ */ y(w, 0, 4, 0), $i = /* @__PURE__ */ S(w, 0, 5), ea = /* @__PURE__ */ function(e) {
+}({}), Zi = /* @__PURE__ */ b(T, 0, 4, 0), Qi = /* @__PURE__ */ C(T, 0, 5), $i = /* @__PURE__ */ function(e) {
 	return e[e.CODEC2_DEFAULT = 0] = "CODEC2_DEFAULT", e[e.CODEC2_3200 = 1] = "CODEC2_3200", e[e.CODEC2_2400 = 2] = "CODEC2_2400", e[e.CODEC2_1600 = 3] = "CODEC2_1600", e[e.CODEC2_1400 = 4] = "CODEC2_1400", e[e.CODEC2_1300 = 5] = "CODEC2_1300", e[e.CODEC2_1200 = 6] = "CODEC2_1200", e[e.CODEC2_700 = 7] = "CODEC2_700", e[e.CODEC2_700B = 8] = "CODEC2_700B", e;
-}({}), ta = /* @__PURE__ */ y(w, 0, 5, 0), na = /* @__PURE__ */ S(w, 0, 6), ra = /* @__PURE__ */ S(w, 0, 7), ia = /* @__PURE__ */ function(e) {
+}({}), ea = /* @__PURE__ */ b(T, 0, 5, 0), ta = /* @__PURE__ */ C(T, 0, 6), na = /* @__PURE__ */ C(T, 0, 7), ra = /* @__PURE__ */ function(e) {
 	return e[e.BAUD_DEFAULT = 0] = "BAUD_DEFAULT", e[e.BAUD_110 = 1] = "BAUD_110", e[e.BAUD_300 = 2] = "BAUD_300", e[e.BAUD_600 = 3] = "BAUD_600", e[e.BAUD_1200 = 4] = "BAUD_1200", e[e.BAUD_2400 = 5] = "BAUD_2400", e[e.BAUD_4800 = 6] = "BAUD_4800", e[e.BAUD_9600 = 7] = "BAUD_9600", e[e.BAUD_19200 = 8] = "BAUD_19200", e[e.BAUD_38400 = 9] = "BAUD_38400", e[e.BAUD_57600 = 10] = "BAUD_57600", e[e.BAUD_115200 = 11] = "BAUD_115200", e[e.BAUD_230400 = 12] = "BAUD_230400", e[e.BAUD_460800 = 13] = "BAUD_460800", e[e.BAUD_576000 = 14] = "BAUD_576000", e[e.BAUD_921600 = 15] = "BAUD_921600", e;
-}({}), aa = /* @__PURE__ */ y(w, 0, 7, 0), oa = /* @__PURE__ */ function(e) {
+}({}), ia = /* @__PURE__ */ b(T, 0, 7, 0), aa = /* @__PURE__ */ function(e) {
 	return e[e.DEFAULT = 0] = "DEFAULT", e[e.SIMPLE = 1] = "SIMPLE", e[e.PROTO = 2] = "PROTO", e[e.TEXTMSG = 3] = "TEXTMSG", e[e.NMEA = 4] = "NMEA", e[e.CALTOPO = 5] = "CALTOPO", e[e.WS85 = 6] = "WS85", e[e.VE_DIRECT = 7] = "VE_DIRECT", e;
-}({}), sa = /* @__PURE__ */ y(w, 0, 7, 1), ca = /* @__PURE__ */ S(w, 0, 8), la = /* @__PURE__ */ S(w, 0, 9), ua = /* @__PURE__ */ S(w, 0, 10), da = /* @__PURE__ */ S(w, 0, 11), fa = /* @__PURE__ */ S(w, 0, 12), pa = /* @__PURE__ */ function(e) {
+}({}), oa = /* @__PURE__ */ b(T, 0, 7, 1), sa = /* @__PURE__ */ C(T, 0, 8), ca = /* @__PURE__ */ C(T, 0, 9), la = /* @__PURE__ */ C(T, 0, 10), ua = /* @__PURE__ */ C(T, 0, 11), da = /* @__PURE__ */ C(T, 0, 12), fa = /* @__PURE__ */ function(e) {
 	return e[e.NONE = 0] = "NONE", e[e.UP = 17] = "UP", e[e.DOWN = 18] = "DOWN", e[e.LEFT = 19] = "LEFT", e[e.RIGHT = 20] = "RIGHT", e[e.SELECT = 10] = "SELECT", e[e.BACK = 27] = "BACK", e[e.CANCEL = 24] = "CANCEL", e;
-}({}), ma = /* @__PURE__ */ y(w, 0, 12, 0), ha = /* @__PURE__ */ S(w, 0, 13), ga = /* @__PURE__ */ S(w, 1), _a = /* @__PURE__ */ function(e) {
+}({}), pa = /* @__PURE__ */ b(T, 0, 12, 0), ma = /* @__PURE__ */ C(T, 0, 13), ha = /* @__PURE__ */ C(T, 1), ga = /* @__PURE__ */ function(e) {
 	return e[e.UNKNOWN = 0] = "UNKNOWN", e[e.DIGITAL_READ = 1] = "DIGITAL_READ", e[e.DIGITAL_WRITE = 2] = "DIGITAL_WRITE", e;
-}({}), va = /* @__PURE__ */ y(w, 0), T = p({
-	PortNum: () => ba,
-	PortNumSchema: () => xa,
-	file_portnums: () => ya
-}), ya = /* @__PURE__ */ x("Cg5wb3J0bnVtcy5wcm90bxIKbWVzaHRhc3RpYyrlBAoHUG9ydE51bRIPCgtVTktOT1dOX0FQUBAAEhQKEFRFWFRfTUVTU0FHRV9BUFAQARIXChNSRU1PVEVfSEFSRFdBUkVfQVBQEAISEAoMUE9TSVRJT05fQVBQEAMSEAoMTk9ERUlORk9fQVBQEAQSDwoLUk9VVElOR19BUFAQBRINCglBRE1JTl9BUFAQBhIfChtURVhUX01FU1NBR0VfQ09NUFJFU1NFRF9BUFAQBxIQCgxXQVlQT0lOVF9BUFAQCBINCglBVURJT19BUFAQCRIYChRERVRFQ1RJT05fU0VOU09SX0FQUBAKEg0KCUFMRVJUX0FQUBALEhgKFEtFWV9WRVJJRklDQVRJT05fQVBQEAwSDQoJUkVQTFlfQVBQECASEQoNSVBfVFVOTkVMX0FQUBAhEhIKDlBBWENPVU5URVJfQVBQECISDgoKU0VSSUFMX0FQUBBAEhUKEVNUT1JFX0ZPUldBUkRfQVBQEEESEgoOUkFOR0VfVEVTVF9BUFAQQhIRCg1URUxFTUVUUllfQVBQEEMSCwoHWlBTX0FQUBBEEhEKDVNJTVVMQVRPUl9BUFAQRRISCg5UUkFDRVJPVVRFX0FQUBBGEhQKEE5FSUdIQk9SSU5GT19BUFAQRxIPCgtBVEFLX1BMVUdJThBIEhIKDk1BUF9SRVBPUlRfQVBQEEkSEwoPUE9XRVJTVFJFU1NfQVBQEEoSGAoUUkVUSUNVTFVNX1RVTk5FTF9BUFAQTBIQCgtQUklWQVRFX0FQUBCAAhITCg5BVEFLX0ZPUldBUkRFUhCBAhIICgNNQVgQ/wNCXQoTY29tLmdlZWtzdmlsbGUubWVzaEIIUG9ydG51bXNaImdpdGh1Yi5jb20vbWVzaHRhc3RpYy9nby9nZW5lcmF0ZWSqAhRNZXNodGFzdGljLlByb3RvYnVmc7oCAGIGcHJvdG8z"), ba = /* @__PURE__ */ function(e) {
+}({}), _a = /* @__PURE__ */ b(T, 0), E = p({
+	PortNum: () => ya,
+	PortNumSchema: () => ba,
+	file_portnums: () => va
+}), va = /* @__PURE__ */ S("Cg5wb3J0bnVtcy5wcm90bxIKbWVzaHRhc3RpYyrlBAoHUG9ydE51bRIPCgtVTktOT1dOX0FQUBAAEhQKEFRFWFRfTUVTU0FHRV9BUFAQARIXChNSRU1PVEVfSEFSRFdBUkVfQVBQEAISEAoMUE9TSVRJT05fQVBQEAMSEAoMTk9ERUlORk9fQVBQEAQSDwoLUk9VVElOR19BUFAQBRINCglBRE1JTl9BUFAQBhIfChtURVhUX01FU1NBR0VfQ09NUFJFU1NFRF9BUFAQBxIQCgxXQVlQT0lOVF9BUFAQCBINCglBVURJT19BUFAQCRIYChRERVRFQ1RJT05fU0VOU09SX0FQUBAKEg0KCUFMRVJUX0FQUBALEhgKFEtFWV9WRVJJRklDQVRJT05fQVBQEAwSDQoJUkVQTFlfQVBQECASEQoNSVBfVFVOTkVMX0FQUBAhEhIKDlBBWENPVU5URVJfQVBQECISDgoKU0VSSUFMX0FQUBBAEhUKEVNUT1JFX0ZPUldBUkRfQVBQEEESEgoOUkFOR0VfVEVTVF9BUFAQQhIRCg1URUxFTUVUUllfQVBQEEMSCwoHWlBTX0FQUBBEEhEKDVNJTVVMQVRPUl9BUFAQRRISCg5UUkFDRVJPVVRFX0FQUBBGEhQKEE5FSUdIQk9SSU5GT19BUFAQRxIPCgtBVEFLX1BMVUdJThBIEhIKDk1BUF9SRVBPUlRfQVBQEEkSEwoPUE9XRVJTVFJFU1NfQVBQEEoSGAoUUkVUSUNVTFVNX1RVTk5FTF9BUFAQTBIQCgtQUklWQVRFX0FQUBCAAhITCg5BVEFLX0ZPUldBUkRFUhCBAhIICgNNQVgQ/wNCXQoTY29tLmdlZWtzdmlsbGUubWVzaEIIUG9ydG51bXNaImdpdGh1Yi5jb20vbWVzaHRhc3RpYy9nby9nZW5lcmF0ZWSqAhRNZXNodGFzdGljLlByb3RvYnVmc7oCAGIGcHJvdG8z"), ya = /* @__PURE__ */ function(e) {
 	return e[e.UNKNOWN_APP = 0] = "UNKNOWN_APP", e[e.TEXT_MESSAGE_APP = 1] = "TEXT_MESSAGE_APP", e[e.REMOTE_HARDWARE_APP = 2] = "REMOTE_HARDWARE_APP", e[e.POSITION_APP = 3] = "POSITION_APP", e[e.NODEINFO_APP = 4] = "NODEINFO_APP", e[e.ROUTING_APP = 5] = "ROUTING_APP", e[e.ADMIN_APP = 6] = "ADMIN_APP", e[e.TEXT_MESSAGE_COMPRESSED_APP = 7] = "TEXT_MESSAGE_COMPRESSED_APP", e[e.WAYPOINT_APP = 8] = "WAYPOINT_APP", e[e.AUDIO_APP = 9] = "AUDIO_APP", e[e.DETECTION_SENSOR_APP = 10] = "DETECTION_SENSOR_APP", e[e.ALERT_APP = 11] = "ALERT_APP", e[e.KEY_VERIFICATION_APP = 12] = "KEY_VERIFICATION_APP", e[e.REPLY_APP = 32] = "REPLY_APP", e[e.IP_TUNNEL_APP = 33] = "IP_TUNNEL_APP", e[e.PAXCOUNTER_APP = 34] = "PAXCOUNTER_APP", e[e.SERIAL_APP = 64] = "SERIAL_APP", e[e.STORE_FORWARD_APP = 65] = "STORE_FORWARD_APP", e[e.RANGE_TEST_APP = 66] = "RANGE_TEST_APP", e[e.TELEMETRY_APP = 67] = "TELEMETRY_APP", e[e.ZPS_APP = 68] = "ZPS_APP", e[e.SIMULATOR_APP = 69] = "SIMULATOR_APP", e[e.TRACEROUTE_APP = 70] = "TRACEROUTE_APP", e[e.NEIGHBORINFO_APP = 71] = "NEIGHBORINFO_APP", e[e.ATAK_PLUGIN = 72] = "ATAK_PLUGIN", e[e.MAP_REPORT_APP = 73] = "MAP_REPORT_APP", e[e.POWERSTRESS_APP = 74] = "POWERSTRESS_APP", e[e.RETICULUM_TUNNEL_APP = 76] = "RETICULUM_TUNNEL_APP", e[e.PRIVATE_APP = 256] = "PRIVATE_APP", e[e.ATAK_FORWARDER = 257] = "ATAK_FORWARDER", e[e.MAX = 511] = "MAX", e;
-}({}), xa = /* @__PURE__ */ y(ya, 0), Sa = p({
-	AirQualityMetricsSchema: () => Ea,
-	DeviceMetricsSchema: () => Ca,
-	EnvironmentMetricsSchema: () => wa,
-	HealthMetricsSchema: () => Oa,
-	HostMetricsSchema: () => ka,
-	LocalStatsSchema: () => Da,
-	Nau7802ConfigSchema: () => ja,
-	PowerMetricsSchema: () => Ta,
-	TelemetrySchema: () => Aa,
-	TelemetrySensorType: () => Ma,
-	TelemetrySensorTypeSchema: () => Na,
-	file_telemetry: () => E
-}), E = /* @__PURE__ */ x("Cg90ZWxlbWV0cnkucHJvdG8SCm1lc2h0YXN0aWMi8wEKDURldmljZU1ldHJpY3MSGgoNYmF0dGVyeV9sZXZlbBgBIAEoDUgAiAEBEhQKB3ZvbHRhZ2UYAiABKAJIAYgBARIgChNjaGFubmVsX3V0aWxpemF0aW9uGAMgASgCSAKIAQESGAoLYWlyX3V0aWxfdHgYBCABKAJIA4gBARIbCg51cHRpbWVfc2Vjb25kcxgFIAEoDUgEiAEBQhAKDl9iYXR0ZXJ5X2xldmVsQgoKCF92b2x0YWdlQhYKFF9jaGFubmVsX3V0aWxpemF0aW9uQg4KDF9haXJfdXRpbF90eEIRCg9fdXB0aW1lX3NlY29uZHMiggcKEkVudmlyb25tZW50TWV0cmljcxIYCgt0ZW1wZXJhdHVyZRgBIAEoAkgAiAEBEh4KEXJlbGF0aXZlX2h1bWlkaXR5GAIgASgCSAGIAQESIAoTYmFyb21ldHJpY19wcmVzc3VyZRgDIAEoAkgCiAEBEhsKDmdhc19yZXNpc3RhbmNlGAQgASgCSAOIAQESFAoHdm9sdGFnZRgFIAEoAkgEiAEBEhQKB2N1cnJlbnQYBiABKAJIBYgBARIQCgNpYXEYByABKA1IBogBARIVCghkaXN0YW5jZRgIIAEoAkgHiAEBEhAKA2x1eBgJIAEoAkgIiAEBEhYKCXdoaXRlX2x1eBgKIAEoAkgJiAEBEhMKBmlyX2x1eBgLIAEoAkgKiAEBEhMKBnV2X2x1eBgMIAEoAkgLiAEBEhsKDndpbmRfZGlyZWN0aW9uGA0gASgNSAyIAQESFwoKd2luZF9zcGVlZBgOIAEoAkgNiAEBEhMKBndlaWdodBgPIAEoAkgOiAEBEhYKCXdpbmRfZ3VzdBgQIAEoAkgPiAEBEhYKCXdpbmRfbHVsbBgRIAEoAkgQiAEBEhYKCXJhZGlhdGlvbhgSIAEoAkgRiAEBEhgKC3JhaW5mYWxsXzFoGBMgASgCSBKIAQESGQoMcmFpbmZhbGxfMjRoGBQgASgCSBOIAQESGgoNc29pbF9tb2lzdHVyZRgVIAEoDUgUiAEBEh0KEHNvaWxfdGVtcGVyYXR1cmUYFiABKAJIFYgBAUIOCgxfdGVtcGVyYXR1cmVCFAoSX3JlbGF0aXZlX2h1bWlkaXR5QhYKFF9iYXJvbWV0cmljX3ByZXNzdXJlQhEKD19nYXNfcmVzaXN0YW5jZUIKCghfdm9sdGFnZUIKCghfY3VycmVudEIGCgRfaWFxQgsKCV9kaXN0YW5jZUIGCgRfbHV4QgwKCl93aGl0ZV9sdXhCCQoHX2lyX2x1eEIJCgdfdXZfbHV4QhEKD193aW5kX2RpcmVjdGlvbkINCgtfd2luZF9zcGVlZEIJCgdfd2VpZ2h0QgwKCl93aW5kX2d1c3RCDAoKX3dpbmRfbHVsbEIMCgpfcmFkaWF0aW9uQg4KDF9yYWluZmFsbF8xaEIPCg1fcmFpbmZhbGxfMjRoQhAKDl9zb2lsX21vaXN0dXJlQhMKEV9zb2lsX3RlbXBlcmF0dXJlIooCCgxQb3dlck1ldHJpY3MSGAoLY2gxX3ZvbHRhZ2UYASABKAJIAIgBARIYCgtjaDFfY3VycmVudBgCIAEoAkgBiAEBEhgKC2NoMl92b2x0YWdlGAMgASgCSAKIAQESGAoLY2gyX2N1cnJlbnQYBCABKAJIA4gBARIYCgtjaDNfdm9sdGFnZRgFIAEoAkgEiAEBEhgKC2NoM19jdXJyZW50GAYgASgCSAWIAQFCDgoMX2NoMV92b2x0YWdlQg4KDF9jaDFfY3VycmVudEIOCgxfY2gyX3ZvbHRhZ2VCDgoMX2NoMl9jdXJyZW50Qg4KDF9jaDNfdm9sdGFnZUIOCgxfY2gzX2N1cnJlbnQihQUKEUFpclF1YWxpdHlNZXRyaWNzEhoKDXBtMTBfc3RhbmRhcmQYASABKA1IAIgBARIaCg1wbTI1X3N0YW5kYXJkGAIgASgNSAGIAQESGwoOcG0xMDBfc3RhbmRhcmQYAyABKA1IAogBARIfChJwbTEwX2Vudmlyb25tZW50YWwYBCABKA1IA4gBARIfChJwbTI1X2Vudmlyb25tZW50YWwYBSABKA1IBIgBARIgChNwbTEwMF9lbnZpcm9ubWVudGFsGAYgASgNSAWIAQESGwoOcGFydGljbGVzXzAzdW0YByABKA1IBogBARIbCg5wYXJ0aWNsZXNfMDV1bRgIIAEoDUgHiAEBEhsKDnBhcnRpY2xlc18xMHVtGAkgASgNSAiIAQESGwoOcGFydGljbGVzXzI1dW0YCiABKA1ICYgBARIbCg5wYXJ0aWNsZXNfNTB1bRgLIAEoDUgKiAEBEhwKD3BhcnRpY2xlc18xMDB1bRgMIAEoDUgLiAEBEhAKA2NvMhgNIAEoDUgMiAEBQhAKDl9wbTEwX3N0YW5kYXJkQhAKDl9wbTI1X3N0YW5kYXJkQhEKD19wbTEwMF9zdGFuZGFyZEIVChNfcG0xMF9lbnZpcm9ubWVudGFsQhUKE19wbTI1X2Vudmlyb25tZW50YWxCFgoUX3BtMTAwX2Vudmlyb25tZW50YWxCEQoPX3BhcnRpY2xlc18wM3VtQhEKD19wYXJ0aWNsZXNfMDV1bUIRCg9fcGFydGljbGVzXzEwdW1CEQoPX3BhcnRpY2xlc18yNXVtQhEKD19wYXJ0aWNsZXNfNTB1bUISChBfcGFydGljbGVzXzEwMHVtQgYKBF9jbzIi0gIKCkxvY2FsU3RhdHMSFgoOdXB0aW1lX3NlY29uZHMYASABKA0SGwoTY2hhbm5lbF91dGlsaXphdGlvbhgCIAEoAhITCgthaXJfdXRpbF90eBgDIAEoAhIWCg5udW1fcGFja2V0c190eBgEIAEoDRIWCg5udW1fcGFja2V0c19yeBgFIAEoDRIaChJudW1fcGFja2V0c19yeF9iYWQYBiABKA0SGAoQbnVtX29ubGluZV9ub2RlcxgHIAEoDRIXCg9udW1fdG90YWxfbm9kZXMYCCABKA0SEwoLbnVtX3J4X2R1cGUYCSABKA0SFAoMbnVtX3R4X3JlbGF5GAogASgNEh0KFW51bV90eF9yZWxheV9jYW5jZWxlZBgLIAEoDRIYChBoZWFwX3RvdGFsX2J5dGVzGAwgASgNEhcKD2hlYXBfZnJlZV9ieXRlcxgNIAEoDSJ7Cg1IZWFsdGhNZXRyaWNzEhYKCWhlYXJ0X2JwbRgBIAEoDUgAiAEBEhEKBHNwTzIYAiABKA1IAYgBARIYCgt0ZW1wZXJhdHVyZRgDIAEoAkgCiAEBQgwKCl9oZWFydF9icG1CBwoFX3NwTzJCDgoMX3RlbXBlcmF0dXJlIpECCgtIb3N0TWV0cmljcxIWCg51cHRpbWVfc2Vjb25kcxgBIAEoDRIVCg1mcmVlbWVtX2J5dGVzGAIgASgEEhcKD2Rpc2tmcmVlMV9ieXRlcxgDIAEoBBIcCg9kaXNrZnJlZTJfYnl0ZXMYBCABKARIAIgBARIcCg9kaXNrZnJlZTNfYnl0ZXMYBSABKARIAYgBARINCgVsb2FkMRgGIAEoDRINCgVsb2FkNRgHIAEoDRIOCgZsb2FkMTUYCCABKA0SGAoLdXNlcl9zdHJpbmcYCSABKAlIAogBAUISChBfZGlza2ZyZWUyX2J5dGVzQhIKEF9kaXNrZnJlZTNfYnl0ZXNCDgoMX3VzZXJfc3RyaW5nIp4DCglUZWxlbWV0cnkSDAoEdGltZRgBIAEoBxIzCg5kZXZpY2VfbWV0cmljcxgCIAEoCzIZLm1lc2h0YXN0aWMuRGV2aWNlTWV0cmljc0gAEj0KE2Vudmlyb25tZW50X21ldHJpY3MYAyABKAsyHi5tZXNodGFzdGljLkVudmlyb25tZW50TWV0cmljc0gAEjwKE2Fpcl9xdWFsaXR5X21ldHJpY3MYBCABKAsyHS5tZXNodGFzdGljLkFpclF1YWxpdHlNZXRyaWNzSAASMQoNcG93ZXJfbWV0cmljcxgFIAEoCzIYLm1lc2h0YXN0aWMuUG93ZXJNZXRyaWNzSAASLQoLbG9jYWxfc3RhdHMYBiABKAsyFi5tZXNodGFzdGljLkxvY2FsU3RhdHNIABIzCg5oZWFsdGhfbWV0cmljcxgHIAEoCzIZLm1lc2h0YXN0aWMuSGVhbHRoTWV0cmljc0gAEi8KDGhvc3RfbWV0cmljcxgIIAEoCzIXLm1lc2h0YXN0aWMuSG9zdE1ldHJpY3NIAEIJCgd2YXJpYW50Ij4KDU5hdTc4MDJDb25maWcSEgoKemVyb09mZnNldBgBIAEoBRIZChFjYWxpYnJhdGlvbkZhY3RvchgCIAEoAiqsBAoTVGVsZW1ldHJ5U2Vuc29yVHlwZRIQCgxTRU5TT1JfVU5TRVQQABIKCgZCTUUyODAQARIKCgZCTUU2ODAQAhILCgdNQ1A5ODA4EAMSCgoGSU5BMjYwEAQSCgoGSU5BMjE5EAUSCgoGQk1QMjgwEAYSCQoFU0hUQzMQBxIJCgVMUFMyMhAIEgsKB1FNQzYzMTAQCRILCgdRTUk4NjU4EAoSDAoIUU1DNTg4M0wQCxIJCgVTSFQzMRAMEgwKCFBNU0EwMDNJEA0SCwoHSU5BMzIyMRAOEgoKBkJNUDA4NRAPEgwKCFJDV0w5NjIwEBASCQoFU0hUNFgQERIMCghWRU1MNzcwMBASEgwKCE1MWDkwNjMyEBMSCwoHT1BUMzAwMRAUEgwKCExUUjM5MFVWEBUSDgoKVFNMMjU5MTFGThAWEgkKBUFIVDEwEBcSEAoMREZST0JPVF9MQVJLEBgSCwoHTkFVNzgwMhAZEgoKBkJNUDNYWBAaEgwKCElDTTIwOTQ4EBsSDAoITUFYMTcwNDgQHBIRCg1DVVNUT01fU0VOU09SEB0SDAoITUFYMzAxMDIQHhIMCghNTFg5MDYxNBAfEgkKBVNDRDRYECASCwoHUkFEU0VOUxAhEgoKBklOQTIyNhAiEhAKDERGUk9CT1RfUkFJThAjEgoKBkRQUzMxMBAkEgwKCFJBSzEyMDM1ECUSDAoITUFYMTcyNjEQJhILCgdQQ1QyMDc1ECdCZAoTY29tLmdlZWtzdmlsbGUubWVzaEIPVGVsZW1ldHJ5UHJvdG9zWiJnaXRodWIuY29tL21lc2h0YXN0aWMvZ28vZ2VuZXJhdGVkqgIUTWVzaHRhc3RpYy5Qcm90b2J1ZnO6AgBiBnByb3RvMw"), Ca = /* @__PURE__ */ S(E, 0), wa = /* @__PURE__ */ S(E, 1), Ta = /* @__PURE__ */ S(E, 2), Ea = /* @__PURE__ */ S(E, 3), Da = /* @__PURE__ */ S(E, 4), Oa = /* @__PURE__ */ S(E, 5), ka = /* @__PURE__ */ S(E, 6), Aa = /* @__PURE__ */ S(E, 7), ja = /* @__PURE__ */ S(E, 8), Ma = /* @__PURE__ */ function(e) {
+}({}), ba = /* @__PURE__ */ b(va, 0), xa = p({
+	AirQualityMetricsSchema: () => Ta,
+	DeviceMetricsSchema: () => Sa,
+	EnvironmentMetricsSchema: () => Ca,
+	HealthMetricsSchema: () => Da,
+	HostMetricsSchema: () => Oa,
+	LocalStatsSchema: () => Ea,
+	Nau7802ConfigSchema: () => Aa,
+	PowerMetricsSchema: () => wa,
+	TelemetrySchema: () => ka,
+	TelemetrySensorType: () => ja,
+	TelemetrySensorTypeSchema: () => Ma,
+	file_telemetry: () => D
+}), D = /* @__PURE__ */ S("Cg90ZWxlbWV0cnkucHJvdG8SCm1lc2h0YXN0aWMi8wEKDURldmljZU1ldHJpY3MSGgoNYmF0dGVyeV9sZXZlbBgBIAEoDUgAiAEBEhQKB3ZvbHRhZ2UYAiABKAJIAYgBARIgChNjaGFubmVsX3V0aWxpemF0aW9uGAMgASgCSAKIAQESGAoLYWlyX3V0aWxfdHgYBCABKAJIA4gBARIbCg51cHRpbWVfc2Vjb25kcxgFIAEoDUgEiAEBQhAKDl9iYXR0ZXJ5X2xldmVsQgoKCF92b2x0YWdlQhYKFF9jaGFubmVsX3V0aWxpemF0aW9uQg4KDF9haXJfdXRpbF90eEIRCg9fdXB0aW1lX3NlY29uZHMiggcKEkVudmlyb25tZW50TWV0cmljcxIYCgt0ZW1wZXJhdHVyZRgBIAEoAkgAiAEBEh4KEXJlbGF0aXZlX2h1bWlkaXR5GAIgASgCSAGIAQESIAoTYmFyb21ldHJpY19wcmVzc3VyZRgDIAEoAkgCiAEBEhsKDmdhc19yZXNpc3RhbmNlGAQgASgCSAOIAQESFAoHdm9sdGFnZRgFIAEoAkgEiAEBEhQKB2N1cnJlbnQYBiABKAJIBYgBARIQCgNpYXEYByABKA1IBogBARIVCghkaXN0YW5jZRgIIAEoAkgHiAEBEhAKA2x1eBgJIAEoAkgIiAEBEhYKCXdoaXRlX2x1eBgKIAEoAkgJiAEBEhMKBmlyX2x1eBgLIAEoAkgKiAEBEhMKBnV2X2x1eBgMIAEoAkgLiAEBEhsKDndpbmRfZGlyZWN0aW9uGA0gASgNSAyIAQESFwoKd2luZF9zcGVlZBgOIAEoAkgNiAEBEhMKBndlaWdodBgPIAEoAkgOiAEBEhYKCXdpbmRfZ3VzdBgQIAEoAkgPiAEBEhYKCXdpbmRfbHVsbBgRIAEoAkgQiAEBEhYKCXJhZGlhdGlvbhgSIAEoAkgRiAEBEhgKC3JhaW5mYWxsXzFoGBMgASgCSBKIAQESGQoMcmFpbmZhbGxfMjRoGBQgASgCSBOIAQESGgoNc29pbF9tb2lzdHVyZRgVIAEoDUgUiAEBEh0KEHNvaWxfdGVtcGVyYXR1cmUYFiABKAJIFYgBAUIOCgxfdGVtcGVyYXR1cmVCFAoSX3JlbGF0aXZlX2h1bWlkaXR5QhYKFF9iYXJvbWV0cmljX3ByZXNzdXJlQhEKD19nYXNfcmVzaXN0YW5jZUIKCghfdm9sdGFnZUIKCghfY3VycmVudEIGCgRfaWFxQgsKCV9kaXN0YW5jZUIGCgRfbHV4QgwKCl93aGl0ZV9sdXhCCQoHX2lyX2x1eEIJCgdfdXZfbHV4QhEKD193aW5kX2RpcmVjdGlvbkINCgtfd2luZF9zcGVlZEIJCgdfd2VpZ2h0QgwKCl93aW5kX2d1c3RCDAoKX3dpbmRfbHVsbEIMCgpfcmFkaWF0aW9uQg4KDF9yYWluZmFsbF8xaEIPCg1fcmFpbmZhbGxfMjRoQhAKDl9zb2lsX21vaXN0dXJlQhMKEV9zb2lsX3RlbXBlcmF0dXJlIooCCgxQb3dlck1ldHJpY3MSGAoLY2gxX3ZvbHRhZ2UYASABKAJIAIgBARIYCgtjaDFfY3VycmVudBgCIAEoAkgBiAEBEhgKC2NoMl92b2x0YWdlGAMgASgCSAKIAQESGAoLY2gyX2N1cnJlbnQYBCABKAJIA4gBARIYCgtjaDNfdm9sdGFnZRgFIAEoAkgEiAEBEhgKC2NoM19jdXJyZW50GAYgASgCSAWIAQFCDgoMX2NoMV92b2x0YWdlQg4KDF9jaDFfY3VycmVudEIOCgxfY2gyX3ZvbHRhZ2VCDgoMX2NoMl9jdXJyZW50Qg4KDF9jaDNfdm9sdGFnZUIOCgxfY2gzX2N1cnJlbnQihQUKEUFpclF1YWxpdHlNZXRyaWNzEhoKDXBtMTBfc3RhbmRhcmQYASABKA1IAIgBARIaCg1wbTI1X3N0YW5kYXJkGAIgASgNSAGIAQESGwoOcG0xMDBfc3RhbmRhcmQYAyABKA1IAogBARIfChJwbTEwX2Vudmlyb25tZW50YWwYBCABKA1IA4gBARIfChJwbTI1X2Vudmlyb25tZW50YWwYBSABKA1IBIgBARIgChNwbTEwMF9lbnZpcm9ubWVudGFsGAYgASgNSAWIAQESGwoOcGFydGljbGVzXzAzdW0YByABKA1IBogBARIbCg5wYXJ0aWNsZXNfMDV1bRgIIAEoDUgHiAEBEhsKDnBhcnRpY2xlc18xMHVtGAkgASgNSAiIAQESGwoOcGFydGljbGVzXzI1dW0YCiABKA1ICYgBARIbCg5wYXJ0aWNsZXNfNTB1bRgLIAEoDUgKiAEBEhwKD3BhcnRpY2xlc18xMDB1bRgMIAEoDUgLiAEBEhAKA2NvMhgNIAEoDUgMiAEBQhAKDl9wbTEwX3N0YW5kYXJkQhAKDl9wbTI1X3N0YW5kYXJkQhEKD19wbTEwMF9zdGFuZGFyZEIVChNfcG0xMF9lbnZpcm9ubWVudGFsQhUKE19wbTI1X2Vudmlyb25tZW50YWxCFgoUX3BtMTAwX2Vudmlyb25tZW50YWxCEQoPX3BhcnRpY2xlc18wM3VtQhEKD19wYXJ0aWNsZXNfMDV1bUIRCg9fcGFydGljbGVzXzEwdW1CEQoPX3BhcnRpY2xlc18yNXVtQhEKD19wYXJ0aWNsZXNfNTB1bUISChBfcGFydGljbGVzXzEwMHVtQgYKBF9jbzIi0gIKCkxvY2FsU3RhdHMSFgoOdXB0aW1lX3NlY29uZHMYASABKA0SGwoTY2hhbm5lbF91dGlsaXphdGlvbhgCIAEoAhITCgthaXJfdXRpbF90eBgDIAEoAhIWCg5udW1fcGFja2V0c190eBgEIAEoDRIWCg5udW1fcGFja2V0c19yeBgFIAEoDRIaChJudW1fcGFja2V0c19yeF9iYWQYBiABKA0SGAoQbnVtX29ubGluZV9ub2RlcxgHIAEoDRIXCg9udW1fdG90YWxfbm9kZXMYCCABKA0SEwoLbnVtX3J4X2R1cGUYCSABKA0SFAoMbnVtX3R4X3JlbGF5GAogASgNEh0KFW51bV90eF9yZWxheV9jYW5jZWxlZBgLIAEoDRIYChBoZWFwX3RvdGFsX2J5dGVzGAwgASgNEhcKD2hlYXBfZnJlZV9ieXRlcxgNIAEoDSJ7Cg1IZWFsdGhNZXRyaWNzEhYKCWhlYXJ0X2JwbRgBIAEoDUgAiAEBEhEKBHNwTzIYAiABKA1IAYgBARIYCgt0ZW1wZXJhdHVyZRgDIAEoAkgCiAEBQgwKCl9oZWFydF9icG1CBwoFX3NwTzJCDgoMX3RlbXBlcmF0dXJlIpECCgtIb3N0TWV0cmljcxIWCg51cHRpbWVfc2Vjb25kcxgBIAEoDRIVCg1mcmVlbWVtX2J5dGVzGAIgASgEEhcKD2Rpc2tmcmVlMV9ieXRlcxgDIAEoBBIcCg9kaXNrZnJlZTJfYnl0ZXMYBCABKARIAIgBARIcCg9kaXNrZnJlZTNfYnl0ZXMYBSABKARIAYgBARINCgVsb2FkMRgGIAEoDRINCgVsb2FkNRgHIAEoDRIOCgZsb2FkMTUYCCABKA0SGAoLdXNlcl9zdHJpbmcYCSABKAlIAogBAUISChBfZGlza2ZyZWUyX2J5dGVzQhIKEF9kaXNrZnJlZTNfYnl0ZXNCDgoMX3VzZXJfc3RyaW5nIp4DCglUZWxlbWV0cnkSDAoEdGltZRgBIAEoBxIzCg5kZXZpY2VfbWV0cmljcxgCIAEoCzIZLm1lc2h0YXN0aWMuRGV2aWNlTWV0cmljc0gAEj0KE2Vudmlyb25tZW50X21ldHJpY3MYAyABKAsyHi5tZXNodGFzdGljLkVudmlyb25tZW50TWV0cmljc0gAEjwKE2Fpcl9xdWFsaXR5X21ldHJpY3MYBCABKAsyHS5tZXNodGFzdGljLkFpclF1YWxpdHlNZXRyaWNzSAASMQoNcG93ZXJfbWV0cmljcxgFIAEoCzIYLm1lc2h0YXN0aWMuUG93ZXJNZXRyaWNzSAASLQoLbG9jYWxfc3RhdHMYBiABKAsyFi5tZXNodGFzdGljLkxvY2FsU3RhdHNIABIzCg5oZWFsdGhfbWV0cmljcxgHIAEoCzIZLm1lc2h0YXN0aWMuSGVhbHRoTWV0cmljc0gAEi8KDGhvc3RfbWV0cmljcxgIIAEoCzIXLm1lc2h0YXN0aWMuSG9zdE1ldHJpY3NIAEIJCgd2YXJpYW50Ij4KDU5hdTc4MDJDb25maWcSEgoKemVyb09mZnNldBgBIAEoBRIZChFjYWxpYnJhdGlvbkZhY3RvchgCIAEoAiqsBAoTVGVsZW1ldHJ5U2Vuc29yVHlwZRIQCgxTRU5TT1JfVU5TRVQQABIKCgZCTUUyODAQARIKCgZCTUU2ODAQAhILCgdNQ1A5ODA4EAMSCgoGSU5BMjYwEAQSCgoGSU5BMjE5EAUSCgoGQk1QMjgwEAYSCQoFU0hUQzMQBxIJCgVMUFMyMhAIEgsKB1FNQzYzMTAQCRILCgdRTUk4NjU4EAoSDAoIUU1DNTg4M0wQCxIJCgVTSFQzMRAMEgwKCFBNU0EwMDNJEA0SCwoHSU5BMzIyMRAOEgoKBkJNUDA4NRAPEgwKCFJDV0w5NjIwEBASCQoFU0hUNFgQERIMCghWRU1MNzcwMBASEgwKCE1MWDkwNjMyEBMSCwoHT1BUMzAwMRAUEgwKCExUUjM5MFVWEBUSDgoKVFNMMjU5MTFGThAWEgkKBUFIVDEwEBcSEAoMREZST0JPVF9MQVJLEBgSCwoHTkFVNzgwMhAZEgoKBkJNUDNYWBAaEgwKCElDTTIwOTQ4EBsSDAoITUFYMTcwNDgQHBIRCg1DVVNUT01fU0VOU09SEB0SDAoITUFYMzAxMDIQHhIMCghNTFg5MDYxNBAfEgkKBVNDRDRYECASCwoHUkFEU0VOUxAhEgoKBklOQTIyNhAiEhAKDERGUk9CT1RfUkFJThAjEgoKBkRQUzMxMBAkEgwKCFJBSzEyMDM1ECUSDAoITUFYMTcyNjEQJhILCgdQQ1QyMDc1ECdCZAoTY29tLmdlZWtzdmlsbGUubWVzaEIPVGVsZW1ldHJ5UHJvdG9zWiJnaXRodWIuY29tL21lc2h0YXN0aWMvZ28vZ2VuZXJhdGVkqgIUTWVzaHRhc3RpYy5Qcm90b2J1ZnO6AgBiBnByb3RvMw"), Sa = /* @__PURE__ */ C(D, 0), Ca = /* @__PURE__ */ C(D, 1), wa = /* @__PURE__ */ C(D, 2), Ta = /* @__PURE__ */ C(D, 3), Ea = /* @__PURE__ */ C(D, 4), Da = /* @__PURE__ */ C(D, 5), Oa = /* @__PURE__ */ C(D, 6), ka = /* @__PURE__ */ C(D, 7), Aa = /* @__PURE__ */ C(D, 8), ja = /* @__PURE__ */ function(e) {
 	return e[e.SENSOR_UNSET = 0] = "SENSOR_UNSET", e[e.BME280 = 1] = "BME280", e[e.BME680 = 2] = "BME680", e[e.MCP9808 = 3] = "MCP9808", e[e.INA260 = 4] = "INA260", e[e.INA219 = 5] = "INA219", e[e.BMP280 = 6] = "BMP280", e[e.SHTC3 = 7] = "SHTC3", e[e.LPS22 = 8] = "LPS22", e[e.QMC6310 = 9] = "QMC6310", e[e.QMI8658 = 10] = "QMI8658", e[e.QMC5883L = 11] = "QMC5883L", e[e.SHT31 = 12] = "SHT31", e[e.PMSA003I = 13] = "PMSA003I", e[e.INA3221 = 14] = "INA3221", e[e.BMP085 = 15] = "BMP085", e[e.RCWL9620 = 16] = "RCWL9620", e[e.SHT4X = 17] = "SHT4X", e[e.VEML7700 = 18] = "VEML7700", e[e.MLX90632 = 19] = "MLX90632", e[e.OPT3001 = 20] = "OPT3001", e[e.LTR390UV = 21] = "LTR390UV", e[e.TSL25911FN = 22] = "TSL25911FN", e[e.AHT10 = 23] = "AHT10", e[e.DFROBOT_LARK = 24] = "DFROBOT_LARK", e[e.NAU7802 = 25] = "NAU7802", e[e.BMP3XX = 26] = "BMP3XX", e[e.ICM20948 = 27] = "ICM20948", e[e.MAX17048 = 28] = "MAX17048", e[e.CUSTOM_SENSOR = 29] = "CUSTOM_SENSOR", e[e.MAX30102 = 30] = "MAX30102", e[e.MLX90614 = 31] = "MLX90614", e[e.SCD4X = 32] = "SCD4X", e[e.RADSENS = 33] = "RADSENS", e[e.INA226 = 34] = "INA226", e[e.DFROBOT_RAIN = 35] = "DFROBOT_RAIN", e[e.DPS310 = 36] = "DPS310", e[e.RAK12035 = 37] = "RAK12035", e[e.MAX17261 = 38] = "MAX17261", e[e.PCT2075 = 39] = "PCT2075", e;
-}({}), Na = /* @__PURE__ */ y(E, 0), D = p({
-	XModemSchema: () => Fa,
-	XModem_Control: () => Ia,
-	XModem_ControlSchema: () => La,
-	file_xmodem: () => Pa
-}), Pa = /* @__PURE__ */ x("Cgx4bW9kZW0ucHJvdG8SCm1lc2h0YXN0aWMitgEKBlhNb2RlbRIrCgdjb250cm9sGAEgASgOMhoubWVzaHRhc3RpYy5YTW9kZW0uQ29udHJvbBILCgNzZXEYAiABKA0SDQoFY3JjMTYYAyABKA0SDgoGYnVmZmVyGAQgASgMIlMKB0NvbnRyb2wSBwoDTlVMEAASBwoDU09IEAESBwoDU1RYEAISBwoDRU9UEAQSBwoDQUNLEAYSBwoDTkFLEBUSBwoDQ0FOEBgSCQoFQ1RSTFoQGkJhChNjb20uZ2Vla3N2aWxsZS5tZXNoQgxYbW9kZW1Qcm90b3NaImdpdGh1Yi5jb20vbWVzaHRhc3RpYy9nby9nZW5lcmF0ZWSqAhRNZXNodGFzdGljLlByb3RvYnVmc7oCAGIGcHJvdG8z"), Fa = /* @__PURE__ */ S(Pa, 0), Ia = /* @__PURE__ */ function(e) {
+}({}), Ma = /* @__PURE__ */ b(D, 0), O = p({
+	XModemSchema: () => Pa,
+	XModem_Control: () => Fa,
+	XModem_ControlSchema: () => Ia,
+	file_xmodem: () => Na
+}), Na = /* @__PURE__ */ S("Cgx4bW9kZW0ucHJvdG8SCm1lc2h0YXN0aWMitgEKBlhNb2RlbRIrCgdjb250cm9sGAEgASgOMhoubWVzaHRhc3RpYy5YTW9kZW0uQ29udHJvbBILCgNzZXEYAiABKA0SDQoFY3JjMTYYAyABKA0SDgoGYnVmZmVyGAQgASgMIlMKB0NvbnRyb2wSBwoDTlVMEAASBwoDU09IEAESBwoDU1RYEAISBwoDRU9UEAQSBwoDQUNLEAYSBwoDTkFLEBUSBwoDQ0FOEBgSCQoFQ1RSTFoQGkJhChNjb20uZ2Vla3N2aWxsZS5tZXNoQgxYbW9kZW1Qcm90b3NaImdpdGh1Yi5jb20vbWVzaHRhc3RpYy9nby9nZW5lcmF0ZWSqAhRNZXNodGFzdGljLlByb3RvYnVmc7oCAGIGcHJvdG8z"), Pa = /* @__PURE__ */ C(Na, 0), Fa = /* @__PURE__ */ function(e) {
 	return e[e.NUL = 0] = "NUL", e[e.SOH = 1] = "SOH", e[e.STX = 2] = "STX", e[e.EOT = 4] = "EOT", e[e.ACK = 6] = "ACK", e[e.NAK = 21] = "NAK", e[e.CAN = 24] = "CAN", e[e.CTRLZ = 26] = "CTRLZ", e;
-}({}), La = /* @__PURE__ */ y(Pa, 0, 0), O = p({
-	ChunkedPayloadResponseSchema: () => Do,
-	ChunkedPayloadSchema: () => To,
-	ClientNotificationSchema: () => uo,
-	CompressedSchema: () => yo,
-	Constants: () => Ao,
-	ConstantsSchema: () => jo,
-	CriticalErrorCode: () => Mo,
-	CriticalErrorCodeSchema: () => No,
-	DataSchema: () => Ja,
-	DeviceMetadataSchema: () => So,
-	DuplicatedPublicKeySchema: () => ho,
-	ExcludedModules: () => Po,
-	ExcludedModulesSchema: () => Fo,
-	FileInfoSchema: () => _o,
-	FromRadioSchema: () => lo,
-	HardwareModel: () => Oo,
-	HardwareModelSchema: () => ko,
-	HeartbeatSchema: () => Co,
-	KeyVerificationFinalSchema: () => mo,
-	KeyVerificationNumberInformSchema: () => fo,
-	KeyVerificationNumberRequestSchema: () => po,
-	KeyVerificationSchema: () => Ya,
-	LogRecordSchema: () => ao,
-	LogRecord_Level: () => oo,
-	LogRecord_LevelSchema: () => so,
-	LowEntropyKeySchema: () => go,
-	MeshPacketSchema: () => Qa,
-	MeshPacket_Delayed: () => to,
-	MeshPacket_DelayedSchema: () => no,
-	MeshPacket_Priority: () => $a,
-	MeshPacket_PrioritySchema: () => eo,
-	MqttClientProxyMessageSchema: () => Za,
-	MyNodeInfoSchema: () => io,
-	NeighborInfoSchema: () => bo,
-	NeighborSchema: () => xo,
-	NodeInfoSchema: () => ro,
-	NodeRemoteHardwarePinSchema: () => wo,
-	PositionSchema: () => Ra,
-	Position_AltSource: () => Va,
-	Position_AltSourceSchema: () => Ha,
-	Position_LocSource: () => za,
-	Position_LocSourceSchema: () => Ba,
-	QueueStatusSchema: () => co,
-	RouteDiscoverySchema: () => Wa,
-	RoutingSchema: () => Ga,
-	Routing_Error: () => Ka,
-	Routing_ErrorSchema: () => qa,
-	ToRadioSchema: () => vo,
-	UserSchema: () => Ua,
-	WaypointSchema: () => Xa,
-	file_mesh: () => k,
-	resend_chunksSchema: () => Eo
-}), k = /* @__PURE__ */ x("CgptZXNoLnByb3RvEgptZXNodGFzdGljIocHCghQb3NpdGlvbhIXCgpsYXRpdHVkZV9pGAEgASgPSACIAQESGAoLbG9uZ2l0dWRlX2kYAiABKA9IAYgBARIVCghhbHRpdHVkZRgDIAEoBUgCiAEBEgwKBHRpbWUYBCABKAcSNwoPbG9jYXRpb25fc291cmNlGAUgASgOMh4ubWVzaHRhc3RpYy5Qb3NpdGlvbi5Mb2NTb3VyY2USNwoPYWx0aXR1ZGVfc291cmNlGAYgASgOMh4ubWVzaHRhc3RpYy5Qb3NpdGlvbi5BbHRTb3VyY2USEQoJdGltZXN0YW1wGAcgASgHEh8KF3RpbWVzdGFtcF9taWxsaXNfYWRqdXN0GAggASgFEhkKDGFsdGl0dWRlX2hhZRgJIAEoEUgDiAEBEigKG2FsdGl0dWRlX2dlb2lkYWxfc2VwYXJhdGlvbhgKIAEoEUgEiAEBEgwKBFBET1AYCyABKA0SDAoESERPUBgMIAEoDRIMCgRWRE9QGA0gASgNEhQKDGdwc19hY2N1cmFjeRgOIAEoDRIZCgxncm91bmRfc3BlZWQYDyABKA1IBYgBARIZCgxncm91bmRfdHJhY2sYECABKA1IBogBARITCgtmaXhfcXVhbGl0eRgRIAEoDRIQCghmaXhfdHlwZRgSIAEoDRIUCgxzYXRzX2luX3ZpZXcYEyABKA0SEQoJc2Vuc29yX2lkGBQgASgNEhMKC25leHRfdXBkYXRlGBUgASgNEhIKCnNlcV9udW1iZXIYFiABKA0SFgoOcHJlY2lzaW9uX2JpdHMYFyABKA0iTgoJTG9jU291cmNlEg0KCUxPQ19VTlNFVBAAEg4KCkxPQ19NQU5VQUwQARIQCgxMT0NfSU5URVJOQUwQAhIQCgxMT0NfRVhURVJOQUwQAyJiCglBbHRTb3VyY2USDQoJQUxUX1VOU0VUEAASDgoKQUxUX01BTlVBTBABEhAKDEFMVF9JTlRFUk5BTBACEhAKDEFMVF9FWFRFUk5BTBADEhIKDkFMVF9CQVJPTUVUUklDEARCDQoLX2xhdGl0dWRlX2lCDgoMX2xvbmdpdHVkZV9pQgsKCV9hbHRpdHVkZUIPCg1fYWx0aXR1ZGVfaGFlQh4KHF9hbHRpdHVkZV9nZW9pZGFsX3NlcGFyYXRpb25CDwoNX2dyb3VuZF9zcGVlZEIPCg1fZ3JvdW5kX3RyYWNrIooCCgRVc2VyEgoKAmlkGAEgASgJEhEKCWxvbmdfbmFtZRgCIAEoCRISCgpzaG9ydF9uYW1lGAMgASgJEhMKB21hY2FkZHIYBCABKAxCAhgBEisKCGh3X21vZGVsGAUgASgOMhkubWVzaHRhc3RpYy5IYXJkd2FyZU1vZGVsEhMKC2lzX2xpY2Vuc2VkGAYgASgIEjIKBHJvbGUYByABKA4yJC5tZXNodGFzdGljLkNvbmZpZy5EZXZpY2VDb25maWcuUm9sZRISCgpwdWJsaWNfa2V5GAggASgMEhwKD2lzX3VubWVzc2FnYWJsZRgJIAEoCEgAiAEBQhIKEF9pc191bm1lc3NhZ2FibGUiWgoOUm91dGVEaXNjb3ZlcnkSDQoFcm91dGUYASADKAcSEwoLc25yX3Rvd2FyZHMYAiADKAUSEgoKcm91dGVfYmFjaxgDIAMoBxIQCghzbnJfYmFjaxgEIAMoBSLiAwoHUm91dGluZxIzCg1yb3V0ZV9yZXF1ZXN0GAEgASgLMhoubWVzaHRhc3RpYy5Sb3V0ZURpc2NvdmVyeUgAEjEKC3JvdXRlX3JlcGx5GAIgASgLMhoubWVzaHRhc3RpYy5Sb3V0ZURpc2NvdmVyeUgAEjEKDGVycm9yX3JlYXNvbhgDIAEoDjIZLm1lc2h0YXN0aWMuUm91dGluZy5FcnJvckgAIrACCgVFcnJvchIICgROT05FEAASDAoITk9fUk9VVEUQARILCgdHT1RfTkFLEAISCwoHVElNRU9VVBADEhAKDE5PX0lOVEVSRkFDRRAEEhIKDk1BWF9SRVRSQU5TTUlUEAUSDgoKTk9fQ0hBTk5FTBAGEg0KCVRPT19MQVJHRRAHEg8KC05PX1JFU1BPTlNFEAgSFAoQRFVUWV9DWUNMRV9MSU1JVBAJEg8KC0JBRF9SRVFVRVNUECASEgoOTk9UX0FVVEhPUklaRUQQIRIOCgpQS0lfRkFJTEVEECISFgoSUEtJX1VOS05PV05fUFVCS0VZECMSGQoVQURNSU5fQkFEX1NFU1NJT05fS0VZECQSIQodQURNSU5fUFVCTElDX0tFWV9VTkFVVEhPUklaRUQQJUIJCgd2YXJpYW50IssBCgREYXRhEiQKB3BvcnRudW0YASABKA4yEy5tZXNodGFzdGljLlBvcnROdW0SDwoHcGF5bG9hZBgCIAEoDBIVCg13YW50X3Jlc3BvbnNlGAMgASgIEgwKBGRlc3QYBCABKAcSDgoGc291cmNlGAUgASgHEhIKCnJlcXVlc3RfaWQYBiABKAcSEAoIcmVwbHlfaWQYByABKAcSDQoFZW1vamkYCCABKAcSFQoIYml0ZmllbGQYCSABKA1IAIgBAUILCglfYml0ZmllbGQiPgoPS2V5VmVyaWZpY2F0aW9uEg0KBW5vbmNlGAEgASgEEg0KBWhhc2gxGAIgASgMEg0KBWhhc2gyGAMgASgMIrwBCghXYXlwb2ludBIKCgJpZBgBIAEoDRIXCgpsYXRpdHVkZV9pGAIgASgPSACIAQESGAoLbG9uZ2l0dWRlX2kYAyABKA9IAYgBARIOCgZleHBpcmUYBCABKA0SEQoJbG9ja2VkX3RvGAUgASgNEgwKBG5hbWUYBiABKAkSEwoLZGVzY3JpcHRpb24YByABKAkSDAoEaWNvbhgIIAEoB0INCgtfbGF0aXR1ZGVfaUIOCgxfbG9uZ2l0dWRlX2kibAoWTXF0dENsaWVudFByb3h5TWVzc2FnZRINCgV0b3BpYxgBIAEoCRIOCgRkYXRhGAIgASgMSAASDgoEdGV4dBgDIAEoCUgAEhAKCHJldGFpbmVkGAQgASgIQhEKD3BheWxvYWRfdmFyaWFudCKbBQoKTWVzaFBhY2tldBIMCgRmcm9tGAEgASgHEgoKAnRvGAIgASgHEg8KB2NoYW5uZWwYAyABKA0SIwoHZGVjb2RlZBgEIAEoCzIQLm1lc2h0YXN0aWMuRGF0YUgAEhMKCWVuY3J5cHRlZBgFIAEoDEgAEgoKAmlkGAYgASgHEg8KB3J4X3RpbWUYByABKAcSDgoGcnhfc25yGAggASgCEhEKCWhvcF9saW1pdBgJIAEoDRIQCgh3YW50X2FjaxgKIAEoCBIxCghwcmlvcml0eRgLIAEoDjIfLm1lc2h0YXN0aWMuTWVzaFBhY2tldC5Qcmlvcml0eRIPCgdyeF9yc3NpGAwgASgFEjMKB2RlbGF5ZWQYDSABKA4yHi5tZXNodGFzdGljLk1lc2hQYWNrZXQuRGVsYXllZEICGAESEAoIdmlhX21xdHQYDiABKAgSEQoJaG9wX3N0YXJ0GA8gASgNEhIKCnB1YmxpY19rZXkYECABKAwSFQoNcGtpX2VuY3J5cHRlZBgRIAEoCBIQCghuZXh0X2hvcBgSIAEoDRISCgpyZWxheV9ub2RlGBMgASgNEhAKCHR4X2FmdGVyGBQgASgNIn4KCFByaW9yaXR5EgkKBVVOU0VUEAASBwoDTUlOEAESDgoKQkFDS0dST1VORBAKEgsKB0RFRkFVTFQQQBIMCghSRUxJQUJMRRBGEgwKCFJFU1BPTlNFEFASCAoESElHSBBkEgkKBUFMRVJUEG4SBwoDQUNLEHgSBwoDTUFYEH8iQgoHRGVsYXllZBIMCghOT19ERUxBWRAAEhUKEURFTEFZRURfQlJPQURDQVNUEAESEgoOREVMQVlFRF9ESVJFQ1QQAkIRCg9wYXlsb2FkX3ZhcmlhbnQixwIKCE5vZGVJbmZvEgsKA251bRgBIAEoDRIeCgR1c2VyGAIgASgLMhAubWVzaHRhc3RpYy5Vc2VyEiYKCHBvc2l0aW9uGAMgASgLMhQubWVzaHRhc3RpYy5Qb3NpdGlvbhILCgNzbnIYBCABKAISEgoKbGFzdF9oZWFyZBgFIAEoBxIxCg5kZXZpY2VfbWV0cmljcxgGIAEoCzIZLm1lc2h0YXN0aWMuRGV2aWNlTWV0cmljcxIPCgdjaGFubmVsGAcgASgNEhAKCHZpYV9tcXR0GAggASgIEhYKCWhvcHNfYXdheRgJIAEoDUgAiAEBEhMKC2lzX2Zhdm9yaXRlGAogASgIEhIKCmlzX2lnbm9yZWQYCyABKAgSIAoYaXNfa2V5X21hbnVhbGx5X3ZlcmlmaWVkGAwgASgIQgwKCl9ob3BzX2F3YXkidAoKTXlOb2RlSW5mbxITCgtteV9ub2RlX251bRgBIAEoDRIUCgxyZWJvb3RfY291bnQYCCABKA0SFwoPbWluX2FwcF92ZXJzaW9uGAsgASgNEhEKCWRldmljZV9pZBgMIAEoDBIPCgdwaW9fZW52GA0gASgJIsABCglMb2dSZWNvcmQSDwoHbWVzc2FnZRgBIAEoCRIMCgR0aW1lGAIgASgHEg4KBnNvdXJjZRgDIAEoCRIqCgVsZXZlbBgEIAEoDjIbLm1lc2h0YXN0aWMuTG9nUmVjb3JkLkxldmVsIlgKBUxldmVsEgkKBVVOU0VUEAASDAoIQ1JJVElDQUwQMhIJCgVFUlJPUhAoEgsKB1dBUk5JTkcQHhIICgRJTkZPEBQSCQoFREVCVUcQChIJCgVUUkFDRRAFIlAKC1F1ZXVlU3RhdHVzEgsKA3JlcxgBIAEoBRIMCgRmcmVlGAIgASgNEg4KBm1heGxlbhgDIAEoDRIWCg5tZXNoX3BhY2tldF9pZBgEIAEoDSL5BQoJRnJvbVJhZGlvEgoKAmlkGAEgASgNEigKBnBhY2tldBgCIAEoCzIWLm1lc2h0YXN0aWMuTWVzaFBhY2tldEgAEikKB215X2luZm8YAyABKAsyFi5tZXNodGFzdGljLk15Tm9kZUluZm9IABIpCglub2RlX2luZm8YBCABKAsyFC5tZXNodGFzdGljLk5vZGVJbmZvSAASJAoGY29uZmlnGAUgASgLMhIubWVzaHRhc3RpYy5Db25maWdIABIrCgpsb2dfcmVjb3JkGAYgASgLMhUubWVzaHRhc3RpYy5Mb2dSZWNvcmRIABIcChJjb25maWdfY29tcGxldGVfaWQYByABKA1IABISCghyZWJvb3RlZBgIIAEoCEgAEjAKDG1vZHVsZUNvbmZpZxgJIAEoCzIYLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnSAASJgoHY2hhbm5lbBgKIAEoCzITLm1lc2h0YXN0aWMuQ2hhbm5lbEgAEi4KC3F1ZXVlU3RhdHVzGAsgASgLMhcubWVzaHRhc3RpYy5RdWV1ZVN0YXR1c0gAEioKDHhtb2RlbVBhY2tldBgMIAEoCzISLm1lc2h0YXN0aWMuWE1vZGVtSAASLgoIbWV0YWRhdGEYDSABKAsyGi5tZXNodGFzdGljLkRldmljZU1ldGFkYXRhSAASRAoWbXF0dENsaWVudFByb3h5TWVzc2FnZRgOIAEoCzIiLm1lc2h0YXN0aWMuTXF0dENsaWVudFByb3h5TWVzc2FnZUgAEigKCGZpbGVJbmZvGA8gASgLMhQubWVzaHRhc3RpYy5GaWxlSW5mb0gAEjwKEmNsaWVudE5vdGlmaWNhdGlvbhgQIAEoCzIeLm1lc2h0YXN0aWMuQ2xpZW50Tm90aWZpY2F0aW9uSAASNAoOZGV2aWNldWlDb25maWcYESABKAsyGi5tZXNodGFzdGljLkRldmljZVVJQ29uZmlnSABCEQoPcGF5bG9hZF92YXJpYW50IvoDChJDbGllbnROb3RpZmljYXRpb24SFQoIcmVwbHlfaWQYASABKA1IAYgBARIMCgR0aW1lGAIgASgHEioKBWxldmVsGAMgASgOMhsubWVzaHRhc3RpYy5Mb2dSZWNvcmQuTGV2ZWwSDwoHbWVzc2FnZRgEIAEoCRJRCh5rZXlfdmVyaWZpY2F0aW9uX251bWJlcl9pbmZvcm0YCyABKAsyJy5tZXNodGFzdGljLktleVZlcmlmaWNhdGlvbk51bWJlckluZm9ybUgAElMKH2tleV92ZXJpZmljYXRpb25fbnVtYmVyX3JlcXVlc3QYDCABKAsyKC5tZXNodGFzdGljLktleVZlcmlmaWNhdGlvbk51bWJlclJlcXVlc3RIABJCChZrZXlfdmVyaWZpY2F0aW9uX2ZpbmFsGA0gASgLMiAubWVzaHRhc3RpYy5LZXlWZXJpZmljYXRpb25GaW5hbEgAEkAKFWR1cGxpY2F0ZWRfcHVibGljX2tleRgOIAEoCzIfLm1lc2h0YXN0aWMuRHVwbGljYXRlZFB1YmxpY0tleUgAEjQKD2xvd19lbnRyb3B5X2tleRgPIAEoCzIZLm1lc2h0YXN0aWMuTG93RW50cm9weUtleUgAQhEKD3BheWxvYWRfdmFyaWFudEILCglfcmVwbHlfaWQiXgobS2V5VmVyaWZpY2F0aW9uTnVtYmVySW5mb3JtEg0KBW5vbmNlGAEgASgEEhcKD3JlbW90ZV9sb25nbmFtZRgCIAEoCRIXCg9zZWN1cml0eV9udW1iZXIYAyABKA0iRgocS2V5VmVyaWZpY2F0aW9uTnVtYmVyUmVxdWVzdBINCgVub25jZRgBIAEoBBIXCg9yZW1vdGVfbG9uZ25hbWUYAiABKAkicQoUS2V5VmVyaWZpY2F0aW9uRmluYWwSDQoFbm9uY2UYASABKAQSFwoPcmVtb3RlX2xvbmduYW1lGAIgASgJEhAKCGlzU2VuZGVyGAMgASgIEh8KF3ZlcmlmaWNhdGlvbl9jaGFyYWN0ZXJzGAQgASgJIhUKE0R1cGxpY2F0ZWRQdWJsaWNLZXkiDwoNTG93RW50cm9weUtleSIxCghGaWxlSW5mbxIRCglmaWxlX25hbWUYASABKAkSEgoKc2l6ZV9ieXRlcxgCIAEoDSKUAgoHVG9SYWRpbxIoCgZwYWNrZXQYASABKAsyFi5tZXNodGFzdGljLk1lc2hQYWNrZXRIABIYCg53YW50X2NvbmZpZ19pZBgDIAEoDUgAEhQKCmRpc2Nvbm5lY3QYBCABKAhIABIqCgx4bW9kZW1QYWNrZXQYBSABKAsyEi5tZXNodGFzdGljLlhNb2RlbUgAEkQKFm1xdHRDbGllbnRQcm94eU1lc3NhZ2UYBiABKAsyIi5tZXNodGFzdGljLk1xdHRDbGllbnRQcm94eU1lc3NhZ2VIABIqCgloZWFydGJlYXQYByABKAsyFS5tZXNodGFzdGljLkhlYXJ0YmVhdEgAQhEKD3BheWxvYWRfdmFyaWFudCJACgpDb21wcmVzc2VkEiQKB3BvcnRudW0YASABKA4yEy5tZXNodGFzdGljLlBvcnROdW0SDAoEZGF0YRgCIAEoDCKHAQoMTmVpZ2hib3JJbmZvEg8KB25vZGVfaWQYASABKA0SFwoPbGFzdF9zZW50X2J5X2lkGAIgASgNEiQKHG5vZGVfYnJvYWRjYXN0X2ludGVydmFsX3NlY3MYAyABKA0SJwoJbmVpZ2hib3JzGAQgAygLMhQubWVzaHRhc3RpYy5OZWlnaGJvciJkCghOZWlnaGJvchIPCgdub2RlX2lkGAEgASgNEgsKA3NuchgCIAEoAhIUCgxsYXN0X3J4X3RpbWUYAyABKAcSJAocbm9kZV9icm9hZGNhc3RfaW50ZXJ2YWxfc2VjcxgEIAEoDSLXAgoORGV2aWNlTWV0YWRhdGESGAoQZmlybXdhcmVfdmVyc2lvbhgBIAEoCRIcChRkZXZpY2Vfc3RhdGVfdmVyc2lvbhgCIAEoDRITCgtjYW5TaHV0ZG93bhgDIAEoCBIPCgdoYXNXaWZpGAQgASgIEhQKDGhhc0JsdWV0b290aBgFIAEoCBITCgtoYXNFdGhlcm5ldBgGIAEoCBIyCgRyb2xlGAcgASgOMiQubWVzaHRhc3RpYy5Db25maWcuRGV2aWNlQ29uZmlnLlJvbGUSFgoOcG9zaXRpb25fZmxhZ3MYCCABKA0SKwoIaHdfbW9kZWwYCSABKA4yGS5tZXNodGFzdGljLkhhcmR3YXJlTW9kZWwSGQoRaGFzUmVtb3RlSGFyZHdhcmUYCiABKAgSDgoGaGFzUEtDGAsgASgIEhgKEGV4Y2x1ZGVkX21vZHVsZXMYDCABKA0iCwoJSGVhcnRiZWF0IlUKFU5vZGVSZW1vdGVIYXJkd2FyZVBpbhIQCghub2RlX251bRgBIAEoDRIqCgNwaW4YAiABKAsyHS5tZXNodGFzdGljLlJlbW90ZUhhcmR3YXJlUGluImUKDkNodW5rZWRQYXlsb2FkEhIKCnBheWxvYWRfaWQYASABKA0SEwoLY2h1bmtfY291bnQYAiABKA0SEwoLY2h1bmtfaW5kZXgYAyABKA0SFQoNcGF5bG9hZF9jaHVuaxgEIAEoDCIfCg1yZXNlbmRfY2h1bmtzEg4KBmNodW5rcxgBIAMoDSKqAQoWQ2h1bmtlZFBheWxvYWRSZXNwb25zZRISCgpwYXlsb2FkX2lkGAEgASgNEhoKEHJlcXVlc3RfdHJhbnNmZXIYAiABKAhIABIZCg9hY2NlcHRfdHJhbnNmZXIYAyABKAhIABIyCg1yZXNlbmRfY2h1bmtzGAQgASgLMhkubWVzaHRhc3RpYy5yZXNlbmRfY2h1bmtzSABCEQoPcGF5bG9hZF92YXJpYW50KvcPCg1IYXJkd2FyZU1vZGVsEgkKBVVOU0VUEAASDAoIVExPUkFfVjIQARIMCghUTE9SQV9WMRACEhIKDlRMT1JBX1YyXzFfMVA2EAMSCQoFVEJFQU0QBBIPCgtIRUxURUNfVjJfMBAFEg4KClRCRUFNX1YwUDcQBhIKCgZUX0VDSE8QBxIQCgxUTE9SQV9WMV8xUDMQCBILCgdSQUs0NjMxEAkSDwoLSEVMVEVDX1YyXzEQChINCglIRUxURUNfVjEQCxIYChRMSUxZR09fVEJFQU1fUzNfQ09SRRAMEgwKCFJBSzExMjAwEA0SCwoHTkFOT19HMRAOEhIKDlRMT1JBX1YyXzFfMVA4EA8SDwoLVExPUkFfVDNfUzMQEBIUChBOQU5PX0cxX0VYUExPUkVSEBESEQoNTkFOT19HMl9VTFRSQRASEg0KCUxPUkFfVFlQRRATEgsKB1dJUEhPTkUQFBIOCgpXSU9fV00xMTEwEBUSCwoHUkFLMjU2MBAWEhMKD0hFTFRFQ19IUlVfMzYwMRAXEhoKFkhFTFRFQ19XSVJFTEVTU19CUklER0UQGBIOCgpTVEFUSU9OX0cxEBkSDAoIUkFLMTEzMTAQGhIUChBTRU5TRUxPUkFfUlAyMDQwEBsSEAoMU0VOU0VMT1JBX1MzEBwSDQoJQ0FOQVJZT05FEB0SDwoLUlAyMDQwX0xPUkEQHhIOCgpTVEFUSU9OX0cyEB8SEQoNTE9SQV9SRUxBWV9WMRAgEg4KCk5SRjUyODQwREsQIRIHCgNQUFIQIhIPCgtHRU5JRUJMT0NLUxAjEhEKDU5SRjUyX1VOS05PV04QJBINCglQT1JURFVJTk8QJRIPCgtBTkRST0lEX1NJTRAmEgoKBkRJWV9WMRAnEhUKEU5SRjUyODQwX1BDQTEwMDU5ECgSCgoGRFJfREVWECkSCwoHTTVTVEFDSxAqEg0KCUhFTFRFQ19WMxArEhEKDUhFTFRFQ19XU0xfVjMQLBITCg9CRVRBRlBWXzI0MDBfVFgQLRIXChNCRVRBRlBWXzkwMF9OQU5PX1RYEC4SDAoIUlBJX1BJQ08QLxIbChdIRUxURUNfV0lSRUxFU1NfVFJBQ0tFUhAwEhkKFUhFTFRFQ19XSVJFTEVTU19QQVBFUhAxEgoKBlRfREVDSxAyEg4KClRfV0FUQ0hfUzMQMxIRCg1QSUNPTVBVVEVSX1MzEDQSDwoLSEVMVEVDX0hUNjIQNRISCg5FQllURV9FU1AzMl9TMxA2EhEKDUVTUDMyX1MzX1BJQ08QNxINCglDSEFUVEVSXzIQOBIeChpIRUxURUNfV0lSRUxFU1NfUEFQRVJfVjFfMBA5EiAKHEhFTFRFQ19XSVJFTEVTU19UUkFDS0VSX1YxXzAQOhILCgdVTlBIT05FEDsSDAoIVERfTE9SQUMQPBITCg9DREVCWVRFX0VPUkFfUzMQPRIPCgtUV0NfTUVTSF9WNBA+EhYKEk5SRjUyX1BST01JQ1JPX0RJWRA/Eh8KG1JBRElPTUFTVEVSXzkwMF9CQU5ESVRfTkFOTxBAEhwKGEhFTFRFQ19DQVBTVUxFX1NFTlNPUl9WMxBBEh0KGUhFTFRFQ19WSVNJT05fTUFTVEVSX1QxOTAQQhIdChlIRUxURUNfVklTSU9OX01BU1RFUl9FMjEzEEMSHQoZSEVMVEVDX1ZJU0lPTl9NQVNURVJfRTI5MBBEEhkKFUhFTFRFQ19NRVNIX05PREVfVDExNBBFEhYKElNFTlNFQ0FQX0lORElDQVRPUhBGEhMKD1RSQUNLRVJfVDEwMDBfRRBHEgsKB1JBSzMxNzIQSBIKCgZXSU9fRTUQSRIaChZSQURJT01BU1RFUl85MDBfQkFORElUEEoSEwoPTUUyNUxTMDFfNFkxMFREEEsSGAoUUlAyMDQwX0ZFQVRIRVJfUkZNOTUQTBIVChFNNVNUQUNLX0NPUkVCQVNJQxBNEhEKDU01U1RBQ0tfQ09SRTIQThINCglSUElfUElDTzIQTxISCg5NNVNUQUNLX0NPUkVTMxBQEhEKDVNFRUVEX1hJQU9fUzMQURILCgdNUzI0U0YxEFISDAoIVExPUkFfQzYQUxIPCgtXSVNNRVNIX1RBUBBUEg0KCVJPVVRBU1RJQxBVEgwKCE1FU0hfVEFCEFYSDAoITUVTSExJTksQVxISCg5YSUFPX05SRjUyX0tJVBBYEhAKDFRISU5LTk9ERV9NMRBZEhAKDFRISU5LTk9ERV9NMhBaEg8KC1RfRVRIX0VMSVRFEFsSFQoRSEVMVEVDX1NFTlNPUl9IVUIQXBIaChZSRVNFUlZFRF9GUklFRF9DSElDS0VOEF0SFgoSSEVMVEVDX01FU0hfUE9DS0VUEF4SFAoQU0VFRURfU09MQVJfTk9ERRBfEhgKFE5PTUFEU1RBUl9NRVRFT1JfUFJPEGASDQoJQ1JPV1BBTkVMEGESCwoHTElOS18zMhBiEhgKFFNFRUVEX1dJT19UUkFDS0VSX0wxEGMSHQoZU0VFRURfV0lPX1RSQUNLRVJfTDFfRUlOSxBkEhQKEFFXQU5UWl9USU5ZX0FSTVMQZRIOCgpUX0RFQ0tfUFJPEGYSEAoMVF9MT1JBX1BBR0VSEGcSHQoZR0FUNTYyX01FU0hfVFJJQUxfVFJBQ0tFUhBoEg8KClBSSVZBVEVfSFcQ/wEqLAoJQ29uc3RhbnRzEggKBFpFUk8QABIVChBEQVRBX1BBWUxPQURfTEVOEOkBKrQCChFDcml0aWNhbEVycm9yQ29kZRIICgROT05FEAASDwoLVFhfV0FUQ0hET0cQARIUChBTTEVFUF9FTlRFUl9XQUlUEAISDAoITk9fUkFESU8QAxIPCgtVTlNQRUNJRklFRBAEEhUKEVVCTE9YX1VOSVRfRkFJTEVEEAUSDQoJTk9fQVhQMTkyEAYSGQoVSU5WQUxJRF9SQURJT19TRVRUSU5HEAcSEwoPVFJBTlNNSVRfRkFJTEVEEAgSDAoIQlJPV05PVVQQCRISCg5TWDEyNjJfRkFJTFVSRRAKEhEKDVJBRElPX1NQSV9CVUcQCxIgChxGTEFTSF9DT1JSVVBUSU9OX1JFQ09WRVJBQkxFEAwSIgoeRkxBU0hfQ09SUlVQVElPTl9VTlJFQ09WRVJBQkxFEA0qgAMKD0V4Y2x1ZGVkTW9kdWxlcxIRCg1FWENMVURFRF9OT05FEAASDwoLTVFUVF9DT05GSUcQARIRCg1TRVJJQUxfQ09ORklHEAISEwoPRVhUTk9USUZfQ09ORklHEAQSFwoTU1RPUkVGT1JXQVJEX0NPTkZJRxAIEhQKEFJBTkdFVEVTVF9DT05GSUcQEBIUChBURUxFTUVUUllfQ09ORklHECASFAoQQ0FOTkVETVNHX0NPTkZJRxBAEhEKDEFVRElPX0NPTkZJRxCAARIaChVSRU1PVEVIQVJEV0FSRV9DT05GSUcQgAISGAoTTkVJR0hCT1JJTkZPX0NPTkZJRxCABBIbChZBTUJJRU5UTElHSFRJTkdfQ09ORklHEIAIEhsKFkRFVEVDVElPTlNFTlNPUl9DT05GSUcQgBASFgoRUEFYQ09VTlRFUl9DT05GSUcQgCASFQoQQkxVRVRPT1RIX0NPTkZJRxCAQBIUCg5ORVRXT1JLX0NPTkZJRxCAgAFCXwoTY29tLmdlZWtzdmlsbGUubWVzaEIKTWVzaFByb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM", [
-	Vr,
-	C,
+}({}), Ia = /* @__PURE__ */ b(Na, 0, 0), k = p({
+	ChunkedPayloadResponseSchema: () => Eo,
+	ChunkedPayloadSchema: () => wo,
+	ClientNotificationSchema: () => lo,
+	CompressedSchema: () => vo,
+	Constants: () => ko,
+	ConstantsSchema: () => Ao,
+	CriticalErrorCode: () => jo,
+	CriticalErrorCodeSchema: () => Mo,
+	DataSchema: () => qa,
+	DeviceMetadataSchema: () => xo,
+	DuplicatedPublicKeySchema: () => mo,
+	ExcludedModules: () => No,
+	ExcludedModulesSchema: () => Po,
+	FileInfoSchema: () => go,
+	FromRadioSchema: () => co,
+	HardwareModel: () => Do,
+	HardwareModelSchema: () => Oo,
+	HeartbeatSchema: () => So,
+	KeyVerificationFinalSchema: () => po,
+	KeyVerificationNumberInformSchema: () => uo,
+	KeyVerificationNumberRequestSchema: () => fo,
+	KeyVerificationSchema: () => Ja,
+	LogRecordSchema: () => io,
+	LogRecord_Level: () => ao,
+	LogRecord_LevelSchema: () => oo,
+	LowEntropyKeySchema: () => ho,
+	MeshPacketSchema: () => Za,
+	MeshPacket_Delayed: () => eo,
+	MeshPacket_DelayedSchema: () => to,
+	MeshPacket_Priority: () => Qa,
+	MeshPacket_PrioritySchema: () => $a,
+	MqttClientProxyMessageSchema: () => Xa,
+	MyNodeInfoSchema: () => ro,
+	NeighborInfoSchema: () => yo,
+	NeighborSchema: () => bo,
+	NodeInfoSchema: () => no,
+	NodeRemoteHardwarePinSchema: () => Co,
+	PositionSchema: () => La,
+	Position_AltSource: () => Ba,
+	Position_AltSourceSchema: () => Va,
+	Position_LocSource: () => Ra,
+	Position_LocSourceSchema: () => za,
+	QueueStatusSchema: () => so,
+	RouteDiscoverySchema: () => Ua,
+	RoutingSchema: () => Wa,
+	Routing_Error: () => Ga,
+	Routing_ErrorSchema: () => Ka,
+	ToRadioSchema: () => _o,
+	UserSchema: () => Ha,
+	WaypointSchema: () => Ya,
+	file_mesh: () => A,
+	resend_chunksSchema: () => To
+}), A = /* @__PURE__ */ S("CgptZXNoLnByb3RvEgptZXNodGFzdGljIocHCghQb3NpdGlvbhIXCgpsYXRpdHVkZV9pGAEgASgPSACIAQESGAoLbG9uZ2l0dWRlX2kYAiABKA9IAYgBARIVCghhbHRpdHVkZRgDIAEoBUgCiAEBEgwKBHRpbWUYBCABKAcSNwoPbG9jYXRpb25fc291cmNlGAUgASgOMh4ubWVzaHRhc3RpYy5Qb3NpdGlvbi5Mb2NTb3VyY2USNwoPYWx0aXR1ZGVfc291cmNlGAYgASgOMh4ubWVzaHRhc3RpYy5Qb3NpdGlvbi5BbHRTb3VyY2USEQoJdGltZXN0YW1wGAcgASgHEh8KF3RpbWVzdGFtcF9taWxsaXNfYWRqdXN0GAggASgFEhkKDGFsdGl0dWRlX2hhZRgJIAEoEUgDiAEBEigKG2FsdGl0dWRlX2dlb2lkYWxfc2VwYXJhdGlvbhgKIAEoEUgEiAEBEgwKBFBET1AYCyABKA0SDAoESERPUBgMIAEoDRIMCgRWRE9QGA0gASgNEhQKDGdwc19hY2N1cmFjeRgOIAEoDRIZCgxncm91bmRfc3BlZWQYDyABKA1IBYgBARIZCgxncm91bmRfdHJhY2sYECABKA1IBogBARITCgtmaXhfcXVhbGl0eRgRIAEoDRIQCghmaXhfdHlwZRgSIAEoDRIUCgxzYXRzX2luX3ZpZXcYEyABKA0SEQoJc2Vuc29yX2lkGBQgASgNEhMKC25leHRfdXBkYXRlGBUgASgNEhIKCnNlcV9udW1iZXIYFiABKA0SFgoOcHJlY2lzaW9uX2JpdHMYFyABKA0iTgoJTG9jU291cmNlEg0KCUxPQ19VTlNFVBAAEg4KCkxPQ19NQU5VQUwQARIQCgxMT0NfSU5URVJOQUwQAhIQCgxMT0NfRVhURVJOQUwQAyJiCglBbHRTb3VyY2USDQoJQUxUX1VOU0VUEAASDgoKQUxUX01BTlVBTBABEhAKDEFMVF9JTlRFUk5BTBACEhAKDEFMVF9FWFRFUk5BTBADEhIKDkFMVF9CQVJPTUVUUklDEARCDQoLX2xhdGl0dWRlX2lCDgoMX2xvbmdpdHVkZV9pQgsKCV9hbHRpdHVkZUIPCg1fYWx0aXR1ZGVfaGFlQh4KHF9hbHRpdHVkZV9nZW9pZGFsX3NlcGFyYXRpb25CDwoNX2dyb3VuZF9zcGVlZEIPCg1fZ3JvdW5kX3RyYWNrIooCCgRVc2VyEgoKAmlkGAEgASgJEhEKCWxvbmdfbmFtZRgCIAEoCRISCgpzaG9ydF9uYW1lGAMgASgJEhMKB21hY2FkZHIYBCABKAxCAhgBEisKCGh3X21vZGVsGAUgASgOMhkubWVzaHRhc3RpYy5IYXJkd2FyZU1vZGVsEhMKC2lzX2xpY2Vuc2VkGAYgASgIEjIKBHJvbGUYByABKA4yJC5tZXNodGFzdGljLkNvbmZpZy5EZXZpY2VDb25maWcuUm9sZRISCgpwdWJsaWNfa2V5GAggASgMEhwKD2lzX3VubWVzc2FnYWJsZRgJIAEoCEgAiAEBQhIKEF9pc191bm1lc3NhZ2FibGUiWgoOUm91dGVEaXNjb3ZlcnkSDQoFcm91dGUYASADKAcSEwoLc25yX3Rvd2FyZHMYAiADKAUSEgoKcm91dGVfYmFjaxgDIAMoBxIQCghzbnJfYmFjaxgEIAMoBSLiAwoHUm91dGluZxIzCg1yb3V0ZV9yZXF1ZXN0GAEgASgLMhoubWVzaHRhc3RpYy5Sb3V0ZURpc2NvdmVyeUgAEjEKC3JvdXRlX3JlcGx5GAIgASgLMhoubWVzaHRhc3RpYy5Sb3V0ZURpc2NvdmVyeUgAEjEKDGVycm9yX3JlYXNvbhgDIAEoDjIZLm1lc2h0YXN0aWMuUm91dGluZy5FcnJvckgAIrACCgVFcnJvchIICgROT05FEAASDAoITk9fUk9VVEUQARILCgdHT1RfTkFLEAISCwoHVElNRU9VVBADEhAKDE5PX0lOVEVSRkFDRRAEEhIKDk1BWF9SRVRSQU5TTUlUEAUSDgoKTk9fQ0hBTk5FTBAGEg0KCVRPT19MQVJHRRAHEg8KC05PX1JFU1BPTlNFEAgSFAoQRFVUWV9DWUNMRV9MSU1JVBAJEg8KC0JBRF9SRVFVRVNUECASEgoOTk9UX0FVVEhPUklaRUQQIRIOCgpQS0lfRkFJTEVEECISFgoSUEtJX1VOS05PV05fUFVCS0VZECMSGQoVQURNSU5fQkFEX1NFU1NJT05fS0VZECQSIQodQURNSU5fUFVCTElDX0tFWV9VTkFVVEhPUklaRUQQJUIJCgd2YXJpYW50IssBCgREYXRhEiQKB3BvcnRudW0YASABKA4yEy5tZXNodGFzdGljLlBvcnROdW0SDwoHcGF5bG9hZBgCIAEoDBIVCg13YW50X3Jlc3BvbnNlGAMgASgIEgwKBGRlc3QYBCABKAcSDgoGc291cmNlGAUgASgHEhIKCnJlcXVlc3RfaWQYBiABKAcSEAoIcmVwbHlfaWQYByABKAcSDQoFZW1vamkYCCABKAcSFQoIYml0ZmllbGQYCSABKA1IAIgBAUILCglfYml0ZmllbGQiPgoPS2V5VmVyaWZpY2F0aW9uEg0KBW5vbmNlGAEgASgEEg0KBWhhc2gxGAIgASgMEg0KBWhhc2gyGAMgASgMIrwBCghXYXlwb2ludBIKCgJpZBgBIAEoDRIXCgpsYXRpdHVkZV9pGAIgASgPSACIAQESGAoLbG9uZ2l0dWRlX2kYAyABKA9IAYgBARIOCgZleHBpcmUYBCABKA0SEQoJbG9ja2VkX3RvGAUgASgNEgwKBG5hbWUYBiABKAkSEwoLZGVzY3JpcHRpb24YByABKAkSDAoEaWNvbhgIIAEoB0INCgtfbGF0aXR1ZGVfaUIOCgxfbG9uZ2l0dWRlX2kibAoWTXF0dENsaWVudFByb3h5TWVzc2FnZRINCgV0b3BpYxgBIAEoCRIOCgRkYXRhGAIgASgMSAASDgoEdGV4dBgDIAEoCUgAEhAKCHJldGFpbmVkGAQgASgIQhEKD3BheWxvYWRfdmFyaWFudCKbBQoKTWVzaFBhY2tldBIMCgRmcm9tGAEgASgHEgoKAnRvGAIgASgHEg8KB2NoYW5uZWwYAyABKA0SIwoHZGVjb2RlZBgEIAEoCzIQLm1lc2h0YXN0aWMuRGF0YUgAEhMKCWVuY3J5cHRlZBgFIAEoDEgAEgoKAmlkGAYgASgHEg8KB3J4X3RpbWUYByABKAcSDgoGcnhfc25yGAggASgCEhEKCWhvcF9saW1pdBgJIAEoDRIQCgh3YW50X2FjaxgKIAEoCBIxCghwcmlvcml0eRgLIAEoDjIfLm1lc2h0YXN0aWMuTWVzaFBhY2tldC5Qcmlvcml0eRIPCgdyeF9yc3NpGAwgASgFEjMKB2RlbGF5ZWQYDSABKA4yHi5tZXNodGFzdGljLk1lc2hQYWNrZXQuRGVsYXllZEICGAESEAoIdmlhX21xdHQYDiABKAgSEQoJaG9wX3N0YXJ0GA8gASgNEhIKCnB1YmxpY19rZXkYECABKAwSFQoNcGtpX2VuY3J5cHRlZBgRIAEoCBIQCghuZXh0X2hvcBgSIAEoDRISCgpyZWxheV9ub2RlGBMgASgNEhAKCHR4X2FmdGVyGBQgASgNIn4KCFByaW9yaXR5EgkKBVVOU0VUEAASBwoDTUlOEAESDgoKQkFDS0dST1VORBAKEgsKB0RFRkFVTFQQQBIMCghSRUxJQUJMRRBGEgwKCFJFU1BPTlNFEFASCAoESElHSBBkEgkKBUFMRVJUEG4SBwoDQUNLEHgSBwoDTUFYEH8iQgoHRGVsYXllZBIMCghOT19ERUxBWRAAEhUKEURFTEFZRURfQlJPQURDQVNUEAESEgoOREVMQVlFRF9ESVJFQ1QQAkIRCg9wYXlsb2FkX3ZhcmlhbnQixwIKCE5vZGVJbmZvEgsKA251bRgBIAEoDRIeCgR1c2VyGAIgASgLMhAubWVzaHRhc3RpYy5Vc2VyEiYKCHBvc2l0aW9uGAMgASgLMhQubWVzaHRhc3RpYy5Qb3NpdGlvbhILCgNzbnIYBCABKAISEgoKbGFzdF9oZWFyZBgFIAEoBxIxCg5kZXZpY2VfbWV0cmljcxgGIAEoCzIZLm1lc2h0YXN0aWMuRGV2aWNlTWV0cmljcxIPCgdjaGFubmVsGAcgASgNEhAKCHZpYV9tcXR0GAggASgIEhYKCWhvcHNfYXdheRgJIAEoDUgAiAEBEhMKC2lzX2Zhdm9yaXRlGAogASgIEhIKCmlzX2lnbm9yZWQYCyABKAgSIAoYaXNfa2V5X21hbnVhbGx5X3ZlcmlmaWVkGAwgASgIQgwKCl9ob3BzX2F3YXkidAoKTXlOb2RlSW5mbxITCgtteV9ub2RlX251bRgBIAEoDRIUCgxyZWJvb3RfY291bnQYCCABKA0SFwoPbWluX2FwcF92ZXJzaW9uGAsgASgNEhEKCWRldmljZV9pZBgMIAEoDBIPCgdwaW9fZW52GA0gASgJIsABCglMb2dSZWNvcmQSDwoHbWVzc2FnZRgBIAEoCRIMCgR0aW1lGAIgASgHEg4KBnNvdXJjZRgDIAEoCRIqCgVsZXZlbBgEIAEoDjIbLm1lc2h0YXN0aWMuTG9nUmVjb3JkLkxldmVsIlgKBUxldmVsEgkKBVVOU0VUEAASDAoIQ1JJVElDQUwQMhIJCgVFUlJPUhAoEgsKB1dBUk5JTkcQHhIICgRJTkZPEBQSCQoFREVCVUcQChIJCgVUUkFDRRAFIlAKC1F1ZXVlU3RhdHVzEgsKA3JlcxgBIAEoBRIMCgRmcmVlGAIgASgNEg4KBm1heGxlbhgDIAEoDRIWCg5tZXNoX3BhY2tldF9pZBgEIAEoDSL5BQoJRnJvbVJhZGlvEgoKAmlkGAEgASgNEigKBnBhY2tldBgCIAEoCzIWLm1lc2h0YXN0aWMuTWVzaFBhY2tldEgAEikKB215X2luZm8YAyABKAsyFi5tZXNodGFzdGljLk15Tm9kZUluZm9IABIpCglub2RlX2luZm8YBCABKAsyFC5tZXNodGFzdGljLk5vZGVJbmZvSAASJAoGY29uZmlnGAUgASgLMhIubWVzaHRhc3RpYy5Db25maWdIABIrCgpsb2dfcmVjb3JkGAYgASgLMhUubWVzaHRhc3RpYy5Mb2dSZWNvcmRIABIcChJjb25maWdfY29tcGxldGVfaWQYByABKA1IABISCghyZWJvb3RlZBgIIAEoCEgAEjAKDG1vZHVsZUNvbmZpZxgJIAEoCzIYLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnSAASJgoHY2hhbm5lbBgKIAEoCzITLm1lc2h0YXN0aWMuQ2hhbm5lbEgAEi4KC3F1ZXVlU3RhdHVzGAsgASgLMhcubWVzaHRhc3RpYy5RdWV1ZVN0YXR1c0gAEioKDHhtb2RlbVBhY2tldBgMIAEoCzISLm1lc2h0YXN0aWMuWE1vZGVtSAASLgoIbWV0YWRhdGEYDSABKAsyGi5tZXNodGFzdGljLkRldmljZU1ldGFkYXRhSAASRAoWbXF0dENsaWVudFByb3h5TWVzc2FnZRgOIAEoCzIiLm1lc2h0YXN0aWMuTXF0dENsaWVudFByb3h5TWVzc2FnZUgAEigKCGZpbGVJbmZvGA8gASgLMhQubWVzaHRhc3RpYy5GaWxlSW5mb0gAEjwKEmNsaWVudE5vdGlmaWNhdGlvbhgQIAEoCzIeLm1lc2h0YXN0aWMuQ2xpZW50Tm90aWZpY2F0aW9uSAASNAoOZGV2aWNldWlDb25maWcYESABKAsyGi5tZXNodGFzdGljLkRldmljZVVJQ29uZmlnSABCEQoPcGF5bG9hZF92YXJpYW50IvoDChJDbGllbnROb3RpZmljYXRpb24SFQoIcmVwbHlfaWQYASABKA1IAYgBARIMCgR0aW1lGAIgASgHEioKBWxldmVsGAMgASgOMhsubWVzaHRhc3RpYy5Mb2dSZWNvcmQuTGV2ZWwSDwoHbWVzc2FnZRgEIAEoCRJRCh5rZXlfdmVyaWZpY2F0aW9uX251bWJlcl9pbmZvcm0YCyABKAsyJy5tZXNodGFzdGljLktleVZlcmlmaWNhdGlvbk51bWJlckluZm9ybUgAElMKH2tleV92ZXJpZmljYXRpb25fbnVtYmVyX3JlcXVlc3QYDCABKAsyKC5tZXNodGFzdGljLktleVZlcmlmaWNhdGlvbk51bWJlclJlcXVlc3RIABJCChZrZXlfdmVyaWZpY2F0aW9uX2ZpbmFsGA0gASgLMiAubWVzaHRhc3RpYy5LZXlWZXJpZmljYXRpb25GaW5hbEgAEkAKFWR1cGxpY2F0ZWRfcHVibGljX2tleRgOIAEoCzIfLm1lc2h0YXN0aWMuRHVwbGljYXRlZFB1YmxpY0tleUgAEjQKD2xvd19lbnRyb3B5X2tleRgPIAEoCzIZLm1lc2h0YXN0aWMuTG93RW50cm9weUtleUgAQhEKD3BheWxvYWRfdmFyaWFudEILCglfcmVwbHlfaWQiXgobS2V5VmVyaWZpY2F0aW9uTnVtYmVySW5mb3JtEg0KBW5vbmNlGAEgASgEEhcKD3JlbW90ZV9sb25nbmFtZRgCIAEoCRIXCg9zZWN1cml0eV9udW1iZXIYAyABKA0iRgocS2V5VmVyaWZpY2F0aW9uTnVtYmVyUmVxdWVzdBINCgVub25jZRgBIAEoBBIXCg9yZW1vdGVfbG9uZ25hbWUYAiABKAkicQoUS2V5VmVyaWZpY2F0aW9uRmluYWwSDQoFbm9uY2UYASABKAQSFwoPcmVtb3RlX2xvbmduYW1lGAIgASgJEhAKCGlzU2VuZGVyGAMgASgIEh8KF3ZlcmlmaWNhdGlvbl9jaGFyYWN0ZXJzGAQgASgJIhUKE0R1cGxpY2F0ZWRQdWJsaWNLZXkiDwoNTG93RW50cm9weUtleSIxCghGaWxlSW5mbxIRCglmaWxlX25hbWUYASABKAkSEgoKc2l6ZV9ieXRlcxgCIAEoDSKUAgoHVG9SYWRpbxIoCgZwYWNrZXQYASABKAsyFi5tZXNodGFzdGljLk1lc2hQYWNrZXRIABIYCg53YW50X2NvbmZpZ19pZBgDIAEoDUgAEhQKCmRpc2Nvbm5lY3QYBCABKAhIABIqCgx4bW9kZW1QYWNrZXQYBSABKAsyEi5tZXNodGFzdGljLlhNb2RlbUgAEkQKFm1xdHRDbGllbnRQcm94eU1lc3NhZ2UYBiABKAsyIi5tZXNodGFzdGljLk1xdHRDbGllbnRQcm94eU1lc3NhZ2VIABIqCgloZWFydGJlYXQYByABKAsyFS5tZXNodGFzdGljLkhlYXJ0YmVhdEgAQhEKD3BheWxvYWRfdmFyaWFudCJACgpDb21wcmVzc2VkEiQKB3BvcnRudW0YASABKA4yEy5tZXNodGFzdGljLlBvcnROdW0SDAoEZGF0YRgCIAEoDCKHAQoMTmVpZ2hib3JJbmZvEg8KB25vZGVfaWQYASABKA0SFwoPbGFzdF9zZW50X2J5X2lkGAIgASgNEiQKHG5vZGVfYnJvYWRjYXN0X2ludGVydmFsX3NlY3MYAyABKA0SJwoJbmVpZ2hib3JzGAQgAygLMhQubWVzaHRhc3RpYy5OZWlnaGJvciJkCghOZWlnaGJvchIPCgdub2RlX2lkGAEgASgNEgsKA3NuchgCIAEoAhIUCgxsYXN0X3J4X3RpbWUYAyABKAcSJAocbm9kZV9icm9hZGNhc3RfaW50ZXJ2YWxfc2VjcxgEIAEoDSLXAgoORGV2aWNlTWV0YWRhdGESGAoQZmlybXdhcmVfdmVyc2lvbhgBIAEoCRIcChRkZXZpY2Vfc3RhdGVfdmVyc2lvbhgCIAEoDRITCgtjYW5TaHV0ZG93bhgDIAEoCBIPCgdoYXNXaWZpGAQgASgIEhQKDGhhc0JsdWV0b290aBgFIAEoCBITCgtoYXNFdGhlcm5ldBgGIAEoCBIyCgRyb2xlGAcgASgOMiQubWVzaHRhc3RpYy5Db25maWcuRGV2aWNlQ29uZmlnLlJvbGUSFgoOcG9zaXRpb25fZmxhZ3MYCCABKA0SKwoIaHdfbW9kZWwYCSABKA4yGS5tZXNodGFzdGljLkhhcmR3YXJlTW9kZWwSGQoRaGFzUmVtb3RlSGFyZHdhcmUYCiABKAgSDgoGaGFzUEtDGAsgASgIEhgKEGV4Y2x1ZGVkX21vZHVsZXMYDCABKA0iCwoJSGVhcnRiZWF0IlUKFU5vZGVSZW1vdGVIYXJkd2FyZVBpbhIQCghub2RlX251bRgBIAEoDRIqCgNwaW4YAiABKAsyHS5tZXNodGFzdGljLlJlbW90ZUhhcmR3YXJlUGluImUKDkNodW5rZWRQYXlsb2FkEhIKCnBheWxvYWRfaWQYASABKA0SEwoLY2h1bmtfY291bnQYAiABKA0SEwoLY2h1bmtfaW5kZXgYAyABKA0SFQoNcGF5bG9hZF9jaHVuaxgEIAEoDCIfCg1yZXNlbmRfY2h1bmtzEg4KBmNodW5rcxgBIAMoDSKqAQoWQ2h1bmtlZFBheWxvYWRSZXNwb25zZRISCgpwYXlsb2FkX2lkGAEgASgNEhoKEHJlcXVlc3RfdHJhbnNmZXIYAiABKAhIABIZCg9hY2NlcHRfdHJhbnNmZXIYAyABKAhIABIyCg1yZXNlbmRfY2h1bmtzGAQgASgLMhkubWVzaHRhc3RpYy5yZXNlbmRfY2h1bmtzSABCEQoPcGF5bG9hZF92YXJpYW50KvcPCg1IYXJkd2FyZU1vZGVsEgkKBVVOU0VUEAASDAoIVExPUkFfVjIQARIMCghUTE9SQV9WMRACEhIKDlRMT1JBX1YyXzFfMVA2EAMSCQoFVEJFQU0QBBIPCgtIRUxURUNfVjJfMBAFEg4KClRCRUFNX1YwUDcQBhIKCgZUX0VDSE8QBxIQCgxUTE9SQV9WMV8xUDMQCBILCgdSQUs0NjMxEAkSDwoLSEVMVEVDX1YyXzEQChINCglIRUxURUNfVjEQCxIYChRMSUxZR09fVEJFQU1fUzNfQ09SRRAMEgwKCFJBSzExMjAwEA0SCwoHTkFOT19HMRAOEhIKDlRMT1JBX1YyXzFfMVA4EA8SDwoLVExPUkFfVDNfUzMQEBIUChBOQU5PX0cxX0VYUExPUkVSEBESEQoNTkFOT19HMl9VTFRSQRASEg0KCUxPUkFfVFlQRRATEgsKB1dJUEhPTkUQFBIOCgpXSU9fV00xMTEwEBUSCwoHUkFLMjU2MBAWEhMKD0hFTFRFQ19IUlVfMzYwMRAXEhoKFkhFTFRFQ19XSVJFTEVTU19CUklER0UQGBIOCgpTVEFUSU9OX0cxEBkSDAoIUkFLMTEzMTAQGhIUChBTRU5TRUxPUkFfUlAyMDQwEBsSEAoMU0VOU0VMT1JBX1MzEBwSDQoJQ0FOQVJZT05FEB0SDwoLUlAyMDQwX0xPUkEQHhIOCgpTVEFUSU9OX0cyEB8SEQoNTE9SQV9SRUxBWV9WMRAgEg4KCk5SRjUyODQwREsQIRIHCgNQUFIQIhIPCgtHRU5JRUJMT0NLUxAjEhEKDU5SRjUyX1VOS05PV04QJBINCglQT1JURFVJTk8QJRIPCgtBTkRST0lEX1NJTRAmEgoKBkRJWV9WMRAnEhUKEU5SRjUyODQwX1BDQTEwMDU5ECgSCgoGRFJfREVWECkSCwoHTTVTVEFDSxAqEg0KCUhFTFRFQ19WMxArEhEKDUhFTFRFQ19XU0xfVjMQLBITCg9CRVRBRlBWXzI0MDBfVFgQLRIXChNCRVRBRlBWXzkwMF9OQU5PX1RYEC4SDAoIUlBJX1BJQ08QLxIbChdIRUxURUNfV0lSRUxFU1NfVFJBQ0tFUhAwEhkKFUhFTFRFQ19XSVJFTEVTU19QQVBFUhAxEgoKBlRfREVDSxAyEg4KClRfV0FUQ0hfUzMQMxIRCg1QSUNPTVBVVEVSX1MzEDQSDwoLSEVMVEVDX0hUNjIQNRISCg5FQllURV9FU1AzMl9TMxA2EhEKDUVTUDMyX1MzX1BJQ08QNxINCglDSEFUVEVSXzIQOBIeChpIRUxURUNfV0lSRUxFU1NfUEFQRVJfVjFfMBA5EiAKHEhFTFRFQ19XSVJFTEVTU19UUkFDS0VSX1YxXzAQOhILCgdVTlBIT05FEDsSDAoIVERfTE9SQUMQPBITCg9DREVCWVRFX0VPUkFfUzMQPRIPCgtUV0NfTUVTSF9WNBA+EhYKEk5SRjUyX1BST01JQ1JPX0RJWRA/Eh8KG1JBRElPTUFTVEVSXzkwMF9CQU5ESVRfTkFOTxBAEhwKGEhFTFRFQ19DQVBTVUxFX1NFTlNPUl9WMxBBEh0KGUhFTFRFQ19WSVNJT05fTUFTVEVSX1QxOTAQQhIdChlIRUxURUNfVklTSU9OX01BU1RFUl9FMjEzEEMSHQoZSEVMVEVDX1ZJU0lPTl9NQVNURVJfRTI5MBBEEhkKFUhFTFRFQ19NRVNIX05PREVfVDExNBBFEhYKElNFTlNFQ0FQX0lORElDQVRPUhBGEhMKD1RSQUNLRVJfVDEwMDBfRRBHEgsKB1JBSzMxNzIQSBIKCgZXSU9fRTUQSRIaChZSQURJT01BU1RFUl85MDBfQkFORElUEEoSEwoPTUUyNUxTMDFfNFkxMFREEEsSGAoUUlAyMDQwX0ZFQVRIRVJfUkZNOTUQTBIVChFNNVNUQUNLX0NPUkVCQVNJQxBNEhEKDU01U1RBQ0tfQ09SRTIQThINCglSUElfUElDTzIQTxISCg5NNVNUQUNLX0NPUkVTMxBQEhEKDVNFRUVEX1hJQU9fUzMQURILCgdNUzI0U0YxEFISDAoIVExPUkFfQzYQUxIPCgtXSVNNRVNIX1RBUBBUEg0KCVJPVVRBU1RJQxBVEgwKCE1FU0hfVEFCEFYSDAoITUVTSExJTksQVxISCg5YSUFPX05SRjUyX0tJVBBYEhAKDFRISU5LTk9ERV9NMRBZEhAKDFRISU5LTk9ERV9NMhBaEg8KC1RfRVRIX0VMSVRFEFsSFQoRSEVMVEVDX1NFTlNPUl9IVUIQXBIaChZSRVNFUlZFRF9GUklFRF9DSElDS0VOEF0SFgoSSEVMVEVDX01FU0hfUE9DS0VUEF4SFAoQU0VFRURfU09MQVJfTk9ERRBfEhgKFE5PTUFEU1RBUl9NRVRFT1JfUFJPEGASDQoJQ1JPV1BBTkVMEGESCwoHTElOS18zMhBiEhgKFFNFRUVEX1dJT19UUkFDS0VSX0wxEGMSHQoZU0VFRURfV0lPX1RSQUNLRVJfTDFfRUlOSxBkEhQKEFFXQU5UWl9USU5ZX0FSTVMQZRIOCgpUX0RFQ0tfUFJPEGYSEAoMVF9MT1JBX1BBR0VSEGcSHQoZR0FUNTYyX01FU0hfVFJJQUxfVFJBQ0tFUhBoEg8KClBSSVZBVEVfSFcQ/wEqLAoJQ29uc3RhbnRzEggKBFpFUk8QABIVChBEQVRBX1BBWUxPQURfTEVOEOkBKrQCChFDcml0aWNhbEVycm9yQ29kZRIICgROT05FEAASDwoLVFhfV0FUQ0hET0cQARIUChBTTEVFUF9FTlRFUl9XQUlUEAISDAoITk9fUkFESU8QAxIPCgtVTlNQRUNJRklFRBAEEhUKEVVCTE9YX1VOSVRfRkFJTEVEEAUSDQoJTk9fQVhQMTkyEAYSGQoVSU5WQUxJRF9SQURJT19TRVRUSU5HEAcSEwoPVFJBTlNNSVRfRkFJTEVEEAgSDAoIQlJPV05PVVQQCRISCg5TWDEyNjJfRkFJTFVSRRAKEhEKDVJBRElPX1NQSV9CVUcQCxIgChxGTEFTSF9DT1JSVVBUSU9OX1JFQ09WRVJBQkxFEAwSIgoeRkxBU0hfQ09SUlVQVElPTl9VTlJFQ09WRVJBQkxFEA0qgAMKD0V4Y2x1ZGVkTW9kdWxlcxIRCg1FWENMVURFRF9OT05FEAASDwoLTVFUVF9DT05GSUcQARIRCg1TRVJJQUxfQ09ORklHEAISEwoPRVhUTk9USUZfQ09ORklHEAQSFwoTU1RPUkVGT1JXQVJEX0NPTkZJRxAIEhQKEFJBTkdFVEVTVF9DT05GSUcQEBIUChBURUxFTUVUUllfQ09ORklHECASFAoQQ0FOTkVETVNHX0NPTkZJRxBAEhEKDEFVRElPX0NPTkZJRxCAARIaChVSRU1PVEVIQVJEV0FSRV9DT05GSUcQgAISGAoTTkVJR0hCT1JJTkZPX0NPTkZJRxCABBIbChZBTUJJRU5UTElHSFRJTkdfQ09ORklHEIAIEhsKFkRFVEVDVElPTlNFTlNPUl9DT05GSUcQgBASFgoRUEFYQ09VTlRFUl9DT05GSUcQgCASFQoQQkxVRVRPT1RIX0NPTkZJRxCAQBIUCg5ORVRXT1JLX0NPTkZJRxCAgAFCXwoTY29tLmdlZWtzdmlsbGUubWVzaEIKTWVzaFByb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM", [
+	Br,
 	w,
-	ya,
-	E,
-	Pa,
-	qr
-]), Ra = /* @__PURE__ */ S(k, 0), za = /* @__PURE__ */ function(e) {
+	T,
+	va,
+	D,
+	Na,
+	Kr
+]), La = /* @__PURE__ */ C(A, 0), Ra = /* @__PURE__ */ function(e) {
 	return e[e.LOC_UNSET = 0] = "LOC_UNSET", e[e.LOC_MANUAL = 1] = "LOC_MANUAL", e[e.LOC_INTERNAL = 2] = "LOC_INTERNAL", e[e.LOC_EXTERNAL = 3] = "LOC_EXTERNAL", e;
-}({}), Ba = /* @__PURE__ */ y(k, 0, 0), Va = /* @__PURE__ */ function(e) {
+}({}), za = /* @__PURE__ */ b(A, 0, 0), Ba = /* @__PURE__ */ function(e) {
 	return e[e.ALT_UNSET = 0] = "ALT_UNSET", e[e.ALT_MANUAL = 1] = "ALT_MANUAL", e[e.ALT_INTERNAL = 2] = "ALT_INTERNAL", e[e.ALT_EXTERNAL = 3] = "ALT_EXTERNAL", e[e.ALT_BAROMETRIC = 4] = "ALT_BAROMETRIC", e;
-}({}), Ha = /* @__PURE__ */ y(k, 0, 1), Ua = /* @__PURE__ */ S(k, 1), Wa = /* @__PURE__ */ S(k, 2), Ga = /* @__PURE__ */ S(k, 3), Ka = /* @__PURE__ */ function(e) {
+}({}), Va = /* @__PURE__ */ b(A, 0, 1), Ha = /* @__PURE__ */ C(A, 1), Ua = /* @__PURE__ */ C(A, 2), Wa = /* @__PURE__ */ C(A, 3), Ga = /* @__PURE__ */ function(e) {
 	return e[e.NONE = 0] = "NONE", e[e.NO_ROUTE = 1] = "NO_ROUTE", e[e.GOT_NAK = 2] = "GOT_NAK", e[e.TIMEOUT = 3] = "TIMEOUT", e[e.NO_INTERFACE = 4] = "NO_INTERFACE", e[e.MAX_RETRANSMIT = 5] = "MAX_RETRANSMIT", e[e.NO_CHANNEL = 6] = "NO_CHANNEL", e[e.TOO_LARGE = 7] = "TOO_LARGE", e[e.NO_RESPONSE = 8] = "NO_RESPONSE", e[e.DUTY_CYCLE_LIMIT = 9] = "DUTY_CYCLE_LIMIT", e[e.BAD_REQUEST = 32] = "BAD_REQUEST", e[e.NOT_AUTHORIZED = 33] = "NOT_AUTHORIZED", e[e.PKI_FAILED = 34] = "PKI_FAILED", e[e.PKI_UNKNOWN_PUBKEY = 35] = "PKI_UNKNOWN_PUBKEY", e[e.ADMIN_BAD_SESSION_KEY = 36] = "ADMIN_BAD_SESSION_KEY", e[e.ADMIN_PUBLIC_KEY_UNAUTHORIZED = 37] = "ADMIN_PUBLIC_KEY_UNAUTHORIZED", e;
-}({}), qa = /* @__PURE__ */ y(k, 3, 0), Ja = /* @__PURE__ */ S(k, 4), Ya = /* @__PURE__ */ S(k, 5), Xa = /* @__PURE__ */ S(k, 6), Za = /* @__PURE__ */ S(k, 7), Qa = /* @__PURE__ */ S(k, 8), $a = /* @__PURE__ */ function(e) {
+}({}), Ka = /* @__PURE__ */ b(A, 3, 0), qa = /* @__PURE__ */ C(A, 4), Ja = /* @__PURE__ */ C(A, 5), Ya = /* @__PURE__ */ C(A, 6), Xa = /* @__PURE__ */ C(A, 7), Za = /* @__PURE__ */ C(A, 8), Qa = /* @__PURE__ */ function(e) {
 	return e[e.UNSET = 0] = "UNSET", e[e.MIN = 1] = "MIN", e[e.BACKGROUND = 10] = "BACKGROUND", e[e.DEFAULT = 64] = "DEFAULT", e[e.RELIABLE = 70] = "RELIABLE", e[e.RESPONSE = 80] = "RESPONSE", e[e.HIGH = 100] = "HIGH", e[e.ALERT = 110] = "ALERT", e[e.ACK = 120] = "ACK", e[e.MAX = 127] = "MAX", e;
-}({}), eo = /* @__PURE__ */ y(k, 8, 0), to = /* @__PURE__ */ function(e) {
+}({}), $a = /* @__PURE__ */ b(A, 8, 0), eo = /* @__PURE__ */ function(e) {
 	return e[e.NO_DELAY = 0] = "NO_DELAY", e[e.DELAYED_BROADCAST = 1] = "DELAYED_BROADCAST", e[e.DELAYED_DIRECT = 2] = "DELAYED_DIRECT", e;
-}({}), no = /* @__PURE__ */ y(k, 8, 1), ro = /* @__PURE__ */ S(k, 9), io = /* @__PURE__ */ S(k, 10), ao = /* @__PURE__ */ S(k, 11), oo = /* @__PURE__ */ function(e) {
+}({}), to = /* @__PURE__ */ b(A, 8, 1), no = /* @__PURE__ */ C(A, 9), ro = /* @__PURE__ */ C(A, 10), io = /* @__PURE__ */ C(A, 11), ao = /* @__PURE__ */ function(e) {
 	return e[e.UNSET = 0] = "UNSET", e[e.CRITICAL = 50] = "CRITICAL", e[e.ERROR = 40] = "ERROR", e[e.WARNING = 30] = "WARNING", e[e.INFO = 20] = "INFO", e[e.DEBUG = 10] = "DEBUG", e[e.TRACE = 5] = "TRACE", e;
-}({}), so = /* @__PURE__ */ y(k, 11, 0), co = /* @__PURE__ */ S(k, 12), lo = /* @__PURE__ */ S(k, 13), uo = /* @__PURE__ */ S(k, 14), fo = /* @__PURE__ */ S(k, 15), po = /* @__PURE__ */ S(k, 16), mo = /* @__PURE__ */ S(k, 17), ho = /* @__PURE__ */ S(k, 18), go = /* @__PURE__ */ S(k, 19), _o = /* @__PURE__ */ S(k, 20), vo = /* @__PURE__ */ S(k, 21), yo = /* @__PURE__ */ S(k, 22), bo = /* @__PURE__ */ S(k, 23), xo = /* @__PURE__ */ S(k, 24), So = /* @__PURE__ */ S(k, 25), Co = /* @__PURE__ */ S(k, 26), wo = /* @__PURE__ */ S(k, 27), To = /* @__PURE__ */ S(k, 28), Eo = /* @__PURE__ */ S(k, 29), Do = /* @__PURE__ */ S(k, 30), Oo = /* @__PURE__ */ function(e) {
+}({}), oo = /* @__PURE__ */ b(A, 11, 0), so = /* @__PURE__ */ C(A, 12), co = /* @__PURE__ */ C(A, 13), lo = /* @__PURE__ */ C(A, 14), uo = /* @__PURE__ */ C(A, 15), fo = /* @__PURE__ */ C(A, 16), po = /* @__PURE__ */ C(A, 17), mo = /* @__PURE__ */ C(A, 18), ho = /* @__PURE__ */ C(A, 19), go = /* @__PURE__ */ C(A, 20), _o = /* @__PURE__ */ C(A, 21), vo = /* @__PURE__ */ C(A, 22), yo = /* @__PURE__ */ C(A, 23), bo = /* @__PURE__ */ C(A, 24), xo = /* @__PURE__ */ C(A, 25), So = /* @__PURE__ */ C(A, 26), Co = /* @__PURE__ */ C(A, 27), wo = /* @__PURE__ */ C(A, 28), To = /* @__PURE__ */ C(A, 29), Eo = /* @__PURE__ */ C(A, 30), Do = /* @__PURE__ */ function(e) {
 	return e[e.UNSET = 0] = "UNSET", e[e.TLORA_V2 = 1] = "TLORA_V2", e[e.TLORA_V1 = 2] = "TLORA_V1", e[e.TLORA_V2_1_1P6 = 3] = "TLORA_V2_1_1P6", e[e.TBEAM = 4] = "TBEAM", e[e.HELTEC_V2_0 = 5] = "HELTEC_V2_0", e[e.TBEAM_V0P7 = 6] = "TBEAM_V0P7", e[e.T_ECHO = 7] = "T_ECHO", e[e.TLORA_V1_1P3 = 8] = "TLORA_V1_1P3", e[e.RAK4631 = 9] = "RAK4631", e[e.HELTEC_V2_1 = 10] = "HELTEC_V2_1", e[e.HELTEC_V1 = 11] = "HELTEC_V1", e[e.LILYGO_TBEAM_S3_CORE = 12] = "LILYGO_TBEAM_S3_CORE", e[e.RAK11200 = 13] = "RAK11200", e[e.NANO_G1 = 14] = "NANO_G1", e[e.TLORA_V2_1_1P8 = 15] = "TLORA_V2_1_1P8", e[e.TLORA_T3_S3 = 16] = "TLORA_T3_S3", e[e.NANO_G1_EXPLORER = 17] = "NANO_G1_EXPLORER", e[e.NANO_G2_ULTRA = 18] = "NANO_G2_ULTRA", e[e.LORA_TYPE = 19] = "LORA_TYPE", e[e.WIPHONE = 20] = "WIPHONE", e[e.WIO_WM1110 = 21] = "WIO_WM1110", e[e.RAK2560 = 22] = "RAK2560", e[e.HELTEC_HRU_3601 = 23] = "HELTEC_HRU_3601", e[e.HELTEC_WIRELESS_BRIDGE = 24] = "HELTEC_WIRELESS_BRIDGE", e[e.STATION_G1 = 25] = "STATION_G1", e[e.RAK11310 = 26] = "RAK11310", e[e.SENSELORA_RP2040 = 27] = "SENSELORA_RP2040", e[e.SENSELORA_S3 = 28] = "SENSELORA_S3", e[e.CANARYONE = 29] = "CANARYONE", e[e.RP2040_LORA = 30] = "RP2040_LORA", e[e.STATION_G2 = 31] = "STATION_G2", e[e.LORA_RELAY_V1 = 32] = "LORA_RELAY_V1", e[e.NRF52840DK = 33] = "NRF52840DK", e[e.PPR = 34] = "PPR", e[e.GENIEBLOCKS = 35] = "GENIEBLOCKS", e[e.NRF52_UNKNOWN = 36] = "NRF52_UNKNOWN", e[e.PORTDUINO = 37] = "PORTDUINO", e[e.ANDROID_SIM = 38] = "ANDROID_SIM", e[e.DIY_V1 = 39] = "DIY_V1", e[e.NRF52840_PCA10059 = 40] = "NRF52840_PCA10059", e[e.DR_DEV = 41] = "DR_DEV", e[e.M5STACK = 42] = "M5STACK", e[e.HELTEC_V3 = 43] = "HELTEC_V3", e[e.HELTEC_WSL_V3 = 44] = "HELTEC_WSL_V3", e[e.BETAFPV_2400_TX = 45] = "BETAFPV_2400_TX", e[e.BETAFPV_900_NANO_TX = 46] = "BETAFPV_900_NANO_TX", e[e.RPI_PICO = 47] = "RPI_PICO", e[e.HELTEC_WIRELESS_TRACKER = 48] = "HELTEC_WIRELESS_TRACKER", e[e.HELTEC_WIRELESS_PAPER = 49] = "HELTEC_WIRELESS_PAPER", e[e.T_DECK = 50] = "T_DECK", e[e.T_WATCH_S3 = 51] = "T_WATCH_S3", e[e.PICOMPUTER_S3 = 52] = "PICOMPUTER_S3", e[e.HELTEC_HT62 = 53] = "HELTEC_HT62", e[e.EBYTE_ESP32_S3 = 54] = "EBYTE_ESP32_S3", e[e.ESP32_S3_PICO = 55] = "ESP32_S3_PICO", e[e.CHATTER_2 = 56] = "CHATTER_2", e[e.HELTEC_WIRELESS_PAPER_V1_0 = 57] = "HELTEC_WIRELESS_PAPER_V1_0", e[e.HELTEC_WIRELESS_TRACKER_V1_0 = 58] = "HELTEC_WIRELESS_TRACKER_V1_0", e[e.UNPHONE = 59] = "UNPHONE", e[e.TD_LORAC = 60] = "TD_LORAC", e[e.CDEBYTE_EORA_S3 = 61] = "CDEBYTE_EORA_S3", e[e.TWC_MESH_V4 = 62] = "TWC_MESH_V4", e[e.NRF52_PROMICRO_DIY = 63] = "NRF52_PROMICRO_DIY", e[e.RADIOMASTER_900_BANDIT_NANO = 64] = "RADIOMASTER_900_BANDIT_NANO", e[e.HELTEC_CAPSULE_SENSOR_V3 = 65] = "HELTEC_CAPSULE_SENSOR_V3", e[e.HELTEC_VISION_MASTER_T190 = 66] = "HELTEC_VISION_MASTER_T190", e[e.HELTEC_VISION_MASTER_E213 = 67] = "HELTEC_VISION_MASTER_E213", e[e.HELTEC_VISION_MASTER_E290 = 68] = "HELTEC_VISION_MASTER_E290", e[e.HELTEC_MESH_NODE_T114 = 69] = "HELTEC_MESH_NODE_T114", e[e.SENSECAP_INDICATOR = 70] = "SENSECAP_INDICATOR", e[e.TRACKER_T1000_E = 71] = "TRACKER_T1000_E", e[e.RAK3172 = 72] = "RAK3172", e[e.WIO_E5 = 73] = "WIO_E5", e[e.RADIOMASTER_900_BANDIT = 74] = "RADIOMASTER_900_BANDIT", e[e.ME25LS01_4Y10TD = 75] = "ME25LS01_4Y10TD", e[e.RP2040_FEATHER_RFM95 = 76] = "RP2040_FEATHER_RFM95", e[e.M5STACK_COREBASIC = 77] = "M5STACK_COREBASIC", e[e.M5STACK_CORE2 = 78] = "M5STACK_CORE2", e[e.RPI_PICO2 = 79] = "RPI_PICO2", e[e.M5STACK_CORES3 = 80] = "M5STACK_CORES3", e[e.SEEED_XIAO_S3 = 81] = "SEEED_XIAO_S3", e[e.MS24SF1 = 82] = "MS24SF1", e[e.TLORA_C6 = 83] = "TLORA_C6", e[e.WISMESH_TAP = 84] = "WISMESH_TAP", e[e.ROUTASTIC = 85] = "ROUTASTIC", e[e.MESH_TAB = 86] = "MESH_TAB", e[e.MESHLINK = 87] = "MESHLINK", e[e.XIAO_NRF52_KIT = 88] = "XIAO_NRF52_KIT", e[e.THINKNODE_M1 = 89] = "THINKNODE_M1", e[e.THINKNODE_M2 = 90] = "THINKNODE_M2", e[e.T_ETH_ELITE = 91] = "T_ETH_ELITE", e[e.HELTEC_SENSOR_HUB = 92] = "HELTEC_SENSOR_HUB", e[e.RESERVED_FRIED_CHICKEN = 93] = "RESERVED_FRIED_CHICKEN", e[e.HELTEC_MESH_POCKET = 94] = "HELTEC_MESH_POCKET", e[e.SEEED_SOLAR_NODE = 95] = "SEEED_SOLAR_NODE", e[e.NOMADSTAR_METEOR_PRO = 96] = "NOMADSTAR_METEOR_PRO", e[e.CROWPANEL = 97] = "CROWPANEL", e[e.LINK_32 = 98] = "LINK_32", e[e.SEEED_WIO_TRACKER_L1 = 99] = "SEEED_WIO_TRACKER_L1", e[e.SEEED_WIO_TRACKER_L1_EINK = 100] = "SEEED_WIO_TRACKER_L1_EINK", e[e.QWANTZ_TINY_ARMS = 101] = "QWANTZ_TINY_ARMS", e[e.T_DECK_PRO = 102] = "T_DECK_PRO", e[e.T_LORA_PAGER = 103] = "T_LORA_PAGER", e[e.GAT562_MESH_TRIAL_TRACKER = 104] = "GAT562_MESH_TRIAL_TRACKER", e[e.PRIVATE_HW = 255] = "PRIVATE_HW", e;
-}({}), ko = /* @__PURE__ */ y(k, 0), Ao = /* @__PURE__ */ function(e) {
+}({}), Oo = /* @__PURE__ */ b(A, 0), ko = /* @__PURE__ */ function(e) {
 	return e[e.ZERO = 0] = "ZERO", e[e.DATA_PAYLOAD_LEN = 233] = "DATA_PAYLOAD_LEN", e;
-}({}), jo = /* @__PURE__ */ y(k, 1), Mo = /* @__PURE__ */ function(e) {
+}({}), Ao = /* @__PURE__ */ b(A, 1), jo = /* @__PURE__ */ function(e) {
 	return e[e.NONE = 0] = "NONE", e[e.TX_WATCHDOG = 1] = "TX_WATCHDOG", e[e.SLEEP_ENTER_WAIT = 2] = "SLEEP_ENTER_WAIT", e[e.NO_RADIO = 3] = "NO_RADIO", e[e.UNSPECIFIED = 4] = "UNSPECIFIED", e[e.UBLOX_UNIT_FAILED = 5] = "UBLOX_UNIT_FAILED", e[e.NO_AXP192 = 6] = "NO_AXP192", e[e.INVALID_RADIO_SETTING = 7] = "INVALID_RADIO_SETTING", e[e.TRANSMIT_FAILED = 8] = "TRANSMIT_FAILED", e[e.BROWNOUT = 9] = "BROWNOUT", e[e.SX1262_FAILURE = 10] = "SX1262_FAILURE", e[e.RADIO_SPI_BUG = 11] = "RADIO_SPI_BUG", e[e.FLASH_CORRUPTION_RECOVERABLE = 12] = "FLASH_CORRUPTION_RECOVERABLE", e[e.FLASH_CORRUPTION_UNRECOVERABLE = 13] = "FLASH_CORRUPTION_UNRECOVERABLE", e;
-}({}), No = /* @__PURE__ */ y(k, 2), Po = /* @__PURE__ */ function(e) {
+}({}), Mo = /* @__PURE__ */ b(A, 2), No = /* @__PURE__ */ function(e) {
 	return e[e.EXCLUDED_NONE = 0] = "EXCLUDED_NONE", e[e.MQTT_CONFIG = 1] = "MQTT_CONFIG", e[e.SERIAL_CONFIG = 2] = "SERIAL_CONFIG", e[e.EXTNOTIF_CONFIG = 4] = "EXTNOTIF_CONFIG", e[e.STOREFORWARD_CONFIG = 8] = "STOREFORWARD_CONFIG", e[e.RANGETEST_CONFIG = 16] = "RANGETEST_CONFIG", e[e.TELEMETRY_CONFIG = 32] = "TELEMETRY_CONFIG", e[e.CANNEDMSG_CONFIG = 64] = "CANNEDMSG_CONFIG", e[e.AUDIO_CONFIG = 128] = "AUDIO_CONFIG", e[e.REMOTEHARDWARE_CONFIG = 256] = "REMOTEHARDWARE_CONFIG", e[e.NEIGHBORINFO_CONFIG = 512] = "NEIGHBORINFO_CONFIG", e[e.AMBIENTLIGHTING_CONFIG = 1024] = "AMBIENTLIGHTING_CONFIG", e[e.DETECTIONSENSOR_CONFIG = 2048] = "DETECTIONSENSOR_CONFIG", e[e.PAXCOUNTER_CONFIG = 4096] = "PAXCOUNTER_CONFIG", e[e.BLUETOOTH_CONFIG = 8192] = "BLUETOOTH_CONFIG", e[e.NETWORK_CONFIG = 16384] = "NETWORK_CONFIG", e;
-}({}), Fo = /* @__PURE__ */ y(k, 3), A = p({
-	AdminMessageSchema: () => Io,
-	AdminMessage_BackupLocation: () => Ho,
-	AdminMessage_BackupLocationSchema: () => Uo,
-	AdminMessage_ConfigType: () => Ro,
-	AdminMessage_ConfigTypeSchema: () => zo,
-	AdminMessage_InputEventSchema: () => Lo,
-	AdminMessage_ModuleConfigType: () => Bo,
-	AdminMessage_ModuleConfigTypeSchema: () => Vo,
-	HamParametersSchema: () => Wo,
-	KeyVerificationAdminSchema: () => qo,
-	KeyVerificationAdmin_MessageType: () => Jo,
-	KeyVerificationAdmin_MessageTypeSchema: () => Yo,
-	NodeRemoteHardwarePinsResponseSchema: () => Go,
-	SharedContactSchema: () => Ko,
-	file_admin: () => j
-}), j = /* @__PURE__ */ x("CgthZG1pbi5wcm90bxIKbWVzaHRhc3RpYyLWGAoMQWRtaW5NZXNzYWdlEhcKD3Nlc3Npb25fcGFzc2tleRhlIAEoDBIdChNnZXRfY2hhbm5lbF9yZXF1ZXN0GAEgASgNSAASMwoUZ2V0X2NoYW5uZWxfcmVzcG9uc2UYAiABKAsyEy5tZXNodGFzdGljLkNoYW5uZWxIABIbChFnZXRfb3duZXJfcmVxdWVzdBgDIAEoCEgAEi4KEmdldF9vd25lcl9yZXNwb25zZRgEIAEoCzIQLm1lc2h0YXN0aWMuVXNlckgAEkEKEmdldF9jb25maWdfcmVxdWVzdBgFIAEoDjIjLm1lc2h0YXN0aWMuQWRtaW5NZXNzYWdlLkNvbmZpZ1R5cGVIABIxChNnZXRfY29uZmlnX3Jlc3BvbnNlGAYgASgLMhIubWVzaHRhc3RpYy5Db25maWdIABJOChlnZXRfbW9kdWxlX2NvbmZpZ19yZXF1ZXN0GAcgASgOMikubWVzaHRhc3RpYy5BZG1pbk1lc3NhZ2UuTW9kdWxlQ29uZmlnVHlwZUgAEj4KGmdldF9tb2R1bGVfY29uZmlnX3Jlc3BvbnNlGAggASgLMhgubWVzaHRhc3RpYy5Nb2R1bGVDb25maWdIABI0CipnZXRfY2FubmVkX21lc3NhZ2VfbW9kdWxlX21lc3NhZ2VzX3JlcXVlc3QYCiABKAhIABI1CitnZXRfY2FubmVkX21lc3NhZ2VfbW9kdWxlX21lc3NhZ2VzX3Jlc3BvbnNlGAsgASgJSAASJQobZ2V0X2RldmljZV9tZXRhZGF0YV9yZXF1ZXN0GAwgASgISAASQgocZ2V0X2RldmljZV9tZXRhZGF0YV9yZXNwb25zZRgNIAEoCzIaLm1lc2h0YXN0aWMuRGV2aWNlTWV0YWRhdGFIABIeChRnZXRfcmluZ3RvbmVfcmVxdWVzdBgOIAEoCEgAEh8KFWdldF9yaW5ndG9uZV9yZXNwb25zZRgPIAEoCUgAEi4KJGdldF9kZXZpY2VfY29ubmVjdGlvbl9zdGF0dXNfcmVxdWVzdBgQIAEoCEgAElMKJWdldF9kZXZpY2VfY29ubmVjdGlvbl9zdGF0dXNfcmVzcG9uc2UYESABKAsyIi5tZXNodGFzdGljLkRldmljZUNvbm5lY3Rpb25TdGF0dXNIABIxCgxzZXRfaGFtX21vZGUYEiABKAsyGS5tZXNodGFzdGljLkhhbVBhcmFtZXRlcnNIABIvCiVnZXRfbm9kZV9yZW1vdGVfaGFyZHdhcmVfcGluc19yZXF1ZXN0GBMgASgISAASXAomZ2V0X25vZGVfcmVtb3RlX2hhcmR3YXJlX3BpbnNfcmVzcG9uc2UYFCABKAsyKi5tZXNodGFzdGljLk5vZGVSZW1vdGVIYXJkd2FyZVBpbnNSZXNwb25zZUgAEiAKFmVudGVyX2RmdV9tb2RlX3JlcXVlc3QYFSABKAhIABIdChNkZWxldGVfZmlsZV9yZXF1ZXN0GBYgASgJSAASEwoJc2V0X3NjYWxlGBcgASgNSAASRQoSYmFja3VwX3ByZWZlcmVuY2VzGBggASgOMicubWVzaHRhc3RpYy5BZG1pbk1lc3NhZ2UuQmFja3VwTG9jYXRpb25IABJGChNyZXN0b3JlX3ByZWZlcmVuY2VzGBkgASgOMicubWVzaHRhc3RpYy5BZG1pbk1lc3NhZ2UuQmFja3VwTG9jYXRpb25IABJMChlyZW1vdmVfYmFja3VwX3ByZWZlcmVuY2VzGBogASgOMicubWVzaHRhc3RpYy5BZG1pbk1lc3NhZ2UuQmFja3VwTG9jYXRpb25IABI/ChBzZW5kX2lucHV0X2V2ZW50GBsgASgLMiMubWVzaHRhc3RpYy5BZG1pbk1lc3NhZ2UuSW5wdXRFdmVudEgAEiUKCXNldF9vd25lchggIAEoCzIQLm1lc2h0YXN0aWMuVXNlckgAEioKC3NldF9jaGFubmVsGCEgASgLMhMubWVzaHRhc3RpYy5DaGFubmVsSAASKAoKc2V0X2NvbmZpZxgiIAEoCzISLm1lc2h0YXN0aWMuQ29uZmlnSAASNQoRc2V0X21vZHVsZV9jb25maWcYIyABKAsyGC5tZXNodGFzdGljLk1vZHVsZUNvbmZpZ0gAEiwKInNldF9jYW5uZWRfbWVzc2FnZV9tb2R1bGVfbWVzc2FnZXMYJCABKAlIABIeChRzZXRfcmluZ3RvbmVfbWVzc2FnZRglIAEoCUgAEhsKEXJlbW92ZV9ieV9ub2RlbnVtGCYgASgNSAASGwoRc2V0X2Zhdm9yaXRlX25vZGUYJyABKA1IABIeChRyZW1vdmVfZmF2b3JpdGVfbm9kZRgoIAEoDUgAEjIKEnNldF9maXhlZF9wb3NpdGlvbhgpIAEoCzIULm1lc2h0YXN0aWMuUG9zaXRpb25IABIfChVyZW1vdmVfZml4ZWRfcG9zaXRpb24YKiABKAhIABIXCg1zZXRfdGltZV9vbmx5GCsgASgHSAASHwoVZ2V0X3VpX2NvbmZpZ19yZXF1ZXN0GCwgASgISAASPAoWZ2V0X3VpX2NvbmZpZ19yZXNwb25zZRgtIAEoCzIaLm1lc2h0YXN0aWMuRGV2aWNlVUlDb25maWdIABI1Cg9zdG9yZV91aV9jb25maWcYLiABKAsyGi5tZXNodGFzdGljLkRldmljZVVJQ29uZmlnSAASGgoQc2V0X2lnbm9yZWRfbm9kZRgvIAEoDUgAEh0KE3JlbW92ZV9pZ25vcmVkX25vZGUYMCABKA1IABIdChNiZWdpbl9lZGl0X3NldHRpbmdzGEAgASgISAASHgoUY29tbWl0X2VkaXRfc2V0dGluZ3MYQSABKAhIABIwCgthZGRfY29udGFjdBhCIAEoCzIZLm1lc2h0YXN0aWMuU2hhcmVkQ29udGFjdEgAEjwKEGtleV92ZXJpZmljYXRpb24YQyABKAsyIC5tZXNodGFzdGljLktleVZlcmlmaWNhdGlvbkFkbWluSAASHgoUZmFjdG9yeV9yZXNldF9kZXZpY2UYXiABKAVIABIcChJyZWJvb3Rfb3RhX3NlY29uZHMYXyABKAVIABIYCg5leGl0X3NpbXVsYXRvchhgIAEoCEgAEhgKDnJlYm9vdF9zZWNvbmRzGGEgASgFSAASGgoQc2h1dGRvd25fc2Vjb25kcxhiIAEoBUgAEh4KFGZhY3RvcnlfcmVzZXRfY29uZmlnGGMgASgFSAASFgoMbm9kZWRiX3Jlc2V0GGQgASgFSAAaUwoKSW5wdXRFdmVudBISCgpldmVudF9jb2RlGAEgASgNEg8KB2tiX2NoYXIYAiABKA0SDwoHdG91Y2hfeBgDIAEoDRIPCgd0b3VjaF95GAQgASgNItYBCgpDb25maWdUeXBlEhEKDURFVklDRV9DT05GSUcQABITCg9QT1NJVElPTl9DT05GSUcQARIQCgxQT1dFUl9DT05GSUcQAhISCg5ORVRXT1JLX0NPTkZJRxADEhIKDkRJU1BMQVlfQ09ORklHEAQSDwoLTE9SQV9DT05GSUcQBRIUChBCTFVFVE9PVEhfQ09ORklHEAYSEwoPU0VDVVJJVFlfQ09ORklHEAcSFQoRU0VTU0lPTktFWV9DT05GSUcQCBITCg9ERVZJQ0VVSV9DT05GSUcQCSK7AgoQTW9kdWxlQ29uZmlnVHlwZRIPCgtNUVRUX0NPTkZJRxAAEhEKDVNFUklBTF9DT05GSUcQARITCg9FWFROT1RJRl9DT05GSUcQAhIXChNTVE9SRUZPUldBUkRfQ09ORklHEAMSFAoQUkFOR0VURVNUX0NPTkZJRxAEEhQKEFRFTEVNRVRSWV9DT05GSUcQBRIUChBDQU5ORURNU0dfQ09ORklHEAYSEAoMQVVESU9fQ09ORklHEAcSGQoVUkVNT1RFSEFSRFdBUkVfQ09ORklHEAgSFwoTTkVJR0hCT1JJTkZPX0NPTkZJRxAJEhoKFkFNQklFTlRMSUdIVElOR19DT05GSUcQChIaChZERVRFQ1RJT05TRU5TT1JfQ09ORklHEAsSFQoRUEFYQ09VTlRFUl9DT05GSUcQDCIjCg5CYWNrdXBMb2NhdGlvbhIJCgVGTEFTSBAAEgYKAlNEEAFCEQoPcGF5bG9hZF92YXJpYW50IlsKDUhhbVBhcmFtZXRlcnMSEQoJY2FsbF9zaWduGAEgASgJEhAKCHR4X3Bvd2VyGAIgASgFEhEKCWZyZXF1ZW5jeRgDIAEoAhISCgpzaG9ydF9uYW1lGAQgASgJImYKHk5vZGVSZW1vdGVIYXJkd2FyZVBpbnNSZXNwb25zZRJEChlub2RlX3JlbW90ZV9oYXJkd2FyZV9waW5zGAEgAygLMiEubWVzaHRhc3RpYy5Ob2RlUmVtb3RlSGFyZHdhcmVQaW4iWAoNU2hhcmVkQ29udGFjdBIQCghub2RlX251bRgBIAEoDRIeCgR1c2VyGAIgASgLMhAubWVzaHRhc3RpYy5Vc2VyEhUKDXNob3VsZF9pZ25vcmUYAyABKAginAIKFEtleVZlcmlmaWNhdGlvbkFkbWluEkIKDG1lc3NhZ2VfdHlwZRgBIAEoDjIsLm1lc2h0YXN0aWMuS2V5VmVyaWZpY2F0aW9uQWRtaW4uTWVzc2FnZVR5cGUSFgoOcmVtb3RlX25vZGVudW0YAiABKA0SDQoFbm9uY2UYAyABKAQSHAoPc2VjdXJpdHlfbnVtYmVyGAQgASgNSACIAQEiZwoLTWVzc2FnZVR5cGUSGQoVSU5JVElBVEVfVkVSSUZJQ0FUSU9OEAASGwoXUFJPVklERV9TRUNVUklUWV9OVU1CRVIQARINCglET19WRVJJRlkQAhIRCg1ET19OT1RfVkVSSUZZEANCEgoQX3NlY3VyaXR5X251bWJlckJgChNjb20uZ2Vla3N2aWxsZS5tZXNoQgtBZG1pblByb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM", [
-	Vr,
-	C,
-	Li,
-	k,
+}({}), Po = /* @__PURE__ */ b(A, 3), j = p({
+	AdminMessageSchema: () => Fo,
+	AdminMessage_BackupLocation: () => Vo,
+	AdminMessage_BackupLocationSchema: () => Ho,
+	AdminMessage_ConfigType: () => Lo,
+	AdminMessage_ConfigTypeSchema: () => Ro,
+	AdminMessage_InputEventSchema: () => Io,
+	AdminMessage_ModuleConfigType: () => zo,
+	AdminMessage_ModuleConfigTypeSchema: () => Bo,
+	HamParametersSchema: () => Uo,
+	KeyVerificationAdminSchema: () => Ko,
+	KeyVerificationAdmin_MessageType: () => qo,
+	KeyVerificationAdmin_MessageTypeSchema: () => Jo,
+	NodeRemoteHardwarePinsResponseSchema: () => Wo,
+	SharedContactSchema: () => Go,
+	file_admin: () => M
+}), M = /* @__PURE__ */ S("CgthZG1pbi5wcm90bxIKbWVzaHRhc3RpYyLWGAoMQWRtaW5NZXNzYWdlEhcKD3Nlc3Npb25fcGFzc2tleRhlIAEoDBIdChNnZXRfY2hhbm5lbF9yZXF1ZXN0GAEgASgNSAASMwoUZ2V0X2NoYW5uZWxfcmVzcG9uc2UYAiABKAsyEy5tZXNodGFzdGljLkNoYW5uZWxIABIbChFnZXRfb3duZXJfcmVxdWVzdBgDIAEoCEgAEi4KEmdldF9vd25lcl9yZXNwb25zZRgEIAEoCzIQLm1lc2h0YXN0aWMuVXNlckgAEkEKEmdldF9jb25maWdfcmVxdWVzdBgFIAEoDjIjLm1lc2h0YXN0aWMuQWRtaW5NZXNzYWdlLkNvbmZpZ1R5cGVIABIxChNnZXRfY29uZmlnX3Jlc3BvbnNlGAYgASgLMhIubWVzaHRhc3RpYy5Db25maWdIABJOChlnZXRfbW9kdWxlX2NvbmZpZ19yZXF1ZXN0GAcgASgOMikubWVzaHRhc3RpYy5BZG1pbk1lc3NhZ2UuTW9kdWxlQ29uZmlnVHlwZUgAEj4KGmdldF9tb2R1bGVfY29uZmlnX3Jlc3BvbnNlGAggASgLMhgubWVzaHRhc3RpYy5Nb2R1bGVDb25maWdIABI0CipnZXRfY2FubmVkX21lc3NhZ2VfbW9kdWxlX21lc3NhZ2VzX3JlcXVlc3QYCiABKAhIABI1CitnZXRfY2FubmVkX21lc3NhZ2VfbW9kdWxlX21lc3NhZ2VzX3Jlc3BvbnNlGAsgASgJSAASJQobZ2V0X2RldmljZV9tZXRhZGF0YV9yZXF1ZXN0GAwgASgISAASQgocZ2V0X2RldmljZV9tZXRhZGF0YV9yZXNwb25zZRgNIAEoCzIaLm1lc2h0YXN0aWMuRGV2aWNlTWV0YWRhdGFIABIeChRnZXRfcmluZ3RvbmVfcmVxdWVzdBgOIAEoCEgAEh8KFWdldF9yaW5ndG9uZV9yZXNwb25zZRgPIAEoCUgAEi4KJGdldF9kZXZpY2VfY29ubmVjdGlvbl9zdGF0dXNfcmVxdWVzdBgQIAEoCEgAElMKJWdldF9kZXZpY2VfY29ubmVjdGlvbl9zdGF0dXNfcmVzcG9uc2UYESABKAsyIi5tZXNodGFzdGljLkRldmljZUNvbm5lY3Rpb25TdGF0dXNIABIxCgxzZXRfaGFtX21vZGUYEiABKAsyGS5tZXNodGFzdGljLkhhbVBhcmFtZXRlcnNIABIvCiVnZXRfbm9kZV9yZW1vdGVfaGFyZHdhcmVfcGluc19yZXF1ZXN0GBMgASgISAASXAomZ2V0X25vZGVfcmVtb3RlX2hhcmR3YXJlX3BpbnNfcmVzcG9uc2UYFCABKAsyKi5tZXNodGFzdGljLk5vZGVSZW1vdGVIYXJkd2FyZVBpbnNSZXNwb25zZUgAEiAKFmVudGVyX2RmdV9tb2RlX3JlcXVlc3QYFSABKAhIABIdChNkZWxldGVfZmlsZV9yZXF1ZXN0GBYgASgJSAASEwoJc2V0X3NjYWxlGBcgASgNSAASRQoSYmFja3VwX3ByZWZlcmVuY2VzGBggASgOMicubWVzaHRhc3RpYy5BZG1pbk1lc3NhZ2UuQmFja3VwTG9jYXRpb25IABJGChNyZXN0b3JlX3ByZWZlcmVuY2VzGBkgASgOMicubWVzaHRhc3RpYy5BZG1pbk1lc3NhZ2UuQmFja3VwTG9jYXRpb25IABJMChlyZW1vdmVfYmFja3VwX3ByZWZlcmVuY2VzGBogASgOMicubWVzaHRhc3RpYy5BZG1pbk1lc3NhZ2UuQmFja3VwTG9jYXRpb25IABI/ChBzZW5kX2lucHV0X2V2ZW50GBsgASgLMiMubWVzaHRhc3RpYy5BZG1pbk1lc3NhZ2UuSW5wdXRFdmVudEgAEiUKCXNldF9vd25lchggIAEoCzIQLm1lc2h0YXN0aWMuVXNlckgAEioKC3NldF9jaGFubmVsGCEgASgLMhMubWVzaHRhc3RpYy5DaGFubmVsSAASKAoKc2V0X2NvbmZpZxgiIAEoCzISLm1lc2h0YXN0aWMuQ29uZmlnSAASNQoRc2V0X21vZHVsZV9jb25maWcYIyABKAsyGC5tZXNodGFzdGljLk1vZHVsZUNvbmZpZ0gAEiwKInNldF9jYW5uZWRfbWVzc2FnZV9tb2R1bGVfbWVzc2FnZXMYJCABKAlIABIeChRzZXRfcmluZ3RvbmVfbWVzc2FnZRglIAEoCUgAEhsKEXJlbW92ZV9ieV9ub2RlbnVtGCYgASgNSAASGwoRc2V0X2Zhdm9yaXRlX25vZGUYJyABKA1IABIeChRyZW1vdmVfZmF2b3JpdGVfbm9kZRgoIAEoDUgAEjIKEnNldF9maXhlZF9wb3NpdGlvbhgpIAEoCzIULm1lc2h0YXN0aWMuUG9zaXRpb25IABIfChVyZW1vdmVfZml4ZWRfcG9zaXRpb24YKiABKAhIABIXCg1zZXRfdGltZV9vbmx5GCsgASgHSAASHwoVZ2V0X3VpX2NvbmZpZ19yZXF1ZXN0GCwgASgISAASPAoWZ2V0X3VpX2NvbmZpZ19yZXNwb25zZRgtIAEoCzIaLm1lc2h0YXN0aWMuRGV2aWNlVUlDb25maWdIABI1Cg9zdG9yZV91aV9jb25maWcYLiABKAsyGi5tZXNodGFzdGljLkRldmljZVVJQ29uZmlnSAASGgoQc2V0X2lnbm9yZWRfbm9kZRgvIAEoDUgAEh0KE3JlbW92ZV9pZ25vcmVkX25vZGUYMCABKA1IABIdChNiZWdpbl9lZGl0X3NldHRpbmdzGEAgASgISAASHgoUY29tbWl0X2VkaXRfc2V0dGluZ3MYQSABKAhIABIwCgthZGRfY29udGFjdBhCIAEoCzIZLm1lc2h0YXN0aWMuU2hhcmVkQ29udGFjdEgAEjwKEGtleV92ZXJpZmljYXRpb24YQyABKAsyIC5tZXNodGFzdGljLktleVZlcmlmaWNhdGlvbkFkbWluSAASHgoUZmFjdG9yeV9yZXNldF9kZXZpY2UYXiABKAVIABIcChJyZWJvb3Rfb3RhX3NlY29uZHMYXyABKAVIABIYCg5leGl0X3NpbXVsYXRvchhgIAEoCEgAEhgKDnJlYm9vdF9zZWNvbmRzGGEgASgFSAASGgoQc2h1dGRvd25fc2Vjb25kcxhiIAEoBUgAEh4KFGZhY3RvcnlfcmVzZXRfY29uZmlnGGMgASgFSAASFgoMbm9kZWRiX3Jlc2V0GGQgASgFSAAaUwoKSW5wdXRFdmVudBISCgpldmVudF9jb2RlGAEgASgNEg8KB2tiX2NoYXIYAiABKA0SDwoHdG91Y2hfeBgDIAEoDRIPCgd0b3VjaF95GAQgASgNItYBCgpDb25maWdUeXBlEhEKDURFVklDRV9DT05GSUcQABITCg9QT1NJVElPTl9DT05GSUcQARIQCgxQT1dFUl9DT05GSUcQAhISCg5ORVRXT1JLX0NPTkZJRxADEhIKDkRJU1BMQVlfQ09ORklHEAQSDwoLTE9SQV9DT05GSUcQBRIUChBCTFVFVE9PVEhfQ09ORklHEAYSEwoPU0VDVVJJVFlfQ09ORklHEAcSFQoRU0VTU0lPTktFWV9DT05GSUcQCBITCg9ERVZJQ0VVSV9DT05GSUcQCSK7AgoQTW9kdWxlQ29uZmlnVHlwZRIPCgtNUVRUX0NPTkZJRxAAEhEKDVNFUklBTF9DT05GSUcQARITCg9FWFROT1RJRl9DT05GSUcQAhIXChNTVE9SRUZPUldBUkRfQ09ORklHEAMSFAoQUkFOR0VURVNUX0NPTkZJRxAEEhQKEFRFTEVNRVRSWV9DT05GSUcQBRIUChBDQU5ORURNU0dfQ09ORklHEAYSEAoMQVVESU9fQ09ORklHEAcSGQoVUkVNT1RFSEFSRFdBUkVfQ09ORklHEAgSFwoTTkVJR0hCT1JJTkZPX0NPTkZJRxAJEhoKFkFNQklFTlRMSUdIVElOR19DT05GSUcQChIaChZERVRFQ1RJT05TRU5TT1JfQ09ORklHEAsSFQoRUEFYQ09VTlRFUl9DT05GSUcQDCIjCg5CYWNrdXBMb2NhdGlvbhIJCgVGTEFTSBAAEgYKAlNEEAFCEQoPcGF5bG9hZF92YXJpYW50IlsKDUhhbVBhcmFtZXRlcnMSEQoJY2FsbF9zaWduGAEgASgJEhAKCHR4X3Bvd2VyGAIgASgFEhEKCWZyZXF1ZW5jeRgDIAEoAhISCgpzaG9ydF9uYW1lGAQgASgJImYKHk5vZGVSZW1vdGVIYXJkd2FyZVBpbnNSZXNwb25zZRJEChlub2RlX3JlbW90ZV9oYXJkd2FyZV9waW5zGAEgAygLMiEubWVzaHRhc3RpYy5Ob2RlUmVtb3RlSGFyZHdhcmVQaW4iWAoNU2hhcmVkQ29udGFjdBIQCghub2RlX251bRgBIAEoDRIeCgR1c2VyGAIgASgLMhAubWVzaHRhc3RpYy5Vc2VyEhUKDXNob3VsZF9pZ25vcmUYAyABKAginAIKFEtleVZlcmlmaWNhdGlvbkFkbWluEkIKDG1lc3NhZ2VfdHlwZRgBIAEoDjIsLm1lc2h0YXN0aWMuS2V5VmVyaWZpY2F0aW9uQWRtaW4uTWVzc2FnZVR5cGUSFgoOcmVtb3RlX25vZGVudW0YAiABKA0SDQoFbm9uY2UYAyABKAQSHAoPc2VjdXJpdHlfbnVtYmVyGAQgASgNSACIAQEiZwoLTWVzc2FnZVR5cGUSGQoVSU5JVElBVEVfVkVSSUZJQ0FUSU9OEAASGwoXUFJPVklERV9TRUNVUklUWV9OVU1CRVIQARINCglET19WRVJJRlkQAhIRCg1ET19OT1RfVkVSSUZZEANCEgoQX3NlY3VyaXR5X251bWJlckJgChNjb20uZ2Vla3N2aWxsZS5tZXNoQgtBZG1pblByb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM", [
+	Br,
 	w,
-	qr
-]), Io = /* @__PURE__ */ S(j, 0), Lo = /* @__PURE__ */ S(j, 0, 0), Ro = /* @__PURE__ */ function(e) {
+	Ii,
+	A,
+	T,
+	Kr
+]), Fo = /* @__PURE__ */ C(M, 0), Io = /* @__PURE__ */ C(M, 0, 0), Lo = /* @__PURE__ */ function(e) {
 	return e[e.DEVICE_CONFIG = 0] = "DEVICE_CONFIG", e[e.POSITION_CONFIG = 1] = "POSITION_CONFIG", e[e.POWER_CONFIG = 2] = "POWER_CONFIG", e[e.NETWORK_CONFIG = 3] = "NETWORK_CONFIG", e[e.DISPLAY_CONFIG = 4] = "DISPLAY_CONFIG", e[e.LORA_CONFIG = 5] = "LORA_CONFIG", e[e.BLUETOOTH_CONFIG = 6] = "BLUETOOTH_CONFIG", e[e.SECURITY_CONFIG = 7] = "SECURITY_CONFIG", e[e.SESSIONKEY_CONFIG = 8] = "SESSIONKEY_CONFIG", e[e.DEVICEUI_CONFIG = 9] = "DEVICEUI_CONFIG", e;
-}({}), zo = /* @__PURE__ */ y(j, 0, 0), Bo = /* @__PURE__ */ function(e) {
+}({}), Ro = /* @__PURE__ */ b(M, 0, 0), zo = /* @__PURE__ */ function(e) {
 	return e[e.MQTT_CONFIG = 0] = "MQTT_CONFIG", e[e.SERIAL_CONFIG = 1] = "SERIAL_CONFIG", e[e.EXTNOTIF_CONFIG = 2] = "EXTNOTIF_CONFIG", e[e.STOREFORWARD_CONFIG = 3] = "STOREFORWARD_CONFIG", e[e.RANGETEST_CONFIG = 4] = "RANGETEST_CONFIG", e[e.TELEMETRY_CONFIG = 5] = "TELEMETRY_CONFIG", e[e.CANNEDMSG_CONFIG = 6] = "CANNEDMSG_CONFIG", e[e.AUDIO_CONFIG = 7] = "AUDIO_CONFIG", e[e.REMOTEHARDWARE_CONFIG = 8] = "REMOTEHARDWARE_CONFIG", e[e.NEIGHBORINFO_CONFIG = 9] = "NEIGHBORINFO_CONFIG", e[e.AMBIENTLIGHTING_CONFIG = 10] = "AMBIENTLIGHTING_CONFIG", e[e.DETECTIONSENSOR_CONFIG = 11] = "DETECTIONSENSOR_CONFIG", e[e.PAXCOUNTER_CONFIG = 12] = "PAXCOUNTER_CONFIG", e;
-}({}), Vo = /* @__PURE__ */ y(j, 0, 1), Ho = /* @__PURE__ */ function(e) {
+}({}), Bo = /* @__PURE__ */ b(M, 0, 1), Vo = /* @__PURE__ */ function(e) {
 	return e[e.FLASH = 0] = "FLASH", e[e.SD = 1] = "SD", e;
-}({}), Uo = /* @__PURE__ */ y(j, 0, 2), Wo = /* @__PURE__ */ S(j, 1), Go = /* @__PURE__ */ S(j, 2), Ko = /* @__PURE__ */ S(j, 3), qo = /* @__PURE__ */ S(j, 4), Jo = /* @__PURE__ */ function(e) {
+}({}), Ho = /* @__PURE__ */ b(M, 0, 2), Uo = /* @__PURE__ */ C(M, 1), Wo = /* @__PURE__ */ C(M, 2), Go = /* @__PURE__ */ C(M, 3), Ko = /* @__PURE__ */ C(M, 4), qo = /* @__PURE__ */ function(e) {
 	return e[e.INITIATE_VERIFICATION = 0] = "INITIATE_VERIFICATION", e[e.PROVIDE_SECURITY_NUMBER = 1] = "PROVIDE_SECURITY_NUMBER", e[e.DO_VERIFY = 2] = "DO_VERIFY", e[e.DO_NOT_VERIFY = 3] = "DO_NOT_VERIFY", e;
-}({}), Yo = /* @__PURE__ */ y(j, 4, 0), Xo = p({
-	ChannelSetSchema: () => Qo,
-	file_apponly: () => Zo
-}), Zo = /* @__PURE__ */ x("Cg1hcHBvbmx5LnByb3RvEgptZXNodGFzdGljIm8KCkNoYW5uZWxTZXQSLQoIc2V0dGluZ3MYASADKAsyGy5tZXNodGFzdGljLkNoYW5uZWxTZXR0aW5ncxIyCgtsb3JhX2NvbmZpZxgCIAEoCzIdLm1lc2h0YXN0aWMuQ29uZmlnLkxvUmFDb25maWdCYgoTY29tLmdlZWtzdmlsbGUubWVzaEINQXBwT25seVByb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM", [Vr, C]), Qo = /* @__PURE__ */ S(Zo, 0), $o = p({
-	ContactSchema: () => as,
-	GeoChatSchema: () => ns,
-	GroupSchema: () => rs,
-	MemberRole: () => ls,
-	MemberRoleSchema: () => us,
-	PLISchema: () => os,
-	StatusSchema: () => is,
-	TAKPacketSchema: () => ts,
-	Team: () => ss,
-	TeamSchema: () => cs,
-	file_atak: () => es
-}), es = /* @__PURE__ */ x("CgphdGFrLnByb3RvEgptZXNodGFzdGljIvgBCglUQUtQYWNrZXQSFQoNaXNfY29tcHJlc3NlZBgBIAEoCBIkCgdjb250YWN0GAIgASgLMhMubWVzaHRhc3RpYy5Db250YWN0EiAKBWdyb3VwGAMgASgLMhEubWVzaHRhc3RpYy5Hcm91cBIiCgZzdGF0dXMYBCABKAsyEi5tZXNodGFzdGljLlN0YXR1cxIeCgNwbGkYBSABKAsyDy5tZXNodGFzdGljLlBMSUgAEiMKBGNoYXQYBiABKAsyEy5tZXNodGFzdGljLkdlb0NoYXRIABIQCgZkZXRhaWwYByABKAxIAEIRCg9wYXlsb2FkX3ZhcmlhbnQiXAoHR2VvQ2hhdBIPCgdtZXNzYWdlGAEgASgJEg8KAnRvGAIgASgJSACIAQESGAoLdG9fY2FsbHNpZ24YAyABKAlIAYgBAUIFCgNfdG9CDgoMX3RvX2NhbGxzaWduIk0KBUdyb3VwEiQKBHJvbGUYASABKA4yFi5tZXNodGFzdGljLk1lbWJlclJvbGUSHgoEdGVhbRgCIAEoDjIQLm1lc2h0YXN0aWMuVGVhbSIZCgZTdGF0dXMSDwoHYmF0dGVyeRgBIAEoDSI0CgdDb250YWN0EhAKCGNhbGxzaWduGAEgASgJEhcKD2RldmljZV9jYWxsc2lnbhgCIAEoCSJfCgNQTEkSEgoKbGF0aXR1ZGVfaRgBIAEoDxITCgtsb25naXR1ZGVfaRgCIAEoDxIQCghhbHRpdHVkZRgDIAEoBRINCgVzcGVlZBgEIAEoDRIOCgZjb3Vyc2UYBSABKA0qwAEKBFRlYW0SFAoQVW5zcGVjaWZlZF9Db2xvchAAEgkKBVdoaXRlEAESCgoGWWVsbG93EAISCgoGT3JhbmdlEAMSCwoHTWFnZW50YRAEEgcKA1JlZBAFEgoKBk1hcm9vbhAGEgoKBlB1cnBsZRAHEg0KCURhcmtfQmx1ZRAIEggKBEJsdWUQCRIICgRDeWFuEAoSCAoEVGVhbBALEgkKBUdyZWVuEAwSDgoKRGFya19HcmVlbhANEgkKBUJyb3duEA4qfwoKTWVtYmVyUm9sZRIOCgpVbnNwZWNpZmVkEAASDgoKVGVhbU1lbWJlchABEgwKCFRlYW1MZWFkEAISBgoCSFEQAxIKCgZTbmlwZXIQBBIJCgVNZWRpYxAFEhMKD0ZvcndhcmRPYnNlcnZlchAGEgcKA1JUTxAHEgYKAks5EAhCXwoTY29tLmdlZWtzdmlsbGUubWVzaEIKQVRBS1Byb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM"), ts = /* @__PURE__ */ S(es, 0), ns = /* @__PURE__ */ S(es, 1), rs = /* @__PURE__ */ S(es, 2), is = /* @__PURE__ */ S(es, 3), as = /* @__PURE__ */ S(es, 4), os = /* @__PURE__ */ S(es, 5), ss = /* @__PURE__ */ function(e) {
+}({}), Jo = /* @__PURE__ */ b(M, 4, 0), Yo = p({
+	ChannelSetSchema: () => Zo,
+	file_apponly: () => Xo
+}), Xo = /* @__PURE__ */ S("Cg1hcHBvbmx5LnByb3RvEgptZXNodGFzdGljIm8KCkNoYW5uZWxTZXQSLQoIc2V0dGluZ3MYASADKAsyGy5tZXNodGFzdGljLkNoYW5uZWxTZXR0aW5ncxIyCgtsb3JhX2NvbmZpZxgCIAEoCzIdLm1lc2h0YXN0aWMuQ29uZmlnLkxvUmFDb25maWdCYgoTY29tLmdlZWtzdmlsbGUubWVzaEINQXBwT25seVByb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM", [Br, w]), Zo = /* @__PURE__ */ C(Xo, 0), Qo = p({
+	ContactSchema: () => is,
+	GeoChatSchema: () => ts,
+	GroupSchema: () => ns,
+	MemberRole: () => cs,
+	MemberRoleSchema: () => ls,
+	PLISchema: () => as,
+	StatusSchema: () => rs,
+	TAKPacketSchema: () => es,
+	Team: () => os,
+	TeamSchema: () => ss,
+	file_atak: () => $o
+}), $o = /* @__PURE__ */ S("CgphdGFrLnByb3RvEgptZXNodGFzdGljIvgBCglUQUtQYWNrZXQSFQoNaXNfY29tcHJlc3NlZBgBIAEoCBIkCgdjb250YWN0GAIgASgLMhMubWVzaHRhc3RpYy5Db250YWN0EiAKBWdyb3VwGAMgASgLMhEubWVzaHRhc3RpYy5Hcm91cBIiCgZzdGF0dXMYBCABKAsyEi5tZXNodGFzdGljLlN0YXR1cxIeCgNwbGkYBSABKAsyDy5tZXNodGFzdGljLlBMSUgAEiMKBGNoYXQYBiABKAsyEy5tZXNodGFzdGljLkdlb0NoYXRIABIQCgZkZXRhaWwYByABKAxIAEIRCg9wYXlsb2FkX3ZhcmlhbnQiXAoHR2VvQ2hhdBIPCgdtZXNzYWdlGAEgASgJEg8KAnRvGAIgASgJSACIAQESGAoLdG9fY2FsbHNpZ24YAyABKAlIAYgBAUIFCgNfdG9CDgoMX3RvX2NhbGxzaWduIk0KBUdyb3VwEiQKBHJvbGUYASABKA4yFi5tZXNodGFzdGljLk1lbWJlclJvbGUSHgoEdGVhbRgCIAEoDjIQLm1lc2h0YXN0aWMuVGVhbSIZCgZTdGF0dXMSDwoHYmF0dGVyeRgBIAEoDSI0CgdDb250YWN0EhAKCGNhbGxzaWduGAEgASgJEhcKD2RldmljZV9jYWxsc2lnbhgCIAEoCSJfCgNQTEkSEgoKbGF0aXR1ZGVfaRgBIAEoDxITCgtsb25naXR1ZGVfaRgCIAEoDxIQCghhbHRpdHVkZRgDIAEoBRINCgVzcGVlZBgEIAEoDRIOCgZjb3Vyc2UYBSABKA0qwAEKBFRlYW0SFAoQVW5zcGVjaWZlZF9Db2xvchAAEgkKBVdoaXRlEAESCgoGWWVsbG93EAISCgoGT3JhbmdlEAMSCwoHTWFnZW50YRAEEgcKA1JlZBAFEgoKBk1hcm9vbhAGEgoKBlB1cnBsZRAHEg0KCURhcmtfQmx1ZRAIEggKBEJsdWUQCRIICgRDeWFuEAoSCAoEVGVhbBALEgkKBUdyZWVuEAwSDgoKRGFya19HcmVlbhANEgkKBUJyb3duEA4qfwoKTWVtYmVyUm9sZRIOCgpVbnNwZWNpZmVkEAASDgoKVGVhbU1lbWJlchABEgwKCFRlYW1MZWFkEAISBgoCSFEQAxIKCgZTbmlwZXIQBBIJCgVNZWRpYxAFEhMKD0ZvcndhcmRPYnNlcnZlchAGEgcKA1JUTxAHEgYKAks5EAhCXwoTY29tLmdlZWtzdmlsbGUubWVzaEIKQVRBS1Byb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM"), es = /* @__PURE__ */ C($o, 0), ts = /* @__PURE__ */ C($o, 1), ns = /* @__PURE__ */ C($o, 2), rs = /* @__PURE__ */ C($o, 3), is = /* @__PURE__ */ C($o, 4), as = /* @__PURE__ */ C($o, 5), os = /* @__PURE__ */ function(e) {
 	return e[e.Unspecifed_Color = 0] = "Unspecifed_Color", e[e.White = 1] = "White", e[e.Yellow = 2] = "Yellow", e[e.Orange = 3] = "Orange", e[e.Magenta = 4] = "Magenta", e[e.Red = 5] = "Red", e[e.Maroon = 6] = "Maroon", e[e.Purple = 7] = "Purple", e[e.Dark_Blue = 8] = "Dark_Blue", e[e.Blue = 9] = "Blue", e[e.Cyan = 10] = "Cyan", e[e.Teal = 11] = "Teal", e[e.Green = 12] = "Green", e[e.Dark_Green = 13] = "Dark_Green", e[e.Brown = 14] = "Brown", e;
-}({}), cs = /* @__PURE__ */ y(es, 0), ls = /* @__PURE__ */ function(e) {
+}({}), ss = /* @__PURE__ */ b($o, 0), cs = /* @__PURE__ */ function(e) {
 	return e[e.Unspecifed = 0] = "Unspecifed", e[e.TeamMember = 1] = "TeamMember", e[e.TeamLead = 2] = "TeamLead", e[e.HQ = 3] = "HQ", e[e.Sniper = 4] = "Sniper", e[e.Medic = 5] = "Medic", e[e.ForwardObserver = 6] = "ForwardObserver", e[e.RTO = 7] = "RTO", e[e.K9 = 8] = "K9", e;
-}({}), us = /* @__PURE__ */ y(es, 1), ds = p({
-	CannedMessageModuleConfigSchema: () => ps,
-	file_cannedmessages: () => fs
-}), fs = /* @__PURE__ */ x("ChRjYW5uZWRtZXNzYWdlcy5wcm90bxIKbWVzaHRhc3RpYyItChlDYW5uZWRNZXNzYWdlTW9kdWxlQ29uZmlnEhAKCG1lc3NhZ2VzGAEgASgJQm4KE2NvbS5nZWVrc3ZpbGxlLm1lc2hCGUNhbm5lZE1lc3NhZ2VDb25maWdQcm90b3NaImdpdGh1Yi5jb20vbWVzaHRhc3RpYy9nby9nZW5lcmF0ZWSqAhRNZXNodGFzdGljLlByb3RvYnVmc7oCAGIGcHJvdG8z"), ps = /* @__PURE__ */ S(fs, 0), ms = p({
-	LocalConfigSchema: () => gs,
-	LocalModuleConfigSchema: () => _s,
-	file_localonly: () => hs
-}), hs = /* @__PURE__ */ x("Cg9sb2NhbG9ubHkucHJvdG8SCm1lc2h0YXN0aWMisgMKC0xvY2FsQ29uZmlnEi8KBmRldmljZRgBIAEoCzIfLm1lc2h0YXN0aWMuQ29uZmlnLkRldmljZUNvbmZpZxIzCghwb3NpdGlvbhgCIAEoCzIhLm1lc2h0YXN0aWMuQ29uZmlnLlBvc2l0aW9uQ29uZmlnEi0KBXBvd2VyGAMgASgLMh4ubWVzaHRhc3RpYy5Db25maWcuUG93ZXJDb25maWcSMQoHbmV0d29yaxgEIAEoCzIgLm1lc2h0YXN0aWMuQ29uZmlnLk5ldHdvcmtDb25maWcSMQoHZGlzcGxheRgFIAEoCzIgLm1lc2h0YXN0aWMuQ29uZmlnLkRpc3BsYXlDb25maWcSKwoEbG9yYRgGIAEoCzIdLm1lc2h0YXN0aWMuQ29uZmlnLkxvUmFDb25maWcSNQoJYmx1ZXRvb3RoGAcgASgLMiIubWVzaHRhc3RpYy5Db25maWcuQmx1ZXRvb3RoQ29uZmlnEg8KB3ZlcnNpb24YCCABKA0SMwoIc2VjdXJpdHkYCSABKAsyIS5tZXNodGFzdGljLkNvbmZpZy5TZWN1cml0eUNvbmZpZyL7BgoRTG9jYWxNb2R1bGVDb25maWcSMQoEbXF0dBgBIAEoCzIjLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLk1RVFRDb25maWcSNQoGc2VyaWFsGAIgASgLMiUubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuU2VyaWFsQ29uZmlnElIKFWV4dGVybmFsX25vdGlmaWNhdGlvbhgDIAEoCzIzLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLkV4dGVybmFsTm90aWZpY2F0aW9uQ29uZmlnEkIKDXN0b3JlX2ZvcndhcmQYBCABKAsyKy5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5TdG9yZUZvcndhcmRDb25maWcSPAoKcmFuZ2VfdGVzdBgFIAEoCzIoLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLlJhbmdlVGVzdENvbmZpZxI7Cgl0ZWxlbWV0cnkYBiABKAsyKC5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5UZWxlbWV0cnlDb25maWcSRAoOY2FubmVkX21lc3NhZ2UYByABKAsyLC5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5DYW5uZWRNZXNzYWdlQ29uZmlnEjMKBWF1ZGlvGAkgASgLMiQubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuQXVkaW9Db25maWcSRgoPcmVtb3RlX2hhcmR3YXJlGAogASgLMi0ubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuUmVtb3RlSGFyZHdhcmVDb25maWcSQgoNbmVpZ2hib3JfaW5mbxgLIAEoCzIrLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLk5laWdoYm9ySW5mb0NvbmZpZxJIChBhbWJpZW50X2xpZ2h0aW5nGAwgASgLMi4ubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuQW1iaWVudExpZ2h0aW5nQ29uZmlnEkgKEGRldGVjdGlvbl9zZW5zb3IYDSABKAsyLi5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5EZXRlY3Rpb25TZW5zb3JDb25maWcSPQoKcGF4Y291bnRlchgOIAEoCzIpLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLlBheGNvdW50ZXJDb25maWcSDwoHdmVyc2lvbhgIIAEoDUJkChNjb20uZ2Vla3N2aWxsZS5tZXNoQg9Mb2NhbE9ubHlQcm90b3NaImdpdGh1Yi5jb20vbWVzaHRhc3RpYy9nby9nZW5lcmF0ZWSqAhRNZXNodGFzdGljLlByb3RvYnVmc7oCAGIGcHJvdG8z", [C, w]), gs = /* @__PURE__ */ S(hs, 0), _s = /* @__PURE__ */ S(hs, 1), vs = p({
-	DeviceProfileSchema: () => bs,
-	file_clientonly: () => ys
-}), ys = /* @__PURE__ */ x("ChBjbGllbnRvbmx5LnByb3RvEgptZXNodGFzdGljIqkDCg1EZXZpY2VQcm9maWxlEhYKCWxvbmdfbmFtZRgBIAEoCUgAiAEBEhcKCnNob3J0X25hbWUYAiABKAlIAYgBARIYCgtjaGFubmVsX3VybBgDIAEoCUgCiAEBEiwKBmNvbmZpZxgEIAEoCzIXLm1lc2h0YXN0aWMuTG9jYWxDb25maWdIA4gBARI5Cg1tb2R1bGVfY29uZmlnGAUgASgLMh0ubWVzaHRhc3RpYy5Mb2NhbE1vZHVsZUNvbmZpZ0gEiAEBEjEKDmZpeGVkX3Bvc2l0aW9uGAYgASgLMhQubWVzaHRhc3RpYy5Qb3NpdGlvbkgFiAEBEhUKCHJpbmd0b25lGAcgASgJSAaIAQESHAoPY2FubmVkX21lc3NhZ2VzGAggASgJSAeIAQFCDAoKX2xvbmdfbmFtZUINCgtfc2hvcnRfbmFtZUIOCgxfY2hhbm5lbF91cmxCCQoHX2NvbmZpZ0IQCg5fbW9kdWxlX2NvbmZpZ0IRCg9fZml4ZWRfcG9zaXRpb25CCwoJX3Jpbmd0b25lQhIKEF9jYW5uZWRfbWVzc2FnZXNCZQoTY29tLmdlZWtzdmlsbGUubWVzaEIQQ2xpZW50T25seVByb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM", [hs, k]), bs = /* @__PURE__ */ S(ys, 0), xs = p({
-	MapReportSchema: () => ws,
-	ServiceEnvelopeSchema: () => Cs,
-	file_mqtt: () => Ss
-}), Ss = /* @__PURE__ */ x("CgptcXR0LnByb3RvEgptZXNodGFzdGljImEKD1NlcnZpY2VFbnZlbG9wZRImCgZwYWNrZXQYASABKAsyFi5tZXNodGFzdGljLk1lc2hQYWNrZXQSEgoKY2hhbm5lbF9pZBgCIAEoCRISCgpnYXRld2F5X2lkGAMgASgJIt8DCglNYXBSZXBvcnQSEQoJbG9uZ19uYW1lGAEgASgJEhIKCnNob3J0X25hbWUYAiABKAkSMgoEcm9sZRgDIAEoDjIkLm1lc2h0YXN0aWMuQ29uZmlnLkRldmljZUNvbmZpZy5Sb2xlEisKCGh3X21vZGVsGAQgASgOMhkubWVzaHRhc3RpYy5IYXJkd2FyZU1vZGVsEhgKEGZpcm13YXJlX3ZlcnNpb24YBSABKAkSOAoGcmVnaW9uGAYgASgOMigubWVzaHRhc3RpYy5Db25maWcuTG9SYUNvbmZpZy5SZWdpb25Db2RlEj8KDG1vZGVtX3ByZXNldBgHIAEoDjIpLm1lc2h0YXN0aWMuQ29uZmlnLkxvUmFDb25maWcuTW9kZW1QcmVzZXQSGwoTaGFzX2RlZmF1bHRfY2hhbm5lbBgIIAEoCBISCgpsYXRpdHVkZV9pGAkgASgPEhMKC2xvbmdpdHVkZV9pGAogASgPEhAKCGFsdGl0dWRlGAsgASgFEhoKEnBvc2l0aW9uX3ByZWNpc2lvbhgMIAEoDRIeChZudW1fb25saW5lX2xvY2FsX25vZGVzGA0gASgNEiEKGWhhc19vcHRlZF9yZXBvcnRfbG9jYXRpb24YDiABKAhCXwoTY29tLmdlZWtzdmlsbGUubWVzaEIKTVFUVFByb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM", [C, k]), Cs = /* @__PURE__ */ S(Ss, 0), ws = /* @__PURE__ */ S(Ss, 1), Ts = p({
-	PaxcountSchema: () => Ds,
-	file_paxcount: () => Es
-}), Es = /* @__PURE__ */ x("Cg5wYXhjb3VudC5wcm90bxIKbWVzaHRhc3RpYyI1CghQYXhjb3VudBIMCgR3aWZpGAEgASgNEgsKA2JsZRgCIAEoDRIOCgZ1cHRpbWUYAyABKA1CYwoTY29tLmdlZWtzdmlsbGUubWVzaEIOUGF4Y291bnRQcm90b3NaImdpdGh1Yi5jb20vbWVzaHRhc3RpYy9nby9nZW5lcmF0ZWSqAhRNZXNodGFzdGljLlByb3RvYnVmc7oCAGIGcHJvdG8z"), Ds = /* @__PURE__ */ S(Es, 0), Os = p({
-	PowerMonSchema: () => As,
-	PowerMon_State: () => js,
-	PowerMon_StateSchema: () => Ms,
-	PowerStressMessageSchema: () => Ns,
-	PowerStressMessage_Opcode: () => Ps,
-	PowerStressMessage_OpcodeSchema: () => Fs,
-	file_powermon: () => ks
-}), ks = /* @__PURE__ */ x("Cg5wb3dlcm1vbi5wcm90bxIKbWVzaHRhc3RpYyLgAQoIUG93ZXJNb24i0wEKBVN0YXRlEggKBE5vbmUQABIRCg1DUFVfRGVlcFNsZWVwEAESEgoOQ1BVX0xpZ2h0U2xlZXAQAhIMCghWZXh0MV9PbhAEEg0KCUxvcmFfUlhPbhAIEg0KCUxvcmFfVFhPbhAQEhEKDUxvcmFfUlhBY3RpdmUQIBIJCgVCVF9PbhBAEgsKBkxFRF9PbhCAARIOCglTY3JlZW5fT24QgAISEwoOU2NyZWVuX0RyYXdpbmcQgAQSDAoHV2lmaV9PbhCACBIPCgpHUFNfQWN0aXZlEIAQIv8CChJQb3dlclN0cmVzc01lc3NhZ2USMgoDY21kGAEgASgOMiUubWVzaHRhc3RpYy5Qb3dlclN0cmVzc01lc3NhZ2UuT3Bjb2RlEhMKC251bV9zZWNvbmRzGAIgASgCIp8CCgZPcGNvZGUSCQoFVU5TRVQQABIOCgpQUklOVF9JTkZPEAESDwoLRk9SQ0VfUVVJRVQQAhINCglFTkRfUVVJRVQQAxINCglTQ1JFRU5fT04QEBIOCgpTQ1JFRU5fT0ZGEBESDAoIQ1BVX0lETEUQIBIRCg1DUFVfREVFUFNMRUVQECESDgoKQ1BVX0ZVTExPThAiEgoKBkxFRF9PThAwEgsKB0xFRF9PRkYQMRIMCghMT1JBX09GRhBAEgsKB0xPUkFfVFgQQRILCgdMT1JBX1JYEEISCgoGQlRfT0ZGEFASCQoFQlRfT04QURIMCghXSUZJX09GRhBgEgsKB1dJRklfT04QYRILCgdHUFNfT0ZGEHASCgoGR1BTX09OEHFCYwoTY29tLmdlZWtzdmlsbGUubWVzaEIOUG93ZXJNb25Qcm90b3NaImdpdGh1Yi5jb20vbWVzaHRhc3RpYy9nby9nZW5lcmF0ZWSqAhRNZXNodGFzdGljLlByb3RvYnVmc7oCAGIGcHJvdG8z"), As = /* @__PURE__ */ S(ks, 0), js = /* @__PURE__ */ function(e) {
+}({}), ls = /* @__PURE__ */ b($o, 1), us = p({
+	CannedMessageModuleConfigSchema: () => fs,
+	file_cannedmessages: () => ds
+}), ds = /* @__PURE__ */ S("ChRjYW5uZWRtZXNzYWdlcy5wcm90bxIKbWVzaHRhc3RpYyItChlDYW5uZWRNZXNzYWdlTW9kdWxlQ29uZmlnEhAKCG1lc3NhZ2VzGAEgASgJQm4KE2NvbS5nZWVrc3ZpbGxlLm1lc2hCGUNhbm5lZE1lc3NhZ2VDb25maWdQcm90b3NaImdpdGh1Yi5jb20vbWVzaHRhc3RpYy9nby9nZW5lcmF0ZWSqAhRNZXNodGFzdGljLlByb3RvYnVmc7oCAGIGcHJvdG8z"), fs = /* @__PURE__ */ C(ds, 0), ps = p({
+	LocalConfigSchema: () => hs,
+	LocalModuleConfigSchema: () => gs,
+	file_localonly: () => ms
+}), ms = /* @__PURE__ */ S("Cg9sb2NhbG9ubHkucHJvdG8SCm1lc2h0YXN0aWMisgMKC0xvY2FsQ29uZmlnEi8KBmRldmljZRgBIAEoCzIfLm1lc2h0YXN0aWMuQ29uZmlnLkRldmljZUNvbmZpZxIzCghwb3NpdGlvbhgCIAEoCzIhLm1lc2h0YXN0aWMuQ29uZmlnLlBvc2l0aW9uQ29uZmlnEi0KBXBvd2VyGAMgASgLMh4ubWVzaHRhc3RpYy5Db25maWcuUG93ZXJDb25maWcSMQoHbmV0d29yaxgEIAEoCzIgLm1lc2h0YXN0aWMuQ29uZmlnLk5ldHdvcmtDb25maWcSMQoHZGlzcGxheRgFIAEoCzIgLm1lc2h0YXN0aWMuQ29uZmlnLkRpc3BsYXlDb25maWcSKwoEbG9yYRgGIAEoCzIdLm1lc2h0YXN0aWMuQ29uZmlnLkxvUmFDb25maWcSNQoJYmx1ZXRvb3RoGAcgASgLMiIubWVzaHRhc3RpYy5Db25maWcuQmx1ZXRvb3RoQ29uZmlnEg8KB3ZlcnNpb24YCCABKA0SMwoIc2VjdXJpdHkYCSABKAsyIS5tZXNodGFzdGljLkNvbmZpZy5TZWN1cml0eUNvbmZpZyL7BgoRTG9jYWxNb2R1bGVDb25maWcSMQoEbXF0dBgBIAEoCzIjLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLk1RVFRDb25maWcSNQoGc2VyaWFsGAIgASgLMiUubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuU2VyaWFsQ29uZmlnElIKFWV4dGVybmFsX25vdGlmaWNhdGlvbhgDIAEoCzIzLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLkV4dGVybmFsTm90aWZpY2F0aW9uQ29uZmlnEkIKDXN0b3JlX2ZvcndhcmQYBCABKAsyKy5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5TdG9yZUZvcndhcmRDb25maWcSPAoKcmFuZ2VfdGVzdBgFIAEoCzIoLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLlJhbmdlVGVzdENvbmZpZxI7Cgl0ZWxlbWV0cnkYBiABKAsyKC5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5UZWxlbWV0cnlDb25maWcSRAoOY2FubmVkX21lc3NhZ2UYByABKAsyLC5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5DYW5uZWRNZXNzYWdlQ29uZmlnEjMKBWF1ZGlvGAkgASgLMiQubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuQXVkaW9Db25maWcSRgoPcmVtb3RlX2hhcmR3YXJlGAogASgLMi0ubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuUmVtb3RlSGFyZHdhcmVDb25maWcSQgoNbmVpZ2hib3JfaW5mbxgLIAEoCzIrLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLk5laWdoYm9ySW5mb0NvbmZpZxJIChBhbWJpZW50X2xpZ2h0aW5nGAwgASgLMi4ubWVzaHRhc3RpYy5Nb2R1bGVDb25maWcuQW1iaWVudExpZ2h0aW5nQ29uZmlnEkgKEGRldGVjdGlvbl9zZW5zb3IYDSABKAsyLi5tZXNodGFzdGljLk1vZHVsZUNvbmZpZy5EZXRlY3Rpb25TZW5zb3JDb25maWcSPQoKcGF4Y291bnRlchgOIAEoCzIpLm1lc2h0YXN0aWMuTW9kdWxlQ29uZmlnLlBheGNvdW50ZXJDb25maWcSDwoHdmVyc2lvbhgIIAEoDUJkChNjb20uZ2Vla3N2aWxsZS5tZXNoQg9Mb2NhbE9ubHlQcm90b3NaImdpdGh1Yi5jb20vbWVzaHRhc3RpYy9nby9nZW5lcmF0ZWSqAhRNZXNodGFzdGljLlByb3RvYnVmc7oCAGIGcHJvdG8z", [w, T]), hs = /* @__PURE__ */ C(ms, 0), gs = /* @__PURE__ */ C(ms, 1), _s = p({
+	DeviceProfileSchema: () => ys,
+	file_clientonly: () => vs
+}), vs = /* @__PURE__ */ S("ChBjbGllbnRvbmx5LnByb3RvEgptZXNodGFzdGljIqkDCg1EZXZpY2VQcm9maWxlEhYKCWxvbmdfbmFtZRgBIAEoCUgAiAEBEhcKCnNob3J0X25hbWUYAiABKAlIAYgBARIYCgtjaGFubmVsX3VybBgDIAEoCUgCiAEBEiwKBmNvbmZpZxgEIAEoCzIXLm1lc2h0YXN0aWMuTG9jYWxDb25maWdIA4gBARI5Cg1tb2R1bGVfY29uZmlnGAUgASgLMh0ubWVzaHRhc3RpYy5Mb2NhbE1vZHVsZUNvbmZpZ0gEiAEBEjEKDmZpeGVkX3Bvc2l0aW9uGAYgASgLMhQubWVzaHRhc3RpYy5Qb3NpdGlvbkgFiAEBEhUKCHJpbmd0b25lGAcgASgJSAaIAQESHAoPY2FubmVkX21lc3NhZ2VzGAggASgJSAeIAQFCDAoKX2xvbmdfbmFtZUINCgtfc2hvcnRfbmFtZUIOCgxfY2hhbm5lbF91cmxCCQoHX2NvbmZpZ0IQCg5fbW9kdWxlX2NvbmZpZ0IRCg9fZml4ZWRfcG9zaXRpb25CCwoJX3Jpbmd0b25lQhIKEF9jYW5uZWRfbWVzc2FnZXNCZQoTY29tLmdlZWtzdmlsbGUubWVzaEIQQ2xpZW50T25seVByb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM", [ms, A]), ys = /* @__PURE__ */ C(vs, 0), bs = p({
+	MapReportSchema: () => Cs,
+	ServiceEnvelopeSchema: () => Ss,
+	file_mqtt: () => xs
+}), xs = /* @__PURE__ */ S("CgptcXR0LnByb3RvEgptZXNodGFzdGljImEKD1NlcnZpY2VFbnZlbG9wZRImCgZwYWNrZXQYASABKAsyFi5tZXNodGFzdGljLk1lc2hQYWNrZXQSEgoKY2hhbm5lbF9pZBgCIAEoCRISCgpnYXRld2F5X2lkGAMgASgJIt8DCglNYXBSZXBvcnQSEQoJbG9uZ19uYW1lGAEgASgJEhIKCnNob3J0X25hbWUYAiABKAkSMgoEcm9sZRgDIAEoDjIkLm1lc2h0YXN0aWMuQ29uZmlnLkRldmljZUNvbmZpZy5Sb2xlEisKCGh3X21vZGVsGAQgASgOMhkubWVzaHRhc3RpYy5IYXJkd2FyZU1vZGVsEhgKEGZpcm13YXJlX3ZlcnNpb24YBSABKAkSOAoGcmVnaW9uGAYgASgOMigubWVzaHRhc3RpYy5Db25maWcuTG9SYUNvbmZpZy5SZWdpb25Db2RlEj8KDG1vZGVtX3ByZXNldBgHIAEoDjIpLm1lc2h0YXN0aWMuQ29uZmlnLkxvUmFDb25maWcuTW9kZW1QcmVzZXQSGwoTaGFzX2RlZmF1bHRfY2hhbm5lbBgIIAEoCBISCgpsYXRpdHVkZV9pGAkgASgPEhMKC2xvbmdpdHVkZV9pGAogASgPEhAKCGFsdGl0dWRlGAsgASgFEhoKEnBvc2l0aW9uX3ByZWNpc2lvbhgMIAEoDRIeChZudW1fb25saW5lX2xvY2FsX25vZGVzGA0gASgNEiEKGWhhc19vcHRlZF9yZXBvcnRfbG9jYXRpb24YDiABKAhCXwoTY29tLmdlZWtzdmlsbGUubWVzaEIKTVFUVFByb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM", [w, A]), Ss = /* @__PURE__ */ C(xs, 0), Cs = /* @__PURE__ */ C(xs, 1), ws = p({
+	PaxcountSchema: () => Es,
+	file_paxcount: () => Ts
+}), Ts = /* @__PURE__ */ S("Cg5wYXhjb3VudC5wcm90bxIKbWVzaHRhc3RpYyI1CghQYXhjb3VudBIMCgR3aWZpGAEgASgNEgsKA2JsZRgCIAEoDRIOCgZ1cHRpbWUYAyABKA1CYwoTY29tLmdlZWtzdmlsbGUubWVzaEIOUGF4Y291bnRQcm90b3NaImdpdGh1Yi5jb20vbWVzaHRhc3RpYy9nby9nZW5lcmF0ZWSqAhRNZXNodGFzdGljLlByb3RvYnVmc7oCAGIGcHJvdG8z"), Es = /* @__PURE__ */ C(Ts, 0), Ds = p({
+	PowerMonSchema: () => ks,
+	PowerMon_State: () => As,
+	PowerMon_StateSchema: () => js,
+	PowerStressMessageSchema: () => Ms,
+	PowerStressMessage_Opcode: () => Ns,
+	PowerStressMessage_OpcodeSchema: () => Ps,
+	file_powermon: () => Os
+}), Os = /* @__PURE__ */ S("Cg5wb3dlcm1vbi5wcm90bxIKbWVzaHRhc3RpYyLgAQoIUG93ZXJNb24i0wEKBVN0YXRlEggKBE5vbmUQABIRCg1DUFVfRGVlcFNsZWVwEAESEgoOQ1BVX0xpZ2h0U2xlZXAQAhIMCghWZXh0MV9PbhAEEg0KCUxvcmFfUlhPbhAIEg0KCUxvcmFfVFhPbhAQEhEKDUxvcmFfUlhBY3RpdmUQIBIJCgVCVF9PbhBAEgsKBkxFRF9PbhCAARIOCglTY3JlZW5fT24QgAISEwoOU2NyZWVuX0RyYXdpbmcQgAQSDAoHV2lmaV9PbhCACBIPCgpHUFNfQWN0aXZlEIAQIv8CChJQb3dlclN0cmVzc01lc3NhZ2USMgoDY21kGAEgASgOMiUubWVzaHRhc3RpYy5Qb3dlclN0cmVzc01lc3NhZ2UuT3Bjb2RlEhMKC251bV9zZWNvbmRzGAIgASgCIp8CCgZPcGNvZGUSCQoFVU5TRVQQABIOCgpQUklOVF9JTkZPEAESDwoLRk9SQ0VfUVVJRVQQAhINCglFTkRfUVVJRVQQAxINCglTQ1JFRU5fT04QEBIOCgpTQ1JFRU5fT0ZGEBESDAoIQ1BVX0lETEUQIBIRCg1DUFVfREVFUFNMRUVQECESDgoKQ1BVX0ZVTExPThAiEgoKBkxFRF9PThAwEgsKB0xFRF9PRkYQMRIMCghMT1JBX09GRhBAEgsKB0xPUkFfVFgQQRILCgdMT1JBX1JYEEISCgoGQlRfT0ZGEFASCQoFQlRfT04QURIMCghXSUZJX09GRhBgEgsKB1dJRklfT04QYRILCgdHUFNfT0ZGEHASCgoGR1BTX09OEHFCYwoTY29tLmdlZWtzdmlsbGUubWVzaEIOUG93ZXJNb25Qcm90b3NaImdpdGh1Yi5jb20vbWVzaHRhc3RpYy9nby9nZW5lcmF0ZWSqAhRNZXNodGFzdGljLlByb3RvYnVmc7oCAGIGcHJvdG8z"), ks = /* @__PURE__ */ C(Os, 0), As = /* @__PURE__ */ function(e) {
 	return e[e.None = 0] = "None", e[e.CPU_DeepSleep = 1] = "CPU_DeepSleep", e[e.CPU_LightSleep = 2] = "CPU_LightSleep", e[e.Vext1_On = 4] = "Vext1_On", e[e.Lora_RXOn = 8] = "Lora_RXOn", e[e.Lora_TXOn = 16] = "Lora_TXOn", e[e.Lora_RXActive = 32] = "Lora_RXActive", e[e.BT_On = 64] = "BT_On", e[e.LED_On = 128] = "LED_On", e[e.Screen_On = 256] = "Screen_On", e[e.Screen_Drawing = 512] = "Screen_Drawing", e[e.Wifi_On = 1024] = "Wifi_On", e[e.GPS_Active = 2048] = "GPS_Active", e;
-}({}), Ms = /* @__PURE__ */ y(ks, 0, 0), Ns = /* @__PURE__ */ S(ks, 1), Ps = /* @__PURE__ */ function(e) {
+}({}), js = /* @__PURE__ */ b(Os, 0, 0), Ms = /* @__PURE__ */ C(Os, 1), Ns = /* @__PURE__ */ function(e) {
 	return e[e.UNSET = 0] = "UNSET", e[e.PRINT_INFO = 1] = "PRINT_INFO", e[e.FORCE_QUIET = 2] = "FORCE_QUIET", e[e.END_QUIET = 3] = "END_QUIET", e[e.SCREEN_ON = 16] = "SCREEN_ON", e[e.SCREEN_OFF = 17] = "SCREEN_OFF", e[e.CPU_IDLE = 32] = "CPU_IDLE", e[e.CPU_DEEPSLEEP = 33] = "CPU_DEEPSLEEP", e[e.CPU_FULLON = 34] = "CPU_FULLON", e[e.LED_ON = 48] = "LED_ON", e[e.LED_OFF = 49] = "LED_OFF", e[e.LORA_OFF = 64] = "LORA_OFF", e[e.LORA_TX = 65] = "LORA_TX", e[e.LORA_RX = 66] = "LORA_RX", e[e.BT_OFF = 80] = "BT_OFF", e[e.BT_ON = 81] = "BT_ON", e[e.WIFI_OFF = 96] = "WIFI_OFF", e[e.WIFI_ON = 97] = "WIFI_ON", e[e.GPS_OFF = 112] = "GPS_OFF", e[e.GPS_ON = 113] = "GPS_ON", e;
-}({}), Fs = /* @__PURE__ */ y(ks, 1, 0), Is = p({
-	HardwareMessageSchema: () => Rs,
-	HardwareMessage_Type: () => zs,
-	HardwareMessage_TypeSchema: () => Bs,
-	file_remote_hardware: () => Ls
-}), Ls = /* @__PURE__ */ x("ChVyZW1vdGVfaGFyZHdhcmUucHJvdG8SCm1lc2h0YXN0aWMi1gEKD0hhcmR3YXJlTWVzc2FnZRIuCgR0eXBlGAEgASgOMiAubWVzaHRhc3RpYy5IYXJkd2FyZU1lc3NhZ2UuVHlwZRIRCglncGlvX21hc2sYAiABKAQSEgoKZ3Bpb192YWx1ZRgDIAEoBCJsCgRUeXBlEgkKBVVOU0VUEAASDwoLV1JJVEVfR1BJT1MQARIPCgtXQVRDSF9HUElPUxACEhEKDUdQSU9TX0NIQU5HRUQQAxIOCgpSRUFEX0dQSU9TEAQSFAoQUkVBRF9HUElPU19SRVBMWRAFQmMKE2NvbS5nZWVrc3ZpbGxlLm1lc2hCDlJlbW90ZUhhcmR3YXJlWiJnaXRodWIuY29tL21lc2h0YXN0aWMvZ28vZ2VuZXJhdGVkqgIUTWVzaHRhc3RpYy5Qcm90b2J1ZnO6AgBiBnByb3RvMw"), Rs = /* @__PURE__ */ S(Ls, 0), zs = /* @__PURE__ */ function(e) {
+}({}), Ps = /* @__PURE__ */ b(Os, 1, 0), Fs = p({
+	HardwareMessageSchema: () => Ls,
+	HardwareMessage_Type: () => Rs,
+	HardwareMessage_TypeSchema: () => zs,
+	file_remote_hardware: () => Is
+}), Is = /* @__PURE__ */ S("ChVyZW1vdGVfaGFyZHdhcmUucHJvdG8SCm1lc2h0YXN0aWMi1gEKD0hhcmR3YXJlTWVzc2FnZRIuCgR0eXBlGAEgASgOMiAubWVzaHRhc3RpYy5IYXJkd2FyZU1lc3NhZ2UuVHlwZRIRCglncGlvX21hc2sYAiABKAQSEgoKZ3Bpb192YWx1ZRgDIAEoBCJsCgRUeXBlEgkKBVVOU0VUEAASDwoLV1JJVEVfR1BJT1MQARIPCgtXQVRDSF9HUElPUxACEhEKDUdQSU9TX0NIQU5HRUQQAxIOCgpSRUFEX0dQSU9TEAQSFAoQUkVBRF9HUElPU19SRVBMWRAFQmMKE2NvbS5nZWVrc3ZpbGxlLm1lc2hCDlJlbW90ZUhhcmR3YXJlWiJnaXRodWIuY29tL21lc2h0YXN0aWMvZ28vZ2VuZXJhdGVkqgIUTWVzaHRhc3RpYy5Qcm90b2J1ZnO6AgBiBnByb3RvMw"), Ls = /* @__PURE__ */ C(Is, 0), Rs = /* @__PURE__ */ function(e) {
 	return e[e.UNSET = 0] = "UNSET", e[e.WRITE_GPIOS = 1] = "WRITE_GPIOS", e[e.WATCH_GPIOS = 2] = "WATCH_GPIOS", e[e.GPIOS_CHANGED = 3] = "GPIOS_CHANGED", e[e.READ_GPIOS = 4] = "READ_GPIOS", e[e.READ_GPIOS_REPLY = 5] = "READ_GPIOS_REPLY", e;
-}({}), Bs = /* @__PURE__ */ y(Ls, 0, 0), Vs = p({
-	RTTTLConfigSchema: () => Us,
-	file_rtttl: () => Hs
-}), Hs = /* @__PURE__ */ x("CgtydHR0bC5wcm90bxIKbWVzaHRhc3RpYyIfCgtSVFRUTENvbmZpZxIQCghyaW5ndG9uZRgBIAEoCUJmChNjb20uZ2Vla3N2aWxsZS5tZXNoQhFSVFRUTENvbmZpZ1Byb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM"), Us = /* @__PURE__ */ S(Hs, 0), Ws = p({
-	StoreAndForwardSchema: () => Ks,
-	StoreAndForward_HeartbeatSchema: () => Ys,
-	StoreAndForward_HistorySchema: () => Js,
-	StoreAndForward_RequestResponse: () => Xs,
-	StoreAndForward_RequestResponseSchema: () => Zs,
-	StoreAndForward_StatisticsSchema: () => qs,
-	file_storeforward: () => Gs
-}), Gs = /* @__PURE__ */ x("ChJzdG9yZWZvcndhcmQucHJvdG8SCm1lc2h0YXN0aWMinAcKD1N0b3JlQW5kRm9yd2FyZBI3CgJychgBIAEoDjIrLm1lc2h0YXN0aWMuU3RvcmVBbmRGb3J3YXJkLlJlcXVlc3RSZXNwb25zZRI3CgVzdGF0cxgCIAEoCzImLm1lc2h0YXN0aWMuU3RvcmVBbmRGb3J3YXJkLlN0YXRpc3RpY3NIABI2CgdoaXN0b3J5GAMgASgLMiMubWVzaHRhc3RpYy5TdG9yZUFuZEZvcndhcmQuSGlzdG9yeUgAEjoKCWhlYXJ0YmVhdBgEIAEoCzIlLm1lc2h0YXN0aWMuU3RvcmVBbmRGb3J3YXJkLkhlYXJ0YmVhdEgAEg4KBHRleHQYBSABKAxIABrNAQoKU3RhdGlzdGljcxIWCg5tZXNzYWdlc190b3RhbBgBIAEoDRIWCg5tZXNzYWdlc19zYXZlZBgCIAEoDRIUCgxtZXNzYWdlc19tYXgYAyABKA0SDwoHdXBfdGltZRgEIAEoDRIQCghyZXF1ZXN0cxgFIAEoDRIYChByZXF1ZXN0c19oaXN0b3J5GAYgASgNEhEKCWhlYXJ0YmVhdBgHIAEoCBISCgpyZXR1cm5fbWF4GAggASgNEhUKDXJldHVybl93aW5kb3cYCSABKA0aSQoHSGlzdG9yeRIYChBoaXN0b3J5X21lc3NhZ2VzGAEgASgNEg4KBndpbmRvdxgCIAEoDRIUCgxsYXN0X3JlcXVlc3QYAyABKA0aLgoJSGVhcnRiZWF0Eg4KBnBlcmlvZBgBIAEoDRIRCglzZWNvbmRhcnkYAiABKA0ivAIKD1JlcXVlc3RSZXNwb25zZRIJCgVVTlNFVBAAEhAKDFJPVVRFUl9FUlJPUhABEhQKEFJPVVRFUl9IRUFSVEJFQVQQAhIPCgtST1VURVJfUElORxADEg8KC1JPVVRFUl9QT05HEAQSDwoLUk9VVEVSX0JVU1kQBRISCg5ST1VURVJfSElTVE9SWRAGEhAKDFJPVVRFUl9TVEFUUxAHEhYKElJPVVRFUl9URVhUX0RJUkVDVBAIEhkKFVJPVVRFUl9URVhUX0JST0FEQ0FTVBAJEhAKDENMSUVOVF9FUlJPUhBAEhIKDkNMSUVOVF9ISVNUT1JZEEESEAoMQ0xJRU5UX1NUQVRTEEISDwoLQ0xJRU5UX1BJTkcQQxIPCgtDTElFTlRfUE9ORxBEEhAKDENMSUVOVF9BQk9SVBBqQgkKB3ZhcmlhbnRCagoTY29tLmdlZWtzdmlsbGUubWVzaEIVU3RvcmVBbmRGb3J3YXJkUHJvdG9zWiJnaXRodWIuY29tL21lc2h0YXN0aWMvZ28vZ2VuZXJhdGVkqgIUTWVzaHRhc3RpYy5Qcm90b2J1ZnO6AgBiBnByb3RvMw"), Ks = /* @__PURE__ */ S(Gs, 0), qs = /* @__PURE__ */ S(Gs, 0, 0), Js = /* @__PURE__ */ S(Gs, 0, 1), Ys = /* @__PURE__ */ S(Gs, 0, 2), Xs = /* @__PURE__ */ function(e) {
+}({}), zs = /* @__PURE__ */ b(Is, 0, 0), Bs = p({
+	RTTTLConfigSchema: () => Hs,
+	file_rtttl: () => Vs
+}), Vs = /* @__PURE__ */ S("CgtydHR0bC5wcm90bxIKbWVzaHRhc3RpYyIfCgtSVFRUTENvbmZpZxIQCghyaW5ndG9uZRgBIAEoCUJmChNjb20uZ2Vla3N2aWxsZS5tZXNoQhFSVFRUTENvbmZpZ1Byb3Rvc1oiZ2l0aHViLmNvbS9tZXNodGFzdGljL2dvL2dlbmVyYXRlZKoCFE1lc2h0YXN0aWMuUHJvdG9idWZzugIAYgZwcm90bzM"), Hs = /* @__PURE__ */ C(Vs, 0), Us = p({
+	StoreAndForwardSchema: () => Gs,
+	StoreAndForward_HeartbeatSchema: () => Js,
+	StoreAndForward_HistorySchema: () => qs,
+	StoreAndForward_RequestResponse: () => Ys,
+	StoreAndForward_RequestResponseSchema: () => Xs,
+	StoreAndForward_StatisticsSchema: () => Ks,
+	file_storeforward: () => Ws
+}), Ws = /* @__PURE__ */ S("ChJzdG9yZWZvcndhcmQucHJvdG8SCm1lc2h0YXN0aWMinAcKD1N0b3JlQW5kRm9yd2FyZBI3CgJychgBIAEoDjIrLm1lc2h0YXN0aWMuU3RvcmVBbmRGb3J3YXJkLlJlcXVlc3RSZXNwb25zZRI3CgVzdGF0cxgCIAEoCzImLm1lc2h0YXN0aWMuU3RvcmVBbmRGb3J3YXJkLlN0YXRpc3RpY3NIABI2CgdoaXN0b3J5GAMgASgLMiMubWVzaHRhc3RpYy5TdG9yZUFuZEZvcndhcmQuSGlzdG9yeUgAEjoKCWhlYXJ0YmVhdBgEIAEoCzIlLm1lc2h0YXN0aWMuU3RvcmVBbmRGb3J3YXJkLkhlYXJ0YmVhdEgAEg4KBHRleHQYBSABKAxIABrNAQoKU3RhdGlzdGljcxIWCg5tZXNzYWdlc190b3RhbBgBIAEoDRIWCg5tZXNzYWdlc19zYXZlZBgCIAEoDRIUCgxtZXNzYWdlc19tYXgYAyABKA0SDwoHdXBfdGltZRgEIAEoDRIQCghyZXF1ZXN0cxgFIAEoDRIYChByZXF1ZXN0c19oaXN0b3J5GAYgASgNEhEKCWhlYXJ0YmVhdBgHIAEoCBISCgpyZXR1cm5fbWF4GAggASgNEhUKDXJldHVybl93aW5kb3cYCSABKA0aSQoHSGlzdG9yeRIYChBoaXN0b3J5X21lc3NhZ2VzGAEgASgNEg4KBndpbmRvdxgCIAEoDRIUCgxsYXN0X3JlcXVlc3QYAyABKA0aLgoJSGVhcnRiZWF0Eg4KBnBlcmlvZBgBIAEoDRIRCglzZWNvbmRhcnkYAiABKA0ivAIKD1JlcXVlc3RSZXNwb25zZRIJCgVVTlNFVBAAEhAKDFJPVVRFUl9FUlJPUhABEhQKEFJPVVRFUl9IRUFSVEJFQVQQAhIPCgtST1VURVJfUElORxADEg8KC1JPVVRFUl9QT05HEAQSDwoLUk9VVEVSX0JVU1kQBRISCg5ST1VURVJfSElTVE9SWRAGEhAKDFJPVVRFUl9TVEFUUxAHEhYKElJPVVRFUl9URVhUX0RJUkVDVBAIEhkKFVJPVVRFUl9URVhUX0JST0FEQ0FTVBAJEhAKDENMSUVOVF9FUlJPUhBAEhIKDkNMSUVOVF9ISVNUT1JZEEESEAoMQ0xJRU5UX1NUQVRTEEISDwoLQ0xJRU5UX1BJTkcQQxIPCgtDTElFTlRfUE9ORxBEEhAKDENMSUVOVF9BQk9SVBBqQgkKB3ZhcmlhbnRCagoTY29tLmdlZWtzdmlsbGUubWVzaEIVU3RvcmVBbmRGb3J3YXJkUHJvdG9zWiJnaXRodWIuY29tL21lc2h0YXN0aWMvZ28vZ2VuZXJhdGVkqgIUTWVzaHRhc3RpYy5Qcm90b2J1ZnO6AgBiBnByb3RvMw"), Gs = /* @__PURE__ */ C(Ws, 0), Ks = /* @__PURE__ */ C(Ws, 0, 0), qs = /* @__PURE__ */ C(Ws, 0, 1), Js = /* @__PURE__ */ C(Ws, 0, 2), Ys = /* @__PURE__ */ function(e) {
 	return e[e.UNSET = 0] = "UNSET", e[e.ROUTER_ERROR = 1] = "ROUTER_ERROR", e[e.ROUTER_HEARTBEAT = 2] = "ROUTER_HEARTBEAT", e[e.ROUTER_PING = 3] = "ROUTER_PING", e[e.ROUTER_PONG = 4] = "ROUTER_PONG", e[e.ROUTER_BUSY = 5] = "ROUTER_BUSY", e[e.ROUTER_HISTORY = 6] = "ROUTER_HISTORY", e[e.ROUTER_STATS = 7] = "ROUTER_STATS", e[e.ROUTER_TEXT_DIRECT = 8] = "ROUTER_TEXT_DIRECT", e[e.ROUTER_TEXT_BROADCAST = 9] = "ROUTER_TEXT_BROADCAST", e[e.CLIENT_ERROR = 64] = "CLIENT_ERROR", e[e.CLIENT_HISTORY = 65] = "CLIENT_HISTORY", e[e.CLIENT_STATS = 66] = "CLIENT_STATS", e[e.CLIENT_PING = 67] = "CLIENT_PING", e[e.CLIENT_PONG = 68] = "CLIENT_PONG", e[e.CLIENT_ABORT = 106] = "CLIENT_ABORT", e;
-}({}), Zs = /* @__PURE__ */ y(Gs, 0, 0), Qs = {
+}({}), Xs = /* @__PURE__ */ b(Ws, 0, 0), Zs = {
 	broadcastNum: 0xffffffff,
 	minFwVer: 2.2
-}, $s = {
+}, Qs = {
 	reset: [0, 0],
 	bold: [1, 22],
 	dim: [2, 22],
@@ -4725,17 +4725,17 @@ var zr = s({
 	bgCyanBright: [106, 49],
 	bgWhiteBright: [107, 49]
 };
-function ec(e, t, n, r = !1) {
-	let i = String(t), a = (e, t) => `\u001b[${t[0]}m${e}\u001b[${t[1]}m`, o = (e, t) => t != null && typeof t == "string" ? a(e, $s[t]) : t != null && Array.isArray(t) ? t.reduce((e, t) => o(e, t), e) : t != null && t[e.trim()] != null ? o(e, t[e.trim()]) : t != null && t["*"] != null ? o(e, t["*"]) : e;
+function $s(e, t, n, r = !1) {
+	let i = String(t), a = (e, t) => `\u001b[${t[0]}m${e}\u001b[${t[1]}m`, o = (e, t) => t != null && typeof t == "string" ? a(e, Qs[t]) : t != null && Array.isArray(t) ? t.reduce((e, t) => o(e, t), e) : t != null && t[e.trim()] != null ? o(e, t[e.trim()]) : t != null && t["*"] != null ? o(e, t["*"]) : e;
 	return i.replace(/{{(.+?)}}/g, (t, i) => {
 		let s = n[i] == null ? r ? "" : t : String(n[i]);
-		return e.stylePrettyLogs ? o(s, e?.prettyLogStyles?.[i] ?? null) + a("", $s.reset) : s;
+		return e.stylePrettyLogs ? o(s, e?.prettyLogStyles?.[i] ?? null) + a("", Qs.reset) : s;
 	});
 }
-function M(e, t = 2, n = 0) {
+function N(e, t = 2, n = 0) {
 	return e != null && isNaN(e) ? "" : (e = e == null ? e : e + n, t === 2 ? e == null ? "--" : e < 10 ? "0" + e : e.toString() : e == null ? "---" : e < 10 ? "00" + e : e < 100 ? "0" + e : e.toString());
 }
-function tc(e) {
+function ec(e) {
 	return {
 		href: e.href,
 		protocol: e.protocol,
@@ -4754,38 +4754,38 @@ function tc(e) {
 		origin: e.origin
 	};
 }
-var nc = {
-	getCallerStackFrame: ac,
-	getErrorTrace: oc,
-	getMeta: ic,
-	transportJSON: fc,
-	transportFormatted: dc,
-	isBuffer: pc,
-	isError: cc,
-	prettyFormatLogObj: lc,
-	prettyFormatErrorObj: uc
-}, rc = {
+var tc = {
+	getCallerStackFrame: ic,
+	getErrorTrace: ac,
+	getMeta: rc,
+	transportJSON: dc,
+	transportFormatted: uc,
+	isBuffer: fc,
+	isError: sc,
+	prettyFormatLogObj: cc,
+	prettyFormatErrorObj: lc
+}, nc = {
 	runtime: "Nodejs",
 	runtimeVersion: process?.version,
 	hostname: u ? u() : void 0
 };
-function ic(e, t, n, r, i, a) {
-	return Object.assign({}, rc, {
+function rc(e, t, n, r, i, a) {
+	return Object.assign({}, nc, {
 		name: i,
 		parentNames: a,
 		date: /* @__PURE__ */ new Date(),
 		logLevelId: e,
 		logLevelName: t,
-		path: r ? void 0 : ac(n)
+		path: r ? void 0 : ic(n)
 	});
 }
-function ac(e, t = Error()) {
-	return sc(t?.stack?.split("\n")?.filter((e) => e.includes("    at "))?.[e]);
+function ic(e, t = Error()) {
+	return oc(t?.stack?.split("\n")?.filter((e) => e.includes("    at "))?.[e]);
+}
+function ac(e) {
+	return e?.stack?.split("\n")?.reduce((e, t) => (t.includes("    at ") && e.push(oc(t)), e), []);
 }
 function oc(e) {
-	return e?.stack?.split("\n")?.reduce((e, t) => (t.includes("    at ") && e.push(sc(t)), e), []);
-}
-function sc(e) {
 	let t = {
 		fullFilePath: void 0,
 		fileName: void 0,
@@ -4803,28 +4803,28 @@ function sc(e) {
 	}
 	return t;
 }
-function cc(e) {
+function sc(e) {
 	return te?.isNativeError == null ? e instanceof Error : te.isNativeError(e);
 }
-function lc(e, t) {
-	return e.reduce((e, n) => (cc(n) ? e.errors.push(uc(n, t)) : e.args.push(n), e), {
+function cc(e, t) {
+	return e.reduce((e, n) => (sc(n) ? e.errors.push(lc(n, t)) : e.args.push(n), e), {
 		args: [],
 		errors: []
 	});
 }
-function uc(e, t) {
-	let n = oc(e).map((e) => ec(t, t.prettyErrorStackTemplate, { ...e }, !0)), r = {
+function lc(e, t) {
+	let n = ac(e).map((e) => $s(t, t.prettyErrorStackTemplate, { ...e }, !0)), r = {
 		errorName: ` ${e.name} `,
 		errorMessage: Object.getOwnPropertyNames(e).reduce((t, n) => (n !== "stack" && t.push(e[n]), t), []).join(", "),
 		errorStack: n.join("\n")
 	};
-	return ec(t, t.prettyErrorTemplate, r);
+	return $s(t, t.prettyErrorTemplate, r);
 }
-function dc(e, t, n, r) {
+function uc(e, t, n, r) {
 	let i = (n.length > 0 && t.length > 0 ? "\n" : "") + n.join("\n");
 	r.prettyInspectOptions.colors = r.stylePrettyLogs, console.log(e + ee(r.prettyInspectOptions, ...t) + i);
 }
-function fc(e) {
+function dc(e) {
 	console.log(t(e));
 	function t(e) {
 		let t = /* @__PURE__ */ new Set();
@@ -4837,12 +4837,12 @@ function fc(e) {
 		});
 	}
 }
-function pc(e) {
+function fc(e) {
 	return Buffer.isBuffer(e);
 }
-var mc = class {
+var pc = class {
 	constructor(e, t, n = 4) {
-		this.logObj = t, this.stackDepthLevel = n, this.runtime = nc, this.settings = {
+		this.logObj = t, this.stackDepthLevel = n, this.runtime = tc, this.settings = {
 			type: e?.type ?? "pretty",
 			name: e?.name,
 			parentNames: e?.parentNames,
@@ -4939,7 +4939,7 @@ var mc = class {
 		if (e instanceof Set) return new Set(e);
 		if (Array.isArray(e)) return e.map((e) => this._recursiveCloneAndMaskValuesOfKeys(e, t, n));
 		if (e instanceof Date) return new Date(e.getTime());
-		if (e instanceof URL) return tc(e);
+		if (e instanceof URL) return ec(e);
 		if (typeof e == "object" && e) {
 			let r = this.runtime.isError(e) ? this._cloneError(e) : Object.create(Object.getPrototypeOf(e));
 			return Object.getOwnPropertyNames(e).reduce((r, i) => (r[i] = t.includes(this.settings?.maskValuesOfKeysCaseInsensitive === !0 ? i.toLowerCase() : i) ? this.settings.maskPlaceholder : (() => {
@@ -5015,13 +5015,13 @@ var mc = class {
 	_prettyFormatLogObjMeta(e) {
 		if (e == null) return "";
 		let t = this.settings.prettyLogTemplate, n = {};
-		t.includes("{{yyyy}}.{{mm}}.{{dd}} {{hh}}:{{MM}}:{{ss}}:{{ms}}") ? t = t.replace("{{yyyy}}.{{mm}}.{{dd}} {{hh}}:{{MM}}:{{ss}}:{{ms}}", "{{dateIsoStr}}") : this.settings.prettyLogTimeZone === "UTC" ? (n.yyyy = e?.date?.getUTCFullYear() ?? "----", n.mm = M(e?.date?.getUTCMonth(), 2, 1), n.dd = M(e?.date?.getUTCDate(), 2), n.hh = M(e?.date?.getUTCHours(), 2), n.MM = M(e?.date?.getUTCMinutes(), 2), n.ss = M(e?.date?.getUTCSeconds(), 2), n.ms = M(e?.date?.getUTCMilliseconds(), 3)) : (n.yyyy = e?.date?.getFullYear() ?? "----", n.mm = M(e?.date?.getMonth(), 2, 1), n.dd = M(e?.date?.getDate(), 2), n.hh = M(e?.date?.getHours(), 2), n.MM = M(e?.date?.getMinutes(), 2), n.ss = M(e?.date?.getSeconds(), 2), n.ms = M(e?.date?.getMilliseconds(), 3));
+		t.includes("{{yyyy}}.{{mm}}.{{dd}} {{hh}}:{{MM}}:{{ss}}:{{ms}}") ? t = t.replace("{{yyyy}}.{{mm}}.{{dd}} {{hh}}:{{MM}}:{{ss}}:{{ms}}", "{{dateIsoStr}}") : this.settings.prettyLogTimeZone === "UTC" ? (n.yyyy = e?.date?.getUTCFullYear() ?? "----", n.mm = N(e?.date?.getUTCMonth(), 2, 1), n.dd = N(e?.date?.getUTCDate(), 2), n.hh = N(e?.date?.getUTCHours(), 2), n.MM = N(e?.date?.getUTCMinutes(), 2), n.ss = N(e?.date?.getUTCSeconds(), 2), n.ms = N(e?.date?.getUTCMilliseconds(), 3)) : (n.yyyy = e?.date?.getFullYear() ?? "----", n.mm = N(e?.date?.getMonth(), 2, 1), n.dd = N(e?.date?.getDate(), 2), n.hh = N(e?.date?.getHours(), 2), n.MM = N(e?.date?.getMinutes(), 2), n.ss = N(e?.date?.getSeconds(), 2), n.ms = N(e?.date?.getMilliseconds(), 3));
 		let r = this.settings.prettyLogTimeZone === "UTC" ? e?.date : /* @__PURE__ */ new Date(e?.date?.getTime() - e?.date?.getTimezoneOffset() * 6e4);
 		n.rawIsoStr = r?.toISOString(), n.dateIsoStr = r?.toISOString().replace("T", " ").replace("Z", ""), n.logLevelName = e?.logLevelName, n.fileNameWithLine = e?.path?.fileNameWithLine ?? "", n.filePathWithLine = e?.path?.filePathWithLine ?? "", n.fullFilePath = e?.path?.fullFilePath ?? "";
 		let i = this.settings.parentNames?.join(this.settings.prettyErrorParentNamesSeparator);
-		return i = i != null && e?.name != null ? i + this.settings.prettyErrorParentNamesSeparator : void 0, n.name = e?.name != null || i != null ? (i ?? "") + e?.name ?? "" : "", n.nameWithDelimiterPrefix = n.name.length > 0 ? this.settings.prettyErrorLoggerNameDelimiter + n.name : "", n.nameWithDelimiterSuffix = n.name.length > 0 ? n.name + this.settings.prettyErrorLoggerNameDelimiter : "", this.settings.overwrite?.addPlaceholders != null && this.settings.overwrite?.addPlaceholders(e, n), ec(this.settings, t, n);
+		return i = i != null && e?.name != null ? i + this.settings.prettyErrorParentNamesSeparator : void 0, n.name = e?.name != null || i != null ? (i ?? "") + e?.name ?? "" : "", n.nameWithDelimiterPrefix = n.name.length > 0 ? this.settings.prettyErrorLoggerNameDelimiter + n.name : "", n.nameWithDelimiterSuffix = n.name.length > 0 ? n.name + this.settings.prettyErrorLoggerNameDelimiter : "", this.settings.overwrite?.addPlaceholders != null && this.settings.overwrite?.addPlaceholders(e, n), $s(this.settings, t, n);
 	}
-}, hc = class extends mc {
+}, mc = class extends pc {
 	constructor(e, t) {
 		let n = typeof window < "u" && typeof document < "u", r = n ? window.chrome !== void 0 && window.CSS !== void 0 && window.CSS.supports("color", "green") : !1, i = n ? /^((?!chrome|android).)*safari/i.test(navigator.userAgent) : !1;
 		e ||= {}, e.stylePrettyLogs = e.stylePrettyLogs && n && !r ? !1 : e.stylePrettyLogs, super(e, t, i ? 4 : 5);
@@ -5053,20 +5053,20 @@ var mc = class {
 	getSubLogger(e, t) {
 		return super.getSubLogger(e, t);
 	}
-}, N = s({
-	ChannelNumber: () => vc,
-	DeviceStatusEnum: () => gc,
-	Emitter: () => P,
-	EmitterScope: () => _c
-}), gc = /* @__PURE__ */ function(e) {
+}, P = s({
+	ChannelNumber: () => _c,
+	DeviceStatusEnum: () => hc,
+	Emitter: () => F,
+	EmitterScope: () => gc
+}), hc = /* @__PURE__ */ function(e) {
 	return e[e.DeviceRestarting = 1] = "DeviceRestarting", e[e.DeviceDisconnected = 2] = "DeviceDisconnected", e[e.DeviceConnecting = 3] = "DeviceConnecting", e[e.DeviceReconnecting = 4] = "DeviceReconnecting", e[e.DeviceConnected = 5] = "DeviceConnected", e[e.DeviceConfiguring = 6] = "DeviceConfiguring", e[e.DeviceConfigured = 7] = "DeviceConfigured", e;
-}({}), _c = /* @__PURE__ */ function(e) {
+}({}), gc = /* @__PURE__ */ function(e) {
 	return e[e.MeshDevice = 1] = "MeshDevice", e[e.SerialConnection = 2] = "SerialConnection", e[e.NodeSerialConnection = 3] = "NodeSerialConnection", e[e.BleConnection = 4] = "BleConnection", e[e.HttpConnection = 5] = "HttpConnection", e;
-}({}), P = /* @__PURE__ */ function(e) {
+}({}), F = /* @__PURE__ */ function(e) {
 	return e[e.Constructor = 0] = "Constructor", e[e.SendText = 1] = "SendText", e[e.SendWaypoint = 2] = "SendWaypoint", e[e.SendPacket = 3] = "SendPacket", e[e.SendRaw = 4] = "SendRaw", e[e.SetConfig = 5] = "SetConfig", e[e.SetModuleConfig = 6] = "SetModuleConfig", e[e.ConfirmSetConfig = 7] = "ConfirmSetConfig", e[e.SetOwner = 8] = "SetOwner", e[e.SetChannel = 9] = "SetChannel", e[e.ConfirmSetChannel = 10] = "ConfirmSetChannel", e[e.ClearChannel = 11] = "ClearChannel", e[e.GetChannel = 12] = "GetChannel", e[e.GetAllChannels = 13] = "GetAllChannels", e[e.GetConfig = 14] = "GetConfig", e[e.GetModuleConfig = 15] = "GetModuleConfig", e[e.GetOwner = 16] = "GetOwner", e[e.Configure = 17] = "Configure", e[e.HandleFromRadio = 18] = "HandleFromRadio", e[e.HandleMeshPacket = 19] = "HandleMeshPacket", e[e.Connect = 20] = "Connect", e[e.Ping = 21] = "Ping", e[e.ReadFromRadio = 22] = "ReadFromRadio", e[e.WriteToRadio = 23] = "WriteToRadio", e[e.SetDebugMode = 24] = "SetDebugMode", e[e.GetMetadata = 25] = "GetMetadata", e[e.ResetNodes = 26] = "ResetNodes", e[e.Shutdown = 27] = "Shutdown", e[e.Reboot = 28] = "Reboot", e[e.RebootOta = 29] = "RebootOta", e[e.FactoryReset = 30] = "FactoryReset", e[e.EnterDfuMode = 31] = "EnterDfuMode", e[e.RemoveNodeByNum = 32] = "RemoveNodeByNum", e[e.SetCannedMessages = 33] = "SetCannedMessages", e[e.Disconnect = 34] = "Disconnect", e[e.ConnectionStatus = 35] = "ConnectionStatus", e;
-}({}), vc = /* @__PURE__ */ function(e) {
+}({}), _c = /* @__PURE__ */ function(e) {
 	return e[e.Primary = 0] = "Primary", e[e.Channel1 = 1] = "Channel1", e[e.Channel2 = 2] = "Channel2", e[e.Channel3 = 3] = "Channel3", e[e.Channel4 = 4] = "Channel4", e[e.Channel5 = 5] = "Channel5", e[e.Channel6 = 6] = "Channel6", e[e.Admin = 7] = "Admin", e;
-}({}), yc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/dispatching/DispatcherWrapper.js": ((e) => {
+}({}), vc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/dispatching/DispatcherWrapper.js": ((e) => {
 	Object.defineProperty(e, "__esModule", { value: !0 }), e.DispatcherWrapper = class {
 		constructor(e) {
 			this._subscribe = (t) => e.subscribe(t), this._unsubscribe = (t) => e.unsubscribe(t), this._one = (t) => e.one(t), this._has = (t) => e.has(t), this._clear = () => e.clear(), this._count = () => e.count, this._onSubscriptionChange = () => e.onSubscriptionChange;
@@ -5099,7 +5099,7 @@ var mc = class {
 			this._clear();
 		}
 	};
-}) }), bc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/events/Subscription.js": ((e) => {
+}) }), yc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/events/Subscription.js": ((e) => {
 	Object.defineProperty(e, "__esModule", { value: !0 }), e.Subscription = class {
 		constructor(e, t) {
 			this.handler = e, this.isOnce = t, this.isExecuted = !1;
@@ -5114,7 +5114,7 @@ var mc = class {
 			}
 		}
 	};
-}) }), xc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/management/EventManagement.js": ((e) => {
+}) }), bc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/management/EventManagement.js": ((e) => {
 	Object.defineProperty(e, "__esModule", { value: !0 }), e.EventManagement = class {
 		constructor(e) {
 			this.unsub = e, this.propagationStopped = !1;
@@ -5123,9 +5123,9 @@ var mc = class {
 			this.propagationStopped = !0;
 		}
 	};
-}) }), Sc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/dispatching/DispatcherBase.js": ((e) => {
+}) }), xc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/dispatching/DispatcherBase.js": ((e) => {
 	Object.defineProperty(e, "__esModule", { value: !0 });
-	let t = yc(), n = bc(), r = xc();
+	let t = vc(), n = yc(), r = bc();
 	var i = class {
 		constructor() {
 			this._subscriptions = [];
@@ -5199,13 +5199,13 @@ var mc = class {
 		}
 	};
 	e.SubscriptionChangeEventDispatcher = a;
-}) }), Cc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/dispatching/DispatchError.js": ((e) => {
+}) }), Sc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/dispatching/DispatchError.js": ((e) => {
 	Object.defineProperty(e, "__esModule", { value: !0 }), e.DispatchError = class extends Error {
 		constructor(e) {
 			super(e);
 		}
 	};
-}) }), wc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/dispatching/EventListBase.js": ((e) => {
+}) }), Cc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/dispatching/EventListBase.js": ((e) => {
 	Object.defineProperty(e, "__esModule", { value: !0 }), e.EventListBase = class {
 		constructor() {
 			this._events = {};
@@ -5218,7 +5218,7 @@ var mc = class {
 			delete this._events[e];
 		}
 	};
-}) }), Tc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/handling/HandlingBase.js": ((e) => {
+}) }), wc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/handling/HandlingBase.js": ((e) => {
 	Object.defineProperty(e, "__esModule", { value: !0 }), e.HandlingBase = class {
 		constructor(e) {
 			this.events = e;
@@ -5242,7 +5242,7 @@ var mc = class {
 			this.unsubscribe(e, t);
 		}
 	};
-}) }), Ec = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/events/PromiseSubscription.js": ((e) => {
+}) }), Tc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/events/PromiseSubscription.js": ((e) => {
 	Object.defineProperty(e, "__esModule", { value: !0 }), e.PromiseSubscription = class {
 		constructor(e, t) {
 			this.handler = e, this.isOnce = t, this.isExecuted = !1;
@@ -5261,9 +5261,9 @@ var mc = class {
 			}
 		}
 	};
-}) }), Dc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/dispatching/PromiseDispatcherBase.js": ((e) => {
+}) }), Ec = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/dispatching/PromiseDispatcherBase.js": ((e) => {
 	Object.defineProperty(e, "__esModule", { value: !0 });
-	let t = Ec(), n = xc(), r = Sc(), i = Cc();
+	let t = Tc(), n = bc(), r = xc(), i = Sc();
 	e.PromiseDispatcherBase = class extends r.DispatcherBase {
 		_dispatch(e, t, n) {
 			throw new i.DispatchError("_dispatch not supported. Use _dispatchAsPromise.");
@@ -5279,9 +5279,9 @@ var mc = class {
 			return e ? null : { propagationStopped: !1 };
 		}
 	};
-}) }), Oc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/index.js": ((e) => {
+}) }), Dc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-core@3.0.11/node_modules/ste-core/dist/index.js": ((e) => {
 	Object.defineProperty(e, "__esModule", { value: !0 }), e.SubscriptionChangeEventDispatcher = e.HandlingBase = e.PromiseDispatcherBase = e.PromiseSubscription = e.DispatchError = e.EventManagement = e.EventListBase = e.DispatcherWrapper = e.DispatcherBase = e.Subscription = void 0;
-	let t = Sc();
+	let t = xc();
 	Object.defineProperty(e, "DispatcherBase", {
 		enumerable: !0,
 		get: function() {
@@ -5293,65 +5293,65 @@ var mc = class {
 			return t.SubscriptionChangeEventDispatcher;
 		}
 	});
-	let n = Cc();
+	let n = Sc();
 	Object.defineProperty(e, "DispatchError", {
 		enumerable: !0,
 		get: function() {
 			return n.DispatchError;
 		}
 	});
-	let r = yc();
+	let r = vc();
 	Object.defineProperty(e, "DispatcherWrapper", {
 		enumerable: !0,
 		get: function() {
 			return r.DispatcherWrapper;
 		}
 	});
-	let i = wc();
+	let i = Cc();
 	Object.defineProperty(e, "EventListBase", {
 		enumerable: !0,
 		get: function() {
 			return i.EventListBase;
 		}
 	});
-	let a = xc();
+	let a = bc();
 	Object.defineProperty(e, "EventManagement", {
 		enumerable: !0,
 		get: function() {
 			return a.EventManagement;
 		}
 	});
-	let o = Tc();
+	let o = wc();
 	Object.defineProperty(e, "HandlingBase", {
 		enumerable: !0,
 		get: function() {
 			return o.HandlingBase;
 		}
 	});
-	let s = Dc();
+	let s = Ec();
 	Object.defineProperty(e, "PromiseDispatcherBase", {
 		enumerable: !0,
 		get: function() {
 			return s.PromiseDispatcherBase;
 		}
 	});
-	let c = Ec();
+	let c = Tc();
 	Object.defineProperty(e, "PromiseSubscription", {
 		enumerable: !0,
 		get: function() {
 			return c.PromiseSubscription;
 		}
 	});
-	let l = bc();
+	let l = yc();
 	Object.defineProperty(e, "Subscription", {
 		enumerable: !0,
 		get: function() {
 			return l.Subscription;
 		}
 	});
-}) }), kc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-simple-events@3.0.11/node_modules/ste-simple-events/dist/SimpleEventDispatcher.js": ((e) => {
+}) }), Oc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-simple-events@3.0.11/node_modules/ste-simple-events/dist/SimpleEventDispatcher.js": ((e) => {
 	Object.defineProperty(e, "__esModule", { value: !0 });
-	let t = Oc();
+	let t = Dc();
 	e.SimpleEventDispatcher = class extends t.DispatcherBase {
 		constructor() {
 			super();
@@ -5368,9 +5368,9 @@ var mc = class {
 			return super.asEvent();
 		}
 	};
-}) }), Ac = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-simple-events@3.0.11/node_modules/ste-simple-events/dist/SimpleEventList.js": ((e) => {
+}) }), kc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-simple-events@3.0.11/node_modules/ste-simple-events/dist/SimpleEventList.js": ((e) => {
 	Object.defineProperty(e, "__esModule", { value: !0 });
-	let t = Oc(), n = kc();
+	let t = Dc(), n = Oc();
 	e.SimpleEventList = class extends t.EventListBase {
 		constructor() {
 			super();
@@ -5379,17 +5379,17 @@ var mc = class {
 			return new n.SimpleEventDispatcher();
 		}
 	};
-}) }), jc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-simple-events@3.0.11/node_modules/ste-simple-events/dist/SimpleEventHandlingBase.js": ((e) => {
+}) }), Ac = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-simple-events@3.0.11/node_modules/ste-simple-events/dist/SimpleEventHandlingBase.js": ((e) => {
 	Object.defineProperty(e, "__esModule", { value: !0 });
-	let t = Oc(), n = Ac();
+	let t = Dc(), n = kc();
 	e.SimpleEventHandlingBase = class extends t.HandlingBase {
 		constructor() {
 			super(new n.SimpleEventList());
 		}
 	};
-}) }), Mc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-simple-events@3.0.11/node_modules/ste-simple-events/dist/NonUniformSimpleEventList.js": ((e) => {
+}) }), jc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-simple-events@3.0.11/node_modules/ste-simple-events/dist/NonUniformSimpleEventList.js": ((e) => {
 	Object.defineProperty(e, "__esModule", { value: !0 });
-	let t = kc();
+	let t = Oc();
 	e.NonUniformSimpleEventList = class {
 		constructor() {
 			this._events = {};
@@ -5406,43 +5406,43 @@ var mc = class {
 			return new t.SimpleEventDispatcher();
 		}
 	};
-}) }), Nc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-simple-events@3.0.11/node_modules/ste-simple-events/dist/index.js": ((e) => {
+}) }), Mc = /* @__PURE__ */ o({ "../../node_modules/.pnpm/ste-simple-events@3.0.11/node_modules/ste-simple-events/dist/index.js": ((e) => {
 	Object.defineProperty(e, "__esModule", { value: !0 }), e.NonUniformSimpleEventList = e.SimpleEventList = e.SimpleEventHandlingBase = e.SimpleEventDispatcher = void 0;
-	let t = kc();
+	let t = Oc();
 	Object.defineProperty(e, "SimpleEventDispatcher", {
 		enumerable: !0,
 		get: function() {
 			return t.SimpleEventDispatcher;
 		}
 	});
-	let n = jc();
+	let n = Ac();
 	Object.defineProperty(e, "SimpleEventHandlingBase", {
 		enumerable: !0,
 		get: function() {
 			return n.SimpleEventHandlingBase;
 		}
 	});
-	let r = Mc();
+	let r = jc();
 	Object.defineProperty(e, "NonUniformSimpleEventList", {
 		enumerable: !0,
 		get: function() {
 			return r.NonUniformSimpleEventList;
 		}
 	});
-	let i = Ac();
+	let i = kc();
 	Object.defineProperty(e, "SimpleEventList", {
 		enumerable: !0,
 		get: function() {
 			return i.SimpleEventList;
 		}
 	});
-}) }), F = /* @__PURE__ */ l(Nc(), 1), Pc = class {
+}) }), I = /* @__PURE__ */ l(Mc(), 1), Nc = class {
 	constructor() {
-		this.onLogEvent = new F.SimpleEventDispatcher(), this.onFromRadio = new F.SimpleEventDispatcher(), this.onMeshPacket = new F.SimpleEventDispatcher(), this.onMyNodeInfo = new F.SimpleEventDispatcher(), this.onNodeInfoPacket = new F.SimpleEventDispatcher(), this.onChannelPacket = new F.SimpleEventDispatcher(), this.onConfigPacket = new F.SimpleEventDispatcher(), this.onModuleConfigPacket = new F.SimpleEventDispatcher(), this.onAtakPacket = new F.SimpleEventDispatcher(), this.onMessagePacket = new F.SimpleEventDispatcher(), this.onRemoteHardwarePacket = new F.SimpleEventDispatcher(), this.onPositionPacket = new F.SimpleEventDispatcher(), this.onUserPacket = new F.SimpleEventDispatcher(), this.onRoutingPacket = new F.SimpleEventDispatcher(), this.onDeviceMetadataPacket = new F.SimpleEventDispatcher(), this.onCannedMessageModulePacket = new F.SimpleEventDispatcher(), this.onWaypointPacket = new F.SimpleEventDispatcher(), this.onAudioPacket = new F.SimpleEventDispatcher(), this.onDetectionSensorPacket = new F.SimpleEventDispatcher(), this.onPingPacket = new F.SimpleEventDispatcher(), this.onIpTunnelPacket = new F.SimpleEventDispatcher(), this.onPaxcounterPacket = new F.SimpleEventDispatcher(), this.onSerialPacket = new F.SimpleEventDispatcher(), this.onStoreForwardPacket = new F.SimpleEventDispatcher(), this.onRangeTestPacket = new F.SimpleEventDispatcher(), this.onTelemetryPacket = new F.SimpleEventDispatcher(), this.onZpsPacket = new F.SimpleEventDispatcher(), this.onSimulatorPacket = new F.SimpleEventDispatcher(), this.onTraceRoutePacket = new F.SimpleEventDispatcher(), this.onNeighborInfoPacket = new F.SimpleEventDispatcher(), this.onAtakPluginPacket = new F.SimpleEventDispatcher(), this.onMapReportPacket = new F.SimpleEventDispatcher(), this.onPrivatePacket = new F.SimpleEventDispatcher(), this.onAtakForwarderPacket = new F.SimpleEventDispatcher(), this.onClientNotificationPacket = new F.SimpleEventDispatcher(), this.onDeviceStatus = new F.SimpleEventDispatcher(), this.onLogRecord = new F.SimpleEventDispatcher(), this.onMeshHeartbeat = new F.SimpleEventDispatcher(), this.onDeviceDebugLog = new F.SimpleEventDispatcher(), this.onPendingSettingsChange = new F.SimpleEventDispatcher(), this.onQueueStatus = new F.SimpleEventDispatcher();
+		this.onLogEvent = new I.SimpleEventDispatcher(), this.onFromRadio = new I.SimpleEventDispatcher(), this.onMeshPacket = new I.SimpleEventDispatcher(), this.onMyNodeInfo = new I.SimpleEventDispatcher(), this.onNodeInfoPacket = new I.SimpleEventDispatcher(), this.onChannelPacket = new I.SimpleEventDispatcher(), this.onConfigPacket = new I.SimpleEventDispatcher(), this.onModuleConfigPacket = new I.SimpleEventDispatcher(), this.onAtakPacket = new I.SimpleEventDispatcher(), this.onMessagePacket = new I.SimpleEventDispatcher(), this.onRemoteHardwarePacket = new I.SimpleEventDispatcher(), this.onPositionPacket = new I.SimpleEventDispatcher(), this.onUserPacket = new I.SimpleEventDispatcher(), this.onRoutingPacket = new I.SimpleEventDispatcher(), this.onDeviceMetadataPacket = new I.SimpleEventDispatcher(), this.onCannedMessageModulePacket = new I.SimpleEventDispatcher(), this.onWaypointPacket = new I.SimpleEventDispatcher(), this.onAudioPacket = new I.SimpleEventDispatcher(), this.onDetectionSensorPacket = new I.SimpleEventDispatcher(), this.onPingPacket = new I.SimpleEventDispatcher(), this.onIpTunnelPacket = new I.SimpleEventDispatcher(), this.onPaxcounterPacket = new I.SimpleEventDispatcher(), this.onSerialPacket = new I.SimpleEventDispatcher(), this.onStoreForwardPacket = new I.SimpleEventDispatcher(), this.onRangeTestPacket = new I.SimpleEventDispatcher(), this.onTelemetryPacket = new I.SimpleEventDispatcher(), this.onZpsPacket = new I.SimpleEventDispatcher(), this.onSimulatorPacket = new I.SimpleEventDispatcher(), this.onTraceRoutePacket = new I.SimpleEventDispatcher(), this.onNeighborInfoPacket = new I.SimpleEventDispatcher(), this.onAtakPluginPacket = new I.SimpleEventDispatcher(), this.onMapReportPacket = new I.SimpleEventDispatcher(), this.onPrivatePacket = new I.SimpleEventDispatcher(), this.onAtakForwarderPacket = new I.SimpleEventDispatcher(), this.onClientNotificationPacket = new I.SimpleEventDispatcher(), this.onDeviceStatus = new I.SimpleEventDispatcher(), this.onLogRecord = new I.SimpleEventDispatcher(), this.onMeshHeartbeat = new I.SimpleEventDispatcher(), this.onDeviceDebugLog = new I.SimpleEventDispatcher(), this.onPendingSettingsChange = new I.SimpleEventDispatcher(), this.onQueueStatus = new I.SimpleEventDispatcher();
 	}
-}, Fc = /* @__PURE__ */ l(Nc(), 1), Ic = class {
+}, Pc = /* @__PURE__ */ l(Mc(), 1), Fc = class {
 	constructor() {
-		this.queue = [], this.lock = !1, this.ackNotifier = new Fc.SimpleEventDispatcher(), this.errorNotifier = new Fc.SimpleEventDispatcher(), this.timeout = 6e4;
+		this.queue = [], this.lock = !1, this.ackNotifier = new Pc.SimpleEventDispatcher(), this.errorNotifier = new Pc.SimpleEventDispatcher(), this.timeout = 6e4;
 	}
 	getState() {
 		return this.queue;
@@ -5463,14 +5463,14 @@ var mc = class {
 				}), setTimeout(() => {
 					if (this.queue.findIndex((t) => t.id === e.id) !== -1) {
 						this.remove(e.id);
-						let r = b(O.ToRadioSchema, e.data);
+						let r = x(k.ToRadioSchema, e.data);
 						if (r.payloadVariant.case === "heartbeat" || r.payloadVariant.case === "wantConfigId") {
 							t(e.id);
 							return;
 						}
 						console.warn(`Packet ${e.id} of type ${r.payloadVariant.case} timed out`), n({
 							id: e.id,
-							error: O.Routing_Error.TIMEOUT
+							error: k.Routing_Error.TIMEOUT
 						});
 					}
 				}, this.timeout);
@@ -5485,7 +5485,7 @@ var mc = class {
 		this.ackNotifier.dispatch(e);
 	}
 	processError(e) {
-		console.error(`Error received for packet ${e.id}: ${O.Routing_Error[e.error]}`), this.errorNotifier.dispatch(e);
+		console.error(`Error received for packet ${e.id}: ${k.Routing_Error[e.error]}`), this.errorNotifier.dispatch(e);
 	}
 	wait(e) {
 		let t = this.queue.find((t) => t.id === e);
@@ -5513,7 +5513,7 @@ var mc = class {
 			t.releaseLock(), this.lock = !1;
 		}
 	}
-}, Lc = () => {
+}, Ic = () => {
 	let e = new Uint8Array([]), t = new TextDecoder();
 	return new TransformStream({ transform(n, r) {
 		e = new Uint8Array([...e, ...n]);
@@ -5536,7 +5536,7 @@ var mc = class {
 			} else i = !0;
 		}
 	} });
-}, Rc = () => new TransformStream({ transform(e, t) {
+}, Lc = () => new TransformStream({ transform(e, t) {
 	let n = e.length, r = new Uint8Array([
 		148,
 		195,
@@ -5544,19 +5544,19 @@ var mc = class {
 		n & 255
 	]);
 	t.enqueue(new Uint8Array([...r, ...e]));
-} }), zc = class {
+} }), Rc = class {
 	constructor(e) {
 		this.sendRaw = e, this.rxBuffer = [], this.txBuffer = [], this.textEncoder = new TextEncoder(), this.counter = 0;
 	}
 	async downloadFile(e) {
-		return await this.sendCommand(D.XModem_Control.STX, this.textEncoder.encode(e), 0);
+		return await this.sendCommand(O.XModem_Control.STX, this.textEncoder.encode(e), 0);
 	}
 	async uploadFile(e, t) {
 		for (let e = 0; e < t.length; e += 128) this.txBuffer.push(t.slice(e, e + 128));
-		return await this.sendCommand(D.XModem_Control.SOH, this.textEncoder.encode(e), 0);
+		return await this.sendCommand(O.XModem_Control.SOH, this.textEncoder.encode(e), 0);
 	}
 	async sendCommand(e, t, n, r) {
-		let i = _(O.ToRadioSchema, { payloadVariant: {
+		let i = v(k.ToRadioSchema, { payloadVariant: {
 			case: "xmodemPacket",
 			value: {
 				buffer: t,
@@ -5565,24 +5565,24 @@ var mc = class {
 				crc16: r
 			}
 		} });
-		return await this.sendRaw(v(O.ToRadioSchema, i));
+		return await this.sendRaw(y(k.ToRadioSchema, i));
 	}
 	async handlePacket(e) {
 		switch (await new Promise((e) => setTimeout(e, 100)), e.control) {
-			case D.XModem_Control.NUL: break;
-			case D.XModem_Control.SOH: return this.counter = e.seq, this.validateCrc16(e) ? (this.rxBuffer[this.counter] = e.buffer, this.sendCommand(D.XModem_Control.ACK)) : await this.sendCommand(D.XModem_Control.NAK, void 0, e.seq);
-			case D.XModem_Control.STX:
-			case D.XModem_Control.EOT: break;
-			case D.XModem_Control.ACK:
-				if (this.counter++, this.txBuffer[this.counter - 1]) return this.sendCommand(D.XModem_Control.SOH, this.txBuffer[this.counter - 1], this.counter, re(this.txBuffer[this.counter - 1] ?? /* @__PURE__ */ new Uint8Array()));
-				if (this.counter === this.txBuffer.length + 1) return this.sendCommand(D.XModem_Control.EOT);
+			case O.XModem_Control.NUL: break;
+			case O.XModem_Control.SOH: return this.counter = e.seq, this.validateCrc16(e) ? (this.rxBuffer[this.counter] = e.buffer, this.sendCommand(O.XModem_Control.ACK)) : await this.sendCommand(O.XModem_Control.NAK, void 0, e.seq);
+			case O.XModem_Control.STX:
+			case O.XModem_Control.EOT: break;
+			case O.XModem_Control.ACK:
+				if (this.counter++, this.txBuffer[this.counter - 1]) return this.sendCommand(O.XModem_Control.SOH, this.txBuffer[this.counter - 1], this.counter, re(this.txBuffer[this.counter - 1] ?? /* @__PURE__ */ new Uint8Array()));
+				if (this.counter === this.txBuffer.length + 1) return this.sendCommand(O.XModem_Control.EOT);
 				this.clear();
 				break;
-			case D.XModem_Control.NAK: return this.sendCommand(D.XModem_Control.SOH, this.txBuffer[this.counter], this.counter, re(this.txBuffer[this.counter - 1] ?? /* @__PURE__ */ new Uint8Array()));
-			case D.XModem_Control.CAN:
+			case O.XModem_Control.NAK: return this.sendCommand(O.XModem_Control.SOH, this.txBuffer[this.counter], this.counter, re(this.txBuffer[this.counter - 1] ?? /* @__PURE__ */ new Uint8Array()));
+			case O.XModem_Control.CAN:
 				this.clear();
 				break;
-			case D.XModem_Control.CTRLZ:
+			case O.XModem_Control.CTRLZ:
 		}
 		return Promise.resolve(0);
 	}
@@ -5592,26 +5592,26 @@ var mc = class {
 	clear() {
 		this.counter = 0, this.rxBuffer = [], this.txBuffer = [];
 	}
-}, Bc = s({
-	EventSystem: () => Pc,
-	Queue: () => Ic,
-	Xmodem: () => zc,
-	fromDeviceStream: () => Lc,
-	toDeviceStream: () => Rc
-}), Vc = (e) => new WritableStream({ write(t) {
+}, zc = s({
+	EventSystem: () => Nc,
+	Queue: () => Fc,
+	Xmodem: () => Rc,
+	fromDeviceStream: () => Ic,
+	toDeviceStream: () => Lc
+}), Bc = (e) => new WritableStream({ write(t) {
 	switch (t.type) {
 		case "status": {
 			let { status: n, reason: r } = t.data;
-			e.updateDeviceStatus(n), e.log.info(P[P.ConnectionStatus], `🔗 ${gc[n]} ${r ? `(${r})` : ""}`);
+			e.updateDeviceStatus(n), e.log.info(F[F.ConnectionStatus], `🔗 ${hc[n]} ${r ? `(${r})` : ""}`);
 			break;
 		}
 		case "debug": break;
 		case "packet": {
 			let n;
 			try {
-				n = b(O.FromRadioSchema, t.data);
+				n = x(k.FromRadioSchema, t.data);
 			} catch (t) {
-				e.log.error(P[P.HandleFromRadio], "⚠️  Received undecodable packet", t);
+				e.log.error(F[F.HandleFromRadio], "⚠️  Received undecodable packet", t);
 				break;
 			}
 			switch (e.events.onFromRadio.dispatch(n), n.payloadVariant.case) {
@@ -5619,20 +5619,20 @@ var mc = class {
 					try {
 						e.handleMeshPacket(n.payloadVariant.value);
 					} catch (t) {
-						e.log.error(P[P.HandleFromRadio], "⚠️  Unable to handle mesh packet", t);
+						e.log.error(F[F.HandleFromRadio], "⚠️  Unable to handle mesh packet", t);
 					}
 					break;
 				case "myInfo":
-					e.events.onMyNodeInfo.dispatch(n.payloadVariant.value), e.log.info(P[P.HandleFromRadio], "📱 Received Node info for this device");
+					e.events.onMyNodeInfo.dispatch(n.payloadVariant.value), e.log.info(F[F.HandleFromRadio], "📱 Received Node info for this device");
 					break;
 				case "nodeInfo":
-					e.log.info(P[P.HandleFromRadio], `📱 Received Node Info packet for node: ${n.payloadVariant.value.num}`), e.events.onNodeInfoPacket.dispatch(n.payloadVariant.value), n.payloadVariant.value.position && e.events.onPositionPacket.dispatch({
+					e.log.info(F[F.HandleFromRadio], `📱 Received Node Info packet for node: ${n.payloadVariant.value.num}`), e.events.onNodeInfoPacket.dispatch(n.payloadVariant.value), n.payloadVariant.value.position && e.events.onPositionPacket.dispatch({
 						id: n.id,
 						rxTime: /* @__PURE__ */ new Date(),
 						from: n.payloadVariant.value.num,
 						to: n.payloadVariant.value.num,
 						type: "direct",
-						channel: vc.Primary,
+						channel: _c.Primary,
 						data: n.payloadVariant.value.position
 					}), n.payloadVariant.value.user && e.events.onUserPacket.dispatch({
 						id: n.id,
@@ -5640,77 +5640,77 @@ var mc = class {
 						from: n.payloadVariant.value.num,
 						to: n.payloadVariant.value.num,
 						type: "direct",
-						channel: vc.Primary,
+						channel: _c.Primary,
 						data: n.payloadVariant.value.user
 					});
 					break;
 				case "config":
-					n.payloadVariant.value.payloadVariant.case ? e.log.trace(P[P.HandleFromRadio], `💾 Received Config packet of variant: ${n.payloadVariant.value.payloadVariant.case}`) : e.log.warn(P[P.HandleFromRadio], "⚠️ Received Config packet of variant: UNK"), e.events.onConfigPacket.dispatch(n.payloadVariant.value);
+					n.payloadVariant.value.payloadVariant.case ? e.log.trace(F[F.HandleFromRadio], `💾 Received Config packet of variant: ${n.payloadVariant.value.payloadVariant.case}`) : e.log.warn(F[F.HandleFromRadio], "⚠️ Received Config packet of variant: UNK"), e.events.onConfigPacket.dispatch(n.payloadVariant.value);
 					break;
 				case "logRecord":
-					e.log.trace(P[P.HandleFromRadio], "Received onLogRecord"), e.events.onLogRecord.dispatch(n.payloadVariant.value);
+					e.log.trace(F[F.HandleFromRadio], "Received onLogRecord"), e.events.onLogRecord.dispatch(n.payloadVariant.value);
 					break;
 				case "configCompleteId":
-					n.payloadVariant.value !== e.configId && e.log.error(P[P.HandleFromRadio], `❌ Invalid config id received from device, expected ${e.configId} but received ${n.payloadVariant.value}`), e.log.info(P[P.HandleFromRadio], `⚙️ Valid config id received from device: ${e.configId}`), e.updateDeviceStatus(gc.DeviceConfigured);
+					n.payloadVariant.value !== e.configId && e.log.error(F[F.HandleFromRadio], `❌ Invalid config id received from device, expected ${e.configId} but received ${n.payloadVariant.value}`), e.log.info(F[F.HandleFromRadio], `⚙️ Valid config id received from device: ${e.configId}`), e.updateDeviceStatus(hc.DeviceConfigured);
 					break;
 				case "rebooted":
 					e.configure().catch(() => {});
 					break;
 				case "moduleConfig":
-					n.payloadVariant.value.payloadVariant.case ? e.log.trace(P[P.HandleFromRadio], `💾 Received Module Config packet of variant: ${n.payloadVariant.value.payloadVariant.case}`) : e.log.warn(P[P.HandleFromRadio], "⚠️ Received Module Config packet of variant: UNK"), e.events.onModuleConfigPacket.dispatch(n.payloadVariant.value);
+					n.payloadVariant.value.payloadVariant.case ? e.log.trace(F[F.HandleFromRadio], `💾 Received Module Config packet of variant: ${n.payloadVariant.value.payloadVariant.case}`) : e.log.warn(F[F.HandleFromRadio], "⚠️ Received Module Config packet of variant: UNK"), e.events.onModuleConfigPacket.dispatch(n.payloadVariant.value);
 					break;
 				case "channel":
-					e.log.trace(P[P.HandleFromRadio], `🔐 Received Channel: ${n.payloadVariant.value.index}`), e.events.onChannelPacket.dispatch(n.payloadVariant.value);
+					e.log.trace(F[F.HandleFromRadio], `🔐 Received Channel: ${n.payloadVariant.value.index}`), e.events.onChannelPacket.dispatch(n.payloadVariant.value);
 					break;
 				case "queueStatus":
-					e.log.trace(P[P.HandleFromRadio], `🚧 Received Queue Status: ${n.payloadVariant.value}`), e.events.onQueueStatus.dispatch(n.payloadVariant.value);
+					e.log.trace(F[F.HandleFromRadio], `🚧 Received Queue Status: ${n.payloadVariant.value}`), e.events.onQueueStatus.dispatch(n.payloadVariant.value);
 					break;
 				case "xmodemPacket":
 					e.xModem.handlePacket(n.payloadVariant.value);
 					break;
 				case "metadata":
-					Number.parseFloat(n.payloadVariant.value.firmwareVersion) < Qs.minFwVer && e.log.fatal(P[P.HandleFromRadio], `Device firmware outdated. Min supported: ${Qs.minFwVer} got : ${n.payloadVariant.value.firmwareVersion}`), e.log.debug(P[P.GetMetadata], "🏷️ Received metadata packet"), e.events.onDeviceMetadataPacket.dispatch({
+					Number.parseFloat(n.payloadVariant.value.firmwareVersion) < Zs.minFwVer && e.log.fatal(F[F.HandleFromRadio], `Device firmware outdated. Min supported: ${Zs.minFwVer} got : ${n.payloadVariant.value.firmwareVersion}`), e.log.debug(F[F.GetMetadata], "🏷️ Received metadata packet"), e.events.onDeviceMetadataPacket.dispatch({
 						id: n.id,
 						rxTime: /* @__PURE__ */ new Date(),
 						from: 0,
 						to: 0,
 						type: "direct",
-						channel: vc.Primary,
+						channel: _c.Primary,
 						data: n.payloadVariant.value
 					});
 					break;
 				case "mqttClientProxyMessage": break;
 				case "clientNotification":
-					e.log.trace(P[P.HandleFromRadio], `📣 Received ClientNotification: ${n.payloadVariant.value.message}`), e.events.onClientNotificationPacket.dispatch(n.payloadVariant.value);
+					e.log.trace(F[F.HandleFromRadio], `📣 Received ClientNotification: ${n.payloadVariant.value.message}`), e.events.onClientNotificationPacket.dispatch(n.payloadVariant.value);
 					break;
-				default: e.log.warn(P[P.HandleFromRadio], `⚠️ Unhandled payload variant: ${n.payloadVariant.case}`);
+				default: e.log.warn(F[F.HandleFromRadio], `⚠️ Unhandled payload variant: ${n.payloadVariant.case}`);
 			}
 		}
 	}
-} }), Hc = class {
+} }), Vc = class {
 	constructor(e, t) {
-		this.log = new hc({
+		this.log = new mc({
 			name: "iMeshDevice",
 			prettyLogTemplate: "{{hh}}:{{MM}}:{{ss}}:{{ms}}	{{logLevelName}}	[{{name}}]	"
-		}), this.transport = e, this.deviceStatus = gc.DeviceDisconnected, this.isConfigured = !1, this.pendingSettingsChanges = !1, this.myNodeInfo = _(O.MyNodeInfoSchema), this.configId = t ?? this.generateRandId(), this.queue = new Ic(), this.events = new Pc(), this.xModem = new zc(this.sendRaw.bind(this)), this.events.onDeviceStatus.subscribe((e) => {
-			this.deviceStatus = e, e === gc.DeviceConfigured ? this.isConfigured = !0 : e === gc.DeviceConfiguring ? this.isConfigured = !1 : e === gc.DeviceDisconnected && (this._heartbeatIntervalId !== void 0 && clearInterval(this._heartbeatIntervalId), this.complete());
+		}), this.transport = e, this.deviceStatus = hc.DeviceDisconnected, this.isConfigured = !1, this.pendingSettingsChanges = !1, this.myNodeInfo = v(k.MyNodeInfoSchema), this.configId = t ?? this.generateRandId(), this.queue = new Fc(), this.events = new Nc(), this.xModem = new Rc(this.sendRaw.bind(this)), this.events.onDeviceStatus.subscribe((e) => {
+			this.deviceStatus = e, e === hc.DeviceConfigured ? this.isConfigured = !0 : e === hc.DeviceConfiguring ? this.isConfigured = !1 : e === hc.DeviceDisconnected && (this._heartbeatIntervalId !== void 0 && clearInterval(this._heartbeatIntervalId), this.complete());
 		}), this.events.onMyNodeInfo.subscribe((e) => {
 			this.myNodeInfo = e;
 		}), this.events.onPendingSettingsChange.subscribe((e) => {
 			this.pendingSettingsChanges = e;
-		}), this.transport.fromDevice.pipeTo(Vc(this));
+		}), this.transport.fromDevice.pipeTo(Bc(this));
 	}
 	async sendText(e, t, n, r, i, a) {
-		this.log.debug(P[P.SendText], `📤 Sending message to ${t ?? "broadcast"} on channel ${r?.toString() ?? 0}`);
+		this.log.debug(F[F.SendText], `📤 Sending message to ${t ?? "broadcast"} on channel ${r?.toString() ?? 0}`);
 		let o = new TextEncoder();
-		return await this.sendPacket(o.encode(e), T.PortNum.TEXT_MESSAGE_APP, t ?? "broadcast", r, n, !1, !0, i, a);
+		return await this.sendPacket(o.encode(e), E.PortNum.TEXT_MESSAGE_APP, t ?? "broadcast", r, n, !1, !0, i, a);
 	}
 	sendWaypoint(e, t, n) {
-		return this.log.debug(P[P.SendWaypoint], `📤 Sending waypoint to ${t} on channel ${n?.toString() ?? 0}`), e.id = this.generateRandId(), this.sendPacket(v(O.WaypointSchema, e), T.PortNum.WAYPOINT_APP, t, n, !0, !1);
+		return this.log.debug(F[F.SendWaypoint], `📤 Sending waypoint to ${t} on channel ${n?.toString() ?? 0}`), e.id = this.generateRandId(), this.sendPacket(y(k.WaypointSchema, e), E.PortNum.WAYPOINT_APP, t, n, !0, !1);
 	}
-	async sendPacket(e, t, n, r = vc.Primary, i = !0, a = !0, o = !1, s, c) {
-		this.log.trace(P[P.SendPacket], `📤 Sending ${T.PortNum[t]} to ${n}`);
-		let l = _(O.MeshPacketSchema, {
+	async sendPacket(e, t, n, r = _c.Primary, i = !0, a = !0, o = !1, s, c) {
+		this.log.trace(F[F.SendPacket], `📤 Sending ${E.PortNum[t]} to ${n}`);
+		let l = v(k.MeshPacketSchema, {
 			payloadVariant: {
 				case: "decoded",
 				value: {
@@ -5725,15 +5725,15 @@ var mc = class {
 				}
 			},
 			from: this.myNodeInfo.myNodeNum,
-			to: n === "broadcast" ? Qs.broadcastNum : n === "self" ? this.myNodeInfo.myNodeNum : n,
+			to: n === "broadcast" ? Zs.broadcastNum : n === "self" ? this.myNodeInfo.myNodeNum : n,
 			id: this.generateRandId(),
 			wantAck: i,
 			channel: r
-		}), u = _(O.ToRadioSchema, { payloadVariant: {
+		}), u = v(k.ToRadioSchema, { payloadVariant: {
 			case: "packet",
 			value: l
 		} });
-		return o && (l.rxTime = Math.trunc(Date.now() / 1e3), this.handleMeshPacket(l)), await this.sendRaw(v(O.ToRadioSchema, u), l.id);
+		return o && (l.rxTime = Math.trunc(Date.now() / 1e3), this.handleMeshPacket(l)), await this.sendRaw(y(k.ToRadioSchema, u), l.id);
 	}
 	async sendRaw(e, t = this.generateRandId()) {
 		if (e.length > 512) throw Error("Message longer than 512 bytes, it will not be sent!");
@@ -5743,227 +5743,227 @@ var mc = class {
 		}), await this.queue.processQueue(this.transport.toDevice), this.queue.wait(t);
 	}
 	async setConfig(e) {
-		this.log.debug(P[P.SetConfig], `⚙️ Setting config, Variant: ${e.payloadVariant.case ?? "Unknown"}`), this.pendingSettingsChanges || await this.beginEditSettings();
-		let t = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.SetConfig], `⚙️ Setting config, Variant: ${e.payloadVariant.case ?? "Unknown"}`), this.pendingSettingsChanges || await this.beginEditSettings();
+		let t = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "setConfig",
 			value: e
 		} });
-		return this.sendPacket(v(A.AdminMessageSchema, t), T.PortNum.ADMIN_APP, "self");
+		return this.sendPacket(y(j.AdminMessageSchema, t), E.PortNum.ADMIN_APP, "self");
 	}
 	async setModuleConfig(e) {
-		this.log.debug(P[P.SetModuleConfig], "⚙️ Setting module config");
-		let t = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.SetModuleConfig], "⚙️ Setting module config");
+		let t = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "setModuleConfig",
 			value: e
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, t), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, t), E.PortNum.ADMIN_APP, "self");
 	}
 	async setCannedMessages(e) {
-		this.log.debug(P[P.SetCannedMessages], "⚙️ Setting CannedMessages");
-		let t = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.SetCannedMessages], "⚙️ Setting CannedMessages");
+		let t = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "setCannedMessageModuleMessages",
 			value: e.messages
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, t), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, t), E.PortNum.ADMIN_APP, "self");
 	}
 	async setOwner(e) {
-		this.log.debug(P[P.SetOwner], "👤 Setting owner");
-		let t = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.SetOwner], "👤 Setting owner");
+		let t = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "setOwner",
 			value: e
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, t), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, t), E.PortNum.ADMIN_APP, "self");
 	}
 	async setChannel(e) {
-		this.log.debug(P[P.SetChannel], `📻 Setting Channel: ${e.index}`);
-		let t = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.SetChannel], `📻 Setting Channel: ${e.index}`);
+		let t = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "setChannel",
 			value: e
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, t), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, t), E.PortNum.ADMIN_APP, "self");
 	}
 	async enterDfuMode() {
-		this.log.debug(P[P.EnterDfuMode], "🔌 Entering DFU mode");
-		let e = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.EnterDfuMode], "🔌 Entering DFU mode");
+		let e = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "enterDfuModeRequest",
 			value: !0
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, e), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, e), E.PortNum.ADMIN_APP, "self");
 	}
 	async setPosition(e) {
-		return await this.sendPacket(v(O.PositionSchema, e), T.PortNum.POSITION_APP, "self");
+		return await this.sendPacket(y(k.PositionSchema, e), E.PortNum.POSITION_APP, "self");
 	}
 	async setFixedPosition(e, t) {
-		let n = _(A.AdminMessageSchema, { payloadVariant: {
+		let n = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "setFixedPosition",
-			value: _(O.PositionSchema, {
+			value: v(k.PositionSchema, {
 				latitudeI: Math.floor(e / 1e-7),
 				longitudeI: Math.floor(t / 1e-7)
 			})
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, n), T.PortNum.ADMIN_APP, "self", 0, !0, !1);
+		return await this.sendPacket(y(j.AdminMessageSchema, n), E.PortNum.ADMIN_APP, "self", 0, !0, !1);
 	}
 	async removeFixedPosition() {
-		let e = _(A.AdminMessageSchema, { payloadVariant: {
+		let e = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "removeFixedPosition",
 			value: !0
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, e), T.PortNum.ADMIN_APP, "self", 0, !0, !1);
+		return await this.sendPacket(y(j.AdminMessageSchema, e), E.PortNum.ADMIN_APP, "self", 0, !0, !1);
 	}
 	async getChannel(e) {
-		this.log.debug(P[P.GetChannel], `📻 Requesting Channel: ${e}`);
-		let t = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.GetChannel], `📻 Requesting Channel: ${e}`);
+		let t = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "getChannelRequest",
 			value: e + 1
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, t), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, t), E.PortNum.ADMIN_APP, "self");
 	}
 	async getConfig(e) {
-		this.log.debug(P[P.GetConfig], "⚙️ Requesting config");
-		let t = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.GetConfig], "⚙️ Requesting config");
+		let t = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "getConfigRequest",
 			value: e
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, t), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, t), E.PortNum.ADMIN_APP, "self");
 	}
 	async getModuleConfig(e) {
-		this.log.debug(P[P.GetModuleConfig], "⚙️ Requesting module config");
-		let t = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.GetModuleConfig], "⚙️ Requesting module config");
+		let t = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "getModuleConfigRequest",
 			value: e
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, t), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, t), E.PortNum.ADMIN_APP, "self");
 	}
 	async getOwner() {
-		this.log.debug(P[P.GetOwner], "👤 Requesting owner");
-		let e = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.GetOwner], "👤 Requesting owner");
+		let e = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "getOwnerRequest",
 			value: !0
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, e), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, e), E.PortNum.ADMIN_APP, "self");
 	}
 	async getMetadata(e) {
-		this.log.debug(P[P.GetMetadata], `🏷️ Requesting metadata from ${e}`);
-		let t = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.GetMetadata], `🏷️ Requesting metadata from ${e}`);
+		let t = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "getDeviceMetadataRequest",
 			value: !0
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, t), T.PortNum.ADMIN_APP, e, vc.Admin);
+		return await this.sendPacket(y(j.AdminMessageSchema, t), E.PortNum.ADMIN_APP, e, _c.Admin);
 	}
 	async clearChannel(e) {
-		this.log.debug(P[P.ClearChannel], `📻 Clearing Channel ${e}`);
-		let t = _(Br.ChannelSchema, {
+		this.log.debug(F[F.ClearChannel], `📻 Clearing Channel ${e}`);
+		let t = v(zr.ChannelSchema, {
 			index: e,
-			role: Br.Channel_Role.DISABLED
-		}), n = _(A.AdminMessageSchema, { payloadVariant: {
+			role: zr.Channel_Role.DISABLED
+		}), n = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "setChannel",
 			value: t
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, n), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, n), E.PortNum.ADMIN_APP, "self");
 	}
 	async beginEditSettings() {
 		this.events.onPendingSettingsChange.dispatch(!0);
-		let e = _(A.AdminMessageSchema, { payloadVariant: {
+		let e = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "beginEditSettings",
 			value: !0
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, e), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, e), E.PortNum.ADMIN_APP, "self");
 	}
 	async commitEditSettings() {
 		this.events.onPendingSettingsChange.dispatch(!1);
-		let e = _(A.AdminMessageSchema, { payloadVariant: {
+		let e = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "commitEditSettings",
 			value: !0
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, e), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, e), E.PortNum.ADMIN_APP, "self");
 	}
 	async resetNodes() {
-		this.log.debug(P[P.ResetNodes], "📻 Resetting NodeDB");
-		let e = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.ResetNodes], "📻 Resetting NodeDB");
+		let e = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "nodedbReset",
 			value: 1
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, e), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, e), E.PortNum.ADMIN_APP, "self");
 	}
 	async removeNodeByNum(e) {
-		this.log.debug(P[P.RemoveNodeByNum], `📻 Removing Node ${e} from NodeDB`);
-		let t = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.RemoveNodeByNum], `📻 Removing Node ${e} from NodeDB`);
+		let t = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "removeByNodenum",
 			value: e
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, t), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, t), E.PortNum.ADMIN_APP, "self");
 	}
 	async shutdown(e) {
-		this.log.debug(P[P.Shutdown], `🔌 Shutting down ${e > 2 ? "now" : `in ${e} seconds`}`);
-		let t = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.Shutdown], `🔌 Shutting down ${e > 2 ? "now" : `in ${e} seconds`}`);
+		let t = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "shutdownSeconds",
 			value: e
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, t), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, t), E.PortNum.ADMIN_APP, "self");
 	}
 	async reboot(e) {
-		this.log.debug(P[P.Reboot], `🔌 Rebooting node ${e === 0 ? "now" : `in ${e} seconds`}`);
-		let t = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.Reboot], `🔌 Rebooting node ${e === 0 ? "now" : `in ${e} seconds`}`);
+		let t = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "rebootSeconds",
 			value: e
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, t), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, t), E.PortNum.ADMIN_APP, "self");
 	}
 	async rebootOta(e) {
-		this.log.debug(P[P.RebootOta], `🔌 Rebooting into OTA mode ${e === 0 ? "now" : `in ${e} seconds`}`);
-		let t = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.RebootOta], `🔌 Rebooting into OTA mode ${e === 0 ? "now" : `in ${e} seconds`}`);
+		let t = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "rebootOtaSeconds",
 			value: e
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, t), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, t), E.PortNum.ADMIN_APP, "self");
 	}
 	async factoryResetDevice() {
-		this.log.debug(P[P.FactoryReset], "♻️ Factory resetting device");
-		let e = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.FactoryReset], "♻️ Factory resetting device");
+		let e = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "factoryResetDevice",
 			value: 1
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, e), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, e), E.PortNum.ADMIN_APP, "self");
 	}
 	async factoryResetConfig() {
-		this.log.debug(P[P.FactoryReset], "♻️ Factory resetting config");
-		let e = _(A.AdminMessageSchema, { payloadVariant: {
+		this.log.debug(F[F.FactoryReset], "♻️ Factory resetting config");
+		let e = v(j.AdminMessageSchema, { payloadVariant: {
 			case: "factoryResetConfig",
 			value: 1
 		} });
-		return await this.sendPacket(v(A.AdminMessageSchema, e), T.PortNum.ADMIN_APP, "self");
+		return await this.sendPacket(y(j.AdminMessageSchema, e), E.PortNum.ADMIN_APP, "self");
 	}
 	configure() {
-		this.log.debug(P[P.Configure], "⚙️ Requesting device configuration"), this.updateDeviceStatus(gc.DeviceConfiguring);
-		let e = _(O.ToRadioSchema, { payloadVariant: {
+		this.log.debug(F[F.Configure], "⚙️ Requesting device configuration"), this.updateDeviceStatus(hc.DeviceConfiguring);
+		let e = v(k.ToRadioSchema, { payloadVariant: {
 			case: "wantConfigId",
 			value: this.configId
 		} });
-		return this.sendRaw(v(O.ToRadioSchema, e)).catch((e) => {
-			throw this.deviceStatus === gc.DeviceDisconnected ? Error("Device connection lost") : e;
+		return this.sendRaw(y(k.ToRadioSchema, e)).catch((e) => {
+			throw this.deviceStatus === hc.DeviceDisconnected ? Error("Device connection lost") : e;
 		});
 	}
 	heartbeat() {
-		this.log.debug(P[P.Ping], "❤️ Send heartbeat ping to radio");
-		let e = _(O.ToRadioSchema, { payloadVariant: {
+		this.log.debug(F[F.Ping], "❤️ Send heartbeat ping to radio");
+		let e = v(k.ToRadioSchema, { payloadVariant: {
 			case: "heartbeat",
 			value: {}
 		} });
-		return this.sendRaw(v(O.ToRadioSchema, e));
+		return this.sendRaw(y(k.ToRadioSchema, e));
 	}
 	setHeartbeatInterval(e) {
 		this._heartbeatIntervalId !== void 0 && clearInterval(this._heartbeatIntervalId), this._heartbeatIntervalId = setInterval(() => {
 			this.heartbeat().catch((e) => {
-				this.log.error(P[P.Ping], `⚠️ Unable to send heartbeat: ${e.message}`);
+				this.log.error(F[F.Ping], `⚠️ Unable to send heartbeat: ${e.message}`);
 			});
 		}, e);
 	}
 	async traceRoute(e) {
-		let t = _(O.RouteDiscoverySchema, { route: [] });
-		return await this.sendPacket(v(O.RouteDiscoverySchema, t), T.PortNum.TRACEROUTE_APP, e);
+		let t = v(k.RouteDiscoverySchema, { route: [] });
+		return await this.sendPacket(y(k.RouteDiscoverySchema, t), E.PortNum.TRACEROUTE_APP, e);
 	}
 	async requestPosition(e) {
-		return await this.sendPacket(/* @__PURE__ */ new Uint8Array(), T.PortNum.POSITION_APP, e);
+		return await this.sendPacket(/* @__PURE__ */ new Uint8Array(), E.PortNum.POSITION_APP, e);
 	}
 	updateDeviceStatus(e) {
 		e !== this.deviceStatus && this.events.onDeviceStatus.dispatch(e);
@@ -5977,7 +5977,7 @@ var mc = class {
 		this.queue.clear();
 	}
 	async disconnect() {
-		this.log.debug(P[P.Disconnect], "🔌 Disconnecting from device"), this._heartbeatIntervalId !== void 0 && clearInterval(this._heartbeatIntervalId), this.complete(), await this.transport.toDevice.close(), await this.transport.disconnect();
+		this.log.debug(F[F.Disconnect], "🔌 Disconnecting from device"), this._heartbeatIntervalId !== void 0 && clearInterval(this._heartbeatIntervalId), this.complete(), await this.transport.toDevice.close(), await this.transport.disconnect();
 	}
 	handleMeshPacket(e) {
 		switch (this.events.onMeshPacket.dispatch(e), e.from !== this.myNodeInfo.myNodeNum && this.events.onMeshHeartbeat.dispatch(/* @__PURE__ */ new Date()), e.payloadVariant.case) {
@@ -5985,7 +5985,7 @@ var mc = class {
 				this.handleDecodedPacket(e.payloadVariant.value, e);
 				break;
 			case "encrypted":
-				this.log.debug(P[P.HandleMeshPacket], "🔐 Device received encrypted data packet, ignoring.");
+				this.log.debug(F[F.HandleMeshPacket], "🔐 Device received encrypted data packet, ignoring.");
 				break;
 			default: throw Error(`Unhandled case ${e.payloadVariant.case}`);
 		}
@@ -5994,43 +5994,43 @@ var mc = class {
 		let n, r, i = {
 			id: t.id,
 			rxTime: /* @__PURE__ */ new Date(t.rxTime * 1e3),
-			type: t.to === Qs.broadcastNum ? "broadcast" : "direct",
+			type: t.to === Zs.broadcastNum ? "broadcast" : "direct",
 			from: t.from,
 			to: t.to,
 			channel: t.channel
 		};
-		switch (this.log.trace(P[P.HandleMeshPacket], `📦 Received ${T.PortNum[e.portnum]} packet`), e.portnum) {
-			case T.PortNum.TEXT_MESSAGE_APP:
+		switch (this.log.trace(F[F.HandleMeshPacket], `📦 Received ${E.PortNum[e.portnum]} packet`), e.portnum) {
+			case E.PortNum.TEXT_MESSAGE_APP:
 				this.events.onMessagePacket.dispatch({
 					...i,
 					data: new TextDecoder().decode(e.payload)
 				});
 				break;
-			case T.PortNum.REMOTE_HARDWARE_APP:
+			case E.PortNum.REMOTE_HARDWARE_APP:
 				this.events.onRemoteHardwarePacket.dispatch({
 					...i,
-					data: b(Is.HardwareMessageSchema, e.payload)
+					data: x(Fs.HardwareMessageSchema, e.payload)
 				});
 				break;
-			case T.PortNum.POSITION_APP:
+			case E.PortNum.POSITION_APP:
 				this.events.onPositionPacket.dispatch({
 					...i,
-					data: b(O.PositionSchema, e.payload)
+					data: x(k.PositionSchema, e.payload)
 				});
 				break;
-			case T.PortNum.NODEINFO_APP:
+			case E.PortNum.NODEINFO_APP:
 				this.events.onUserPacket.dispatch({
 					...i,
-					data: b(O.UserSchema, e.payload)
+					data: x(k.UserSchema, e.payload)
 				});
 				break;
-			case T.PortNum.ROUTING_APP:
-				switch (r = b(O.RoutingSchema, e.payload), this.events.onRoutingPacket.dispatch({
+			case E.PortNum.ROUTING_APP:
+				switch (r = x(k.RoutingSchema, e.payload), this.events.onRoutingPacket.dispatch({
 					...i,
 					data: r
 				}), r.variant.case) {
 					case "errorReason":
-						r.variant.value === O.Routing_Error.NONE ? this.queue.processAck(e.requestId) : this.queue.processError({
+						r.variant.value === k.Routing_Error.NONE ? this.queue.processAck(e.requestId) : this.queue.processError({
 							id: e.requestId,
 							error: r.variant.value
 						});
@@ -6040,8 +6040,8 @@ var mc = class {
 					default: throw Error(`Unhandled case ${r.variant.case}`);
 				}
 				break;
-			case T.PortNum.ADMIN_APP:
-				switch (n = b(A.AdminMessageSchema, e.payload), n.payloadVariant.case) {
+			case E.PortNum.ADMIN_APP:
+				switch (n = x(j.AdminMessageSchema, e.payload), n.payloadVariant.case) {
 					case "getChannelResponse":
 						this.events.onChannelPacket.dispatch(n.payloadVariant.value);
 						break;
@@ -6058,123 +6058,123 @@ var mc = class {
 						this.events.onModuleConfigPacket.dispatch(n.payloadVariant.value);
 						break;
 					case "getDeviceMetadataResponse":
-						this.log.debug(P[P.GetMetadata], `🏷️ Received metadata packet from ${e.source}`), this.events.onDeviceMetadataPacket.dispatch({
+						this.log.debug(F[F.GetMetadata], `🏷️ Received metadata packet from ${e.source}`), this.events.onDeviceMetadataPacket.dispatch({
 							...i,
 							data: n.payloadVariant.value
 						});
 						break;
 					case "getCannedMessageModuleMessagesResponse":
-						this.log.debug(P[P.GetMetadata], "🥫 Received CannedMessage Module Messages response packet"), this.events.onCannedMessageModulePacket.dispatch({
+						this.log.debug(F[F.GetMetadata], "🥫 Received CannedMessage Module Messages response packet"), this.events.onCannedMessageModulePacket.dispatch({
 							...i,
 							data: n.payloadVariant.value
 						});
 						break;
-					default: this.log.error(P[P.HandleMeshPacket], `⚠️ Received unhandled AdminMessage, type ${n.payloadVariant.case ?? "undefined"}`, e.payload);
+					default: this.log.error(F[F.HandleMeshPacket], `⚠️ Received unhandled AdminMessage, type ${n.payloadVariant.case ?? "undefined"}`, e.payload);
 				}
 				break;
-			case T.PortNum.WAYPOINT_APP:
+			case E.PortNum.WAYPOINT_APP:
 				this.events.onWaypointPacket.dispatch({
 					...i,
-					data: b(O.WaypointSchema, e.payload)
+					data: x(k.WaypointSchema, e.payload)
 				});
 				break;
-			case T.PortNum.AUDIO_APP:
+			case E.PortNum.AUDIO_APP:
 				this.events.onAudioPacket.dispatch({
 					...i,
 					data: e.payload
 				});
 				break;
-			case T.PortNum.DETECTION_SENSOR_APP:
+			case E.PortNum.DETECTION_SENSOR_APP:
 				this.events.onDetectionSensorPacket.dispatch({
 					...i,
 					data: e.payload
 				});
 				break;
-			case T.PortNum.REPLY_APP:
+			case E.PortNum.REPLY_APP:
 				this.events.onPingPacket.dispatch({
 					...i,
 					data: e.payload
 				});
 				break;
-			case T.PortNum.IP_TUNNEL_APP:
+			case E.PortNum.IP_TUNNEL_APP:
 				this.events.onIpTunnelPacket.dispatch({
 					...i,
 					data: e.payload
 				});
 				break;
-			case T.PortNum.PAXCOUNTER_APP:
+			case E.PortNum.PAXCOUNTER_APP:
 				this.events.onPaxcounterPacket.dispatch({
 					...i,
-					data: b(Ts.PaxcountSchema, e.payload)
+					data: x(ws.PaxcountSchema, e.payload)
 				});
 				break;
-			case T.PortNum.SERIAL_APP:
+			case E.PortNum.SERIAL_APP:
 				this.events.onSerialPacket.dispatch({
 					...i,
 					data: e.payload
 				});
 				break;
-			case T.PortNum.STORE_FORWARD_APP:
+			case E.PortNum.STORE_FORWARD_APP:
 				this.events.onStoreForwardPacket.dispatch({
 					...i,
 					data: e.payload
 				});
 				break;
-			case T.PortNum.RANGE_TEST_APP:
+			case E.PortNum.RANGE_TEST_APP:
 				this.events.onRangeTestPacket.dispatch({
 					...i,
 					data: e.payload
 				});
 				break;
-			case T.PortNum.TELEMETRY_APP:
+			case E.PortNum.TELEMETRY_APP:
 				this.events.onTelemetryPacket.dispatch({
 					...i,
-					data: b(Sa.TelemetrySchema, e.payload)
+					data: x(xa.TelemetrySchema, e.payload)
 				});
 				break;
-			case T.PortNum.ZPS_APP:
+			case E.PortNum.ZPS_APP:
 				this.events.onZpsPacket.dispatch({
 					...i,
 					data: e.payload
 				});
 				break;
-			case T.PortNum.SIMULATOR_APP:
+			case E.PortNum.SIMULATOR_APP:
 				this.events.onSimulatorPacket.dispatch({
 					...i,
 					data: e.payload
 				});
 				break;
-			case T.PortNum.TRACEROUTE_APP:
+			case E.PortNum.TRACEROUTE_APP:
 				this.events.onTraceRoutePacket.dispatch({
 					...i,
-					data: b(O.RouteDiscoverySchema, e.payload)
+					data: x(k.RouteDiscoverySchema, e.payload)
 				});
 				break;
-			case T.PortNum.NEIGHBORINFO_APP:
+			case E.PortNum.NEIGHBORINFO_APP:
 				this.events.onNeighborInfoPacket.dispatch({
 					...i,
-					data: b(O.NeighborInfoSchema, e.payload)
+					data: x(k.NeighborInfoSchema, e.payload)
 				});
 				break;
-			case T.PortNum.ATAK_PLUGIN:
+			case E.PortNum.ATAK_PLUGIN:
 				this.events.onAtakPluginPacket.dispatch({
 					...i,
 					data: e.payload
 				});
 				break;
-			case T.PortNum.MAP_REPORT_APP:
+			case E.PortNum.MAP_REPORT_APP:
 				this.events.onMapReportPacket.dispatch({
 					...i,
 					data: e.payload
 				});
 				break;
-			case T.PortNum.PRIVATE_APP:
+			case E.PortNum.PRIVATE_APP:
 				this.events.onPrivatePacket.dispatch({
 					...i,
 					data: e.payload
 				});
 				break;
-			case T.PortNum.ATAK_FORWARDER:
+			case E.PortNum.ATAK_FORWARDER:
 				this.events.onAtakForwarderPacket.dispatch({
 					...i,
 					data: e.payload
@@ -6183,7 +6183,7 @@ var mc = class {
 			default: throw Error(`Unhandled case ${e.portnum}`);
 		}
 	}
-}, Uc = class e {
+}, Hc = class e {
 	static async create(t) {
 		let n = await navigator.serial.requestPort();
 		return await n.open({ baudRate: t || 115200 }), new e(n);
@@ -6192,18 +6192,18 @@ var mc = class {
 		return t.readable && t.writable || await t.open({ baudRate: n || 115200 }), new e(t);
 	}
 	constructor(e) {
-		if (this.pipePromise = null, this.lastStatus = N.DeviceStatusEnum.DeviceDisconnected, this.closingByUser = !1, !e.readable || !e.writable) throw Error("Stream not accessible");
+		if (this.pipePromise = null, this.lastStatus = P.DeviceStatusEnum.DeviceDisconnected, this.closingByUser = !1, !e.readable || !e.writable) throw Error("Stream not accessible");
 		this.connection = e, this.portReadable = e.readable, this.abortController = new AbortController();
-		let t = this.abortController, n = Bc.toDeviceStream();
+		let t = this.abortController, n = zc.toDeviceStream();
 		this.pipePromise = n.readable.pipeTo(e.writable, { signal: this.abortController.signal }).catch((e) => {
-			t.signal.aborted || (console.error("Error piping data to serial port:", e), this.connection.close().catch(() => {}), this.emitStatus(N.DeviceStatusEnum.DeviceDisconnected, "write-error"));
+			t.signal.aborted || (console.error("Error piping data to serial port:", e), this.connection.close().catch(() => {}), this.emitStatus(P.DeviceStatusEnum.DeviceDisconnected, "write-error"));
 		}), this._toDevice = n.writable, this._fromDevice = new ReadableStream({ start: async (e) => {
-			this.fromDeviceController = e, this.emitStatus(N.DeviceStatusEnum.DeviceConnecting);
-			let t = this.portReadable.pipeThrough(Bc.fromDeviceStream()), n = t.getReader(), r = (e) => {
+			this.fromDeviceController = e, this.emitStatus(P.DeviceStatusEnum.DeviceConnecting);
+			let t = this.portReadable.pipeThrough(zc.fromDeviceStream()), n = t.getReader(), r = (e) => {
 				let { port: t } = e;
-				t && t === this.connection && this.emitStatus(N.DeviceStatusEnum.DeviceDisconnected, "serial-disconnected");
+				t && t === this.connection && this.emitStatus(P.DeviceStatusEnum.DeviceDisconnected, "serial-disconnected");
 			};
-			navigator.serial.addEventListener("disconnect", r), this.emitStatus(N.DeviceStatusEnum.DeviceConnected);
+			navigator.serial.addEventListener("disconnect", r), this.emitStatus(P.DeviceStatusEnum.DeviceConnected);
 			try {
 				for (;;) {
 					let { value: t, done: r } = await n.read();
@@ -6212,7 +6212,7 @@ var mc = class {
 				}
 				e.close();
 			} catch (n) {
-				this.closingByUser || this.emitStatus(N.DeviceStatusEnum.DeviceDisconnected, "read-error"), e.error(n instanceof Error ? n : Error(String(n)));
+				this.closingByUser || this.emitStatus(P.DeviceStatusEnum.DeviceDisconnected, "read-error"), e.error(n instanceof Error ? n : Error(String(n)));
 				try {
 					await t.cancel();
 				} catch {}
@@ -6245,28 +6245,28 @@ var mc = class {
 		} catch (e) {
 			console.warn("Could not cleanly disconnect serial port:", e);
 		} finally {
-			this.emitStatus(N.DeviceStatusEnum.DeviceDisconnected, "user"), this.closingByUser = !1;
+			this.emitStatus(P.DeviceStatusEnum.DeviceDisconnected, "user"), this.closingByUser = !1;
 		}
 	}
 	async reconnect() {
-		this.emitStatus(N.DeviceStatusEnum.DeviceConnecting, "reconnect");
+		this.emitStatus(P.DeviceStatusEnum.DeviceConnecting, "reconnect");
 		try {
 			if (!this.connection.readable || !this.connection.writable) throw Error("Stream not accessible");
 			this.portReadable = this.connection.readable, this.abortController = new AbortController();
 			let e = this.abortController;
-			this.pipePromise = Bc.toDeviceStream().readable.pipeTo(this.connection.writable, { signal: this.abortController.signal }).catch((t) => {
-				e.signal.aborted || (console.error("Error piping data to serial port (reconnect):", t), this.emitStatus(N.DeviceStatusEnum.DeviceDisconnected, "write-error"));
-			}), this.emitStatus(N.DeviceStatusEnum.DeviceConnected, "reconnected");
+			this.pipePromise = zc.toDeviceStream().readable.pipeTo(this.connection.writable, { signal: this.abortController.signal }).catch((t) => {
+				e.signal.aborted || (console.error("Error piping data to serial port (reconnect):", t), this.emitStatus(P.DeviceStatusEnum.DeviceDisconnected, "write-error"));
+			}), this.emitStatus(P.DeviceStatusEnum.DeviceConnected, "reconnected");
 		} catch (e) {
-			throw this.emitStatus(N.DeviceStatusEnum.DeviceDisconnected, "reconnect-failed"), e;
+			throw this.emitStatus(P.DeviceStatusEnum.DeviceDisconnected, "reconnect-failed"), e;
 		}
 	}
 };
 // node_modules/@meshtastic/transport-web-bluetooth/dist/mod.js
-function Wc(e) {
+function Uc(e) {
 	return e.buffer instanceof ArrayBuffer && e.byteOffset === 0 && e.byteLength === e.buffer.byteLength ? e.buffer : e.slice().buffer;
 }
-var Gc = class e {
+var Wc = class e {
 	static {
 		this.ToRadioUuid = "f75c76d2-129e-4dad-a1dd-7866124401e7";
 	}
@@ -6294,23 +6294,23 @@ var Gc = class e {
 		return new e(i, a, o, n);
 	}
 	constructor(e, t, n, r) {
-		this.lastStatus = N.DeviceStatusEnum.DeviceDisconnected, this.closingByUser = !1, this.reading = !1, this.onGattDisconnected = () => {
-			this.closingByUser || this.emitStatus(N.DeviceStatusEnum.DeviceDisconnected, "gatt-disconnected");
+		this.lastStatus = P.DeviceStatusEnum.DeviceDisconnected, this.closingByUser = !1, this.reading = !1, this.onGattDisconnected = () => {
+			this.closingByUser || this.emitStatus(P.DeviceStatusEnum.DeviceDisconnected, "gatt-disconnected");
 		}, this.onFromNumChanged = () => {
 			this.readFromRadio();
 		}, this.toRadioCharacteristic = e, this.fromRadioCharacteristic = t, this.fromNumCharacteristic = n, this.gattServer = r, this._fromDevice = new ReadableStream({ start: async (e) => {
-			this.fromDeviceController = e, this.emitStatus(N.DeviceStatusEnum.DeviceConnecting), this.gattServer.device.addEventListener("gattserverdisconnected", this.onGattDisconnected);
+			this.fromDeviceController = e, this.emitStatus(P.DeviceStatusEnum.DeviceConnecting), this.gattServer.device.addEventListener("gattserverdisconnected", this.onGattDisconnected);
 			try {
-				await this.fromNumCharacteristic.startNotifications(), this.fromNumCharacteristic.addEventListener("characteristicvaluechanged", this.onFromNumChanged), this.emitStatus(N.DeviceStatusEnum.DeviceConnected), this.readFromRadio();
+				await this.fromNumCharacteristic.startNotifications(), this.fromNumCharacteristic.addEventListener("characteristicvaluechanged", this.onFromNumChanged), this.emitStatus(P.DeviceStatusEnum.DeviceConnected), this.readFromRadio();
 			} catch {
-				this.emitStatus(N.DeviceStatusEnum.DeviceDisconnected, "notify-failed"), this.gattServer.device.removeEventListener("gattserverdisconnected", this.onGattDisconnected);
+				this.emitStatus(P.DeviceStatusEnum.DeviceDisconnected, "notify-failed"), this.gattServer.device.removeEventListener("gattserverdisconnected", this.onGattDisconnected);
 			}
 		} }), this._toDevice = new WritableStream({ write: async (e) => {
 			try {
-				let t = Wc(e);
+				let t = Uc(e);
 				await this.toRadioCharacteristic.writeValue(t), this.readFromRadio();
 			} catch (e) {
-				throw this.emitStatus(N.DeviceStatusEnum.DeviceDisconnected, "write-error"), e;
+				throw this.emitStatus(P.DeviceStatusEnum.DeviceDisconnected, "write-error"), e;
 			}
 		} });
 	}
@@ -6322,7 +6322,7 @@ var Gc = class e {
 	}
 	disconnect() {
 		try {
-			this.closingByUser = !0, this.emitStatus(N.DeviceStatusEnum.DeviceDisconnected, "user");
+			this.closingByUser = !0, this.emitStatus(P.DeviceStatusEnum.DeviceDisconnected, "user");
 			try {
 				this.fromNumCharacteristic.stopNotifications?.();
 			} catch {}
@@ -6345,7 +6345,7 @@ var Gc = class e {
 					});
 				}
 			} catch (e) {
-				throw this.closingByUser || this.emitStatus(N.DeviceStatusEnum.DeviceDisconnected, "read-error"), e;
+				throw this.closingByUser || this.emitStatus(P.DeviceStatusEnum.DeviceDisconnected, "read-error"), e;
 			} finally {
 				this.reading = !1;
 			}
@@ -6365,16 +6365,16 @@ var Gc = class e {
 	}
 };
 // node_modules/@bufbuild/protobuf/dist/esm/is-message.js
-function Kc(e, t) {
+function Gc(e, t) {
 	return typeof e == "object" && e && "$typeName" in e && typeof e.$typeName == "string" ? t === void 0 || t.typeName === e.$typeName : !1;
 }
 // node_modules/@bufbuild/protobuf/dist/esm/descriptors.js
-var I;
+var L;
 (function(e) {
 	e[e.DOUBLE = 1] = "DOUBLE", e[e.FLOAT = 2] = "FLOAT", e[e.INT64 = 3] = "INT64", e[e.UINT64 = 4] = "UINT64", e[e.INT32 = 5] = "INT32", e[e.FIXED64 = 6] = "FIXED64", e[e.FIXED32 = 7] = "FIXED32", e[e.BOOL = 8] = "BOOL", e[e.STRING = 9] = "STRING", e[e.BYTES = 12] = "BYTES", e[e.UINT32 = 13] = "UINT32", e[e.SFIXED32 = 15] = "SFIXED32", e[e.SFIXED64 = 16] = "SFIXED64", e[e.SINT32 = 17] = "SINT32", e[e.SINT64 = 18] = "SINT64";
-})(I ||= {});
+})(L ||= {});
 // node_modules/@bufbuild/protobuf/dist/esm/wire/varint.js
-function qc() {
+function Kc() {
 	let e = this.buf, t = this.pos, n = 0, r = 0;
 	for (let i = 0; i < 28; i += 7) {
 		let a = e[t++];
@@ -6396,48 +6396,48 @@ function qc() {
 		throw Error("invalid varint");
 	}
 }
-var Jc = 4294967296;
-function Yc(e) {
+var qc = 4294967296;
+function Jc(e) {
 	let t = e[0] === "-";
 	t && (e = e.slice(1));
 	let n = 1e6, r = 0, i = 0;
 	function a(t, a) {
 		let o = Number(e.slice(t, a));
-		i *= n, r = r * n + o, r >= Jc && (i += r / Jc | 0, r %= Jc);
+		i *= n, r = r * n + o, r >= qc && (i += r / qc | 0, r %= qc);
 	}
-	return a(-24, -18), a(-18, -12), a(-12, -6), a(-6), t ? el(r, i) : $c(r, i);
+	return a(-24, -18), a(-18, -12), a(-12, -6), a(-6), t ? $c(r, i) : Qc(r, i);
 }
-function Xc(e, t) {
-	let n = $c(e, t), r = n.hi & 0x80000000;
-	r && (n = el(n.lo, n.hi));
-	let i = Zc(n.lo, n.hi);
+function Yc(e, t) {
+	let n = Qc(e, t), r = n.hi & 0x80000000;
+	r && (n = $c(n.lo, n.hi));
+	let i = Xc(n.lo, n.hi);
 	return r ? "-" + i : i;
 }
-function Zc(e, t) {
-	if ({lo: e, hi: t} = Qc(e, t), t <= 2097151) return String(Jc * t + e);
+function Xc(e, t) {
+	if ({lo: e, hi: t} = Zc(e, t), t <= 2097151) return String(qc * t + e);
 	let n = e & 0xffffff, r = (e >>> 24 | t << 8) & 0xffffff, i = t >> 16 & 65535, a = n + r * 6777216 + i * 6710656, o = r + i * 8147497, s = i * 2, c = 1e7;
-	return a >= c && (o += Math.floor(a / c), a %= c), o >= c && (s += Math.floor(o / c), o %= c), s.toString() + tl(o) + tl(a);
+	return a >= c && (o += Math.floor(a / c), a %= c), o >= c && (s += Math.floor(o / c), o %= c), s.toString() + el(o) + el(a);
 }
-function Qc(e, t) {
+function Zc(e, t) {
 	return {
 		lo: e >>> 0,
 		hi: t >>> 0
 	};
 }
-function $c(e, t) {
+function Qc(e, t) {
 	return {
 		lo: e | 0,
 		hi: t | 0
 	};
 }
-function el(e, t) {
-	return t = ~t, e ? e = ~e + 1 : t += 1, $c(e, t);
+function $c(e, t) {
+	return t = ~t, e ? e = ~e + 1 : t += 1, Qc(e, t);
 }
-var tl = (e) => {
+var el = (e) => {
 	let t = String(e);
 	return "0000000".slice(t.length) + t;
 };
-function nl(e, t) {
+function tl(e, t) {
 	if (e >>> 0 < 128) t.push(e);
 	else if (e >= 0) {
 		for (; e > 127;) t.push(e & 127 | 128), e >>>= 7;
@@ -6447,7 +6447,7 @@ function nl(e, t) {
 		t.push(1);
 	}
 }
-function rl() {
+function nl() {
 	let e = this.buf[this.pos++];
 	if (!(e & 128)) return this.assertBounds(), e;
 	let t = e & 127;
@@ -6458,8 +6458,8 @@ function rl() {
 	return this.assertBounds(), t >>> 0;
 }
 // node_modules/@bufbuild/protobuf/dist/esm/proto-int64.js
-var L = /*@__PURE__*/ il();
-function il() {
+var R = /*@__PURE__*/ rl();
+function rl() {
 	let e = /* @__PURE__ */ new DataView(/* @__PURE__ */ new ArrayBuffer(8));
 	if (typeof BigInt == "function" && typeof e.getBigInt64 == "function" && typeof e.getBigUint64 == "function" && typeof e.setBigInt64 == "function" && typeof e.setBigUint64 == "function" && (globalThis.Deno || globalThis.Bun || typeof process != "object" || typeof process.env != "object" || process.env.BUF_BIGINT_DISABLE !== "1")) {
 		let t = BigInt("-9223372036854775808"), n = BigInt("9223372036854775807"), r = BigInt("0"), i = BigInt("18446744073709551615");
@@ -6500,92 +6500,92 @@ function il() {
 		zero: "0",
 		supported: !1,
 		parse(e) {
-			return typeof e != "string" && (e = e.toString()), al(e), e;
+			return typeof e != "string" && (e = e.toString()), il(e), e;
 		},
 		uParse(e) {
-			return typeof e != "string" && (e = e.toString()), ol(e), e;
+			return typeof e != "string" && (e = e.toString()), al(e), e;
 		},
 		enc(e) {
-			return typeof e != "string" && (e = e.toString()), al(e), Yc(e);
+			return typeof e != "string" && (e = e.toString()), il(e), Jc(e);
 		},
 		uEnc(e) {
-			return typeof e != "string" && (e = e.toString()), ol(e), Yc(e);
+			return typeof e != "string" && (e = e.toString()), al(e), Jc(e);
 		},
 		dec(e, t) {
-			return Xc(e, t);
+			return Yc(e, t);
 		},
 		uDec(e, t) {
-			return Zc(e, t);
+			return Xc(e, t);
 		}
 	};
 }
-function al(e) {
+function il(e) {
 	if (!/^-?[0-9]+$/.test(e)) throw Error("invalid int64: " + e);
 }
-function ol(e) {
+function al(e) {
 	if (!/^[0-9]+$/.test(e)) throw Error("invalid uint64: " + e);
 }
 // node_modules/@bufbuild/protobuf/dist/esm/reflect/scalar.js
-function sl(e, t) {
+function ol(e, t) {
 	switch (e) {
-		case I.STRING: return "";
-		case I.BOOL: return !1;
-		case I.DOUBLE:
-		case I.FLOAT: return 0;
-		case I.INT64:
-		case I.UINT64:
-		case I.SFIXED64:
-		case I.FIXED64:
-		case I.SINT64: return t ? "0" : L.zero;
-		case I.BYTES: return /* @__PURE__ */ new Uint8Array();
+		case L.STRING: return "";
+		case L.BOOL: return !1;
+		case L.DOUBLE:
+		case L.FLOAT: return 0;
+		case L.INT64:
+		case L.UINT64:
+		case L.SFIXED64:
+		case L.FIXED64:
+		case L.SINT64: return t ? "0" : R.zero;
+		case L.BYTES: return /* @__PURE__ */ new Uint8Array();
 		default: return 0;
 	}
 }
-function cl(e, t) {
+function sl(e, t) {
 	switch (e) {
-		case I.BOOL: return t === !1;
-		case I.STRING: return t === "";
-		case I.BYTES: return t instanceof Uint8Array && !t.byteLength;
-		case I.DOUBLE:
-		case I.FLOAT: return Object.is(t, 0);
+		case L.BOOL: return t === !1;
+		case L.STRING: return t === "";
+		case L.BYTES: return t instanceof Uint8Array && !t.byteLength;
+		case L.DOUBLE:
+		case L.FLOAT: return Object.is(t, 0);
 		default: return t == 0;
 	}
 }
 // node_modules/@bufbuild/protobuf/dist/esm/reflect/unsafe.js
-var ll = 2, R = Symbol.for("reflect unsafe local");
-function ul(e, t) {
+var cl = 2, z = Symbol.for("reflect unsafe local");
+function ll(e, t) {
 	let n = e[t.localName].case;
 	return n === void 0 ? n : t.fields.find((e) => e.localName === n);
 }
-function dl(e, t) {
+function ul(e, t) {
 	let n = t.localName;
 	if (t.oneof) return e[t.oneof.localName].case === n;
-	if (t.presence != ll) return e[n] !== void 0 && Object.prototype.hasOwnProperty.call(e, n);
+	if (t.presence != cl) return e[n] !== void 0 && Object.prototype.hasOwnProperty.call(e, n);
 	switch (t.fieldKind) {
 		case "list": return e[n].length > 0;
 		case "map": return Object.keys(e[n]).length > 0;
-		case "scalar": return !cl(t.scalar, e[n]);
+		case "scalar": return !sl(t.scalar, e[n]);
 		case "enum": return e[n] !== t.enum.values[0].number;
 	}
 	throw Error("message field with implicit presence");
 }
-function fl(e, t) {
+function dl(e, t) {
 	return Object.prototype.hasOwnProperty.call(e, t) && e[t] !== void 0;
 }
-function pl(e, t) {
+function fl(e, t) {
 	if (t.oneof) {
 		let n = e[t.oneof.localName];
 		return n.case === t.localName ? n.value : void 0;
 	}
 	return e[t.localName];
 }
-function ml(e, t, n) {
+function pl(e, t, n) {
 	t.oneof ? e[t.oneof.localName] = {
 		case: t.localName,
 		value: n
 	} : e[t.localName] = n;
 }
-function z(e, t, n) {
+function B(e, t, n) {
 	t === "__proto__" ? Object.defineProperty(e, "__proto__", {
 		value: n,
 		writable: !0,
@@ -6593,15 +6593,15 @@ function z(e, t, n) {
 		configurable: !0
 	}) : e[t] = n;
 }
-function hl(e, t) {
+function ml(e, t) {
 	return Object.prototype.hasOwnProperty.call(e, t) ? e[t] : void 0;
 }
-function gl(e, t) {
+function hl(e, t) {
 	let n = t.localName;
 	if (t.oneof) {
 		let r = t.oneof.localName;
 		e[r].case === n && (e[r] = { case: void 0 });
-	} else if (t.presence != ll) delete e[n];
+	} else if (t.presence != cl) delete e[n];
 	else switch (t.fieldKind) {
 		case "map":
 			e[n] = {};
@@ -6612,15 +6612,15 @@ function gl(e, t) {
 		case "enum":
 			e[n] = t.enum.values[0].number;
 			break;
-		case "scalar": e[n] = sl(t.scalar, t.longAsString);
+		case "scalar": e[n] = ol(t.scalar, t.longAsString);
 	}
 }
 // node_modules/@bufbuild/protobuf/dist/esm/reflect/guard.js
-function _l(e) {
+function gl(e) {
 	return typeof e == "object" && !!e && !Array.isArray(e);
 }
-function vl(e, t) {
-	if (_l(e) && R in e && "add" in e && "field" in e && typeof e.field == "function") {
+function _l(e, t) {
+	if (gl(e) && z in e && "add" in e && "field" in e && typeof e.field == "function") {
 		if (t !== void 0) {
 			let n = t, r = e.field();
 			return n.listKind == r.listKind && n.scalar === r.scalar && n.message?.typeName === r.message?.typeName && n.enum?.typeName === r.enum?.typeName;
@@ -6629,8 +6629,8 @@ function vl(e, t) {
 	}
 	return !1;
 }
-function yl(e, t) {
-	if (_l(e) && R in e && "has" in e && "field" in e && typeof e.field == "function") {
+function vl(e, t) {
+	if (gl(e) && z in e && "has" in e && "field" in e && typeof e.field == "function") {
 		if (t !== void 0) {
 			let n = t, r = e.field();
 			return n.mapKey === r.mapKey && n.mapKind == r.mapKind && n.scalar === r.scalar && n.message?.typeName === r.message?.typeName && n.enum?.typeName === r.enum?.typeName;
@@ -6639,18 +6639,18 @@ function yl(e, t) {
 	}
 	return !1;
 }
-function bl(e, t) {
-	return _l(e) && R in e && "desc" in e && _l(e.desc) && e.desc.kind === "message" && (t === void 0 || e.desc.typeName == t.typeName);
+function yl(e, t) {
+	return gl(e) && z in e && "desc" in e && gl(e.desc) && e.desc.kind === "message" && (t === void 0 || e.desc.typeName == t.typeName);
 }
 // node_modules/@bufbuild/protobuf/dist/esm/wkt/wrappers.js
+function bl(e) {
+	return wl(e.$typeName);
+}
 function xl(e) {
-	return Tl(e.$typeName);
+	let t = e.fields[0];
+	return wl(e.typeName) && t !== void 0 && t.fieldKind == "scalar" && t.name == "value" && t.number == 1;
 }
 function Sl(e) {
-	let t = e.fields[0];
-	return Tl(e.typeName) && t !== void 0 && t.fieldKind == "scalar" && t.name == "value" && t.number == 1;
-}
-function Cl(e) {
 	switch (e.typeName) {
 		case "google.protobuf.Any":
 		case "google.protobuf.Timestamp":
@@ -6659,10 +6659,10 @@ function Cl(e) {
 		case "google.protobuf.Struct":
 		case "google.protobuf.Value":
 		case "google.protobuf.ListValue": return !0;
-		default: return Sl(e);
+		default: return xl(e);
 	}
 }
-var wl = /*@__PURE__*/ new Set([
+var Cl = /*@__PURE__*/ new Set([
 	"google.protobuf.DoubleValue",
 	"google.protobuf.FloatValue",
 	"google.protobuf.Int64Value",
@@ -6673,43 +6673,43 @@ var wl = /*@__PURE__*/ new Set([
 	"google.protobuf.StringValue",
 	"google.protobuf.BytesValue"
 ]);
-function Tl(e) {
-	return wl.has(e);
+function wl(e) {
+	return Cl.has(e);
 }
 // node_modules/@bufbuild/protobuf/dist/esm/create.js
-var El = 999, Dl = 998, Ol = 2;
-function B(e, t) {
-	return Kc(t, e) ? t : Al(e)(t);
+var Tl = 999, El = 998, Dl = 2;
+function V(e, t) {
+	return Gc(t, e) ? t : kl(e)(t);
 }
-var kl = /* @__PURE__ */ new WeakMap();
-function Al(e) {
-	let t = kl.get(e);
-	return t === void 0 && (t = Fl(e), kl.set(e, t)), t;
+var Ol = /* @__PURE__ */ new WeakMap();
+function kl(e) {
+	let t = Ol.get(e);
+	return t === void 0 && (t = Pl(e), Ol.set(e, t)), t;
 }
-var jl = 0, Ml = 1, Nl = 2, Pl = 3;
-function Fl(e) {
-	let t = e.typeName, { properties: n, prototype: r } = Il(e);
+var Al = 0, jl = 1, Ml = 2, Nl = 3;
+function Pl(e) {
+	let t = e.typeName, { properties: n, prototype: r } = Fl(e);
 	return (e) => {
 		let i;
 		r === void 0 ? i = { $typeName: t } : (i = Object.create(r), i.$typeName = t);
 		for (let t = 0; t < n.length; t++) {
 			let r = n[t], a = r.name, o = e?.[a];
 			switch (r.kind) {
-				case jl:
+				case Al:
 					o == null ? r.constant !== void 0 && (i[a] = r.constant) : i[a] = r.convert === void 0 ? o : r.convert(o);
 					break;
-				case Ml:
+				case jl:
 					i[a] = r.convert !== void 0 && Array.isArray(o) ? o.map(r.convert) : o ?? [];
 					break;
-				case Nl:
-					if (r.convert === void 0 || !_l(o)) i[a] = o ?? {};
+				case Ml:
+					if (r.convert === void 0 || !gl(o)) i[a] = o ?? {};
 					else {
 						let e = {}, t = Object.keys(o);
-						for (let n = 0; n < t.length; n++) z(e, t[n], r.convert(o[t[n]]));
+						for (let n = 0; n < t.length; n++) B(e, t[n], r.convert(o[t[n]]));
 						i[a] = e;
 					}
 					break;
-				case Pl: {
+				case Nl: {
 					let e = o;
 					if (e?.case != null) {
 						let t = r.convert.get(e.case);
@@ -6729,48 +6729,48 @@ function Fl(e) {
 		return i;
 	};
 }
-function Il(e) {
-	let t = [], n = {}, r = Bl(e);
+function Fl(e) {
+	let t = [], n = {}, r = zl(e);
 	for (let i of e.members) {
 		let e = i.localName;
 		if (i.kind == "oneof") t.push({
 			name: e,
-			kind: Pl,
+			kind: Nl,
 			constant: void 0,
-			convert: Ll(i)
+			convert: Il(i)
 		});
 		else switch (i.fieldKind) {
 			case "message":
 				t.push({
 					name: e,
-					kind: jl,
+					kind: Al,
 					constant: void 0,
-					convert: Rl(i)
+					convert: Ll(i)
 				});
 				break;
 			case "list":
 				t.push({
 					name: e,
-					kind: Ml,
+					kind: jl,
 					constant: void 0,
-					convert: i.listKind == "message" ? Rl(i) ?? ((e) => e) : i.scalar == I.BYTES ? zl : void 0
+					convert: i.listKind == "message" ? Ll(i) ?? ((e) => e) : i.scalar == L.BYTES ? Rl : void 0
 				});
 				break;
 			case "map":
 				t.push({
 					name: e,
-					kind: Nl,
+					kind: Ml,
 					constant: void 0,
-					convert: i.mapKind == "message" ? Rl(i) ?? ((e) => e) : i.scalar == I.BYTES ? zl : void 0
+					convert: i.mapKind == "message" ? Ll(i) ?? ((e) => e) : i.scalar == L.BYTES ? Rl : void 0
 				});
 				break;
 			default: {
-				let a = Vl(i);
+				let a = Bl(i);
 				t.push({
 					name: e,
-					kind: jl,
-					constant: i.presence == Ol ? a : void 0,
-					convert: i.fieldKind == "scalar" && i.scalar == I.BYTES ? zl : void 0
+					kind: Al,
+					constant: i.presence == Dl ? a : void 0,
+					convert: i.fieldKind == "scalar" && i.scalar == L.BYTES ? Rl : void 0
 				}), r && (n[e] = a);
 				break;
 			}
@@ -6781,54 +6781,54 @@ function Il(e) {
 		prototype: r ? n : void 0
 	};
 }
-function Ll(e) {
+function Il(e) {
 	let t = /* @__PURE__ */ new Map();
 	for (let n of e.fields) {
 		let e;
-		n.fieldKind == "message" ? e = Rl(n) : n.fieldKind == "scalar" && n.scalar == I.BYTES && (e = zl), t.set(n.localName, e ?? ((e) => e));
+		n.fieldKind == "message" ? e = Ll(n) : n.fieldKind == "scalar" && n.scalar == L.BYTES && (e = Rl), t.set(n.localName, e ?? ((e) => e));
 	}
 	return t;
 }
-function Rl(e) {
-	if (e.fieldKind == "message" && !e.oneof && Sl(e.message)) return e.message.fields[0].scalar == I.BYTES ? zl : void 0;
+function Ll(e) {
+	if (e.fieldKind == "message" && !e.oneof && xl(e.message)) return e.message.fields[0].scalar == L.BYTES ? Rl : void 0;
 	if (e.message.typeName == "google.protobuf.Struct" && e.parent.typeName !== "google.protobuf.Value") return;
 	let t = e.message, n;
-	return (e) => !_l(e) || Kc(e, t) ? e : (n ??= Al(t), n(e));
+	return (e) => !gl(e) || Gc(e, t) ? e : (n ??= kl(t), n(e));
 }
-function zl(e) {
+function Rl(e) {
 	return Array.isArray(e) ? new Uint8Array(e) : e;
 }
-function Bl(e) {
+function zl(e) {
 	switch (e.file.edition) {
-		case El: return !1;
-		case Dl: return !0;
-		default: return e.fields.some((e) => e.presence != Ol && e.fieldKind != "message" && !e.oneof);
+		case Tl: return !1;
+		case El: return !0;
+		default: return e.fields.some((e) => e.presence != Dl && e.fieldKind != "message" && !e.oneof);
 	}
 }
-function Vl(e) {
+function Bl(e) {
 	let t = e.getDefaultValue();
-	return t === void 0 ? e.fieldKind == "scalar" ? sl(e.scalar, e.longAsString) : e.enum.values[0].number : e.fieldKind == "scalar" && e.longAsString ? t.toString() : t;
+	return t === void 0 ? e.fieldKind == "scalar" ? ol(e.scalar, e.longAsString) : e.enum.values[0].number : e.fieldKind == "scalar" && e.longAsString ? t.toString() : t;
 }
 // node_modules/@bufbuild/protobuf/dist/esm/reflect/error.js
-var Hl = [
+var Vl = [
 	"FieldValueInvalidError",
 	"FieldListRangeError",
 	"ForeignFieldError"
-], V = class extends Error {
+], H = class extends Error {
 	constructor(e, t, n = "FieldValueInvalidError") {
 		super(t), this.name = n, this.field = () => e;
 	}
 };
-function Ul(e) {
-	return e instanceof Error && Hl.includes(e.name) && "field" in e && typeof e.field == "function";
+function Hl(e) {
+	return e instanceof Error && Vl.includes(e.name) && "field" in e && typeof e.field == "function";
 }
 // node_modules/@bufbuild/protobuf/dist/esm/wire/text-encoding.js
-var Wl;
-function Gl(e) {
-	Wl = Object.assign(Object.assign({}, e), { encodeUtf8Into: e.encodeUtf8Into ?? ql(e.encodeUtf8.bind(e)) });
+var Ul;
+function Wl(e) {
+	Ul = Object.assign(Object.assign({}, e), { encodeUtf8Into: e.encodeUtf8Into ?? Kl(e.encodeUtf8.bind(e)) });
 }
-function Kl() {
-	if (!Wl) {
+function Gl() {
+	if (!Ul) {
 		let e = globalThis;
 		if (!e.TextEncoder || !e.TextDecoder) throw Error("encoding API missing: install TextEncoder and TextDecoder on globalThis");
 		let t = new e.TextEncoder(), n = new e.TextDecoder("utf-8", { ignoreBOM: !0 }), r, i = {
@@ -6851,29 +6851,29 @@ function Kl() {
 		};
 		t.encodeInto && (i.encodeUtf8Into = t.encodeInto.bind(t));
 		let a = String.prototype.isWellFormed;
-		a && (i.checkUtf8 = (e) => a.call(e)), Gl(i);
+		a && (i.checkUtf8 = (e) => a.call(e)), Wl(i);
 	}
-	return Wl;
+	return Ul;
 }
-function ql(e) {
+function Kl(e) {
 	return (t, n) => {
 		let r = e(t);
 		return n.set(r), { written: r.byteLength };
 	};
 }
 // node_modules/@bufbuild/protobuf/dist/esm/wire/binary-encoding.js
-var H;
+var U;
 (function(e) {
 	e[e.Varint = 0] = "Varint", e[e.Bit64 = 1] = "Bit64", e[e.LengthDelimited = 2] = "LengthDelimited", e[e.StartGroup = 3] = "StartGroup", e[e.EndGroup = 4] = "EndGroup", e[e.Bit32 = 5] = "Bit32";
-})(H ||= {});
-var Jl = class {
+})(U ||= {});
+var ql = class {
 	constructor(e) {
-		this.stackPos = [], this.encodeUtf8Into = e ? ql(e) : Kl().encodeUtf8Into, this.buffer = Zl, this.viewCache = Ql, this.pos = 0;
+		this.stackPos = [], this.encodeUtf8Into = e ? Kl(e) : Gl().encodeUtf8Into, this.buffer = Xl, this.viewCache = Zl, this.pos = 0;
 	}
 	ensureCapacity(e) {
 		let t = this.pos + e;
 		if (t > this.buffer.length) {
-			let e = this.buffer.length || Yl;
+			let e = this.buffer.length || Jl;
 			for (; e < t;) e *= 2;
 			let n = new Uint8Array(e);
 			this.pos > 0 && n.set(this.buffer), this.buffer = n;
@@ -6890,13 +6890,13 @@ var Jl = class {
 		return this.pos = 0, this.stackPos = [], e;
 	}
 	fork() {
-		return this.stackPos.push(this.pos), this.ensureCapacity(Xl), this.buffer[this.pos++] = 0, this;
+		return this.stackPos.push(this.pos), this.ensureCapacity(Yl), this.buffer[this.pos++] = 0, this;
 	}
 	join() {
 		let e = this.stackPos.pop();
 		if (e === void 0) throw Error("invalid state, fork stack empty");
-		let t = this.pos - e - Xl, n = eu(t);
-		return n > Xl && (this.ensureCapacity(n - Xl), this.buffer.copyWithin(e + n, e + Xl, this.pos)), this.pos = e, this.uint32(t), this.pos += t, this;
+		let t = this.pos - e - Yl, n = $l(t);
+		return n > Yl && (this.ensureCapacity(n - Yl), this.buffer.copyWithin(e + n, e + Yl, this.pos)), this.pos = e, this.uint32(t), this.pos += t, this;
 	}
 	tag(e, t) {
 		return this.uint32((e << 3 | t) >>> 0);
@@ -6905,12 +6905,12 @@ var Jl = class {
 		return this.ensureCapacity(e.length), this.buffer.set(e, this.pos), this.pos += e.length, this;
 	}
 	uint32(e) {
-		if (ru(e), this.ensureCapacity(5), e < 128) return this.buffer[this.pos++] = e, this;
+		if (nu(e), this.ensureCapacity(5), e < 128) return this.buffer[this.pos++] = e, this;
 		for (; e > 127;) this.buffer[this.pos++] = e & 127 | 128, e >>>= 7;
 		return this.buffer[this.pos++] = e, this;
 	}
 	int32(e) {
-		if (nu(e), e >= 0) return this.uint32(e);
+		if (tu(e), e >= 0) return this.uint32(e);
 		this.ensureCapacity(10);
 		for (let t = 0; t < 9; t++) this.buffer[this.pos++] = e & 127 | 128, e >>= 7;
 		return this.buffer[this.pos++] = 1, this;
@@ -6924,7 +6924,7 @@ var Jl = class {
 	string(e) {
 		typeof e != "string" && (e = String(e));
 		let t = e.length;
-		if (t <= $l) {
+		if (t <= Ql) {
 			this.ensureCapacity(t + 1);
 			let n = this.buffer, r = this.pos;
 			n[r++] = t;
@@ -6937,46 +6937,46 @@ var Jl = class {
 			if (i == t) return this.pos = r, this;
 		}
 		this.ensureCapacity(t * 3 + 5);
-		let n = eu(t), r = this.buffer, i = this.pos, { written: a } = this.encodeUtf8Into(e, r.subarray(i + n)), o = eu(a);
+		let n = $l(t), r = this.buffer, i = this.pos, { written: a } = this.encodeUtf8Into(e, r.subarray(i + n)), o = $l(a);
 		return o != n && r.copyWithin(i + o, i + n, i + n + a), this.uint32(a), this.pos += a, this;
 	}
 	float(e) {
-		return iu(e), this.ensureCapacity(4), this.view().setFloat32(this.pos, e, !0), this.pos += 4, this;
+		return ru(e), this.ensureCapacity(4), this.view().setFloat32(this.pos, e, !0), this.pos += 4, this;
 	}
 	double(e) {
 		return this.ensureCapacity(8), this.view().setFloat64(this.pos, e, !0), this.pos += 8, this;
 	}
 	fixed32(e) {
-		return ru(e), this.ensureCapacity(4), this.view().setUint32(this.pos, e, !0), this.pos += 4, this;
+		return nu(e), this.ensureCapacity(4), this.view().setUint32(this.pos, e, !0), this.pos += 4, this;
 	}
 	sfixed32(e) {
-		return nu(e), this.ensureCapacity(4), this.view().setInt32(this.pos, e, !0), this.pos += 4, this;
+		return tu(e), this.ensureCapacity(4), this.view().setInt32(this.pos, e, !0), this.pos += 4, this;
 	}
 	sint32(e) {
-		return nu(e), this.uint32((e << 1 ^ e >> 31) >>> 0);
+		return tu(e), this.uint32((e << 1 ^ e >> 31) >>> 0);
 	}
 	sfixed64(e) {
-		let t = L.enc(e);
+		let t = R.enc(e);
 		this.ensureCapacity(8);
 		let n = this.view();
 		return n.setInt32(this.pos, t.lo, !0), n.setInt32(this.pos + 4, t.hi, !0), this.pos += 8, this;
 	}
 	fixed64(e) {
-		let t = L.uEnc(e);
+		let t = R.uEnc(e);
 		this.ensureCapacity(8);
 		let n = this.view();
 		return n.setInt32(this.pos, t.lo, !0), n.setInt32(this.pos + 4, t.hi, !0), this.pos += 8, this;
 	}
 	int64(e) {
-		let t = L.enc(e);
+		let t = R.enc(e);
 		return this.writeVarint64(t.lo, t.hi);
 	}
 	sint64(e) {
-		let t = L.enc(e), n = t.hi >> 31, r = t.lo << 1 ^ n, i = (t.hi << 1 | t.lo >>> 31) ^ n;
+		let t = R.enc(e), n = t.hi >> 31, r = t.lo << 1 ^ n, i = (t.hi << 1 | t.lo >>> 31) ^ n;
 		return this.writeVarint64(r, i);
 	}
 	uint64(e) {
-		let t = L.uEnc(e);
+		let t = R.uEnc(e);
 		return this.writeVarint64(t.lo, t.hi);
 	}
 	writeVarint64(e, t) {
@@ -6994,13 +6994,13 @@ var Jl = class {
 		}
 		return n[r++] = t >>> 31 & 1, this.pos = r, this;
 	}
-}, Yl = 128, Xl = 1, Zl = /* @__PURE__ */ new Uint8Array(), Ql = new DataView(Zl.buffer), $l = 32;
-function eu(e) {
+}, Jl = 128, Yl = 1, Xl = /* @__PURE__ */ new Uint8Array(), Zl = new DataView(Xl.buffer), Ql = 32;
+function $l(e) {
 	return e < 128 ? 1 : e < 16384 ? 2 : e < 2097152 ? 3 : e < 268435456 ? 4 : 5;
 }
-var tu = class {
-	constructor(e, t = Kl().decodeUtf8) {
-		this.decodeUtf8 = t, this.varint64Lo = 0, this.varint64Hi = 0, this.varint64 = qc, this.uint32 = rl, this.buf = e, this.len = e.length, this.pos = 0, this.view = new DataView(e.buffer, e.byteOffset, e.byteLength);
+var eu = class {
+	constructor(e, t = Gl().decodeUtf8) {
+		this.decodeUtf8 = t, this.varint64Lo = 0, this.varint64Hi = 0, this.varint64 = Kc, this.uint32 = nl, this.buf = e, this.len = e.length, this.pos = 0, this.view = new DataView(e.buffer, e.byteOffset, e.byteLength);
 	}
 	tag() {
 		let e = this.pos, t = this.uint32(), n = this.pos - e;
@@ -7012,22 +7012,22 @@ var tu = class {
 	skip(e, t, n = 100) {
 		let r = this.pos;
 		switch (e) {
-			case H.Varint:
+			case U.Varint:
 				for (; this.buf[this.pos++] & 128;);
 				break;
-			case H.Bit64: this.pos += 4;
-			case H.Bit32:
+			case U.Bit64: this.pos += 4;
+			case U.Bit32:
 				this.pos += 4;
 				break;
-			case H.LengthDelimited:
+			case U.LengthDelimited:
 				let r = this.uint32();
 				this.pos += r;
 				break;
-			case H.StartGroup:
+			case U.StartGroup:
 				if (n <= 0) throw Error("maximum recursion depth reached");
 				for (;;) {
 					let [e, r] = this.tag();
-					if (r === H.EndGroup) {
+					if (r === U.EndGroup) {
 						if (t !== void 0 && e !== t) throw Error("invalid end group tag");
 						break;
 					}
@@ -7049,15 +7049,15 @@ var tu = class {
 		return e >>> 1 ^ -(e & 1);
 	}
 	int64() {
-		return this.varint64(), L.dec(this.varint64Lo, this.varint64Hi);
+		return this.varint64(), R.dec(this.varint64Lo, this.varint64Hi);
 	}
 	uint64() {
-		return this.varint64(), L.uDec(this.varint64Lo, this.varint64Hi);
+		return this.varint64(), R.uDec(this.varint64Lo, this.varint64Hi);
 	}
 	sint64() {
 		this.varint64();
 		let e = this.varint64Lo, t = this.varint64Hi, n = -(e & 1);
-		return e = (e >>> 1 | (t & 1) << 31) ^ n, t = t >>> 1 ^ n, L.dec(e, t);
+		return e = (e >>> 1 | (t & 1) << 31) ^ n, t = t >>> 1 ^ n, R.dec(e, t);
 	}
 	bool() {
 		let e = this.buf[this.pos];
@@ -7070,10 +7070,10 @@ var tu = class {
 		return this.view.getInt32((this.pos += 4) - 4, !0);
 	}
 	fixed64() {
-		return L.uDec(this.sfixed32(), this.sfixed32());
+		return R.uDec(this.sfixed32(), this.sfixed32());
 	}
 	sfixed64() {
-		return L.dec(this.sfixed32(), this.sfixed32());
+		return R.dec(this.sfixed32(), this.sfixed32());
 	}
 	float() {
 		return this.view.getFloat32((this.pos += 4) - 4, !0);
@@ -7089,7 +7089,7 @@ var tu = class {
 		let t = this.uint32(), n = this.pos;
 		this.pos += t, this.assertBounds();
 		let r = this.buf;
-		if (t <= $l) {
+		if (t <= Ql) {
 			let i = Array(t);
 			for (let a = 0; a < t; a++) {
 				let t = r[n + a];
@@ -7101,17 +7101,17 @@ var tu = class {
 		return this.decodeUtf8(r.subarray(n, this.pos), e);
 	}
 };
-function nu(e) {
+function tu(e) {
 	if (typeof e == "string") e = Number(e);
 	else if (typeof e != "number") throw Error("invalid int32: " + typeof e);
 	if (!Number.isInteger(e) || e > 0x7fffffff || e < -0x80000000) throw Error("invalid int32: " + e);
 }
-function ru(e) {
+function nu(e) {
 	if (typeof e == "string") e = Number(e);
 	else if (typeof e != "number") throw Error("invalid uint32: " + typeof e);
 	if (!Number.isInteger(e) || e > 0xffffffff || e < 0) throw Error("invalid uint32: " + e);
 }
-function iu(e) {
+function ru(e) {
 	if (typeof e == "string") {
 		let t = e;
 		if (e = Number(e), Number.isNaN(e) && t !== "NaN") throw Error("invalid float32: " + t);
@@ -7119,60 +7119,60 @@ function iu(e) {
 	if (!Number.isFinite(Math.fround(e)) && Number.isFinite(e)) throw Error("invalid float32: " + e);
 }
 // node_modules/@bufbuild/protobuf/dist/esm/reflect/reflect-check.js
-function au(e, t) {
-	let n = e.fieldKind == "list" ? vl(t, e) : e.fieldKind == "map" ? yl(t, e) : cu(e, t);
+function iu(e, t) {
+	let n = e.fieldKind == "list" ? _l(t, e) : e.fieldKind == "map" ? vl(t, e) : su(e, t);
 	if (n === !0) return;
 	let r;
 	switch (e.fieldKind) {
 		case "list":
-			r = `expected ${du(e)}, got ${W(t)}`;
+			r = `expected ${uu(e)}, got ${G(t)}`;
 			break;
 		case "map":
-			r = `expected ${fu(e)}, got ${W(t)}`;
+			r = `expected ${du(e)}, got ${G(t)}`;
 			break;
-		default: r = U(e, t, n);
+		default: r = W(e, t, n);
 	}
-	return new V(e, r);
+	return new H(e, r);
+}
+function au(e, t, n) {
+	let r = su(e, n);
+	if (r !== !0) return new H(e, `list item #${t + 1}: ${W(e, n, r)}`);
 }
 function ou(e, t, n) {
-	let r = cu(e, n);
-	if (r !== !0) return new V(e, `list item #${t + 1}: ${U(e, n, r)}`);
+	let r = cu(e.mapKey)(t);
+	if (r !== !0) return new H(e, `invalid map key: ${W({ scalar: e.mapKey }, t, r)}`);
+	let i = su(e, n);
+	if (i !== !0) return new H(e, `map entry ${G(t)}: ${W(e, n, i)}`);
 }
-function su(e, t, n) {
-	let r = lu(e.mapKey)(t);
-	if (r !== !0) return new V(e, `invalid map key: ${U({ scalar: e.mapKey }, t, r)}`);
-	let i = cu(e, n);
-	if (i !== !0) return new V(e, `map entry ${W(t)}: ${U(e, n, i)}`);
+function su(e, t) {
+	return e.scalar === void 0 ? e.enum === void 0 ? yl(t, e.message) : e.enum.open ? cu(L.INT32)(t) : e.enum.values.some((e) => e.number === t) : cu(e.scalar)(t);
 }
-function cu(e, t) {
-	return e.scalar === void 0 ? e.enum === void 0 ? bl(t, e.message) : e.enum.open ? lu(I.INT32)(t) : e.enum.values.some((e) => e.number === t) : lu(e.scalar)(t);
-}
-function lu(e) {
+function cu(e) {
 	switch (e) {
-		case I.DOUBLE: return (e) => typeof e == "number";
-		case I.FLOAT: return (e) => typeof e == "number" ? !Number.isFinite(Math.fround(e)) && Number.isFinite(e) ? `${e.toFixed()} out of range` : !0 : !1;
-		case I.INT32:
-		case I.SFIXED32:
-		case I.SINT32: return (e) => typeof e != "number" || !Number.isInteger(e) ? !1 : e > 0x7fffffff || e < -0x80000000 ? `${e.toFixed()} out of range` : !0;
-		case I.FIXED32:
-		case I.UINT32: return (e) => typeof e != "number" || !Number.isInteger(e) ? !1 : e > 0xffffffff || e < 0 ? `${e.toFixed()} out of range` : !0;
-		case I.BOOL: return (e) => typeof e == "boolean";
-		case I.STRING: return (e) => typeof e == "string" ? Kl().checkUtf8(e) || "invalid UTF8" : !1;
-		case I.BYTES: return (e) => e instanceof Uint8Array;
-		case I.INT64:
-		case I.SFIXED64:
-		case I.SINT64: return (e) => {
+		case L.DOUBLE: return (e) => typeof e == "number";
+		case L.FLOAT: return (e) => typeof e == "number" ? !Number.isFinite(Math.fround(e)) && Number.isFinite(e) ? `${e.toFixed()} out of range` : !0 : !1;
+		case L.INT32:
+		case L.SFIXED32:
+		case L.SINT32: return (e) => typeof e != "number" || !Number.isInteger(e) ? !1 : e > 0x7fffffff || e < -0x80000000 ? `${e.toFixed()} out of range` : !0;
+		case L.FIXED32:
+		case L.UINT32: return (e) => typeof e != "number" || !Number.isInteger(e) ? !1 : e > 0xffffffff || e < 0 ? `${e.toFixed()} out of range` : !0;
+		case L.BOOL: return (e) => typeof e == "boolean";
+		case L.STRING: return (e) => typeof e == "string" ? Gl().checkUtf8(e) || "invalid UTF8" : !1;
+		case L.BYTES: return (e) => e instanceof Uint8Array;
+		case L.INT64:
+		case L.SFIXED64:
+		case L.SINT64: return (e) => {
 			if (typeof e == "bigint" || typeof e == "number" || typeof e == "string" && e.length > 0) try {
-				return L.parse(e), !0;
+				return R.parse(e), !0;
 			} catch {
 				return `${e} out of range`;
 			}
 			return !1;
 		};
-		case I.FIXED64:
-		case I.UINT64: return (e) => {
+		case L.FIXED64:
+		case L.UINT64: return (e) => {
 			if (typeof e == "bigint" || typeof e == "number" || typeof e == "string" && e.length > 0) try {
-				return L.uParse(e), !0;
+				return R.uParse(e), !0;
 			} catch {
 				return `${e} out of range`;
 			}
@@ -7180,12 +7180,12 @@ function lu(e) {
 		};
 	}
 }
-function U(e, t, n) {
-	return n = typeof n == "string" ? `: ${n}` : `, got ${W(t)}`, e.scalar === void 0 ? e.enum === void 0 ? `expected ${uu(e.message)}` + n : `expected ${e.enum.toString()}` + n : `expected ${pu(e.scalar)}` + n;
+function W(e, t, n) {
+	return n = typeof n == "string" ? `: ${n}` : `, got ${G(t)}`, e.scalar === void 0 ? e.enum === void 0 ? `expected ${lu(e.message)}` + n : `expected ${e.enum.toString()}` + n : `expected ${fu(e.scalar)}` + n;
 }
-function W(e) {
+function G(e) {
 	switch (typeof e) {
-		case "object": return e === null ? "null" : e instanceof Uint8Array ? `Uint8Array(${e.length})` : Array.isArray(e) ? `Array(${e.length})` : vl(e) ? du(e.field()) : yl(e) ? fu(e.field()) : bl(e) ? uu(e.desc) : Kc(e) ? `message ${e.$typeName}` : "object";
+		case "object": return e === null ? "null" : e instanceof Uint8Array ? `Uint8Array(${e.length})` : Array.isArray(e) ? `Array(${e.length})` : _l(e) ? uu(e.field()) : vl(e) ? du(e.field()) : yl(e) ? lu(e.desc) : Gc(e) ? `message ${e.$typeName}` : "object";
 		case "string": return e.length > 30 ? "string" : `"${e.split("\"").join("\\\"")}"`;
 		case "boolean":
 		case "number": return String(e);
@@ -7193,54 +7193,54 @@ function W(e) {
 		default: return typeof e;
 	}
 }
-function uu(e) {
+function lu(e) {
 	return `ReflectMessage (${e.typeName})`;
 }
-function du(e) {
+function uu(e) {
 	switch (e.listKind) {
 		case "message": return `ReflectList (${e.message.toString()})`;
 		case "enum": return `ReflectList (${e.enum.toString()})`;
-		case "scalar": return `ReflectList (${I[e.scalar]})`;
+		case "scalar": return `ReflectList (${L[e.scalar]})`;
+	}
+}
+function du(e) {
+	switch (e.mapKind) {
+		case "message": return `ReflectMap (${L[e.mapKey]}, ${e.message.toString()})`;
+		case "enum": return `ReflectMap (${L[e.mapKey]}, ${e.enum.toString()})`;
+		case "scalar": return `ReflectMap (${L[e.mapKey]}, ${L[e.scalar]})`;
 	}
 }
 function fu(e) {
-	switch (e.mapKind) {
-		case "message": return `ReflectMap (${I[e.mapKey]}, ${e.message.toString()})`;
-		case "enum": return `ReflectMap (${I[e.mapKey]}, ${e.enum.toString()})`;
-		case "scalar": return `ReflectMap (${I[e.mapKey]}, ${I[e.scalar]})`;
-	}
-}
-function pu(e) {
 	switch (e) {
-		case I.STRING: return "string";
-		case I.BOOL: return "boolean";
-		case I.INT64:
-		case I.SINT64:
-		case I.SFIXED64: return "bigint (int64)";
-		case I.UINT64:
-		case I.FIXED64: return "bigint (uint64)";
-		case I.BYTES: return "Uint8Array";
-		case I.DOUBLE: return "number (float64)";
-		case I.FLOAT: return "number (float32)";
-		case I.FIXED32:
-		case I.UINT32: return "number (uint32)";
-		case I.INT32:
-		case I.SFIXED32:
-		case I.SINT32: return "number (int32)";
+		case L.STRING: return "string";
+		case L.BOOL: return "boolean";
+		case L.INT64:
+		case L.SINT64:
+		case L.SFIXED64: return "bigint (int64)";
+		case L.UINT64:
+		case L.FIXED64: return "bigint (uint64)";
+		case L.BYTES: return "Uint8Array";
+		case L.DOUBLE: return "number (float64)";
+		case L.FLOAT: return "number (float32)";
+		case L.FIXED32:
+		case L.UINT32: return "number (uint32)";
+		case L.INT32:
+		case L.SFIXED32:
+		case L.SINT32: return "number (int32)";
 	}
 }
 // node_modules/@bufbuild/protobuf/dist/esm/reflect/message.js
-var mu = 0;
-function hu(e) {
-	if (gu(e)) return {
-		toMessage: (e) => _u(e),
-		toLocal: (e) => vu(e)
+var pu = 0;
+function mu(e) {
+	if (hu(e)) return {
+		toMessage: (e) => gu(e),
+		toLocal: (e) => _u(e)
 	};
-	if (e.fieldKind == "message" && !e.oneof && Sl(e.message)) {
+	if (e.fieldKind == "message" && !e.oneof && xl(e.message)) {
 		let t = e.message, n = t.fields[0].localName;
 		return {
 			toMessage: (e) => {
-				let r = B(t);
+				let r = V(t);
 				return e !== void 0 && (r[n] = e), r;
 			},
 			toLocal: (e) => e[n]
@@ -7248,36 +7248,36 @@ function hu(e) {
 	}
 	let t = e.message;
 	return {
-		toMessage: (e) => e === void 0 ? B(t) : e,
+		toMessage: (e) => e === void 0 ? V(t) : e,
 		toLocal: (e) => e
 	};
 }
-function gu(e) {
+function hu(e) {
 	return e.message.typeName == "google.protobuf.Struct" && e.parent.typeName != "google.protobuf.Value";
 }
-function _u(e) {
+function gu(e) {
 	let t = {
 		$typeName: "google.protobuf.Struct",
 		fields: {}
 	};
-	if (_l(e)) for (let n of Object.keys(e)) z(t.fields, n, bu(e[n]));
+	if (gl(e)) for (let n of Object.keys(e)) B(t.fields, n, yu(e[n]));
+	return t;
+}
+function _u(e) {
+	let t = {};
+	for (let n of Object.keys(e.fields)) B(t, n, vu(e.fields[n]));
 	return t;
 }
 function vu(e) {
-	let t = {};
-	for (let n of Object.keys(e.fields)) z(t, n, yu(e.fields[n]));
-	return t;
-}
-function yu(e) {
 	switch (e.kind.case) {
-		case "structValue": return vu(e.kind.value);
-		case "listValue": return e.kind.value.values.map(yu);
+		case "structValue": return _u(e.kind.value);
+		case "listValue": return e.kind.value.values.map(vu);
 		case "nullValue":
 		case void 0: return null;
 		default: return e.kind.value;
 	}
 }
-function bu(e) {
+function yu(e) {
 	let t = {
 		$typeName: "google.protobuf.Value",
 		kind: { case: void 0 }
@@ -7303,73 +7303,73 @@ function bu(e) {
 			break;
 		case "object": if (e === null) t.kind = {
 			case: "nullValue",
-			value: mu
+			value: pu
 		};
 		else if (Array.isArray(e)) {
 			let n = {
 				$typeName: "google.protobuf.ListValue",
 				values: []
 			};
-			if (Array.isArray(e)) for (let t of e) n.values.push(bu(t));
+			if (Array.isArray(e)) for (let t of e) n.values.push(yu(t));
 			t.kind = {
 				case: "listValue",
 				value: n
 			};
 		} else t.kind = {
 			case: "structValue",
-			value: _u(e)
+			value: gu(e)
 		};
 	}
 	return t;
 }
 // node_modules/@bufbuild/protobuf/dist/esm/reflect/reflect.js
-function xu(e, t, n = !0) {
-	return new Cu(e, t, n);
+function bu(e, t, n = !0) {
+	return new Su(e, t, n);
 }
-var Su = /* @__PURE__ */ new WeakMap(), Cu = class {
+var xu = /* @__PURE__ */ new WeakMap(), Su = class {
 	get sortedFields() {
-		let e = Su.get(this.desc);
+		let e = xu.get(this.desc);
 		if (e) return e;
 		let t = this.desc.fields.concat().sort((e, t) => e.number - t.number);
-		return Su.set(this.desc, t), t;
+		return xu.set(this.desc, t), t;
 	}
 	constructor(e, t, n = !0) {
-		this.lists = /* @__PURE__ */ new Map(), this.maps = /* @__PURE__ */ new Map(), this.check = n, this.desc = e, this.message = this[R] = t ?? B(e), this.fields = e.fields, this.oneofs = e.oneofs, this.members = e.members;
+		this.lists = /* @__PURE__ */ new Map(), this.maps = /* @__PURE__ */ new Map(), this.check = n, this.desc = e, this.message = this[z] = t ?? V(e), this.fields = e.fields, this.oneofs = e.oneofs, this.members = e.members;
 	}
 	findNumber(e) {
 		return this._fieldsByNumber ||= new Map(this.desc.fields.map((e) => [e.number, e])), this._fieldsByNumber.get(e);
 	}
 	oneofCase(e) {
-		return wu(this.message, e), ul(this.message, e);
+		return Cu(this.message, e), ll(this.message, e);
 	}
 	isSet(e) {
-		return wu(this.message, e), dl(this.message, e);
+		return Cu(this.message, e), ul(this.message, e);
 	}
 	clear(e) {
-		wu(this.message, e), gl(this.message, e);
+		Cu(this.message, e), hl(this.message, e);
 	}
 	get(e) {
-		wu(this.message, e);
-		let t = pl(this.message, e);
+		Cu(this.message, e);
+		let t = fl(this.message, e);
 		switch (e.fieldKind) {
 			case "list":
 				let n = this.lists.get(e);
-				return n && n[R] === t || this.lists.set(e, n = new Tu(e, t, this.check)), n;
+				return n && n[z] === t || this.lists.set(e, n = new wu(e, t, this.check)), n;
 			case "map":
 				let r = this.maps.get(e);
-				return r && r[R] === t || this.maps.set(e, r = new Eu(e, t, this.check)), r;
-			case "message": return Ou(e, t, this.check);
-			case "scalar": return t === void 0 ? sl(e.scalar, !1) : Fu(e, t);
+				return r && r[z] === t || this.maps.set(e, r = new Tu(e, t, this.check)), r;
+			case "message": return Du(e, t, this.check);
+			case "scalar": return t === void 0 ? ol(e.scalar, !1) : Pu(e, t);
 			case "enum": return t ?? e.enum.values[0].number;
 		}
 	}
 	set(e, t) {
-		if (wu(this.message, e), this.check) {
-			let n = au(e, t);
+		if (Cu(this.message, e), this.check) {
+			let n = iu(e, t);
 			if (n) throw n;
 		}
 		let n;
-		n = e.fieldKind == "message" ? Du(e, t) : yl(t) || vl(t) ? t[R] : Iu(e, t), ml(this.message, e, n);
+		n = e.fieldKind == "message" ? Eu(e, t) : vl(t) || _l(t) ? t[z] : Fu(e, t), pl(this.message, e, n);
 	}
 	getUnknown() {
 		return this.message.$unknown;
@@ -7378,10 +7378,10 @@ var Su = /* @__PURE__ */ new WeakMap(), Cu = class {
 		this.message.$unknown = e;
 	}
 };
-function wu(e, t) {
-	if (t.parent.typeName !== e.$typeName) throw new V(t, `cannot use ${t.toString()} with message ${e.$typeName}`, "ForeignFieldError");
+function Cu(e, t) {
+	if (t.parent.typeName !== e.$typeName) throw new H(t, `cannot use ${t.toString()} with message ${e.$typeName}`, "ForeignFieldError");
 }
-var Tu = class {
+var wu = class {
 	field() {
 		return this._field;
 	}
@@ -7389,26 +7389,26 @@ var Tu = class {
 		return this._arr.length;
 	}
 	constructor(e, t, n) {
-		this._field = e, this._arr = this[R] = t, this.check = n;
+		this._field = e, this._arr = this[z] = t, this.check = n;
 	}
 	get(e) {
 		let t = this._arr[e];
-		return t === void 0 ? void 0 : Au(this._field, t, this.check);
+		return t === void 0 ? void 0 : ku(this._field, t, this.check);
 	}
 	set(e, t) {
-		if (e < 0 || e >= this._arr.length) throw new V(this._field, `list item #${e + 1}: out of range`);
+		if (e < 0 || e >= this._arr.length) throw new H(this._field, `list item #${e + 1}: out of range`);
 		if (this.check) {
-			let n = ou(this._field, e, t);
+			let n = au(this._field, e, t);
 			if (n) throw n;
 		}
-		this._arr[e] = ku(this._field, t);
+		this._arr[e] = Ou(this._field, t);
 	}
 	add(e) {
 		if (this.check) {
-			let t = ou(this._field, this._arr.length, e);
+			let t = au(this._field, this._arr.length, e);
 			if (t) throw t;
 		}
-		this._arr.push(ku(this._field, e));
+		this._arr.push(Ou(this._field, e));
 	}
 	clear() {
 		this._arr.splice(0, this._arr.length);
@@ -7420,44 +7420,44 @@ var Tu = class {
 		return this._arr.keys();
 	}
 	*values() {
-		for (let e of this._arr) yield Au(this._field, e, this.check);
+		for (let e of this._arr) yield ku(this._field, e, this.check);
 	}
 	*entries() {
-		for (let e = 0; e < this._arr.length; e++) yield [e, Au(this._field, this._arr[e], this.check)];
+		for (let e = 0; e < this._arr.length; e++) yield [e, ku(this._field, this._arr[e], this.check)];
 	}
-}, Eu = class {
+}, Tu = class {
 	constructor(e, t, n = !0) {
-		this.obj = this[R] = t ?? {}, this.check = n, this._field = e;
+		this.obj = this[z] = t ?? {}, this.check = n, this._field = e;
 	}
 	field() {
 		return this._field;
 	}
 	set(e, t) {
 		if (this.check) {
-			let n = su(this._field, e, t);
+			let n = ou(this._field, e, t);
 			if (n) throw n;
 		}
-		return z(this.obj, Nu(e), ju(this._field, t)), this;
+		return B(this.obj, Mu(e), Au(this._field, t)), this;
 	}
 	delete(e) {
-		let t = Nu(e), n = Object.prototype.hasOwnProperty.call(this.obj, t);
+		let t = Mu(e), n = Object.prototype.hasOwnProperty.call(this.obj, t);
 		return n && delete this.obj[t], n;
 	}
 	clear() {
 		for (let e of Object.keys(this.obj)) delete this.obj[e];
 	}
 	get(e) {
-		let t = hl(this.obj, Nu(e));
-		return t !== void 0 && (t = Mu(this._field, t, this.check)), t;
+		let t = ml(this.obj, Mu(e));
+		return t !== void 0 && (t = ju(this._field, t, this.check)), t;
 	}
 	has(e) {
-		return Object.prototype.hasOwnProperty.call(this.obj, Nu(e));
+		return Object.prototype.hasOwnProperty.call(this.obj, Mu(e));
 	}
 	*keys() {
-		for (let e of Object.keys(this.obj)) yield Pu(e, this._field.mapKey);
+		for (let e of Object.keys(this.obj)) yield Nu(e, this._field.mapKey);
 	}
 	*entries() {
-		for (let e of Object.entries(this.obj)) yield [Pu(e[0], this._field.mapKey), Mu(this._field, e[1], this.check)];
+		for (let e of Object.entries(this.obj)) yield [Nu(e[0], this._field.mapKey), ju(this._field, e[1], this.check)];
 	}
 	[Symbol.iterator]() {
 		return this.entries();
@@ -7466,127 +7466,127 @@ var Tu = class {
 		return Object.keys(this.obj).length;
 	}
 	*values() {
-		for (let e of Object.values(this.obj)) yield Mu(this._field, e, this.check);
+		for (let e of Object.values(this.obj)) yield ju(this._field, e, this.check);
 	}
 	forEach(e, t) {
 		for (let n of this.entries()) e.call(t, n[1], n[0], this);
 	}
 };
-function Du(e, t) {
-	return bl(t) ? xl(t.message) && !e.oneof && e.fieldKind == "message" ? t.message.value : t.desc.typeName == "google.protobuf.Struct" && e.parent.typeName != "google.protobuf.Value" ? vu(t.message) : t.message : t;
+function Eu(e, t) {
+	return yl(t) ? bl(t.message) && !e.oneof && e.fieldKind == "message" ? t.message.value : t.desc.typeName == "google.protobuf.Struct" && e.parent.typeName != "google.protobuf.Value" ? _u(t.message) : t.message : t;
 }
-function Ou(e, t, n) {
-	return t !== void 0 && (Sl(e.message) && !e.oneof && e.fieldKind == "message" ? t = {
+function Du(e, t, n) {
+	return t !== void 0 && (xl(e.message) && !e.oneof && e.fieldKind == "message" ? t = {
 		$typeName: e.message.typeName,
-		value: Fu(e.message.fields[0], t)
-	} : e.message.typeName == "google.protobuf.Struct" && e.parent.typeName != "google.protobuf.Value" && _l(t) && (t = _u(t))), new Cu(e.message, t, n);
+		value: Pu(e.message.fields[0], t)
+	} : e.message.typeName == "google.protobuf.Struct" && e.parent.typeName != "google.protobuf.Value" && gl(t) && (t = gu(t))), new Su(e.message, t, n);
 }
-function ku(e, t) {
-	return e.listKind == "message" ? Du(e, t) : Iu(e, t);
+function Ou(e, t) {
+	return e.listKind == "message" ? Eu(e, t) : Fu(e, t);
 }
-function Au(e, t, n) {
-	return e.listKind == "message" ? Ou(e, t, n) : Fu(e, t);
+function ku(e, t, n) {
+	return e.listKind == "message" ? Du(e, t, n) : Pu(e, t);
 }
-function ju(e, t) {
-	return e.mapKind == "message" ? Du(e, t) : Iu(e, t);
+function Au(e, t) {
+	return e.mapKind == "message" ? Eu(e, t) : Fu(e, t);
 }
-function Mu(e, t, n) {
-	return e.mapKind == "message" ? Ou(e, t, n) : t;
+function ju(e, t, n) {
+	return e.mapKind == "message" ? Du(e, t, n) : t;
 }
-function Nu(e) {
+function Mu(e) {
 	return typeof e == "string" || typeof e == "number" ? e : String(e);
 }
-function Pu(e, t) {
+function Nu(e, t) {
 	switch (t) {
-		case I.STRING: return e;
-		case I.INT32:
-		case I.FIXED32:
-		case I.UINT32:
-		case I.SFIXED32:
-		case I.SINT32: {
+		case L.STRING: return e;
+		case L.INT32:
+		case L.FIXED32:
+		case L.UINT32:
+		case L.SFIXED32:
+		case L.SINT32: {
 			let t = Number.parseInt(e);
 			if (Number.isFinite(t)) return t;
 			break;
 		}
-		case I.BOOL:
+		case L.BOOL:
 			switch (e) {
 				case "true": return !0;
 				case "false": return !1;
 			}
 			break;
-		case I.UINT64:
-		case I.FIXED64:
+		case L.UINT64:
+		case L.FIXED64:
 			try {
-				return L.uParse(e);
+				return R.uParse(e);
 			} catch {}
 			break;
 		default: try {
-			return L.parse(e);
+			return R.parse(e);
 		} catch {}
 	}
 	return e;
 }
-function Fu(e, t) {
+function Pu(e, t) {
 	switch (e.scalar) {
-		case I.INT64:
-		case I.SFIXED64:
-		case I.SINT64:
-			"longAsString" in e && e.longAsString && typeof t == "string" && (t = L.parse(t));
+		case L.INT64:
+		case L.SFIXED64:
+		case L.SINT64:
+			"longAsString" in e && e.longAsString && typeof t == "string" && (t = R.parse(t));
 			break;
-		case I.FIXED64:
-		case I.UINT64: "longAsString" in e && e.longAsString && typeof t == "string" && (t = L.uParse(t));
+		case L.FIXED64:
+		case L.UINT64: "longAsString" in e && e.longAsString && typeof t == "string" && (t = R.uParse(t));
 	}
 	return t;
 }
-function Iu(e, t) {
+function Fu(e, t) {
 	switch (e.scalar) {
-		case I.INT64:
-		case I.SFIXED64:
-		case I.SINT64:
-			"longAsString" in e && e.longAsString ? t = String(t) : (typeof t == "string" || typeof t == "number") && (t = L.parse(t));
+		case L.INT64:
+		case L.SFIXED64:
+		case L.SINT64:
+			"longAsString" in e && e.longAsString ? t = String(t) : (typeof t == "string" || typeof t == "number") && (t = R.parse(t));
 			break;
-		case I.FIXED64:
-		case I.UINT64: "longAsString" in e && e.longAsString ? t = String(t) : (typeof t == "string" || typeof t == "number") && (t = L.uParse(t));
+		case L.FIXED64:
+		case L.UINT64: "longAsString" in e && e.longAsString ? t = String(t) : (typeof t == "string" || typeof t == "number") && (t = R.uParse(t));
 	}
 	return t;
 }
 // node_modules/@bufbuild/protobuf/dist/esm/clone.js
-function Lu(e, t) {
-	return Ru(xu(e, t)).message;
+function Iu(e, t) {
+	return Lu(bu(e, t)).message;
 }
-function Ru(e) {
-	let t = xu(e.desc);
+function Lu(e) {
+	let t = bu(e.desc);
 	for (let n of e.fields) if (e.isSet(n)) switch (n.fieldKind) {
 		case "list":
 			let r = t.get(n);
-			for (let t of e.get(n)) r.add(zu(n, t));
+			for (let t of e.get(n)) r.add(Ru(n, t));
 			break;
 		case "map":
 			let i = t.get(n);
-			for (let t of e.get(n).entries()) i.set(t[0], zu(n, t[1]));
+			for (let t of e.get(n).entries()) i.set(t[0], Ru(n, t[1]));
 			break;
-		default: t.set(n, zu(n, e.get(n)));
+		default: t.set(n, Ru(n, e.get(n)));
 	}
 	let n = e.getUnknown();
 	return n && n.length > 0 && t.setUnknown([...n]), t;
 }
-function zu(e, t) {
-	return e.message !== void 0 && bl(t) ? Ru(t) : e.scalar == I.BYTES && t instanceof Uint8Array ? t.slice() : t;
+function Ru(e, t) {
+	return e.message !== void 0 && yl(t) ? Lu(t) : e.scalar == L.BYTES && t instanceof Uint8Array ? t.slice() : t;
 }
 // node_modules/@bufbuild/protobuf/dist/esm/wire/base64-encoding.js
-var Bu = Uint8Array.prototype.setFromBase64;
-function Vu(e) {
+var zu = Uint8Array.prototype.setFromBase64;
+function Bu(e) {
 	let t = e.length, n = t - (t + 3 >> 2);
 	!(t & 3) && e[t - 1] == "=" && (n -= e[t - 2] == "=" ? 2 : 1);
 	let r = new Uint8Array(n), i = -1;
-	if (Bu) try {
-		let n = Bu.call(r, e);
+	if (zu) try {
+		let n = zu.call(r, e);
 		n.read == t && (i = n.written);
 	} catch {}
-	return i < 0 && (i = Hu(r, e)), i == n ? r : r.subarray(0, i);
+	return i < 0 && (i = Vu(r, e)), i == n ? r : r.subarray(0, i);
 }
-function Hu(e, t) {
-	let n = Xu(), r = 0, i = 0, a, o = 0;
+function Vu(e, t) {
+	let n = Yu(), r = 0, i = 0, a, o = 0;
 	for (let s = 0; s < t.length; s++) {
 		if (a = n[t.charCodeAt(s)], a === void 0) switch (t[s]) {
 			case "=": i = 0;
@@ -7612,7 +7612,7 @@ function Hu(e, t) {
 	if (i == 1) throw Error("invalid base64 string");
 	return r;
 }
-var Uu = Uint8Array.prototype.toBase64, Wu = {
+var Hu = Uint8Array.prototype.toBase64, Uu = {
 	std: {
 		alphabet: "base64",
 		omitPadding: !1
@@ -7626,9 +7626,9 @@ var Uu = Uint8Array.prototype.toBase64, Wu = {
 		omitPadding: !0
 	}
 };
-function Gu(e, t = "std") {
-	if (Uu) return Uu.call(e, Wu[t]);
-	let n = Yu(t), r = t == "std", i = "", a = 0, o, s = 0;
+function Wu(e, t = "std") {
+	if (Hu) return Hu.call(e, Uu[t]);
+	let n = Ju(t), r = t == "std", i = "", a = 0, o, s = 0;
 	for (let t = 0; t < e.length; t++) switch (o = e[t], a) {
 		case 0:
 			i += n[o >> 2], s = (o & 3) << 4, a = 1;
@@ -7640,21 +7640,21 @@ function Gu(e, t = "std") {
 	}
 	return a && (i += n[s], r && (i += "=", a == 1 && (i += "="))), i;
 }
-var Ku, qu, Ju;
-function Yu(e) {
-	return Ku || (Ku = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".split(""), qu = Ku.slice(0, -2).concat("-", "_")), e == "url" ? qu : Ku;
+var Gu, Ku, qu;
+function Ju(e) {
+	return Gu || (Gu = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".split(""), Ku = Gu.slice(0, -2).concat("-", "_")), e == "url" ? Ku : Gu;
 }
-function Xu() {
-	if (!Ju) {
-		Ju = [];
-		let e = Yu("std");
-		for (let t = 0; t < e.length; t++) Ju[e[t].charCodeAt(0)] = t;
-		Ju[45] = e.indexOf("+"), Ju[95] = e.indexOf("/");
+function Yu() {
+	if (!qu) {
+		qu = [];
+		let e = Ju("std");
+		for (let t = 0; t < e.length; t++) qu[e[t].charCodeAt(0)] = t;
+		qu[45] = e.indexOf("+"), qu[95] = e.indexOf("/");
 	}
-	return Ju;
+	return qu;
 }
 // node_modules/@bufbuild/protobuf/dist/esm/reflect/names.js
-function Zu(e) {
+function Xu(e) {
 	let t = !1, n = [];
 	for (let r = 0; r < e.length; r++) {
 		let i = e.charAt(r);
@@ -7679,58 +7679,58 @@ function Zu(e) {
 	}
 	return n.join("");
 }
-function Qu(e) {
+function Zu(e) {
 	return e.replace(/[A-Z]/g, (e) => "_" + e.toLowerCase());
 }
-var $u = /* @__PURE__ */ new Set([
+var Qu = /* @__PURE__ */ new Set([
 	"constructor",
 	"toString",
 	"toJSON",
 	"valueOf"
 ]);
-function ed(e) {
-	return $u.has(e) ? e + "$" : e;
+function $u(e) {
+	return Qu.has(e) ? e + "$" : e;
 }
 // node_modules/@bufbuild/protobuf/dist/esm/codegenv2/restore-json-names.js
-function td(e) {
-	for (let t of e.field) fl(t, "jsonName") || (t.jsonName = Zu(t.name));
-	e.nestedType.forEach(td);
+function ed(e) {
+	for (let t of e.field) dl(t, "jsonName") || (t.jsonName = Xu(t.name));
+	e.nestedType.forEach(ed);
 }
 // node_modules/@bufbuild/protobuf/dist/esm/wire/text-format.js
-function nd(e, t) {
+function td(e, t) {
 	let n = e.values.find((e) => e.name === t);
 	if (!n) throw Error(`cannot parse ${e} default value: ${t}`);
 	return n.number;
 }
-function rd(e, t) {
+function nd(e, t) {
 	switch (e) {
-		case I.STRING: return t;
-		case I.BYTES: {
-			let n = id(t);
-			if (n === !1) throw Error(`cannot parse ${I[e]} default value: ${t}`);
+		case L.STRING: return t;
+		case L.BYTES: {
+			let n = rd(t);
+			if (n === !1) throw Error(`cannot parse ${L[e]} default value: ${t}`);
 			return n;
 		}
-		case I.INT64:
-		case I.SFIXED64:
-		case I.SINT64: return L.parse(t);
-		case I.UINT64:
-		case I.FIXED64: return L.uParse(t);
-		case I.DOUBLE:
-		case I.FLOAT: switch (t) {
+		case L.INT64:
+		case L.SFIXED64:
+		case L.SINT64: return R.parse(t);
+		case L.UINT64:
+		case L.FIXED64: return R.uParse(t);
+		case L.DOUBLE:
+		case L.FLOAT: switch (t) {
 			case "inf": return 1e400;
 			case "-inf": return -1e400;
 			case "nan": return NaN;
 			default: return parseFloat(t);
 		}
-		case I.BOOL: return t === "true";
-		case I.INT32:
-		case I.UINT32:
-		case I.SINT32:
-		case I.FIXED32:
-		case I.SFIXED32: return parseInt(t, 10);
+		case L.BOOL: return t === "true";
+		case L.INT32:
+		case L.UINT32:
+		case L.SINT32:
+		case L.FIXED32:
+		case L.SFIXED32: return parseInt(t, 10);
 	}
 }
-function id(e) {
+function rd(e) {
 	let t = [], n = {
 		tail: e,
 		c: "",
@@ -7803,7 +7803,7 @@ function id(e) {
 			case "U": {
 				let e = n.c, r = n.take(8);
 				if (r === !1) return !1;
-				let i = L.uEnc(e + r), a = /* @__PURE__ */ new Uint8Array(8), o = new DataView(a.buffer);
+				let i = R.uEnc(e + r), a = /* @__PURE__ */ new Uint8Array(8), o = new DataView(a.buffer);
 				o.setInt32(0, i.lo, !0), o.setInt32(4, i.hi, !0), t.push(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
 				break;
 			}
@@ -7812,26 +7812,26 @@ function id(e) {
 	return new Uint8Array(t);
 }
 // node_modules/@bufbuild/protobuf/dist/esm/reflect/nested-types.js
-function* ad(e) {
+function* id(e) {
 	switch (e.kind) {
 		case "file":
-			for (let t of e.messages) yield t, yield* ad(t);
+			for (let t of e.messages) yield t, yield* id(t);
 			yield* e.enums, yield* e.services, yield* e.extensions;
 			break;
 		case "message":
-			for (let t of e.nestedMessages) yield t, yield* ad(t);
+			for (let t of e.nestedMessages) yield t, yield* id(t);
 			yield* e.nestedEnums, yield* e.nestedExtensions;
 	}
 }
 // node_modules/@bufbuild/protobuf/dist/esm/registry.js
-function od(e, t) {
-	return sd([e, t]);
+function ad(e, t) {
+	return od([e, t]);
 }
-function sd(e, t) {
-	let n = cd();
+function od(e, t) {
+	let n = sd();
 	if (!e.length) return n;
 	if ("$typeName" in e[0] && e[0].$typeName == "google.protobuf.FileDescriptorSet") {
-		for (let r of e[0].file) t?.(r), Ad(r, n);
+		for (let r of e[0].file) t?.(r), kd(r, n);
 		return n;
 	}
 	if ("$typeName" in e[0]) {
@@ -7846,11 +7846,11 @@ function sd(e, t) {
 			}
 			return t.concat(...t.map(o));
 		}
-		for (let e of [r, ...o(r)].reverse()) t?.(e), Ad(e, n);
+		for (let e of [r, ...o(r)].reverse()) t?.(e), kd(e, n);
 	} else for (let t of e) for (let e of t.files) n.addFile(e);
 	return n;
 }
-function cd() {
+function sd() {
 	let e = /* @__PURE__ */ new Map(), t = /* @__PURE__ */ new Map(), n = /* @__PURE__ */ new Map();
 	return {
 		kind: "registry",
@@ -7863,7 +7863,7 @@ function cd() {
 			return n.values();
 		},
 		addFile(e, t, r) {
-			if (n.set(e.proto.name, e), !t) for (let t of ad(e)) this.add(t);
+			if (n.set(e.proto.name, e), !t) for (let t of id(e)) this.add(t);
 			if (r) for (let n of e.dependencies) this.addFile(n, t, r);
 		},
 		add(n) {
@@ -7900,7 +7900,7 @@ function cd() {
 		}
 	};
 }
-var ld = 998, ud = 999, dd = 9999, fd = 9, pd = 10, md = 11, hd = 12, gd = 14, _d = 3, vd = 2, yd = 1, bd = 0, xd = 1, Sd = 2, Cd = 3, wd = 1, Td = 2, Ed = 1, Dd = 2, Od = 1002, kd = {
+var cd = 998, ld = 999, ud = 9999, dd = 9, fd = 10, pd = 11, md = 12, hd = 14, gd = 3, _d = 2, vd = 1, yd = 0, bd = 1, xd = 2, Sd = 3, Cd = 1, wd = 2, Td = 1, Ed = 2, Dd = 1002, Od = {
 	998: {
 		fieldPresence: 1,
 		enumType: 2,
@@ -7957,14 +7957,14 @@ var ld = 998, ud = 999, dd = 9999, fd = 9, pd = 10, md = 11, hd = 12, gd = 14, _
 		enforceProtoLimits: 2
 	}
 };
-function Ad(e, t) {
+function kd(e, t) {
 	let n = {
 		kind: "file",
 		proto: e,
 		deprecated: e.options?.deprecated ?? !1,
-		edition: zd(e),
+		edition: Rd(e),
 		name: e.name.replace(/\.proto$/, ""),
-		dependencies: Bd(e, t),
+		dependencies: zd(e, t),
 		enums: [],
 		messages: [],
 		extensions: [],
@@ -7977,45 +7977,45 @@ function Ad(e, t) {
 			return r.get(e);
 		},
 		add(e) {
-			G(e.proto.options?.mapEntry === !0), r.set(e.typeName, e);
+			$d(e.proto.options?.mapEntry === !0), r.set(e.typeName, e);
 		}
 	};
-	for (let r of e.enumType) Nd(r, n, void 0, t);
-	for (let r of e.messageType) Pd(r, n, void 0, t, i);
-	for (let r of e.service) Fd(r, n, t);
-	jd(n, t);
-	for (let e of r.values()) Md(e, t, i);
-	for (let e of n.messages) Md(e, t, i), jd(e, t);
+	for (let r of e.enumType) Md(r, n, void 0, t);
+	for (let r of e.messageType) Nd(r, n, void 0, t, i);
+	for (let r of e.service) Pd(r, n, t);
+	Ad(n, t);
+	for (let e of r.values()) jd(e, t, i);
+	for (let e of n.messages) jd(e, t, i), Ad(e, t);
 	t.addFile(n, !0);
 }
-function jd(e, t) {
+function Ad(e, t) {
 	switch (e.kind) {
 		case "file":
 			for (let n of e.proto.extension) {
-				let r = Rd(n, e, t);
+				let r = Ld(n, e, t);
 				e.extensions.push(r), t.add(r);
 			}
 			break;
 		case "message":
 			for (let n of e.proto.extension) {
-				let r = Rd(n, e, t);
+				let r = Ld(n, e, t);
 				e.nestedExtensions.push(r), t.add(r);
 			}
-			for (let n of e.nestedMessages) jd(n, t);
+			for (let n of e.nestedMessages) Ad(n, t);
 	}
 }
-function Md(e, t, n) {
-	let r = e.proto.oneofDecl.map((t) => Ld(t, e)), i = /* @__PURE__ */ new Set();
+function jd(e, t, n) {
+	let r = e.proto.oneofDecl.map((t) => Id(t, e)), i = /* @__PURE__ */ new Set();
 	for (let a of e.proto.field) {
-		let o = Kd(a, r), s = Rd(a, e, t, o, n);
+		let o = Gd(a, r), s = Ld(a, e, t, o, n);
 		e.fields.push(s), e.field[s.localName] = s, o === void 0 ? e.members.push(s) : (o.fields.push(s), i.has(o) || (i.add(o), e.members.push(o)));
 	}
 	for (let t of r.filter((e) => i.has(e))) e.oneofs.push(t);
-	for (let r of e.nestedMessages) Md(r, t, n);
+	for (let r of e.nestedMessages) jd(r, t, n);
 }
-function Nd(e, t, n, r) {
+function Md(e, t, n, r) {
 	var i, a;
-	let o = Vd(e.name, e.value), s = {
+	let o = Bd(e.name, e.value), s = {
 		kind: "enum",
 		proto: e,
 		deprecated: e.options?.deprecated ?? !1,
@@ -8023,7 +8023,7 @@ function Nd(e, t, n, r) {
 		parent: n,
 		open: !0,
 		name: e.name,
-		typeName: Wd(e, n, t),
+		typeName: Ud(e, n, t),
 		value: {},
 		values: [],
 		sharedPrefix: o,
@@ -8031,7 +8031,7 @@ function Nd(e, t, n, r) {
 			return `enum ${this.typeName}`;
 		}
 	};
-	s.open = Xd(s), r.add(s);
+	s.open = Yd(s), r.add(s);
 	for (let t of e.value) {
 		let e = t.name, n = {
 			kind: "enum_value",
@@ -8039,9 +8039,9 @@ function Nd(e, t, n, r) {
 			deprecated: t.options?.deprecated ?? !1,
 			parent: s,
 			name: e,
-			localName: ed(o == null ? e : e.substring(o.length)),
+			localName: $u(o == null ? e : e.substring(o.length)),
 			number: t.number,
-			jsonName: Hd(t) ?? e,
+			jsonName: Vd(t) ?? e,
 			toString() {
 				return `enum value ${s.typeName}.${e}`;
 			}
@@ -8050,7 +8050,7 @@ function Nd(e, t, n, r) {
 	}
 	(n?.nestedEnums ?? t.enums).push(s);
 }
-function Pd(e, t, n, r, i) {
+function Nd(e, t, n, r, i) {
 	let a = {
 		kind: "message",
 		proto: e,
@@ -8058,7 +8058,7 @@ function Pd(e, t, n, r, i) {
 		file: t,
 		parent: n,
 		name: e.name,
-		typeName: Wd(e, n, t),
+		typeName: Ud(e, n, t),
 		fields: [],
 		field: {},
 		oneofs: [],
@@ -8071,17 +8071,17 @@ function Pd(e, t, n, r, i) {
 		}
 	};
 	e.options?.mapEntry === !0 ? i.add(a) : ((n?.nestedMessages ?? t.messages).push(a), r.add(a));
-	for (let n of e.enumType) Nd(n, t, a, r);
-	for (let n of e.nestedType) Pd(n, t, a, r, i);
+	for (let n of e.enumType) Md(n, t, a, r);
+	for (let n of e.nestedType) Nd(n, t, a, r, i);
 }
-function Fd(e, t, n) {
+function Pd(e, t, n) {
 	let r = {
 		kind: "service",
 		proto: e,
 		deprecated: e.options?.deprecated ?? !1,
 		file: t,
 		name: e.name,
-		typeName: Wd(e, void 0, t),
+		typeName: Ud(e, void 0, t),
 		methods: [],
 		method: {},
 		toString() {
@@ -8090,15 +8090,15 @@ function Fd(e, t, n) {
 	};
 	t.services.push(r), n.add(r);
 	for (let t of e.method) {
-		let e = Id(t, r, n);
+		let e = Fd(t, r, n);
 		r.methods.push(e), r.method[e.localName] = e;
 	}
 }
-function Id(e, t, n) {
+function Fd(e, t, n) {
 	let r;
 	r = e.clientStreaming && e.serverStreaming ? "bidi_streaming" : e.clientStreaming ? "client_streaming" : e.serverStreaming ? "server_streaming" : "unary";
-	let i = n.getMessage(Gd(e.inputType)), a = n.getMessage(Gd(e.outputType));
-	G(i, `invalid MethodDescriptorProto: input_type ${e.inputType} not found`), G(a, `invalid MethodDescriptorProto: output_type ${e.inputType} not found`);
+	let i = n.getMessage(Wd(e.inputType)), a = n.getMessage(Wd(e.outputType));
+	$d(i, `invalid MethodDescriptorProto: input_type ${e.inputType} not found`), $d(a, `invalid MethodDescriptorProto: output_type ${e.inputType} not found`);
 	let o = e.name;
 	return {
 		kind: "rpc",
@@ -8106,17 +8106,17 @@ function Id(e, t, n) {
 		deprecated: e.options?.deprecated ?? !1,
 		parent: t,
 		name: o,
-		localName: ed(o.length ? ed(o[0].toLowerCase() + o.substring(1)) : o),
+		localName: $u(o.length ? $u(o[0].toLowerCase() + o.substring(1)) : o),
 		methodKind: r,
 		input: i,
 		output: a,
-		idempotency: e.options?.idempotencyLevel ?? bd,
+		idempotency: e.options?.idempotencyLevel ?? yd,
 		toString() {
 			return `rpc ${t.typeName}.${o}`;
 		}
 	};
 }
-function Ld(e, t) {
+function Id(e, t) {
 	return {
 		kind: "oneof",
 		proto: e,
@@ -8124,13 +8124,13 @@ function Ld(e, t) {
 		parent: t,
 		fields: [],
 		name: e.name,
-		localName: ed(Zu(e.name)),
+		localName: $u(Xu(e.name)),
 		toString() {
 			return `oneof ${t.typeName}.${this.name}`;
 		}
 	};
 }
-function Rd(e, t, n, r, i) {
+function Ld(e, t, n, r, i) {
 	let a = i === void 0, o = {
 		kind: "field",
 		proto: e,
@@ -8140,8 +8140,8 @@ function Rd(e, t, n, r, i) {
 		scalar: void 0,
 		message: void 0,
 		enum: void 0,
-		presence: qd(e, r, a, t),
-		utf8Validation: Qd(e, t),
+		presence: Kd(e, r, a, t),
+		utf8Validation: Zd(e, t),
 		listKind: void 0,
 		mapKind: void 0,
 		mapKey: void 0,
@@ -8151,13 +8151,13 @@ function Rd(e, t, n, r, i) {
 		getDefaultValue: void 0
 	}, s;
 	if (a) {
-		let r = t.kind == "file" ? t : t.file, i = t.kind == "file" ? void 0 : t, a = Wd(e, i, r);
+		let r = t.kind == "file" ? t : t.file, i = t.kind == "file" ? void 0 : t, a = Ud(e, i, r);
 		o.kind = "extension", o.file = r, o.parent = i, o.oneof = void 0, o.typeName = a, o.jsonName = `[${a}]`, s = () => `extension ${a}`;
-		let c = n.getMessage(Gd(e.extendee));
-		G(c, `invalid FieldDescriptorProto: extendee ${e.extendee} not found`), o.extendee = c;
+		let c = n.getMessage(Wd(e.extendee));
+		$d(c, `invalid FieldDescriptorProto: extendee ${e.extendee} not found`), o.extendee = c;
 	} else {
 		let n = t;
-		G(n.kind == "message"), o.parent = n, o.oneof = r, o.localName = r ? Zu(e.name) : ed(Zu(e.name)), o.jsonName = e.jsonName, s = () => `field ${n.typeName}.${e.name}`;
+		$d(n.kind == "message"), o.parent = n, o.oneof = r, o.localName = r ? Xu(e.name) : $u(Xu(e.name)), o.jsonName = e.jsonName, s = () => `field ${n.typeName}.${e.name}`;
 	}
 	Object.defineProperty(o, "toString", {
 		value: s,
@@ -8166,60 +8166,60 @@ function Rd(e, t, n, r, i) {
 		configurable: !0
 	});
 	let c = e.label, l = e.type, u = e.options?.jstype;
-	if (c === _d) {
-		let r = l == md ? i?.get(Gd(e.typeName)) : void 0;
+	if (c === gd) {
+		let r = l == pd ? i?.get(Wd(e.typeName)) : void 0;
 		if (r) {
 			o.fieldKind = "map";
-			let { key: e, value: t } = Yd(r);
+			let { key: e, value: t } = Jd(r);
 			return o.mapKey = e.scalar, o.mapKind = t.fieldKind, o.message = t.message, o.delimitedEncoding = !1, o.enum = t.enum, o.scalar = t.scalar, o;
 		}
 		switch (o.fieldKind = "list", l) {
-			case md:
 			case pd:
-				o.listKind = "message", o.message = n.getMessage(Gd(e.typeName)), G(o.message), o.delimitedEncoding = Zd(e, t);
+			case fd:
+				o.listKind = "message", o.message = n.getMessage(Wd(e.typeName)), $d(o.message), o.delimitedEncoding = Xd(e, t);
 				break;
-			case gd:
-				o.listKind = "enum", o.enum = n.getEnum(Gd(e.typeName)), G(o.enum);
+			case hd:
+				o.listKind = "enum", o.enum = n.getEnum(Wd(e.typeName)), $d(o.enum);
 				break;
-			default: o.listKind = "scalar", o.scalar = l, o.longAsString = u == yd;
+			default: o.listKind = "scalar", o.scalar = l, o.longAsString = u == vd;
 		}
-		return o.packed = Jd(e, t), o;
+		return o.packed = qd(e, t), o;
 	}
 	switch (l) {
-		case md:
 		case pd:
-			o.fieldKind = "message", o.message = n.getMessage(Gd(e.typeName)), G(o.message, `invalid FieldDescriptorProto: type_name ${e.typeName} not found`), o.delimitedEncoding = Zd(e, t), o.getDefaultValue = () => void 0;
+		case fd:
+			o.fieldKind = "message", o.message = n.getMessage(Wd(e.typeName)), $d(o.message, `invalid FieldDescriptorProto: type_name ${e.typeName} not found`), o.delimitedEncoding = Xd(e, t), o.getDefaultValue = () => void 0;
 			break;
-		case gd: {
-			let t = n.getEnum(Gd(e.typeName));
-			G(t !== void 0, `invalid FieldDescriptorProto: type_name ${e.typeName} not found`), o.fieldKind = "enum", o.enum = n.getEnum(Gd(e.typeName)), o.getDefaultValue = () => fl(e, "defaultValue") ? nd(t, e.defaultValue) : void 0;
+		case hd: {
+			let t = n.getEnum(Wd(e.typeName));
+			$d(t !== void 0, `invalid FieldDescriptorProto: type_name ${e.typeName} not found`), o.fieldKind = "enum", o.enum = n.getEnum(Wd(e.typeName)), o.getDefaultValue = () => dl(e, "defaultValue") ? td(t, e.defaultValue) : void 0;
 			break;
 		}
-		default: o.fieldKind = "scalar", o.scalar = l, o.longAsString = u == yd, o.getDefaultValue = () => fl(e, "defaultValue") ? rd(l, e.defaultValue) : void 0;
+		default: o.fieldKind = "scalar", o.scalar = l, o.longAsString = u == vd, o.getDefaultValue = () => dl(e, "defaultValue") ? nd(l, e.defaultValue) : void 0;
 	}
 	return o;
 }
-function zd(e) {
+function Rd(e) {
 	switch (e.syntax) {
 		case "":
-		case "proto2": return ld;
-		case "proto3": return ud;
+		case "proto2": return cd;
+		case "proto3": return ld;
 		case "editions":
-			if (e.edition === dd) return Od;
-			if (e.edition in kd) return e.edition;
+			if (e.edition === ud) return Dd;
+			if (e.edition in Od) return e.edition;
 			throw Error(`${e.name}: unsupported edition`);
 		default: throw Error(`${e.name}: unsupported syntax "${e.syntax}"`);
 	}
 }
-function Bd(e, t) {
+function zd(e, t) {
 	return e.dependency.map((n) => {
 		let r = t.getFile(n);
 		if (!r) throw Error(`Cannot find ${n}, imported by ${e.name}`);
 		return r;
 	});
 }
-function Vd(e, t) {
-	let n = Ud(e) + "_";
+function Bd(e, t) {
+	let n = Hd(e) + "_";
 	for (let e of t) {
 		if (!e.name.toLowerCase().startsWith(n)) return;
 		let t = e.name.substring(n.length);
@@ -8227,103 +8227,103 @@ function Vd(e, t) {
 	}
 	return n;
 }
-function Hd(e) {
+function Vd(e) {
 	let t;
 	for (let n of e.options?.$unknown ?? []) {
-		if (n.no !== 998 || n.wireType !== H.LengthDelimited) continue;
-		let e = new tu(new tu(n.data).bytes());
+		if (n.no !== 998 || n.wireType !== U.LengthDelimited) continue;
+		let e = new eu(new eu(n.data).bytes());
 		for (; e.pos < e.len;) {
 			let [n, r] = e.tag();
-			n === 1 && r === H.LengthDelimited ? t = e.string() : e.skip(r, n);
+			n === 1 && r === U.LengthDelimited ? t = e.string() : e.skip(r, n);
 		}
 	}
 	return t;
 }
-function Ud(e) {
+function Hd(e) {
 	return (e.substring(0, 1) + e.substring(1).replace(/[A-Z]/g, (e) => "_" + e)).toLowerCase();
 }
-function Wd(e, t, n) {
+function Ud(e, t, n) {
 	let r;
 	return r = t ? `${t.typeName}.${e.name}` : n.proto.package.length > 0 ? `${n.proto.package}.${e.name}` : `${e.name}`, r;
 }
-function Gd(e) {
+function Wd(e) {
 	return e.startsWith(".") ? e.substring(1) : e;
 }
-function Kd(e, t) {
-	if (!fl(e, "oneofIndex") || e.proto3Optional) return;
+function Gd(e, t) {
+	if (!dl(e, "oneofIndex") || e.proto3Optional) return;
 	let n = t[e.oneofIndex];
-	return G(n, `invalid FieldDescriptorProto: oneof #${e.oneofIndex} for field #${e.number} not found`), n;
+	return $d(n, `invalid FieldDescriptorProto: oneof #${e.oneofIndex} for field #${e.number} not found`), n;
 }
-function qd(e, t, n, r) {
-	if (e.label == vd) return Cd;
+function Kd(e, t, n, r) {
 	if (e.label == _d) return Sd;
-	if (t || e.proto3Optional || n) return xd;
-	let i = $d("fieldPresence", {
+	if (e.label == gd) return xd;
+	if (t || e.proto3Optional || n) return bd;
+	let i = Qd("fieldPresence", {
 		proto: e,
 		parent: r
 	});
-	return i == Sd && (e.type == md || e.type == pd) ? xd : i;
+	return i == xd && (e.type == pd || e.type == fd) ? bd : i;
 }
-function Jd(e, t) {
-	if (e.label != _d) return !1;
+function qd(e, t) {
+	if (e.label != gd) return !1;
 	switch (e.type) {
+		case dd:
+		case md:
 		case fd:
-		case hd:
-		case pd:
-		case md: return !1;
+		case pd: return !1;
 	}
 	let n = e.options;
-	return n && fl(n, "packed") ? n.packed : wd == $d("repeatedFieldEncoding", {
+	return n && dl(n, "packed") ? n.packed : Cd == Qd("repeatedFieldEncoding", {
 		proto: e,
 		parent: t
 	});
 }
-function Yd(e) {
+function Jd(e) {
 	let t = e.fields.find((e) => e.number === 1), n = e.fields.find((e) => e.number === 2);
-	return G(t && t.fieldKind == "scalar" && t.scalar != I.BYTES && t.scalar != I.FLOAT && t.scalar != I.DOUBLE && n && n.fieldKind != "list" && n.fieldKind != "map"), {
+	return $d(t && t.fieldKind == "scalar" && t.scalar != L.BYTES && t.scalar != L.FLOAT && t.scalar != L.DOUBLE && n && n.fieldKind != "list" && n.fieldKind != "map"), {
 		key: t,
 		value: n
 	};
 }
-function Xd(e) {
-	return Ed == $d("enumType", {
+function Yd(e) {
+	return Td == Qd("enumType", {
 		proto: e.proto,
 		parent: e.parent ?? e.file
 	});
 }
+function Xd(e, t) {
+	return e.type == fd || wd == Qd("messageEncoding", {
+		proto: e,
+		parent: t
+	});
+}
 function Zd(e, t) {
-	return e.type == pd || Td == $d("messageEncoding", {
+	return Ed == Qd("utf8Validation", {
 		proto: e,
 		parent: t
 	});
 }
 function Qd(e, t) {
-	return Dd == $d("utf8Validation", {
-		proto: e,
-		parent: t
-	});
-}
-function $d(e, t) {
 	let n = t.proto.options?.features;
 	if (n) {
 		let t = n[e];
 		if (t != 0) return t;
 	}
 	if ("kind" in t) {
-		if (t.kind == "message") return $d(e, t.parent ?? t.file);
-		let n = kd[t.edition];
+		if (t.kind == "message") return Qd(e, t.parent ?? t.file);
+		let n = Od[t.edition];
 		if (!n) throw Error(`feature default for edition ${t.edition} not found`);
 		return n[e];
 	}
-	return $d(e, t.parent);
+	return Qd(e, t.parent);
 }
-function G(e, t) {
+function $d(e, t) {
 	if (!e) throw Error(t);
 }
 // node_modules/@bufbuild/protobuf/dist/esm/codegenv2/boot.js
 function ef(e) {
 	let t = tf(e);
-	return t.messageType.forEach(td), od(t, () => void 0).getFile(t.name);
+	return t.messageType.forEach(ed), ad(t, () => void 0).getFile(t.name);
 }
 function tf(e) {
 	return Object.assign(Object.create({
@@ -10541,8 +10541,8 @@ function Af(e) {
 	}, e), { depth: 0 });
 }
 function jf(e, t, n) {
-	let r = B(e);
-	return Nf(e).read(r, new tu(t), Af(n), t.byteLength), r;
+	let r = V(e);
+	return Nf(e).read(r, new eu(t), Af(n), t.byteLength), r;
 }
 var Mf = /* @__PURE__ */ new WeakMap();
 function Nf(e) {
@@ -10580,7 +10580,7 @@ function If(e, t) {
 	return (n, r, i, a) => {
 		if (++i.depth > i.recursionLimit) throw Error(`cannot decode ${e} from binary: maximum recursion depth of ${i.recursionLimit} reached`);
 		let o, s, c = n.$unknown ?? [];
-		for (; r.pos < r.len && ([o, s] = r.tag(), s != H.EndGroup);) {
+		for (; r.pos < r.len && ([o, s] = r.tag(), s != U.EndGroup);) {
 			let e = t.get(o);
 			if (e === void 0) {
 				let e = r.skip(s, o, i.recursionLimit - i.depth);
@@ -10591,12 +10591,12 @@ function If(e, t) {
 				});
 			} else e(n, r, i, s);
 		}
-		if (s != H.EndGroup || o !== a) throw Error("invalid end group tag");
+		if (s != U.EndGroup || o !== a) throw Error("invalid end group tag");
 		c.length > 0 && (n.$unknown = c), i.depth--;
 	};
 }
 function Lf(e, t, n, r, i) {
-	Rf(n)(e[R], t, i, r);
+	Rf(n)(e[z], t, i, r);
 }
 function Rf(e) {
 	switch (e.fieldKind) {
@@ -10641,7 +10641,7 @@ function Bf(e) {
 		};
 		else if (o.readUnknownFields) {
 			let t = [];
-			nl(c, t);
+			tl(c, t);
 			let n = e.$unknown ?? [];
 			n.push({
 				no: i,
@@ -10652,7 +10652,7 @@ function Bf(e) {
 	};
 }
 function Vf(e) {
-	let t = e.localName, { toMessage: n, toLocal: r } = hu(e), i = Hf(e);
+	let t = e.localName, { toMessage: n, toLocal: r } = mu(e), i = Hf(e);
 	if (e.oneof) {
 		let a = e.oneof.localName;
 		return (e, o, s) => {
@@ -10679,29 +10679,29 @@ function Hf(e) {
 function Uf(e) {
 	let t = e.localName;
 	if (e.listKind == "message") {
-		let { toMessage: n, toLocal: r } = hu(e), i = Hf(e);
+		let { toMessage: n, toLocal: r } = mu(e), i = Hf(e);
 		return (e, a, o) => {
 			let s = n(void 0);
 			i(s, a, o), e[t].push(r(s));
 		};
 	}
-	let n = e.listKind == "enum" ? I.INT32 : e.scalar, r = e.listKind == "scalar" && e.longAsString, i = Gf(n, e.utf8Validation, r), a = n != I.STRING && n != I.BYTES;
+	let n = e.listKind == "enum" ? L.INT32 : e.scalar, r = e.listKind == "scalar" && e.longAsString, i = Gf(n, e.utf8Validation, r), a = n != L.STRING && n != L.BYTES;
 	return (e, n, r, o) => {
 		let s = e[t];
-		if (o == H.LengthDelimited && a) {
+		if (o == U.LengthDelimited && a) {
 			let e = n.uint32() + n.pos;
 			for (; n.pos < e;) s.push(i(n));
 		} else s.push(i(n));
 	};
 }
 function Wf(e) {
-	let t = e.localName, n = Gf(e.mapKey, e.utf8Validation, !1), r = sl(e.mapKey, !1), i, a;
+	let t = e.localName, n = Gf(e.mapKey, e.utf8Validation, !1), r = ol(e.mapKey, !1), i, a;
 	switch (e.mapKind) {
 		case "scalar": {
 			let t = e.scalar, n = Gf(t, e.utf8Validation, !1);
-			if (i = (e) => n(e), t == I.BYTES) a = () => /* @__PURE__ */ new Uint8Array();
+			if (i = (e) => n(e), t == L.BYTES) a = () => /* @__PURE__ */ new Uint8Array();
 			else {
-				let e = sl(t, !1);
+				let e = ol(t, !1);
 				a = () => e;
 			}
 			break;
@@ -10712,7 +10712,7 @@ function Wf(e) {
 			break;
 		}
 		case "message": {
-			let { toMessage: t, toLocal: n } = hu(e), r = Nf(e.message).read;
+			let { toMessage: t, toLocal: n } = mu(e), r = Nf(e.message).read;
 			i = (e, i, a) => {
 				let o = t(a);
 				return r(o, e, i, e.uint32()), n(o);
@@ -10734,39 +10734,39 @@ function Wf(e) {
 				default: o.skip(t, e, s.recursionLimit - s.depth);
 			}
 		}
-		l === void 0 && (l = r), u === void 0 && (u = a()), z(c, l, u);
+		l === void 0 && (l = r), u === void 0 && (u = a()), B(c, l, u);
 	};
 }
 function Gf(e, t, n) {
 	switch (e) {
-		case I.STRING: return (e) => e.string(t);
-		case I.BOOL: return (e) => e.bool();
-		case I.DOUBLE: return (e) => e.double();
-		case I.FLOAT: return (e) => e.float();
-		case I.INT32: return (e) => e.int32();
-		case I.INT64: return n ? (e) => String(e.int64()) : (e) => e.int64();
-		case I.UINT64: return n ? (e) => String(e.uint64()) : (e) => e.uint64();
-		case I.FIXED64: return n ? (e) => String(e.fixed64()) : (e) => e.fixed64();
-		case I.BYTES: return (e) => e.bytes();
-		case I.FIXED32: return (e) => e.fixed32();
-		case I.SFIXED32: return (e) => e.sfixed32();
-		case I.SFIXED64: return n ? (e) => String(e.sfixed64()) : (e) => e.sfixed64();
-		case I.SINT64: return n ? (e) => String(e.sint64()) : (e) => e.sint64();
-		case I.UINT32: return (e) => e.uint32();
-		case I.SINT32: return (e) => e.sint32();
+		case L.STRING: return (e) => e.string(t);
+		case L.BOOL: return (e) => e.bool();
+		case L.DOUBLE: return (e) => e.double();
+		case L.FLOAT: return (e) => e.float();
+		case L.INT32: return (e) => e.int32();
+		case L.INT64: return n ? (e) => String(e.int64()) : (e) => e.int64();
+		case L.UINT64: return n ? (e) => String(e.uint64()) : (e) => e.uint64();
+		case L.FIXED64: return n ? (e) => String(e.fixed64()) : (e) => e.fixed64();
+		case L.BYTES: return (e) => e.bytes();
+		case L.FIXED32: return (e) => e.fixed32();
+		case L.SFIXED32: return (e) => e.sfixed32();
+		case L.SFIXED64: return n ? (e) => String(e.sfixed64()) : (e) => e.sfixed64();
+		case L.SINT64: return n ? (e) => String(e.sint64()) : (e) => e.sint64();
+		case L.UINT32: return (e) => e.uint32();
+		case L.SINT32: return (e) => e.sint32();
 	}
 }
 // node_modules/@bufbuild/protobuf/dist/esm/codegenv2/file.js
 function Kf(e, t) {
-	let n = jf(cf, Vu(e));
-	return n.messageType.forEach(td), n.dependency = t?.map((e) => e.proto.name) ?? [], od(n, (e) => t?.find((t) => t.proto.name === e)).getFile(n.name);
+	let n = jf(cf, Bu(e));
+	return n.messageType.forEach(ed), n.dependency = t?.map((e) => e.proto.name) ?? [], ad(n, (e) => t?.find((t) => t.proto.name === e)).getFile(n.name);
 }
 var qf = /*@__PURE__*/ sf(/* @__PURE__ */ Kf("Chlnb29nbGUvcHJvdG9idWYvYW55LnByb3RvEg9nb29nbGUucHJvdG9idWYiJgoDQW55EhAKCHR5cGVfdXJsGAEgASgJEg0KBXZhbHVlGAIgASgMQnYKE2NvbS5nb29nbGUucHJvdG9idWZCCEFueVByb3RvUAFaLGdvb2dsZS5nb2xhbmcub3JnL3Byb3RvYnVmL3R5cGVzL2tub3duL2FueXBiogIDR1BCqgIeR29vZ2xlLlByb3RvYnVmLldlbGxLbm93blR5cGVzYgZwcm90bzM"), 0), Jf = 2, Yf = 3, Xf = { writeUnknownFields: !0 };
 function Zf(e) {
 	return e ? Object.assign(Object.assign({}, Xf), e) : Xf;
 }
 function Qf(e, t, n) {
-	let r = new Jl();
+	let r = new ql();
 	return ep(e)(r, Zf(n), t), r.finish();
 }
 var $f = /* @__PURE__ */ new WeakMap();
@@ -10776,7 +10776,7 @@ function ep(e) {
 }
 function tp(e) {
 	let t = e.typeName, n = e.fields.concat().sort((e, t) => e.number - t.number), r = n[0], i = [], a = (e, n, a) => {
-		if (a.$typeName !== t && r !== void 0) throw new V(r, `cannot use ${r} with message ${a.$typeName}`, "ForeignFieldError");
+		if (a.$typeName !== t && r !== void 0) throw new H(r, `cannot use ${r} with message ${a.$typeName}`, "ForeignFieldError");
 		for (let t = 0; t < i.length; t++) i[t](e, n, a);
 		let o = a.$unknown;
 		if (o !== void 0 && n.writeUnknownFields) for (let t = 0; t < o.length; t++) {
@@ -10822,20 +10822,20 @@ function rp(e) {
 		};
 	}
 	switch (e.scalar) {
-		case I.BOOL: return (e, r, i) => {
+		case L.BOOL: return (e, r, i) => {
 			let a = i[n];
 			a !== !1 && t(e, r, a);
 		};
-		case I.STRING: return (e, r, i) => {
+		case L.STRING: return (e, r, i) => {
 			let a = i[n];
 			a !== "" && t(e, r, a);
 		};
-		case I.BYTES: return (e, r, i) => {
+		case L.BYTES: return (e, r, i) => {
 			let a = i[n];
 			(!(a instanceof Uint8Array) || a.byteLength > 0) && t(e, r, a);
 		};
-		case I.DOUBLE:
-		case I.FLOAT: return (e, r, i) => {
+		case L.DOUBLE:
+		case L.FLOAT: return (e, r, i) => {
 			let a = i[n];
 			Object.is(a, 0) || t(e, r, a);
 		};
@@ -10848,14 +10848,14 @@ function rp(e) {
 function ip(e) {
 	switch (e.fieldKind) {
 		case "message": {
-			let { toMessage: t } = hu(e), n = fp(e);
+			let { toMessage: t } = mu(e), n = fp(e);
 			return (e, r, i) => {
 				n(e, r, t(i));
 			};
 		}
 		case "scalar":
 		case "enum": {
-			let t = e.fieldKind == "enum" ? I.INT32 : e.scalar, n = e.number, r = pp(t), i = lp(t, e.parent.typeName, e.name);
+			let t = e.fieldKind == "enum" ? L.INT32 : e.scalar, n = e.number, r = pp(t), i = lp(t, e.parent.typeName, e.name);
 			return (e, t, a) => {
 				e.tag(n, r), i(e, a);
 			};
@@ -10866,7 +10866,7 @@ function ap(e) {
 	let t = e.localName, n = e.number;
 	switch (e.listKind) {
 		case "message": {
-			let { toMessage: n } = hu(e), r = fp(e);
+			let { toMessage: n } = mu(e), r = fp(e);
 			return (e, i, a) => {
 				let o = a[t];
 				for (let t = 0; t < o.length; t++) r(e, i, n(o[t]));
@@ -10874,11 +10874,11 @@ function ap(e) {
 		}
 		case "scalar":
 		case "enum": {
-			let r = e.listKind == "enum" ? I.INT32 : e.scalar, i = lp(r, e.parent.typeName, e.name);
+			let r = e.listKind == "enum" ? L.INT32 : e.scalar, i = lp(r, e.parent.typeName, e.name);
 			if (e.packed) return (e, r, a) => {
 				let o = a[t];
 				if (o.length != 0) {
-					e.tag(n, H.LengthDelimited).fork();
+					e.tag(n, U.LengthDelimited).fork();
 					for (let t = 0; t < o.length; t++) i(e, o[t]);
 					e.join();
 				}
@@ -10894,21 +10894,21 @@ function ap(e) {
 function op(e) {
 	let t = e.localName, n = e.number, r = sp(e);
 	if (e.mapKind == "message") {
-		let { toMessage: i } = hu(e), a = ep(e.message);
+		let { toMessage: i } = mu(e), a = ep(e.message);
 		return (e, o, s) => {
 			let c = s[t], l = Object.keys(c);
 			for (let t = 0; t < l.length; t++) {
 				let s = l[t];
-				e.tag(n, H.LengthDelimited).fork(), r(e, s), e.tag(2, H.LengthDelimited).fork(), a(e, o, i(c[s])), e.join(), e.join();
+				e.tag(n, U.LengthDelimited).fork(), r(e, s), e.tag(2, U.LengthDelimited).fork(), a(e, o, i(c[s])), e.join(), e.join();
 			}
 		};
 	}
-	let i = e.mapKind == "enum" ? I.INT32 : e.scalar, a = pp(i), o = lp(i, e.parent.typeName, e.name);
+	let i = e.mapKind == "enum" ? L.INT32 : e.scalar, a = pp(i), o = lp(i, e.parent.typeName, e.name);
 	return (e, i, s) => {
 		let c = s[t], l = Object.keys(c);
 		for (let t = 0; t < l.length; t++) {
 			let i = l[t];
-			e.tag(n, H.LengthDelimited).fork(), r(e, i), e.tag(2, a), o(e, c[i]), e.join();
+			e.tag(n, U.LengthDelimited).fork(), r(e, i), e.tag(2, a), o(e, c[i]), e.join();
 		}
 	};
 }
@@ -10920,21 +10920,21 @@ function sp(e) {
 }
 function cp(e) {
 	switch (e) {
-		case I.STRING: return (e) => e;
-		case I.BOOL: return (e) => e === "true" || e !== "false" && e;
-		case I.UINT64:
-		case I.FIXED64: return (e) => {
+		case L.STRING: return (e) => e;
+		case L.BOOL: return (e) => e === "true" || e !== "false" && e;
+		case L.UINT64:
+		case L.FIXED64: return (e) => {
 			try {
-				return L.uParse(e);
+				return R.uParse(e);
 			} catch {
 				return e;
 			}
 		};
-		case I.INT64:
-		case I.SFIXED64:
-		case I.SINT64: return (e) => {
+		case L.INT64:
+		case L.SFIXED64:
+		case L.SINT64: return (e) => {
 			try {
-				return L.parse(e);
+				return R.parse(e);
 			} catch {
 				return e;
 			}
@@ -10957,51 +10957,51 @@ function lp(e, t, n) {
 }
 function up(e) {
 	switch (e) {
-		case I.STRING: return (e, t) => e.string(t);
-		case I.BOOL: return (e, t) => e.bool(t);
-		case I.DOUBLE: return (e, t) => e.double(t);
-		case I.FLOAT: return (e, t) => e.float(t);
-		case I.INT32: return (e, t) => e.int32(t);
-		case I.INT64: return (e, t) => e.int64(t);
-		case I.UINT64: return (e, t) => e.uint64(t);
-		case I.FIXED64: return (e, t) => e.fixed64(t);
-		case I.BYTES: return (e, t) => e.bytes(t);
-		case I.FIXED32: return (e, t) => e.fixed32(t);
-		case I.SFIXED32: return (e, t) => e.sfixed32(t);
-		case I.SFIXED64: return (e, t) => e.sfixed64(t);
-		case I.SINT64: return (e, t) => e.sint64(t);
-		case I.UINT32: return (e, t) => e.uint32(t);
-		case I.SINT32: return (e, t) => e.sint32(t);
+		case L.STRING: return (e, t) => e.string(t);
+		case L.BOOL: return (e, t) => e.bool(t);
+		case L.DOUBLE: return (e, t) => e.double(t);
+		case L.FLOAT: return (e, t) => e.float(t);
+		case L.INT32: return (e, t) => e.int32(t);
+		case L.INT64: return (e, t) => e.int64(t);
+		case L.UINT64: return (e, t) => e.uint64(t);
+		case L.FIXED64: return (e, t) => e.fixed64(t);
+		case L.BYTES: return (e, t) => e.bytes(t);
+		case L.FIXED32: return (e, t) => e.fixed32(t);
+		case L.SFIXED32: return (e, t) => e.sfixed32(t);
+		case L.SFIXED64: return (e, t) => e.sfixed64(t);
+		case L.SINT64: return (e, t) => e.sint64(t);
+		case L.UINT32: return (e, t) => e.uint32(t);
+		case L.SINT32: return (e, t) => e.sint32(t);
 	}
 }
 function dp(e, t, n, r) {
-	np(r)(e, t, n[R]);
+	np(r)(e, t, n[z]);
 }
 function fp(e) {
 	let t = e.number, n = ep(e.message);
 	return e.delimitedEncoding ? (e, r, i) => {
-		e.tag(t, H.StartGroup), n(e, r, i), e.tag(t, H.EndGroup);
+		e.tag(t, U.StartGroup), n(e, r, i), e.tag(t, U.EndGroup);
 	} : (e, r, i) => {
-		e.tag(t, H.LengthDelimited).fork(), n(e, r, i), e.join();
+		e.tag(t, U.LengthDelimited).fork(), n(e, r, i), e.join();
 	};
 }
 function pp(e) {
 	switch (e) {
-		case I.BYTES:
-		case I.STRING: return H.LengthDelimited;
-		case I.DOUBLE:
-		case I.FIXED64:
-		case I.SFIXED64: return H.Bit64;
-		case I.FIXED32:
-		case I.SFIXED32:
-		case I.FLOAT: return H.Bit32;
-		default: return H.Varint;
+		case L.BYTES:
+		case L.STRING: return U.LengthDelimited;
+		case L.DOUBLE:
+		case L.FIXED64:
+		case L.SFIXED64: return U.Bit64;
+		case L.FIXED32:
+		case L.SFIXED32:
+		case L.FLOAT: return U.Bit32;
+		default: return U.Varint;
 	}
 }
 // node_modules/@bufbuild/protobuf/dist/esm/wkt/any.js
 function mp(e, t, n) {
 	let r = !1;
-	return n || (n = B(qf), r = !0), n.value = Qf(e, t), n.typeUrl = _p(t.$typeName), r ? n : void 0;
+	return n || (n = V(qf), r = !0), n.value = Qf(e, t), n.typeUrl = _p(t.$typeName), r ? n : void 0;
 }
 function hp(e, t) {
 	return e.typeUrl !== "" && (typeof t == "string" ? t : t.typeName) === vp(e.typeUrl);
@@ -11028,14 +11028,14 @@ var yp = /*@__PURE__*/ Kf("Chxnb29nbGUvcHJvdG9idWYvc3RydWN0LnByb3RvEg9nb29nbGUuc
 function wp(e, t, n) {
 	Op(t, e);
 	let r = Ep(e.$unknown, t), [i, a, o] = Dp(t), s = Af(n);
-	for (let e of r) Lf(i, new tu(e.data), a, e.wireType, s);
+	for (let e of r) Lf(i, new eu(e.data), a, e.wireType, s);
 	return o();
 }
 function Tp(e, t, n) {
 	Op(t, e);
-	let r = (e.$unknown ?? []).filter((e) => e.no !== t.number), [i, a] = Dp(t, n), o = new Jl();
+	let r = (e.$unknown ?? []).filter((e) => e.no !== t.number), [i, a] = Dp(t, n), o = new ql();
 	dp(o, { writeUnknownFields: !0 }, i, a);
-	let s = new tu(o.finish());
+	let s = new eu(o.finish());
 	for (; s.pos < s.len;) {
 		let [e, t] = s.tag(), n = s.skip(t, e);
 		r.push({
@@ -11063,15 +11063,15 @@ function Dp(e, t) {
 		fields: [r],
 		members: [r],
 		oneofs: []
-	}), a = B(i, t === void 0 ? void 0 : { [n]: t });
+	}), a = V(i, t === void 0 ? void 0 : { [n]: t });
 	return [
-		xu(i, a),
+		bu(i, a),
 		r,
 		() => {
 			let t = a[n];
 			if (t === void 0) {
 				let t = e.message;
-				return Sl(t) ? sl(t.fields[0].scalar, t.fields[0].longAsString) : B(t);
+				return xl(t) ? ol(t.fields[0].scalar, t.fields[0].longAsString) : V(t);
 			}
 			return t;
 		}
@@ -11101,13 +11101,13 @@ function Rp(e) {
 	let t = e.typeName, n = Bp(e);
 	if (n !== void 0) {
 		let r = e.fields[0], i = (e, i) => {
-			if (i.$typeName !== t && r !== void 0) throw new V(r, `cannot use ${r} with message ${i.$typeName}`, "ForeignFieldError");
+			if (i.$typeName !== t && r !== void 0) throw new H(r, `cannot use ${r} with message ${i.$typeName}`, "ForeignFieldError");
 			return n(e, i);
 		};
 		return Ip.set(e, i), i;
 	}
 	let r = e.fields.concat().sort((e, t) => e.number - t.number), i = r[0], a = [], o = (n, r) => {
-		if (r.$typeName !== t && i !== void 0) throw new V(i, `cannot use ${i} with message ${r.$typeName}`, "ForeignFieldError");
+		if (r.$typeName !== t && i !== void 0) throw new H(i, `cannot use ${i} with message ${r.$typeName}`, "ForeignFieldError");
 		let o = {};
 		for (let e = 0; e < a.length; e++) a[e](n, r, o);
 		return n.registry && em(o, n, n.registry, r, e), o;
@@ -11123,7 +11123,7 @@ function zp(e) {
 	return (t, n, r) => {
 		let i = Object.create(null);
 		e(t, n, i);
-		for (let e of Object.keys(i)) z(r, e, i[e]);
+		for (let e of Object.keys(i)) B(r, e, i[e]);
 	};
 }
 function Bp(e) {
@@ -11136,8 +11136,8 @@ function Bp(e) {
 		case "google.protobuf.Value": return (e, t) => am(t);
 		case "google.protobuf.ListValue": return (e, t) => om(t);
 		default:
-			if (Sl(e)) {
-				let t = e.fields[0], n = t.localName, r = sl(t.scalar, !1), i = Qp(t);
+			if (xl(e)) {
+				let t = e.fields[0], n = t.localName, r = ol(t.scalar, !1), i = Qp(t);
 				return (e, t) => {
 					let a = t[n];
 					return i(e, a === void 0 ? r : a);
@@ -11186,20 +11186,20 @@ function Hp(e) {
 		};
 	}
 	switch (e.scalar) {
-		case I.BOOL: return (e, a, o) => {
+		case L.BOOL: return (e, a, o) => {
 			let s = a[i];
 			(s !== !1 || e.alwaysEmitImplicit) && (o[e.useProtoFieldName ? n : r] = t(e, s));
 		};
-		case I.STRING: return (e, a, o) => {
+		case L.STRING: return (e, a, o) => {
 			let s = a[i];
 			(s !== "" || e.alwaysEmitImplicit) && (o[e.useProtoFieldName ? n : r] = t(e, s));
 		};
-		case I.BYTES: return (e, a, o) => {
+		case L.BYTES: return (e, a, o) => {
 			let s = a[i];
 			(!(s instanceof Uint8Array) || s.byteLength > 0 || e.alwaysEmitImplicit) && (o[e.useProtoFieldName ? n : r] = t(e, s));
 		};
-		case I.DOUBLE:
-		case I.FLOAT: return (e, a, o) => {
+		case L.DOUBLE:
+		case L.FLOAT: return (e, a, o) => {
 			let s = a[i];
 			(!Object.is(s, 0) || e.alwaysEmitImplicit) && (o[e.useProtoFieldName ? n : r] = t(e, s));
 		};
@@ -11226,7 +11226,7 @@ function Wp(e) {
 	}
 }
 function Gp(e) {
-	let { toMessage: t } = hu(e), n = Lp(e.message);
+	let { toMessage: t } = mu(e), n = Lp(e.message);
 	return (e, r) => n(e, t(r));
 }
 function Kp(e) {
@@ -11254,7 +11254,7 @@ function Jp(e) {
 		let a = {};
 		for (let n = 0; n < i.length; n++) {
 			let o = i[n];
-			z(a, o, t(e, r[o]));
+			B(a, o, t(e, r[o]));
 		}
 		return a;
 	};
@@ -11277,47 +11277,47 @@ function Xp(e) {
 	};
 }
 function Zp(e, t) {
-	return /* @__PURE__ */ Error(`cannot encode ${e} to JSON: expected number, got ${W(t)}`);
+	return /* @__PURE__ */ Error(`cannot encode ${e} to JSON: expected number, got ${G(t)}`);
 }
 function Qp(e) {
 	switch (e.scalar) {
-		case I.INT32:
-		case I.SFIXED32:
-		case I.SINT32:
-		case I.FIXED32:
-		case I.UINT32: return (t, n) => {
+		case L.INT32:
+		case L.SFIXED32:
+		case L.SINT32:
+		case L.FIXED32:
+		case L.UINT32: return (t, n) => {
 			if (typeof n != "number") throw $p(e, n);
 			return n;
 		};
-		case I.FLOAT:
-		case I.DOUBLE: return (t, n) => {
+		case L.FLOAT:
+		case L.DOUBLE: return (t, n) => {
 			if (typeof n != "number") throw $p(e, n);
 			return Number.isNaN(n) ? "NaN" : n === 1e400 ? "Infinity" : n === -1e400 ? "-Infinity" : n;
 		};
-		case I.STRING: return (t, n) => {
+		case L.STRING: return (t, n) => {
 			if (typeof n != "string") throw $p(e, n);
 			return n;
 		};
-		case I.BOOL: return (t, n) => {
+		case L.BOOL: return (t, n) => {
 			if (typeof n != "boolean") throw $p(e, n);
 			return n;
 		};
-		case I.UINT64:
-		case I.FIXED64:
-		case I.INT64:
-		case I.SFIXED64:
-		case I.SINT64: return (t, n) => {
+		case L.UINT64:
+		case L.FIXED64:
+		case L.INT64:
+		case L.SFIXED64:
+		case L.SINT64: return (t, n) => {
 			if (typeof n == "bigint" || typeof n == "string" || typeof n == "number" && Number.isInteger(n)) return n.toString();
 			throw $p(e, n);
 		};
-		case I.BYTES: return (t, n) => {
-			if (n instanceof Uint8Array) return Gu(n);
+		case L.BYTES: return (t, n) => {
+			if (n instanceof Uint8Array) return Wu(n);
 			throw $p(e, n);
 		};
 	}
 }
 function $p(e, t) {
-	return /* @__PURE__ */ Error(`cannot encode ${e} to JSON: ${au(e, t)?.message}`);
+	return /* @__PURE__ */ Error(`cannot encode ${e} to JSON: ${iu(e, t)?.message}`);
 }
 function em(e, t, n, r, i) {
 	let a = r.$unknown;
@@ -11329,7 +11329,7 @@ function em(e, t, n, r, i) {
 			o.add(c);
 			let a = n.getExtensionFor(i, c);
 			if (!a) continue;
-			let [s, l] = Dp(a, wp(r, a)), u = s[R], d = Up(l)(t, u[l.localName]);
+			let [s, l] = Dp(a, wp(r, a)), u = s[z], d = Up(l)(t, u[l.localName]);
 			d !== void 0 && (e[a.jsonName] = d);
 		}
 	}
@@ -11338,7 +11338,7 @@ function tm(e, t) {
 	if (e.typeUrl === "") return {};
 	let { registry: n } = t, r, i;
 	if (n && (r = gp(e, n), r && (i = n.getMessage(r.$typeName))), !i || !r) throw Error(`cannot encode message ${e.$typeName} to JSON: "${e.typeUrl}" is not in the type registry`);
-	let a = Cl(i) ? { value: Lp(i)(t, r) } : Lp(i)(t, r);
+	let a = Sl(i) ? { value: Lp(i)(t, r) } : Lp(i)(t, r);
 	return a["@type"] = e.typeUrl, a;
 }
 function nm(e) {
@@ -11354,15 +11354,15 @@ function nm(e) {
 }
 function rm(e) {
 	return e.paths.map((t) => {
-		if (Qu(Zu(t)) !== t) throw Error(`cannot encode message ${e.$typeName} to JSON: lowerCamelCase of path name "${t}" is irreversible`);
-		return Zu(t);
+		if (Zu(Xu(t)) !== t) throw Error(`cannot encode message ${e.$typeName} to JSON: lowerCamelCase of path name "${t}" is irreversible`);
+		return Xu(t);
 	}).join(",");
 }
 function im(e) {
 	let t = {}, n = Object.keys(e.fields);
 	for (let r = 0; r < n.length; r++) {
 		let i = n[r];
-		z(t, i, am(e.fields[i]));
+		B(t, i, am(e.fields[i]));
 	}
 	return t;
 }
@@ -11403,14 +11403,14 @@ function lm(e) {
 	}, e), { depth: 0 });
 }
 function um(e, t, n) {
-	let r = B(e);
+	let r = V(e);
 	return dm(e, r, t, n), r;
 }
 function dm(e, t, n, r) {
 	try {
 		pm(e)(t, n, lm(r));
 	} catch (e) {
-		throw Ul(e) ? Error(`cannot decode ${e.field()} from JSON: ${e.message}`, { cause: e }) : e;
+		throw Hl(e) ? Error(`cannot decode ${e.field()} from JSON: ${e.message}`, { cause: e }) : e;
 	}
 }
 var fm = /* @__PURE__ */ new WeakMap();
@@ -11429,17 +11429,17 @@ function mm(e) {
 	}
 	let r = e.typeName, i = /* @__PURE__ */ new Map(), a = (e, n, a) => {
 		if (++a.depth > a.recursionLimit) throw Error(`cannot decode ${t} from JSON: maximum recursion depth of ${a.recursionLimit} reached`);
-		if (n == null || Array.isArray(n) || typeof n != "object") throw Error(`cannot decode ${t} from JSON: ${W(n)}`);
+		if (n == null || Array.isArray(n) || typeof n != "object") throw Error(`cannot decode ${t} from JSON: ${G(n)}`);
 		let o = /* @__PURE__ */ new Map(), s = /* @__PURE__ */ new Set(), c = Object.keys(n);
 		for (let l = 0; l < c.length; l++) {
 			let u = c[l], d = n[u], f = i.get(u);
 			if (f !== void 0) {
 				let t = f.field;
-				if (s.has(t)) throw new V(t, "set multiple times");
+				if (s.has(t)) throw new H(t, "set multiple times");
 				if (s.add(t), f.oneofScalarNullSkip && d === null) continue;
 				if (f.oneof) {
 					let e = o.get(f.oneof);
-					if (e !== void 0) throw new V(f.oneof, `oneof set multiple times by ${e.name} and ${t.name}`);
+					if (e !== void 0) throw new H(f.oneof, `oneof set multiple times by ${e.name} and ${t.name}`);
 					o.set(f.oneof, t);
 				}
 				f.read(e, d, a);
@@ -11447,7 +11447,7 @@ function mm(e) {
 				let n = u.startsWith("[") && u.endsWith("]") ? a.registry?.getExtension(u.substring(1, u.length - 1)) : void 0;
 				if (n?.extendee.typeName == r) {
 					let [t, r, i] = Dp(n);
-					gm(r)(t[R], d, a), Tp(e, n, i());
+					gm(r)(t[z], d, a), Tp(e, n, i());
 				}
 				if (n === void 0 && !a.ignoreUnknownFields) throw Error(`cannot decode ${t} from JSON: key "${u}" is unknown`);
 			}
@@ -11476,10 +11476,10 @@ function hm(e) {
 		case "google.protobuf.Value": return (e, t, n) => Lm(e, t, n);
 		case "google.protobuf.ListValue": return (e, t, n) => Rm(e, t, n);
 		default:
-			if (Sl(e)) {
+			if (xl(e)) {
 				let t = e.fields[0], n = t.localName, r = t.scalar, i = t.longAsString, a = Dm(t);
 				return (e, t) => {
-					t === null ? e[n] = sl(r, i) : e[n] = a(t);
+					t === null ? e[n] = ol(r, i) : e[n] = a(t);
 				};
 			}
 			return;
@@ -11523,7 +11523,7 @@ function vm(e) {
 	}
 	let n = e.scalar, r = e.longAsString;
 	return (e) => {
-		e[t] = sl(n, r);
+		e[t] = ol(n, r);
 	};
 }
 function ym(e) {
@@ -11538,7 +11538,7 @@ function ym(e) {
 			let l = t(s, c.ignoreUnknownFields);
 			if (l === wm) return;
 			let u = n(l);
-			if (u !== !0) throw new V(e, U(e, l, u));
+			if (u !== !0) throw new H(e, W(e, l, u));
 			o[a] = {
 				case: r,
 				value: l
@@ -11554,12 +11554,12 @@ function ym(e) {
 		let l = t(s, c.ignoreUnknownFields);
 		if (l === wm) return;
 		let u = n(l);
-		if (u !== !0) throw new V(e, U(e, l, u));
+		if (u !== !0) throw new H(e, W(e, l, u));
 		o[r] = l;
 	};
 }
 function bm(e) {
-	let t = e.localName, { toMessage: n, toLocal: r } = hu(e), i = pm(e.message), a = e.message.typeName != "google.protobuf.Value";
+	let t = e.localName, { toMessage: n, toLocal: r } = mu(e), i = pm(e.message), a = e.message.typeName != "google.protobuf.Value";
 	if (e.oneof) {
 		let o = e.oneof.localName;
 		return (e, s, c) => {
@@ -11588,7 +11588,7 @@ function xm(e) {
 	let t = e.localName, n = Sm(e);
 	return (r, i, a) => {
 		if (i === null) return;
-		if (!Array.isArray(i)) throw new V(e, "expected Array, got " + W(i));
+		if (!Array.isArray(i)) throw new H(e, "expected Array, got " + G(i));
 		let o = r[t];
 		for (let e = 0; e < i.length; e++) {
 			let t = n(i[e], a, o.length);
@@ -11599,29 +11599,29 @@ function xm(e) {
 function Sm(e) {
 	switch (e.listKind) {
 		case "scalar": {
-			let t = Om(e), n = lu(e.scalar), r = km(e);
+			let t = Om(e), n = cu(e.scalar), r = km(e);
 			return (i, a, o) => {
-				if (i === null) throw new V(e, "list item must not be null");
+				if (i === null) throw new H(e, "list item must not be null");
 				let s = t(i), c = n(s);
-				if (c !== !0) throw new V(e, `list item #${o + 1}: ${U(e, s, c)}`);
+				if (c !== !0) throw new H(e, `list item #${o + 1}: ${W(e, s, c)}`);
 				return r(s);
 			};
 		}
 		case "enum": {
 			let t = Tm(e.enum), n = Em(e.enum), r = e.enum.typeName != "google.protobuf.NullValue";
 			return (i, a, o) => {
-				if (i === null && r) throw new V(e, "list item must not be null");
+				if (i === null && r) throw new H(e, "list item must not be null");
 				let s = t(i, a.ignoreUnknownFields);
 				if (s === wm) return s;
 				let c = n(s);
-				if (c !== !0) throw new V(e, `list item #${o + 1}: ${U(e, s, c)}`);
+				if (c !== !0) throw new H(e, `list item #${o + 1}: ${W(e, s, c)}`);
 				return s;
 			};
 		}
 		case "message": {
-			let { toMessage: t, toLocal: n } = hu(e), r = pm(e.message), i = e.message.typeName != "google.protobuf.Value";
+			let { toMessage: t, toLocal: n } = mu(e), r = pm(e.message), i = e.message.typeName != "google.protobuf.Value";
 			return (a, o) => {
-				if (a === null && i) throw new V(e, "list item must not be null");
+				if (a === null && i) throw new H(e, "list item must not be null");
 				let s = t(void 0);
 				return r(s, a, o), n(s);
 			};
@@ -11629,10 +11629,10 @@ function Sm(e) {
 	}
 }
 function Cm(e) {
-	let t = e.localName, n = e.mapKey, r = Am(n), i = lu(n), a, o, s = (e) => e, c = !0;
+	let t = e.localName, n = e.mapKey, r = Am(n), i = cu(n), a, o, s = (e) => e, c = !0;
 	switch (e.mapKind) {
 		case "scalar":
-			a = Om(e), o = lu(e.scalar), s = km(e);
+			a = Om(e), o = cu(e.scalar), s = km(e);
 			break;
 		case "enum": {
 			let t = Tm(e.enum);
@@ -11640,7 +11640,7 @@ function Cm(e) {
 			break;
 		}
 		case "message": {
-			let { toMessage: t, toLocal: n } = hu(e), r = pm(e.message);
+			let { toMessage: t, toLocal: n } = mu(e), r = pm(e.message);
 			c = e.message.typeName != "google.protobuf.Value", a = (e, i) => {
 				let a = t(void 0);
 				return r(a, e, i), n(a);
@@ -11650,21 +11650,21 @@ function Cm(e) {
 	}
 	return (l, u, d) => {
 		if (u === null) return;
-		if (typeof u != "object" || Array.isArray(u)) throw new V(e, "expected object, got " + W(u));
+		if (typeof u != "object" || Array.isArray(u)) throw new H(e, "expected object, got " + G(u));
 		let f = l[t], ee = /* @__PURE__ */ new Set(), te = Object.keys(u);
 		for (let t = 0; t < te.length; t++) {
 			let l = te[t], ne = u[l], re = r(l);
-			if (ee.has(re)) throw new V(e, `duplicate map key "${l}"`);
-			if (ee.add(re), ne === null && c) throw new V(e, "map value must not be null");
+			if (ee.has(re)) throw new H(e, `duplicate map key "${l}"`);
+			if (ee.add(re), ne === null && c) throw new H(e, "map value must not be null");
 			let ie = a(ne, d);
 			if (ie === wm) continue;
 			let p = i(re);
-			if (p !== !0) throw new V(e, `invalid map key: ${U({ scalar: n }, re, p)}`);
+			if (p !== !0) throw new H(e, `invalid map key: ${W({ scalar: n }, re, p)}`);
 			if (o !== void 0) {
 				let t = o(ie);
-				if (t !== !0) throw new V(e, `map entry ${W(re)}: ${U(e, ie, t)}`);
+				if (t !== !0) throw new H(e, `map entry ${G(re)}: ${W(e, ie, t)}`);
 			}
-			z(f, re, s(ie));
+			B(f, re, s(ie));
 		}
 	};
 }
@@ -11686,32 +11686,32 @@ function Tm(e) {
 				break;
 			}
 		}
-		throw Error(`cannot decode ${e} from JSON: ${W(r)}`);
+		throw Error(`cannot decode ${e} from JSON: ${G(r)}`);
 	};
 }
 function Em(e) {
-	if (e.open) return lu(I.INT32);
+	if (e.open) return cu(L.INT32);
 	let t = e.values;
 	return (e) => t.some((t) => t.number === e);
 }
 function Dm(e) {
-	let t = Om(e), n = lu(e.scalar), r = km(e);
+	let t = Om(e), n = cu(e.scalar), r = km(e);
 	return (i) => {
 		let a = t(i), o = n(a);
-		if (o !== !0) throw new V(e, U(e, a, o));
+		if (o !== !0) throw new H(e, W(e, a, o));
 		return r(a);
 	};
 }
 function Om(e) {
 	switch (e.scalar) {
-		case I.DOUBLE:
-		case I.FLOAT: return (t) => {
+		case L.DOUBLE:
+		case L.FLOAT: return (t) => {
 			if (t === "NaN") return NaN;
 			if (t === "Infinity") return 1e400;
 			if (t === "-Infinity") return -1e400;
 			if (typeof t == "number") {
-				if (Number.isNaN(t)) throw new V(e, "unexpected NaN number");
-				if (!Number.isFinite(t)) throw new V(e, "unexpected infinite number");
+				if (Number.isNaN(t)) throw new H(e, "unexpected NaN number");
+				if (!Number.isFinite(t)) throw new H(e, "unexpected infinite number");
 				return t;
 			}
 			if (typeof t == "string") {
@@ -11721,18 +11721,18 @@ function Om(e) {
 			}
 			return t;
 		};
-		case I.INT32:
-		case I.FIXED32:
-		case I.SFIXED32:
-		case I.SINT32:
-		case I.UINT32: return jm;
-		case I.BYTES: return (t) => {
+		case L.INT32:
+		case L.FIXED32:
+		case L.SFIXED32:
+		case L.SINT32:
+		case L.UINT32: return jm;
+		case L.BYTES: return (t) => {
 			if (typeof t == "string") {
 				if (t === "") return /* @__PURE__ */ new Uint8Array();
 				try {
-					return Vu(t);
+					return Bu(t);
 				} catch (t) {
-					throw new V(e, t instanceof Error ? t.message : String(t));
+					throw new H(e, t instanceof Error ? t.message : String(t));
 				}
 			}
 			return t;
@@ -11743,33 +11743,33 @@ function Om(e) {
 function km(e) {
 	let t = e.fieldKind !== "map" && e.longAsString;
 	switch (e.scalar) {
-		case I.INT64:
-		case I.SFIXED64:
-		case I.SINT64: return t ? (e) => String(e) : (e) => typeof e == "string" || typeof e == "number" ? L.parse(e) : e;
-		case I.FIXED64:
-		case I.UINT64: return t ? (e) => String(e) : (e) => typeof e == "string" || typeof e == "number" ? L.uParse(e) : e;
+		case L.INT64:
+		case L.SFIXED64:
+		case L.SINT64: return t ? (e) => String(e) : (e) => typeof e == "string" || typeof e == "number" ? R.parse(e) : e;
+		case L.FIXED64:
+		case L.UINT64: return t ? (e) => String(e) : (e) => typeof e == "string" || typeof e == "number" ? R.uParse(e) : e;
 		default: return (e) => e;
 	}
 }
 function Am(e) {
 	switch (e) {
-		case I.BOOL: return (e) => {
+		case L.BOOL: return (e) => {
 			switch (e) {
 				case "true": return !0;
 				case "false": return !1;
 			}
 			return e;
 		};
-		case I.INT32:
-		case I.FIXED32:
-		case I.UINT32:
-		case I.SFIXED32:
-		case I.SINT32: return jm;
-		case I.INT64:
-		case I.SINT64:
-		case I.SFIXED64:
-		case I.UINT64:
-		case I.FIXED64: return (e) => /^-?0+$/.test(e) ? "0" : e.replace(/^(-?)0+(?=\d)/, "$1");
+		case L.INT32:
+		case L.FIXED32:
+		case L.UINT32:
+		case L.SFIXED32:
+		case L.SINT32: return jm;
+		case L.INT64:
+		case L.SINT64:
+		case L.SFIXED64:
+		case L.UINT64:
+		case L.FIXED64: return (e) => /^-?0+$/.test(e) ? "0" : e.replace(/^(-?)0+(?=\d)/, "$1");
 		default: return (e) => e;
 	}
 }
@@ -11782,7 +11782,7 @@ function jm(e) {
 	return e;
 }
 function Mm(e, t, n) {
-	if (t === null || Array.isArray(t) || typeof t != "object") throw Error(`cannot decode message ${e.$typeName} from JSON: expected object but got ${W(t)}`);
+	if (t === null || Array.isArray(t) || typeof t != "object") throw Error(`cannot decode message ${e.$typeName} from JSON: expected object but got ${G(t)}`);
 	if (Object.keys(t).length == 0) return;
 	let r = t["@type"];
 	if (typeof r != "string" || r == "") throw Error(`cannot decode message ${e.$typeName} from JSON: "@type" is empty`);
@@ -11790,47 +11790,47 @@ function Mm(e, t, n) {
 	if (!i.length) throw Error(`cannot decode message ${e.$typeName} from JSON: "@type" is invalid`);
 	let a = n.registry?.getMessage(i);
 	if (!a) throw Error(`cannot decode message ${e.$typeName} from JSON: ${r} is not in the type registry`);
-	let o = B(a);
-	if (Cl(a) && Object.prototype.hasOwnProperty.call(t, "value")) pm(a)(o, t.value, n);
+	let o = V(a);
+	if (Sl(a) && Object.prototype.hasOwnProperty.call(t, "value")) pm(a)(o, t.value, n);
 	else {
 		let e = {};
-		for (let n of Object.keys(t)) n !== "@type" && z(e, n, t[n]);
+		for (let n of Object.keys(t)) n !== "@type" && B(e, n, t[n]);
 		pm(a)(o, e, n);
 	}
 	mp(a, o, e);
 }
 function Nm(e, t) {
-	if (typeof t != "string") throw Error(`cannot decode message ${e.$typeName} from JSON: ${W(t)}`);
+	if (typeof t != "string") throw Error(`cannot decode message ${e.$typeName} from JSON: ${G(t)}`);
 	let n = t.match(/^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})(?:\.([0-9]{1,9}))?(?:Z|([+-][0-9][0-9]:[0-9][0-9]))$/);
 	if (!n) throw Error(`cannot decode message ${e.$typeName} from JSON: invalid RFC 3339 string`);
 	let r = Date.parse(n[1] + "-" + n[2] + "-" + n[3] + "T" + n[4] + ":" + n[5] + ":" + n[6] + (n[8] ? n[8] : "Z"));
 	if (Number.isNaN(r)) throw Error(`cannot decode message ${e.$typeName} from JSON: invalid RFC 3339 string`);
 	if (r < kp || r > Ap) throw Error(`cannot decode message ${e.$typeName} from JSON: must be from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59Z inclusive`);
-	e.seconds = L.parse(r / 1e3), e.nanos = 0, n[7] && (e.nanos = parseInt("1" + n[7] + "0".repeat(9 - n[7].length)) - 1e9);
+	e.seconds = R.parse(r / 1e3), e.nanos = 0, n[7] && (e.nanos = parseInt("1" + n[7] + "0".repeat(9 - n[7].length)) - 1e9);
 }
 function Pm(e, t) {
-	if (typeof t != "string") throw Error(`cannot decode message ${e.$typeName} from JSON: ${W(t)}`);
+	if (typeof t != "string") throw Error(`cannot decode message ${e.$typeName} from JSON: ${G(t)}`);
 	let n = t.match(/^(-?[0-9]+)(?:\.([0-9]+))?s/);
-	if (n === null) throw Error(`cannot decode message ${e.$typeName} from JSON: ${W(t)}`);
+	if (n === null) throw Error(`cannot decode message ${e.$typeName} from JSON: ${G(t)}`);
 	let r = Number(n[1]);
-	if (r > 315576e6 || r < -315576e6) throw Error(`cannot decode message ${e.$typeName} from JSON: ${W(t)}`);
-	if (e.seconds = L.parse(r), typeof n[2] != "string") return;
+	if (r > 315576e6 || r < -315576e6) throw Error(`cannot decode message ${e.$typeName} from JSON: ${G(t)}`);
+	if (e.seconds = R.parse(r), typeof n[2] != "string") return;
 	let i = n[2] + "0".repeat(9 - n[2].length);
 	e.nanos = parseInt(i), (r < 0 || Object.is(r, -0)) && (e.nanos = -e.nanos);
 }
 function Fm(e, t) {
-	if (typeof t != "string") throw Error(`cannot decode message ${e.$typeName} from JSON: ${W(t)}`);
+	if (typeof t != "string") throw Error(`cannot decode message ${e.$typeName} from JSON: ${G(t)}`);
 	t !== "" && (e.paths = t.split(",").map((t) => {
 		if (t.includes("_")) throw Error(`cannot decode message ${e.$typeName} from JSON: path names must be lowerCamelCase`);
-		return Qu(t);
+		return Zu(t);
 	}));
 }
 function Im(e, t, n) {
-	if (typeof t != "object" || !t || Array.isArray(t)) throw Error(`cannot decode message ${e.$typeName} from JSON ${W(t)}`);
+	if (typeof t != "object" || !t || Array.isArray(t)) throw Error(`cannot decode message ${e.$typeName} from JSON ${G(t)}`);
 	let r = Object.keys(t);
 	for (let i = 0; i < r.length; i++) {
-		let a = r[i], o = B(xp);
-		Lm(o, t[a], n), z(e.fields, a, o);
+		let a = r[i], o = V(xp);
+		Lm(o, t[a], n), B(e.fields, a, o);
 	}
 }
 function Lm(e, t, n) {
@@ -11860,27 +11860,27 @@ function Lm(e, t, n) {
 				value: Cp.NULL_VALUE
 			};
 			else if (Array.isArray(t)) {
-				let r = B(Sp);
+				let r = V(Sp);
 				Rm(r, t, n), e.kind = {
 					case: "listValue",
 					value: r
 				};
 			} else {
-				let r = B(bp);
+				let r = V(bp);
 				Im(r, t, n), e.kind = {
 					case: "structValue",
 					value: r
 				};
 			}
 			break;
-		default: throw Error(`cannot decode message ${e.$typeName} from JSON ${W(t)}`);
+		default: throw Error(`cannot decode message ${e.$typeName} from JSON ${G(t)}`);
 	}
 	return n.depth--, e;
 }
 function Rm(e, t, n) {
-	if (!Array.isArray(t)) throw Error(`cannot decode message ${e.$typeName} from JSON ${W(t)}`);
+	if (!Array.isArray(t)) throw Error(`cannot decode message ${e.$typeName} from JSON ${G(t)}`);
 	for (let r = 0; r < t.length; r++) {
-		let i = B(xp);
+		let i = V(xp);
 		Lm(i, t[r], n), e.values.push(i);
 	}
 }
@@ -12251,12 +12251,12 @@ var Um = {
 	PRIMARY: "Primär",
 	SECONDARY: "Sekundär"
 }, Wm = /* @__PURE__ */ new Set([
-	I.INT64,
-	I.UINT64,
-	I.FIXED64,
-	I.SFIXED64,
-	I.SINT64
-]), Gm = /* @__PURE__ */ new Set([I.FLOAT, I.DOUBLE]), Km = /psk|password|privateKey/i, K = (e, t = {}, ...n) => {
+	L.INT64,
+	L.UINT64,
+	L.FIXED64,
+	L.SFIXED64,
+	L.SINT64
+]), Gm = /* @__PURE__ */ new Set([L.FLOAT, L.DOUBLE]), Km = /psk|password|privateKey/i, K = (e, t = {}, ...n) => {
 	let r = document.createElement(e);
 	for (let [e, n] of Object.entries(t)) e === "class" ? r.className = n : e.startsWith("on") ? r.addEventListener(e.slice(2), n) : n != null && r.setAttribute(e, n);
 	for (let e of n) e != null && r.append(e);
@@ -12273,16 +12273,16 @@ function Jm(e) {
 }
 function Ym(e, t, n, r) {
 	let i = "tk-" + Math.random().toString(36).slice(2), a;
-	return t === I.BOOL ? (a = K("input", {
+	return t === L.BOOL ? (a = K("input", {
 		type: "checkbox",
 		id: i,
 		class: "form-check-input",
 		role: "switch"
-	}), a.checked = !!n(), a.addEventListener("change", () => r(a.checked))) : t === I.STRING ? (a = K("input", {
+	}), a.checked = !!n(), a.addEventListener("change", () => r(a.checked))) : t === L.STRING ? (a = K("input", {
 		type: Km.test(e.localName) ? "password" : "text",
 		id: i,
 		class: "form-control form-control-sm"
-	}), a.value = n() ?? "", a.addEventListener("input", () => r(a.value))) : t === I.BYTES ? (a = K("input", {
+	}), a.value = n() ?? "", a.addEventListener("input", () => r(a.value))) : t === L.BYTES ? (a = K("input", {
 		type: Km.test(e.localName) ? "password" : "text",
 		id: i,
 		class: "form-control form-control-sm",
@@ -12350,7 +12350,7 @@ function Qm(e, t, n = {}) {
 				break;
 			}
 			case "message": {
-				t[i.localName] || (t[i.localName] = B(i.message));
+				t[i.localName] || (t[i.localName] = V(i.message));
 				let a = K("fieldset", { class: "border rounded p-2 mb-2" }, K("legend", { class: "float-none w-auto px-1 fs-6 fw-bold" }, e));
 				a.append(Qm(i.message, t[i.localName], n)), r.append(a);
 				break;
@@ -12363,9 +12363,9 @@ function Qm(e, t, n = {}) {
 					class: "form-control form-control-sm",
 					placeholder: "ein Wert pro Zeile"
 				});
-				n.value = (a() ?? []).map((e) => i.scalar === I.BYTES ? qm(e) : String(e)).join("\n"), n.addEventListener("change", () => {
+				n.value = (a() ?? []).map((e) => i.scalar === L.BYTES ? qm(e) : String(e)).join("\n"), n.addEventListener("change", () => {
 					let e = n.value.split("\n").map((e) => e.trim()).filter(Boolean), t;
-					t = i.listKind === "enum" ? e.map((e) => parseInt(e, 10)) : i.scalar === I.BYTES ? e.map(Jm) : i.scalar === I.STRING ? e : Wm.has(i.scalar) ? e.map((e) => BigInt(e)) : e.map(Number), o(t);
+					t = i.listKind === "enum" ? e.map((e) => parseInt(e, 10)) : i.scalar === L.BYTES ? e.map(Jm) : i.scalar === L.STRING ? e : Wm.has(i.scalar) ? e.map((e) => BigInt(e)) : e.map(Number), o(t);
 				}), r.append(Zm(e, n, t, "ein Wert pro Zeile"));
 				break;
 			}
@@ -12373,13 +12373,14 @@ function Qm(e, t, n = {}) {
 	}
 	return r;
 }
-function $m(e) {
+var $m = (e) => Object.assign(Error(e), { de: !0 });
+function eh(e) {
 	if (e?.de) return e.message;
 	let t = e?.name ?? "", n = String(e?.message ?? e ?? "");
 	return t === "NotFoundError" || /No port selected|User cancelled/i.test(n) ? "Kein Gerät ausgewählt." : t === "SecurityError" ? "Der Browser hat den Zugriff verweigert. Seite über https öffnen und erneut versuchen." : t === "NetworkError" || /Failed to open serial port|already open/i.test(n) ? "Der USB-Anschluss ist belegt. Andere Programme oder Browser-Tabs mit dem Gerät schließen und neu verbinden." : t === "InvalidStateError" ? "Die Verbindung ist schon offen. Erst trennen, dann neu verbinden." : /timeout|timed out/i.test(n) ? "Zeitüberschreitung: Das Gerät antwortet nicht. Kabel prüfen und neu verbinden." : /Bluetooth|GATT/i.test(n) ? "Bluetooth-Verbindung fehlgeschlagen. Gerät in der Nähe? Bluetooth am Gerät an?" : /Failed to connect|Couldn't sync|Invalid head of packet|Failed to read/i.test(n) ? "Keine Verbindung zum Bootloader. Kabel neu stecken; falls nötig die Taste beim Einstecken gedrückt halten." : "Unerwarteter Fehler (" + n + ").";
 }
 // src/menu-model.js
-var eh = {
+var th = {
 	"pos.send": ["Position senden", "Position senden"],
 	"light.toggle": ["Licht: immer an ↔ bei Taste", "Licht: bei Taste"],
 	"light.cycle": ["Licht: aus / bei Taste / immer", "Licht: bei Taste"],
@@ -12396,7 +12397,14 @@ var eh = {
 	"nav.stop": ["Navigation beenden", "nav.stop"],
 	"nav.track": ["Track starten/stoppen", "Track starten"],
 	"track.clear": ["Track löschen", "track.clear"],
-	"map.offline": ["Offline-Karte (kommt bald)", "map.offline"],
+	"map.offline": ["Karten-Info", "map.offline"],
+	"map.move": ["Karte verschieben (Tasten-Modus)", "map.move"],
+	"map.zoomin": ["Hineinzoomen", "map.zoomin"],
+	"map.zoomout": ["Herauszoomen", "map.zoomout"],
+	"map.center": ["Zur eigenen Position", "map.center"],
+	"map.rotate": ["Ausrichtung Norden/Laufrichtung", "Ausrichtung: Laufrichtung"],
+	"map.wphere": ["Wegpunkt in Kartenmitte", "map.wphere"],
+	"map.gohere": ["Zur Kartenmitte navigieren", "map.gohere"],
 	"nodes.list": ["Knotenliste (mit Knoten-Menü)", "nodes.list"],
 	ping: ["Reichweitentest (Ping)", "ping"],
 	"radio.mode": ["Funkmodus wechseln", "Zu Kira-Funk wechseln"],
@@ -12409,8 +12417,8 @@ var eh = {
 	"sys.off": ["Ausschalten", "sys.off"],
 	home: ["Zur Startseite", "Zur Startseite"],
 	sos: ["SOS auslösen", "SOS auslösen"]
-}, th = "P0\nIpos.send|Position senden\nIlight.toggle|\nIsound.toggle|\nIscreen.off|Bildschirm aus\nP1\nImsg.reply|Antworten\nImsg.new|Neue Nachricht (alle)\nImsg.chats|Alle Chats\nImsg.clear|Löschen\nP2\nInav.goto|Navigieren zu …\nInav.wpsave|Wegpunkt hier speichern\nIwp.manage|Wegpunkte verwalten\nInav.stop|Navigation beenden\nInav.track|\nIpos.send|Position senden\nP3\nImap.offline|Offline-Karte\nP4\nInodes.list|Knoten wählen …\nIping|Reichweitentest (Ping)\nP5\nSFunk\nIradio.mode|\nIradio.stats|Statistik\nIping|Reichweitentest (Ping)\nE\nSAnzeige & Töne\nIlight.cycle|\nIleds.toggle|\nIsound.toggle|\nIpages|Seiten ein/aus\nE\nSVerbindungen\nIbt.toggle|\nIwifi|WLAN & Web\nE\nSSystem\nIsys.info|Info\nIsys.reboot|Neustart\nIsys.off|Ausschalten\nE\n";
-function nh(e) {
+}, nh = "P0\nIpos.send|Position senden\nIlight.toggle|\nIsound.toggle|\nIscreen.off|Bildschirm aus\nP1\nImsg.reply|Antworten\nImsg.new|Neue Nachricht (alle)\nImsg.chats|Alle Chats\nImsg.clear|Löschen\nP2\nInav.goto|Navigieren zu …\nInav.wpsave|Wegpunkt hier speichern\nIwp.manage|Wegpunkte verwalten\nInav.stop|Navigation beenden\nInav.track|\nIpos.send|Position senden\nP3\nImap.move|Karte verschieben\nImap.zoomin|Hineinzoomen\nImap.zoomout|Herauszoomen\nImap.center|Zur eigenen Position\nImap.rotate|\nImap.wphere|Wegpunkt in Kartenmitte\nImap.gohere|Hierhin navigieren\nImap.offline|Karten-Info\nP4\nInodes.list|Knoten wählen …\nIping|Reichweitentest (Ping)\nP5\nSFunk\nIradio.mode|\nIradio.stats|Statistik\nIping|Reichweitentest (Ping)\nE\nSAnzeige & Töne\nIlight.cycle|\nIleds.toggle|\nIsound.toggle|\nIpages|Seiten ein/aus\nE\nSVerbindungen\nIbt.toggle|\nIwifi|WLAN & Web\nE\nSSystem\nIsys.info|Info\nIsys.reboot|Neustart\nIsys.off|Ausschalten\nE\n";
+function rh(e) {
 	let t = [
 		[],
 		[],
@@ -12432,7 +12440,7 @@ function nh(e) {
 				action: e < 0 ? s : s.slice(0, e),
 				label: e < 0 ? "" : s.slice(e + 1)
 			};
-			eh[i.action] || c("unbekannte Aktion " + i.action), (r ? r.sub : t[n]).push(i);
+			th[i.action] || c("unbekannte Aktion " + i.action), (r ? r.sub : t[n]).push(i);
 		} else o === "S" ? (r && c("höchstens 2 Menü-Ebenen"), r = {
 			label: s || "Untermenü",
 			sub: []
@@ -12440,38 +12448,38 @@ function nh(e) {
 	}), !t[5].length) throw Error("Das Menü der Einstellungen darf nicht leer sein.");
 	return t;
 }
-var rh = (e) => String(e ?? "").replace(/[\n\r|]/g, "").trim();
-function ih(e) {
+var ih = (e) => String(e ?? "").replace(/[\n\r|]/g, "").trim();
+function ah(e) {
 	let t = "";
 	return e.forEach((e, n) => {
 		t += "P" + n + "\n";
 		for (let n of e) if (n.sub) {
-			t += "S" + (rh(n.label) || "Untermenü") + "\n";
-			for (let e of n.sub) t += "I" + e.action + "|" + (rh(e.label) || (eh[e.action][1] === e.action ? eh[e.action][0] : "")) + "\n";
+			t += "S" + (ih(n.label) || "Untermenü") + "\n";
+			for (let e of n.sub) t += "I" + e.action + "|" + (ih(e.label) || (th[e.action][1] === e.action ? th[e.action][0] : "")) + "\n";
 			t += "E\n";
-		} else t += "I" + n.action + "|" + (rh(n.label) || (eh[n.action][1] === n.action ? eh[n.action][0] : "")) + "\n";
+		} else t += "I" + n.action + "|" + (ih(n.label) || (th[n.action][1] === n.action ? th[n.action][0] : "")) + "\n";
 	}), t;
 }
-var ah = (e) => e.map((e) => e.map((e) => e.sub ? {
+var oh = (e) => e.map((e) => e.map((e) => e.sub ? {
 	label: e.label,
 	sub: e.sub.map((e) => ({ ...e }))
-} : { ...e })), oh = "nmphos", sh = {
+} : { ...e })), sh = "nmphos", ch = {
 	n: "Weiter / nächster Eintrag",
 	p: "Zurück / eine Ebene zurück",
 	m: "Menü öffnen / auswählen",
 	h: "Zur Startseite",
 	l: "Licht an/aus",
 	x: "nichts"
-}, ch = {
+}, lh = {
 	o: "Ausschalten",
 	s: "SOS (5 s Countdown)",
 	x: "nichts"
 };
-function lh(e) {
-	return typeof e != "string" || e.length !== 6 || [...e.slice(0, 4)].some((e) => !sh[e]) || [...e.slice(4)].some((e) => !ch[e]) ? "Tastenbelegung ungültig." : e.slice(0, 4).includes("m") ? e.slice(0, 4).includes("n") ? null : "„Weiter / nächster Eintrag“ muss auf einer Taste liegen." : "„Menü öffnen / auswählen“ muss auf einer Taste liegen.";
+function uh(e) {
+	return typeof e != "string" || e.length !== 6 || [...e.slice(0, 4)].some((e) => !ch[e]) || [...e.slice(4)].some((e) => !lh[e]) ? "Tastenbelegung ungültig." : e.slice(0, 4).includes("m") ? e.slice(0, 4).includes("n") ? null : "„Weiter / nächster Eintrag“ muss auf einer Taste liegen." : "„Menü öffnen / auswählen“ muss auf einer Taste liegen.";
 }
 // src/designer.js
-var uh = {
+var dh = {
 	c: "Uhr (groß)",
 	b: "Akku",
 	t: "Ziel und Entfernung",
@@ -12481,7 +12489,7 @@ var uh = {
 	n: "Ungelesene Nachrichten",
 	m: "Funkmodus",
 	p: "Position (Koordinaten)"
-}, dh = 169, fh = {
+}, fh = 169, ph = {
 	order: "012345",
 	pages: 63,
 	start: "cbtgsknm",
@@ -12495,10 +12503,10 @@ var uh = {
 		"Wo bist du?",
 		"Brauche Hilfe"
 	],
-	keys: oh,
-	menus: nh(th)
+	keys: sh,
+	menus: rh(nh)
 };
-function ph(e) {
+function mh(e) {
 	let [t, n, r, i, a] = e;
 	return {
 		order: t,
@@ -12508,7 +12516,7 @@ function ph(e) {
 		keys: a || "nmphos"
 	};
 }
-function mh(e) {
+function hh(e) {
 	return [
 		"ui",
 		e.order,
@@ -12518,21 +12526,21 @@ function mh(e) {
 		e.keys
 	].join("|");
 }
-function hh(e) {
-	let t = ih(e), n = ["mb"];
+function gh(e) {
+	let t = ah(e), n = ["mb"];
 	for (let e = 0; e < t.length; e += 200) n.push("ml|" + t.slice(e, e + 200));
 	return n.push("me"), n;
 }
-var gh = (e) => ({
+var _h = (e) => ({
 	order: e.order,
 	pages: e.pages,
 	start: e.start,
 	replies: [...e.replies],
 	keys: e.keys ?? "nmphos",
-	menus: ah(e.menus ?? fh.menus)
+	menus: oh(e.menus ?? ph.menus)
 });
-function _h(e) {
-	let t = gh(e);
+function vh(e) {
+	let t = _h(e);
 	return {
 		format: "thinkkira-design",
 		version: 2,
@@ -12541,17 +12549,17 @@ function _h(e) {
 		start: t.start,
 		replies: t.replies,
 		keys: t.keys,
-		menu: ih(t.menus).split("\n").filter(Boolean)
+		menu: ah(t.menus).split("\n").filter(Boolean)
 	};
 }
-function vh(e, t = "thinkkira-design.json") {
-	let n = JSON.stringify(_h(e), null, 2), r = K("a", {
+function yh(e, t = "thinkkira-design.json") {
+	let n = JSON.stringify(vh(e), null, 2), r = K("a", {
 		href: URL.createObjectURL(new Blob([n], { type: "application/json" })),
 		download: t
 	});
 	r.click(), setTimeout(() => URL.revokeObjectURL(r.href), 1e3);
 }
-function yh(e) {
+function bh(e) {
 	let t;
 	try {
 		t = JSON.parse(e);
@@ -12562,12 +12570,12 @@ function yh(e) {
 	let n = String(t.order ?? "");
 	if (n.length !== 6 || [...n].sort().join("") !== "012345") throw Error("Die Seiten-Reihenfolge in der Datei ist ungültig.");
 	let r = String(t.start ?? "");
-	if (r.length > 11 || [...r].some((e) => !uh[e])) throw Error("Die Startseiten-Bausteine in der Datei sind ungültig.");
+	if (r.length > 11 || [...r].some((e) => !dh[e])) throw Error("Die Startseiten-Bausteine in der Datei sind ungültig.");
 	let i = (Array.isArray(t.replies) ? t.replies : []).map((e) => String(e).replace(/[;|\n]/g, "").trim()).filter(Boolean);
-	if (!i.length || i.join(";").length > dh) throw Error("Die Schnellantworten in der Datei fehlen oder sind zu lang.");
-	let a = t.keys ?? "nmphos", o = lh(a);
+	if (!i.length || i.join(";").length > fh) throw Error("Die Schnellantworten in der Datei fehlen oder sind zu lang.");
+	let a = t.keys ?? "nmphos", o = uh(a);
 	if (o) throw Error(o);
-	let s = t.menu ? nh(Array.isArray(t.menu) ? t.menu.join("\n") : t.menu) : nh(th);
+	let s = t.menu ? rh(Array.isArray(t.menu) ? t.menu.join("\n") : t.menu) : rh(nh);
 	return {
 		order: n,
 		pages: t.pages & 63 | 33,
@@ -12577,7 +12585,7 @@ function yh(e) {
 		menus: s
 	};
 }
-function bh(e = ".json,application/json") {
+function xh(e = ".json,application/json") {
 	return new Promise((t) => {
 		let n = K("input", {
 			type: "file",
@@ -12587,7 +12595,7 @@ function bh(e = ".json,application/json") {
 	});
 }
 // src/main.js
-var J = zr, xh = 7, Y = {
+var J = Rr, Sh = 7, Y = {
 	device: null,
 	status: "getrennt",
 	myNodeNum: 0,
@@ -12604,34 +12612,34 @@ var J = zr, xh = 7, Y = {
 	kiraPending: null,
 	page: "device",
 	dirty: !1
-}, Sh;
-async function Ch(e) {
+}, Ch;
+async function wh(e) {
 	try {
-		Dh("verbinde …");
-		let t = e === "serial" ? await Uc.create(115200) : await Gc.create(), n = new Hc(t);
-		Y.device = n, Y.transport = t, Y.config = {}, Y.moduleConfig = {}, Y.channels = [], Y.nodes.clear(), Y.kira = null, Y.kiraStats = null, Y.kiraStatsAsked = !1, Y.wifiNets = null, Y.ui = null, Y.menuText = Y.menuBuf = null, Y.devWps = Y.wpBuf = null, Y.wpAsked = !1, n.events.onDeviceStatus.subscribe((e) => {
-			e === xh ? (Dh("verbunden"), X("get"), X("ui"), X("mg")) : e === 2 && Y.device === n && !Y.closing ? (wh(n, t), Th("Verbindung verloren")) : e === 6 && Dh("lese Einstellungen …");
+		Oh("verbinde …");
+		let t = e === "serial" ? await Hc.create(115200) : await Wc.create(), n = new Vc(t);
+		Y.device = n, Y.transport = t, Y.config = {}, Y.moduleConfig = {}, Y.channels = [], Y.nodes.clear(), Y.kira = null, Y.kiraStats = null, Y.kiraStatsAsked = !1, Y.wifiNets = null, Y.ui = null, Y.menuText = Y.menuBuf = null, Y.devWps = Y.wpBuf = null, Y.wpAsked = !1, Y.mapInfo = void 0, Y.mapAsked = !1, n.events.onDeviceStatus.subscribe((e) => {
+			e === Sh ? (Oh("verbunden"), X("get"), X("ui"), X("mg")) : e === 2 && Y.device === n && !Y.closing ? (Th(n, t), Eh("Verbindung verloren")) : e === 6 && Oh("lese Einstellungen …");
 		}), n.events.onMyNodeInfo.subscribe((e) => Y.myNodeNum = e.myNodeNum), n.events.onDeviceMetadataPacket.subscribe((e) => {
 			Y.metadata = e.data, $();
 		}), n.events.onConfigPacket.subscribe((e) => {
-			e.payloadVariant.case && (Y.config[e.payloadVariant.case] = e.payloadVariant.value), kh();
+			e.payloadVariant.case && (Y.config[e.payloadVariant.case] = e.payloadVariant.value), Ah();
 		}), n.events.onModuleConfigPacket.subscribe((e) => {
-			e.payloadVariant.case && (Y.moduleConfig[e.payloadVariant.case] = e.payloadVariant.value), kh();
+			e.payloadVariant.case && (Y.moduleConfig[e.payloadVariant.case] = e.payloadVariant.value), Ah();
 		}), n.events.onChannelPacket.subscribe((e) => {
-			Y.channels[e.index] = e, kh();
+			Y.channels[e.index] = e, Ah();
 		}), n.events.onNodeInfoPacket.subscribe((e) => {
-			Y.nodes.set(e.num, e), kh();
-		}), n.events.onMeshPacket.subscribe(Uh), n.events.onWaypointPacket.subscribe((e) => {
+			Y.nodes.set(e.num, e), Ah();
+		}), n.events.onMeshPacket.subscribe(Yh), n.events.onWaypointPacket.subscribe((e) => {
 			Y.waypoints.set(e.data.id, {
 				...e.data,
 				from: e.from
-			}), kh();
-		}), await n.configure(), Dh("verbunden");
+			}), Ah();
+		}), await n.configure(), Oh("verbunden");
 	} catch (e) {
-		console.error(e), Y.device && await wh(Y.device, Y.transport), Th("Fehler: " + $m(e));
+		console.error(e), Y.device && await Th(Y.device, Y.transport), Eh("Fehler: " + eh(e));
 	}
 }
-async function wh(e, t) {
+async function Th(e, t) {
 	try {
 		e?.complete?.();
 	} catch {}
@@ -12642,40 +12650,40 @@ async function wh(e, t) {
 		await t?.disconnect();
 	} catch {}
 }
-function Th(e) {
-	Y.device = null, Y.transport = null, Y.dirty = !1, Y.kira = null, Y.kiraStats = null, Y.wifiNets = null, Y.wifiScanning = !1, Y.ui = null, Y.menuText = Y.menuBuf = null, Dh(e);
+function Eh(e) {
+	Y.device = null, Y.transport = null, Y.dirty = !1, Y.kira = null, Y.kiraStats = null, Y.wifiNets = null, Y.wifiScanning = !1, Y.ui = null, Y.menuText = Y.menuBuf = null, Oh(e);
 }
-async function Eh() {
-	Y.device && (!Y.dirty || confirm("Es gibt ungespeicherte Änderungen. Trotzdem trennen und verwerfen?")) && (Y.closing = !0, Dh("trenne …"), await wh(Y.device, Y.transport), Y.closing = !1, Th("getrennt – das Gerät kann jetzt abgezogen werden"));
+async function Dh() {
+	Y.device && (!Y.dirty || confirm("Es gibt ungespeicherte Änderungen. Trotzdem trennen und verwerfen?")) && (Y.closing = !0, Oh("trenne …"), await Th(Y.device, Y.transport), Y.closing = !1, Eh("getrennt – das Gerät kann jetzt abgezogen werden"));
 }
 window.addEventListener("beforeunload", (e) => {
 	Y.device && Y.dirty && e.preventDefault();
 }), window.addEventListener("pagehide", () => {
-	Y.device && wh(Y.device, Y.transport);
+	Y.device && Th(Y.device, Y.transport);
 });
-function Dh(e) {
+function Oh(e) {
 	Y.status = e, $();
 }
-var Oh;
-function kh() {
-	clearTimeout(Oh), Oh = setTimeout($, 150);
+var kh;
+function Ah() {
+	clearTimeout(kh), kh = setTimeout($, 150);
 }
-async function Ah(e) {
+async function jh(e) {
 	let t = Y.device;
 	if (t) try {
 		await t.beginEditSettings?.(), await e(t), await t.commitEditSettings(), Q("Gespeichert. Das Gerät startet ggf. neu."), Y.dirty = !1;
 	} catch (e) {
-		console.error(e), Q("Fehler beim Speichern: " + $m(e), !0);
+		console.error(e), Q("Fehler beim Speichern: " + eh(e), !0);
 	}
 }
-var jh = (e) => Ah((t) => t.setConfig(B(J.Config.ConfigSchema, { payloadVariant: {
+var Mh = (e) => jh((t) => t.setConfig(V(J.Config.ConfigSchema, { payloadVariant: {
 	case: e,
 	value: Y.config[e]
-} }))), Mh = (e) => Ah((t) => t.setModuleConfig(B(J.ModuleConfig.ModuleConfigSchema, { payloadVariant: {
+} }))), Nh = (e) => jh((t) => t.setModuleConfig(V(J.ModuleConfig.ModuleConfigSchema, { payloadVariant: {
 	case: e,
 	value: Y.moduleConfig[e]
 } })));
-function Nh() {
+function Ph() {
 	let e = {
 		thinkkira: 1,
 		created: (/* @__PURE__ */ new Date()).toISOString(),
@@ -12684,11 +12692,11 @@ function Nh() {
 		channels: [],
 		owner: null
 	};
-	for (let [t, n] of Object.entries(Y.config)) e.config[t] = Fp(J.Config.ConfigSchema, B(J.Config.ConfigSchema, { payloadVariant: {
+	for (let [t, n] of Object.entries(Y.config)) e.config[t] = Fp(J.Config.ConfigSchema, V(J.Config.ConfigSchema, { payloadVariant: {
 		case: t,
 		value: n
 	} }));
-	for (let [t, n] of Object.entries(Y.moduleConfig)) e.moduleConfig[t] = Fp(J.ModuleConfig.ModuleConfigSchema, B(J.ModuleConfig.ModuleConfigSchema, { payloadVariant: {
+	for (let [t, n] of Object.entries(Y.moduleConfig)) e.moduleConfig[t] = Fp(J.ModuleConfig.ModuleConfigSchema, V(J.ModuleConfig.ModuleConfigSchema, { payloadVariant: {
 		case: t,
 		value: n
 	} }));
@@ -12696,24 +12704,24 @@ function Nh() {
 	let t = Y.nodes.get(Y.myNodeNum);
 	return t?.user && (e.owner = Fp(J.Mesh.UserSchema, t.user)), e;
 }
-function Ph() {
-	let e = new Blob([JSON.stringify(Nh(), null, 2)], { type: "application/json" });
+function Fh() {
+	let e = new Blob([JSON.stringify(Ph(), null, 2)], { type: "application/json" });
 	K("a", {
 		href: URL.createObjectURL(e),
 		download: `thinkkira-backup-${(/* @__PURE__ */ new Date()).toISOString().slice(0, 10)}.json`
 	}).click();
 }
-async function Fh(e) {
+async function Ih(e) {
 	let t = JSON.parse(await e.text());
 	if (!t.config) return Q("Keine gültige Sicherung", !0);
-	await Ah(async (e) => {
+	await jh(async (e) => {
 		for (let n of Object.values(t.config)) await e.setConfig(um(J.Config.ConfigSchema, n));
 		for (let n of Object.values(t.moduleConfig ?? {})) await e.setModuleConfig(um(J.ModuleConfig.ModuleConfigSchema, n));
 		for (let n of t.channels ?? []) await e.setChannel(um(J.Channel.ChannelSchema, n));
 		t.owner && await e.setOwner(um(J.Mesh.UserSchema, t.owner));
 	});
 }
-function Ih(e) {
+function Lh(e) {
 	return [...new DOMParser().parseFromString(e, "application/xml").querySelectorAll("wpt")].map((e) => ({
 		lat: parseFloat(e.getAttribute("lat")),
 		lon: parseFloat(e.getAttribute("lon")),
@@ -12721,7 +12729,7 @@ function Ih(e) {
 		description: e.querySelector("desc")?.textContent ?? ""
 	}));
 }
-function Lh(e) {
+function Rh(e) {
 	let t = (e) => String(e).replace(/[<>&"]/g, (e) => ({
 		"<": "&lt;",
 		">": "&gt;",
@@ -12730,12 +12738,93 @@ function Lh(e) {
 	})[e]);
 	return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="ThinkKira" xmlns="http://www.topografix.com/GPX/1/1">\n${e.map((e) => `  <wpt lat="${(e.latitudeI * 1e-7).toFixed(7)}" lon="${(e.longitudeI * 1e-7).toFixed(7)}"><name>${t(e.name)}</name><desc>${t(e.description ?? "")}</desc></wpt>`).join("\n")}\n</gpx>\n`;
 }
-function Rh(e) {
+var zh = null;
+function Bh(e, t) {
+	return new Promise((n, r) => {
+		zh = {
+			resolve: n,
+			reject: r
+		}, setTimeout(() => r(Error(t)), e);
+	}).finally(() => zh = null);
+}
+async function Vh(e) {
+	let t = Y.device;
+	for (; t.queue?.lock;) await new Promise((e) => setTimeout(e, 20));
+	let n = t.transport.toDevice.getWriter();
+	try {
+		for (let t of e) {
+			let e = V(J.Mesh.MeshPacketSchema, {
+				payloadVariant: {
+					case: "decoded",
+					value: {
+						payload: new TextEncoder().encode(t),
+						portnum: qh
+					}
+				},
+				from: Y.myNodeNum,
+				to: Y.myNodeNum,
+				id: Math.floor(Math.random() * 0x7fffffff) + 1,
+				wantAck: !1
+			});
+			await n.write(Qf(J.Mesh.ToRadioSchema, V(J.Mesh.ToRadioSchema, { payloadVariant: {
+				case: "packet",
+				value: e
+			} })));
+		}
+	} finally {
+		n.releaseLock();
+	}
+}
+var Hh = () => Ch?.dataset.firmware || "/_scripts/php/keylink/thinkkira/firmware.php";
+async function Uh(e, t) {
+	if (!Y.device) return Q("Bitte zuerst das Gerät verbinden.", !0);
+	if (e.length < 40 || new TextDecoder().decode(e.subarray(0, 4)) !== "TKM1") return Q("Das ist keine ThinkKira-Kartendatei (.tkm).", !0);
+	Y.mapUp = {
+		total: e.length,
+		sent: 0,
+		label: t,
+		cancel: !1
+	}, $();
+	try {
+		let n = Bh(1e4, "Das Gerät antwortet nicht.");
+		X("mapb|" + e.length), await n;
+		let r = 0, i = 0;
+		for (; r < e.length;) {
+			if (Y.mapUp.cancel) throw $m("Abgebrochen.");
+			let t = [];
+			for (let n = r, i = 0; i < 8 && n < e.length; i++, n += 168) {
+				let r = "";
+				for (let t of e.subarray(n, n + 168)) r += String.fromCharCode(t);
+				t.push("mapd|" + n + "|" + btoa(r));
+			}
+			t.push("mapq");
+			let n = Bh(8e3, "Das Gerät quittiert nicht mehr – Verbindung prüfen.");
+			await Vh(t);
+			let a;
+			try {
+				a = await n;
+			} catch (e) {
+				if (++i > 5) throw e;
+				continue;
+			}
+			if (a > r) i = 0;
+			else if (++i > 20) throw $m("Zu viele Übertragungsfehler. Bitte erneut versuchen (USB-Kabel prüfen).");
+			r = a, Y.mapUp.sent = r, $();
+		}
+		let a = Bh(2e4, "Das Gerät hat das Ende nicht bestätigt.");
+		X("mape"), await a, Q("Karte „" + t + "“ übertragen (" + Math.round(e.length / 1024) + " KB).");
+	} catch (e) {
+		Q("Karte: " + eh(e), !0);
+	} finally {
+		Y.mapUp = null, $();
+	}
+}
+function Wh(e) {
 	return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="ThinkKira" xmlns="http://www.topografix.com/GPX/1/1">\n<trk><name>ThinkKira Track</name><trkseg>\n${e.map(([e, t, n]) => `    <trkpt lat="${(e * 1e-7).toFixed(7)}" lon="${(t * 1e-7).toFixed(7)}">${n ? `<time>${(/* @__PURE__ */ new Date(n * 1e3)).toISOString()}</time>` : ""}</trkpt>`).join("\n")}\n</trkseg></trk>\n</gpx>\n`;
 }
-var zh = (e) => String(e).replace(/[|\n\r]/g, " ").trim().slice(0, 19) || "WP";
-async function Bh(e) {
-	let t = B(J.Mesh.WaypointSchema, {
+var Gh = (e) => String(e).replace(/[|\n\r]/g, " ").trim().slice(0, 19) || "WP";
+async function Kh(e) {
+	let t = V(J.Mesh.WaypointSchema, {
 		id: Math.floor(Math.random() * 0x7fffffff),
 		name: e.name.slice(0, 29),
 		description: (e.description ?? "").slice(0, 99),
@@ -12749,20 +12838,28 @@ async function Bh(e) {
 		from: Y.myNodeNum
 	});
 }
-var Vh = 287, Hh;
-function Uh(e) {
+var qh = 287, Jh;
+function Yh(e) {
 	let t = e?.payloadVariant?.case === "decoded" ? e.payloadVariant.value : null;
-	if (!t || t.portnum !== Vh) return;
+	if (!t || t.portnum !== qh) return;
 	let n = new TextDecoder().decode(t.payload), [r, i, a, ...o] = n.split("|");
 	if (r === "m") {
 		Y.kira = {
 			mode: i,
 			version: a
-		}, kh();
+		}, Ah();
+		return;
+	}
+	if (r === "k") {
+		i === "info" ? Y.mapInfo = {
+			size: +a,
+			level: +o[0],
+			bbox: o.slice(1, 5).map((e) => e * 1e-7)
+		} : i === "none" ? Y.mapInfo = !1 : i === "ready" ? zh?.resolve("ready") : i === "ok" ? (zh?.resolve("ok"), X("mapi")) : i === "a" && zh?.resolve(+a), Ah();
 		return;
 	}
 	if (r === "p") {
-		i === "end" ? (Y.devWps = Y.wpBuf ?? [], Y.wpBuf = null, Y.arrive = +o[0] || 20, Y.navTarget = o[1] ?? "", kh()) : (Y.wpBuf ??= []).push({
+		i === "end" ? (Y.devWps = Y.wpBuf ?? [], Y.wpBuf = null, Y.arrive = +o[0] || 20, Y.navTarget = o[1] ?? "", Ah()) : (Y.wpBuf ??= []).push({
 			idx: +i,
 			name: a,
 			lat: o[0] * 1e-7,
@@ -12780,7 +12877,7 @@ function Uh(e) {
 		if (e.startsWith("end|")) {
 			let e = (Y.trackBuf ?? "").split("\n").filter(Boolean).map((e) => e.split(",").map(Number));
 			if (Y.trackBuf = null, !e.length) return Q("Der Track im Gerät ist leer.", !0);
-			let t = new Blob([Rh(e)], { type: "application/gpx+xml" });
+			let t = new Blob([Wh(e)], { type: "application/gpx+xml" });
 			K("a", {
 				href: URL.createObjectURL(t),
 				download: "thinkkira-track.gpx"
@@ -12792,15 +12889,15 @@ function Uh(e) {
 	}
 	if (r === "M") {
 		let e = n.slice(2);
-		e === "end" ? (Y.menuText = Y.menuBuf ?? "", Y.menuBuf = "", kh()) : e === "ok" ? (Q("Design übertragen. Das Gerät zeigt die neue Oberfläche sofort."), X("ui"), X("mg")) : Y.menuBuf = (Y.menuBuf ?? "") + e;
+		e === "end" ? (Y.menuText = Y.menuBuf ?? "", Y.menuBuf = "", Ah()) : e === "ok" ? (Q("Design übertragen. Das Gerät zeigt die neue Oberfläche sofort."), X("ui"), X("mg")) : Y.menuBuf = (Y.menuBuf ?? "") + e;
 		return;
 	}
 	if (r === "u") {
-		Y.ui = ph([
+		Y.ui = mh([
 			i,
 			a,
 			...o
-		]), kh();
+		]), Ah();
 		return;
 	}
 	if (r === "s" && i !== "end") {
@@ -12846,7 +12943,7 @@ function Uh(e) {
 			counters: null,
 			heard: [],
 			range: []
-		}, Y.kiraStats.range.unshift(e), $(), Q("Antwort von " + Wh(a) + ": " + e.rssiUs + " dBm"));
+		}, Y.kiraStats.range.unshift(e), $(), Q("Antwort von " + Xh(a) + ": " + e.rssiUs + " dBm"));
 		return;
 	}
 	if (r === "s" && i === "end") {
@@ -12854,12 +12951,12 @@ function Uh(e) {
 		return;
 	}
 	if (r === "err") {
-		Q("Gerät meldet: " + i, !0);
+		i.startsWith("Karte") && zh?.reject(Error(i)), Q("Gerät meldet: " + i, !0);
 		return;
 	}
 	if (r !== "w") return;
 	if (i === "end") {
-		clearTimeout(Hh), Y.wifiScanning = !1, Y.wifiNets.sort((e, t) => t.rssi - e.rssi), $(), a === "-1" ? Q("Diese Firmware kann keine WLAN-Suche.", !0) : Q(Y.wifiNets.length ? Y.wifiNets.length + " WLAN-Netze gefunden. Bitte unten auswählen." : "Keine WLAN-Netze gefunden.");
+		clearTimeout(Jh), Y.wifiScanning = !1, Y.wifiNets.sort((e, t) => t.rssi - e.rssi), $(), a === "-1" ? Q("Diese Firmware kann keine WLAN-Suche.", !0) : Q(Y.wifiNets.length ? Y.wifiNets.length + " WLAN-Netze gefunden. Bitte unten auswählen." : "Keine WLAN-Netze gefunden.");
 		return;
 	}
 	let s = o.join("|");
@@ -12872,29 +12969,29 @@ function Uh(e) {
 async function X(e) {
 	if (!Y.device) return !1;
 	try {
-		return await Y.device.sendPacket(new TextEncoder().encode(e), Vh, "self", 0, !1, !1), !0;
+		return await Y.device.sendPacket(new TextEncoder().encode(e), qh, "self", 0, !1, !1), !0;
 	} catch (e) {
 		return console.error(e), !1;
 	}
 }
-function Wh(e) {
+function Xh(e) {
 	let t = Y.nodes.get(parseInt(e, 16));
 	return t?.user?.shortName || t?.user?.longName || "!" + e;
 }
-async function Gh() {
+async function Zh() {
 	if (Y.device && !Y.wifiScanning) {
 		Y.wifiScanning = !0, Y.wifiNets = [], $();
 		try {
-			await Y.device.sendPacket(new TextEncoder().encode("wifiscan"), Vh, "self", 0, !1, !1);
+			await Y.device.sendPacket(new TextEncoder().encode("wifiscan"), qh, "self", 0, !1, !1);
 		} catch (e) {
 			console.error(e);
 		}
-		clearTimeout(Hh), Hh = setTimeout(() => {
+		clearTimeout(Jh), Jh = setTimeout(() => {
 			Y.wifiScanning && (Y.wifiScanning = !1, $(), Q("Das Gerät antwortet nicht auf die WLAN-Suche. Bitte zuerst die neueste ThinkKira-Firmware über den Loader aufspielen.", !0));
 		}, 12e3);
 	}
 }
-function Kh(e, t) {
+function Qh(e, t) {
 	let n = "tk-ssid", r = "__manuell__", i = e() ?? "", a = Y.wifiNets ?? [], o = K("select", {
 		id: n,
 		class: "form-select form-select-sm"
@@ -12918,18 +13015,18 @@ function Kh(e, t) {
 	let c = K("button", {
 		type: "button",
 		class: "btn btn-sm btn-outline-secondary",
-		onclick: Gh
-	}, Y.wifiScanning ? K("span", { class: "spinner-border spinner-border-sm me-1" }) : qh("fa-search"), Y.wifiScanning ? "Suche …" : "Netze suchen");
+		onclick: Zh
+	}, Y.wifiScanning ? K("span", { class: "spinner-border spinner-border-sm me-1" }) : $h("fa-search"), Y.wifiScanning ? "Suche …" : "Netze suchen");
 	return (Y.wifiScanning || !Y.device) && (c.disabled = !0), {
 		input: K("div", {}, K("div", { class: "input-group input-group-sm" }, o, c), s),
 		id: n
 	};
 }
-var qh = (e) => K("i", { class: "fas " + e + " me-1" }), Z = (e, t, n = "primary", r) => K("button", {
+var $h = (e) => K("i", { class: "fas " + e + " me-1" }), Z = (e, t, n = "primary", r) => K("button", {
 	type: "button",
 	class: "btn btn-sm btn-" + n + " me-2 mt-2",
 	onclick: t
-}, r ? qh(r) : null, e), Jh = (...e) => K("div", { class: "row g-3 mb-3" }, ...e.filter(Boolean).map((e) => K("div", { class: "col-lg-6" }, e))), Yh = (e) => K("div", { class: "form-text mb-2" }, e), Xh = [
+}, r ? $h(r) : null, e), eg = (...e) => K("div", { class: "row g-3 mb-3" }, ...e.filter(Boolean).map((e) => K("div", { class: "col-lg-6" }, e))), tg = (e) => K("div", { class: "form-text mb-2" }, e), ng = [
 	{
 		id: "device",
 		title: "Gerät",
@@ -13001,48 +13098,48 @@ var qh = (e) => K("i", { class: "fas " + e + " me-1" }), Z = (e, t, n = "primary
 		ic: "fa-cog"
 	}
 ];
-function Zh() {
+function rg() {
 	let e = Y.metadata, t = Y.nodes.get(Y.myNodeNum), n = (e, t) => K("div", { class: "col-6 col-md-3" }, K("div", { class: "small text-muted" }, e), K("div", { class: "fw-bold" }, t));
 	return K("div", { class: "row g-2 mb-3" }, n("Name", t?.user?.longName ?? "–"), n("Knoten-Nr.", Y.myNodeNum ? "!" + Y.myNodeNum.toString(16).padStart(8, "0") : "–"), n("Firmware", e?.firmwareVersion ?? "–"), n("Knoten bekannt", String(Y.nodes.size)));
 }
-function Qh() {
+function ig() {
 	let e = Y.nodes.get(Y.myNodeNum), t = null;
 	if (e?.user) {
-		let n = Lu(J.Mesh.UserSchema, e.user);
+		let n = Iu(J.Mesh.UserSchema, e.user);
 		t = q("Name", Qm(J.Mesh.UserSchema, n, { skip: [
 			"id",
 			"macaddr",
 			"hwModel",
 			"publicKey",
 			"role"
-		] }), Z("Name speichern", () => Ah((e) => e.setOwner(n)), "primary", "fa-save"));
+		] }), Z("Name speichern", () => jh((e) => e.setOwner(n)), "primary", "fa-save"));
 	}
-	let n = Y.config.device ? q("Geräte-Einstellungen", Qm(J.Config.Config_DeviceConfigSchema, Y.config.device), Z("Speichern", () => jh("device"), "primary", "fa-save")) : null;
-	return Jh(t, n);
+	let n = Y.config.device ? q("Geräte-Einstellungen", Qm(J.Config.Config_DeviceConfigSchema, Y.config.device), Z("Speichern", () => Mh("device"), "primary", "fa-save")) : null;
+	return eg(t, n);
 }
-function $h(e) {
+function ag(e) {
 	let t = Y.config[e];
 	if (!t) return K("div", { class: "alert alert-warning" }, "Noch nicht vom Gerät geladen.");
 	let n = J.Config.ConfigSchema.fields.find((t) => t.localName === e).message;
-	return Jh(q(zm[e] ?? e, e === "lora" ? Yh("Für Deutschland: Region EU_868. Der eigene ThinkKira-Funkmodus kommt mit Firmware-Phase 2.") : null, e === "network" ? Yh("„Netze suchen“ lässt das Gerät die WLAN-Netze in der Nähe suchen (dauert ein paar Sekunden).") : null, Qm(n, t, e === "network" ? { custom: { wifiSsid: Kh } } : {}), Z("Speichern", () => jh(e), "primary", "fa-save")));
+	return eg(q(zm[e] ?? e, e === "lora" ? tg("Für Deutschland: Region EU_868. Der eigene ThinkKira-Funkmodus kommt mit Firmware-Phase 2.") : null, e === "network" ? tg("„Netze suchen“ lässt das Gerät die WLAN-Netze in der Nähe suchen (dauert ein paar Sekunden).") : null, Qm(n, t, e === "network" ? { custom: { wifiSsid: Qh } } : {}), Z("Speichern", () => Mh(e), "primary", "fa-save")));
 }
-function eg() {
+function og() {
 	let e = [];
 	for (let t = 0; t < 8; t++) {
 		let n = Y.channels[t];
-		n && e.push(q(`Kanal ${t}${t === 0 ? " (primär)" : ""}`, Qm(J.Channel.ChannelSchema, n, { skip: ["index"] }), Z(`Kanal ${t} speichern`, () => Ah((e) => e.setChannel(n)), "primary", "fa-save")));
+		n && e.push(q(`Kanal ${t}${t === 0 ? " (primär)" : ""}`, Qm(J.Channel.ChannelSchema, n, { skip: ["index"] }), Z(`Kanal ${t} speichern`, () => jh((e) => e.setChannel(n)), "primary", "fa-save")));
 	}
-	return Jh(...e);
+	return eg(...e);
 }
-function tg() {
+function sg() {
 	let e = [];
 	for (let t of J.ModuleConfig.ModuleConfigSchema.fields) {
 		let n = Y.moduleConfig[t.localName];
-		n && e.push(q(zm[t.localName] ?? t.localName, Qm(t.message, n), Z("Speichern", () => Mh(t.localName), "primary", "fa-save")));
+		n && e.push(q(zm[t.localName] ?? t.localName, Qm(t.message, n), Z("Speichern", () => Nh(t.localName), "primary", "fa-save")));
 	}
-	return Jh(...e);
+	return eg(...e);
 }
-function ng() {
+function cg() {
 	let e = !!Y.kira;
 	e && !Y.devWps && !Y.wpAsked && (Y.wpAsked = !0, setTimeout(() => X("wpl"), 0));
 	let t = K("input", {
@@ -13065,7 +13162,7 @@ function ng() {
 		class: "form-check-input",
 		id: "tk-wp-mesh"
 	}), a = () => !t.value || !n.value || !r.value ? (Q("Name, Breite und Länge ausfüllen", !0), null) : {
-		name: zh(t.value),
+		name: Gh(t.value),
 		lat: parseFloat(n.value),
 		lon: parseFloat(r.value)
 	}, o = Y.devWps ?? [], s = o.map((e) => {
@@ -13076,7 +13173,7 @@ function ng() {
 			maxlength: "19",
 			"aria-label": "Name"
 		});
-		t.addEventListener("change", () => X("wpr|" + e.idx + "|" + zh(t.value)));
+		t.addEventListener("change", () => X("wpr|" + e.idx + "|" + Gh(t.value)));
 		let n = (e, t, n) => K("button", {
 			type: "button",
 			class: "btn btn-sm btn-outline-secondary",
@@ -13101,8 +13198,8 @@ function ng() {
 		accept: ".gpx,application/gpx+xml"
 	});
 	c.addEventListener("change", async () => {
-		let e = Ih(await c.files[0].text()), t = 64 - o.length;
-		for (let n of e.slice(0, t)) X(`wpa|${zh(n.name)}|${Math.round(n.lat * 1e7)}|${Math.round(n.lon * 1e7)}`);
+		let e = Lh(await c.files[0].text()), t = 64 - o.length;
+		for (let n of e.slice(0, t)) X(`wpa|${Gh(n.name)}|${Math.round(n.lat * 1e7)}|${Math.round(n.lon * 1e7)}`);
 		Q(e.length > t ? `${t} von ${e.length} Wegpunkten übernommen (Gerät hat Platz für 64).` : `${e.length} Wegpunkte ins Gerät übernommen.`);
 	});
 	let l = K("input", {
@@ -13112,12 +13209,12 @@ function ng() {
 		max: "500",
 		value: String(Y.arrive ?? 20),
 		id: "tk-arrive"
-	}), u = e ? q("Wegpunkte im Gerät (" + o.length + " von 64)", Y.navTarget ? K("div", { class: "alert alert-info py-1 px-2 small" }, "Aktuelles Ziel: " + Y.navTarget) : null, o.length ? ag([
+	}), u = e ? q("Wegpunkte im Gerät (" + o.length + " von 64)", Y.navTarget ? K("div", { class: "alert alert-info py-1 px-2 small" }, "Aktuelles Ziel: " + Y.navTarget) : null, o.length ? dg([
 		"Name",
 		"Position",
 		""
 	], s) : K("p", { class: "text-muted small" }, Y.devWps ? "Noch keine Wegpunkte im Gerät." : "Lese Wegpunkte …"), K("div", { class: "mb-2" }, K("label", { class: "form-label small mb-1" }, "GPX-Datei ins Gerät übernehmen"), c), Z("Als GPX exportieren", () => {
-		let e = new Blob([Lh(o.map((e) => ({
+		let e = new Blob([Rh(o.map((e) => ({
 			name: e.name,
 			latitudeI: e.lat * 1e7,
 			longitudeI: e.lon * 1e7
@@ -13131,10 +13228,10 @@ function ng() {
 		for: "tk-wp-mesh"
 	}, "Auch als Meshtastic-Wegpunkt an alle senden")), e ? Z("Im Gerät speichern", async () => {
 		let e = a();
-		e && (X(`wpa|${e.name}|${Math.round(e.lat * 1e7)}|${Math.round(e.lon * 1e7)}`), i.checked && await Bh(e), Q("Wegpunkt gespeichert" + (i.checked ? " und gesendet" : "")));
+		e && (X(`wpa|${e.name}|${Math.round(e.lat * 1e7)}|${Math.round(e.lon * 1e7)}`), i.checked && await Kh(e), Q("Wegpunkt gespeichert" + (i.checked ? " und gesendet" : "")));
 	}, "primary", "fa-save") : null, Z("Nur an alle senden", async () => {
 		let e = a();
-		e && (await Bh(e), Q("Wegpunkt gesendet"), $());
+		e && (await Kh(e), Q("Wegpunkt gesendet"), $());
 	}, "outline-secondary", "fa-paper-plane")), f = e ? q("Navigation & Track", K("label", {
 		class: "form-label small mb-1",
 		for: "tk-arrive"
@@ -13142,20 +13239,20 @@ function ng() {
 		type: "button",
 		class: "btn btn-outline-secondary",
 		onclick: () => X("arrive|" + Math.round(+l.value || 20))
-	}, "Speichern")), Yh("Innerhalb dieses Abstands meldet das Gerät „Ziel erreicht“ (Ton + LED) und beendet die Navigation."), Z("Track herunterladen (GPX)", () => {
+	}, "Speichern")), tg("Innerhalb dieses Abstands meldet das Gerät „Ziel erreicht“ (Ton + LED) und beendet die Navigation."), Z("Track herunterladen (GPX)", () => {
 		Y.trackBuf = "", X("trk"), Q("Track wird gelesen …");
 	}, "outline-secondary", "fa-route"), Z("Track im Gerät löschen", () => confirm("Den aufgezeichneten Track im Gerät löschen?") && X("trc"), "outline-danger", "fa-trash")) : null;
-	return K("div", {}, Jh(u, d), Jh(f));
+	return K("div", {}, eg(u, d), eg(f));
 }
-function rg() {
+function lg() {
 	let e = K("textarea", {
 		rows: "6",
 		class: "form-control form-control-sm",
 		placeholder: "Eine Nachricht pro Zeile, z. B.\nOK\nBin unterwegs\nBrauche Hilfe"
 	});
-	return Jh(q("Schnellantworten", Yh("Erscheinen auf dem Gerät unter Nachrichten → Antworten. Eine Nachricht pro Zeile."), e, Z("Speichern", () => Ah((t) => t.setCannedMessages(B(J.CannedMessages.CannedMessageModuleConfigSchema, { messages: e.value.split("\n").map((e) => e.trim()).filter(Boolean).join("|") }))), "primary", "fa-save")));
+	return eg(q("Schnellantworten", tg("Erscheinen auf dem Gerät unter Nachrichten → Antworten. Eine Nachricht pro Zeile."), e, Z("Speichern", () => jh((t) => t.setCannedMessages(V(J.CannedMessages.CannedMessageModuleConfigSchema, { messages: e.value.split("\n").map((e) => e.trim()).filter(Boolean).join("|") }))), "primary", "fa-save")));
 }
-function ig() {
+function ug() {
 	let e = Y.kira, t;
 	if (!e) t = q("Funkmodus", K("div", { class: "alert alert-warning mb-0" }, "Keine Antwort vom ThinkKira-Modul. Bitte die neueste ThinkKira-Firmware über den Loader aufspielen."));
 	else {
@@ -13166,7 +13263,7 @@ function ig() {
 		n.append(K("option", { value: "meshtastic" }, "Meshtastic (Standard, kompatibel mit allen Meshtastic-Geräten)")), n.append(K("option", { value: "kira" }, "Kira-Funk (eigenes Netz, nur ThinkKira-Geräte)")), n.value = e.mode, t = q("Funkmodus", K("div", { class: "mb-2" }, K("label", {
 			class: "form-label small mb-1",
 			for: "tk-mode"
-		}, "Modus"), n), Yh("Kira-Funk nutzt ein eigenes Sync-Word: Die Geräte hören nur noch andere ThinkKira-Geräte im Kira-Funk, nicht mehr das Meshtastic-Netz. Kanäle und Verschlüsselung bleiben gleich. Beim Wechsel startet das Gerät neu."), Z("Modus speichern", async () => {
+		}, "Modus"), n), tg("Kira-Funk nutzt ein eigenes Sync-Word: Die Geräte hören nur noch andere ThinkKira-Geräte im Kira-Funk, nicht mehr das Meshtastic-Netz. Kanäle und Verschlüsselung bleiben gleich. Beim Wechsel startet das Gerät neu."), Z("Modus speichern", async () => {
 			if (n.value === e.mode) return Q("Der Modus ist schon eingestellt.");
 			await X("mode|" + n.value) && Q("Gespeichert. Das Gerät startet neu – danach bitte neu verbinden.");
 		}, "primary", "fa-save"), K("div", { class: "small text-muted mt-2" }, "ThinkKira " + e.version));
@@ -13176,33 +13273,32 @@ function ig() {
 		let e = n.counters, t = (e, t) => K("div", { class: "col-6 col-md-4" }, K("div", { class: "small text-muted" }, e), K("div", { class: "fw-bold" }, String(t)));
 		r.push(K("div", { class: "row g-2 mb-3" }, t("Empfangen", e.rxGood), t("Empfangsfehler", e.rxBad), t("Gesendet", e.tx), t("Weitergeleitet", e.relay), t("Pings", e.pings), t("Antworten", e.pongs)));
 	}
-	n?.heard?.length && (r.push(K("div", { class: "fw-bold small mb-1" }, "Zuletzt gehört")), r.push(ag([
+	n?.heard?.length && (r.push(K("div", { class: "fw-bold small mb-1" }, "Zuletzt gehört")), r.push(dg([
 		"Knoten",
 		"RSSI",
 		"SNR",
 		"vor"
 	], n.heard.map((e) => [
-		Wh(e.from),
+		Xh(e.from),
 		e.rssi + " dBm",
 		e.snr.toFixed(1) + " dB",
 		e.ago + " s"
-	])))), n || r.push(Yh("Noch keine Werte geladen."));
-	let i = q("Funk-Statistik", ...r, Z("Aktualisieren", () => X("stats"), "outline-secondary", "fa-sync")), a = [Yh("Sendet einen Ping an alle direkt erreichbaren ThinkKira-Geräte (ohne Weiterleitung). Jede Antwort zeigt, wie gut beide Seiten sich hören.")];
-	n?.range?.length && a.push(ag([
+	])))), n || r.push(tg("Noch keine Werte geladen."));
+	let i = q("Funk-Statistik", ...r, Z("Aktualisieren", () => X("stats"), "outline-secondary", "fa-sync")), a = [tg("Sendet einen Ping an alle direkt erreichbaren ThinkKira-Geräte (ohne Weiterleitung). Jede Antwort zeigt, wie gut beide Seiten sich hören.")];
+	n?.range?.length && a.push(dg([
 		"#",
 		"Gerät",
 		"dort gehört",
 		"hier gehört"
 	], n.range.map((e) => [
 		String(e.seq),
-		Wh(e.from),
+		Xh(e.from),
 		e.rssiThem + " dBm / " + e.snrThem.toFixed(1) + " dB",
 		e.rssiUs + " dBm / " + e.snrUs.toFixed(1) + " dB"
 	])));
 	let o = q("Reichweitentest", ...a, Z("Ping senden", async () => {
 		await X("ping") && Q("Ping gesendet. Antworten erscheinen hier.");
 	}, "primary", "fa-satellite-dish")), s = [
-		["Offline-Karte hochladen", "4b"],
 		["WLAN-Weboberfläche, Update aus GitHub-Release", 5],
 		["Energieprofile (Wandern / Basis / Maximal sparen)", 6],
 		["SOS-Einstellungen", 7],
@@ -13210,7 +13306,7 @@ function ig() {
 	], c = K("ul", { class: "list-group list-group-flush" });
 	for (let [e, t] of s) c.append(K("li", { class: "list-group-item px-0 d-flex justify-content-between align-items-center gap-2" }, e, K("span", { class: "badge text-bg-secondary" }, `ab Phase ${t}`)));
 	Y.device && e && !n && !Y.kiraStatsAsked && (Y.kiraStatsAsked = !0, setTimeout(() => X("stats"), 0));
-	let l = Y.ui, u = q("Design der Oberfläche", Yh("Das Design erstellst du im ThinkKira Designer (geht auch ohne Gerät) und exportierst es als Datei. Hier überträgst du die Datei aufs Gerät. Das Gerät übernimmt sie sofort."), l ? K("div", { class: "small mb-1" }, K("div", {}, "Seiten: " + [...l.order].filter((e) => l.pages & 1 << e).map((e) => [
+	let l = Y.ui, u = q("Design der Oberfläche", tg("Das Design erstellst du im ThinkKira Designer (geht auch ohne Gerät) und exportierst es als Datei. Hier überträgst du die Datei aufs Gerät. Das Gerät übernimmt sie sofort."), l ? K("div", { class: "small mb-1" }, K("div", {}, "Seiten: " + [...l.order].filter((e) => l.pages & 1 << e).map((e) => [
 		"Start",
 		"Nachrichten",
 		"Navigation",
@@ -13218,83 +13314,104 @@ function ig() {
 		"Knoten",
 		"Einstellungen"
 	][+e]).join(" → ")), K("div", {}, "Schnellantworten: " + l.replies.join(", "))) : K("div", { class: "alert alert-warning py-2 mb-1" }, "Das Gerät kennt noch kein Design. Bitte ThinkKira 0.3.2 oder neuer über den Loader aufspielen."), Z("Design übertragen …", async () => {
-		let e = await bh();
+		let e = await xh();
 		if (e) try {
-			let t = yh(await e.text());
+			let t = bh(await e.text());
 			if (!Y.device) return Q("Bitte zuerst das Gerät verbinden.", !0);
-			for (let e of [mh(t), ...hh(t.menus)]) X(e);
+			for (let e of [hh(t), ...gh(t.menus)]) X(e);
 			Q("Design „" + e.name + "“ wird übertragen …");
 		} catch (e) {
 			Q(e.message, !0);
 		}
 	}, "primary", "fa-upload"), l ? Z("Design vom Gerät exportieren", () => {
 		try {
-			vh({
+			yh({
 				...l,
-				menus: nh(Y.menuText || "")
+				menus: rh(Y.menuText || "")
 			});
 		} catch {
-			vh(l);
+			yh(l);
 		}
 	}, "outline-secondary", "fa-download") : null);
-	return K("div", {}, Jh(t, i), Jh(o, u), Jh(q("Kommt noch", c)));
+	e && Y.mapInfo === void 0 && !Y.mapAsked && (Y.mapAsked = !0, setTimeout(() => X("mapi"), 0));
+	let d = Y.mapInfo, f = Y.mapUp, ee = q("Offline-Karte", d ? K("div", { class: "small mb-2" }, `Im Gerät: ${Math.round(d.size / 1024)} KB, Detailstufe ${d.level}, ${d.bbox[0].toFixed(2)}–${d.bbox[2].toFixed(2)} N, ${d.bbox[1].toFixed(2)}–${d.bbox[3].toFixed(2)} O`) : K("div", { class: "small text-muted mb-2" }, d === !1 ? "Keine Karte im Gerät." : "Frage das Gerät …"), f ? K("div", {}, K("div", { class: "small mb-1" }, `Übertrage „${f.label}“ … ${Math.round(f.sent / 1024)} von ${Math.round(f.total / 1024)} KB`), K("div", {
+		class: "progress mb-2",
+		role: "progressbar",
+		"aria-label": "Fortschritt"
+	}, K("div", {
+		class: "progress-bar",
+		style: `width:${Math.round(100 * f.sent / f.total)}%`
+	})), Z("Abbrechen", () => f.cancel = !0, "outline-danger", "fa-times")) : K("div", {}, Z("Potsdam–Ludwigsfelde laden", async () => {
+		try {
+			Q("Lade Karte …");
+			let e = await fetch(Hh() + "?map=potsdam-ludwigsfelde");
+			if (!e.ok) throw $m("Karte nicht erreichbar (" + e.status + ").");
+			await Uh(new Uint8Array(await e.arrayBuffer()), "Potsdam–Ludwigsfelde");
+		} catch (e) {
+			Q(eh(e), !0);
+		}
+	}, "primary", "fa-map"), Z("Kartendatei wählen …", async () => {
+		let e = await xh(".tkm");
+		e && await Uh(new Uint8Array(await e.arrayBuffer()), e.name);
+	}, "outline-secondary", "fa-folder-open"), d ? Z("Karte löschen", () => confirm("Die Offline-Karte im Gerät löschen?") && X("mapx"), "outline-danger", "fa-trash") : null), tg("Übertragung per USB dauert einige Minuten. Eigene Gebiete erzeugt das Werkzeug tools/mapgen. Kartendaten © OpenStreetMap-Mitwirkende (ODbL)."));
+	return K("div", {}, eg(t, i), eg(o, u), eg(ee, q("Kommt noch", c)));
 }
-function ag(e, t) {
+function dg(e, t) {
 	return K("div", { class: "table-responsive" }, K("table", { class: "table table-sm table-striped mb-2" }, K("thead", {}, K("tr", {}, ...e.map((e) => K("th", {}, e)))), K("tbody", {}, ...t.map((e) => K("tr", {}, ...e.map((e) => K("td", {}, e)))))));
 }
-function og() {
+function fg() {
 	let e = K("input", {
 		type: "file",
 		class: "form-control form-control-sm",
 		accept: "application/json,.json"
 	});
-	return e.addEventListener("change", () => Fh(e.files[0])), Jh(q("Sicherung", Yh("Alle Einstellungen, Kanäle und den Namen als Datei sichern oder zurückspielen."), Z("Alle Einstellungen sichern", Ph, "primary", "fa-download"), K("div", { class: "mt-3" }, K("label", { class: "form-label small mb-1" }, "Sicherung wiederherstellen"), e)), q("Gerät", Z("Neustart", () => Y.device?.reboot(2), "outline-secondary", "fa-redo"), Z("Werkseinstellungen", () => {
+	return e.addEventListener("change", () => Ih(e.files[0])), eg(q("Sicherung", tg("Alle Einstellungen, Kanäle und den Namen als Datei sichern oder zurückspielen."), Z("Alle Einstellungen sichern", Fh, "primary", "fa-download"), K("div", { class: "mt-3" }, K("label", { class: "form-label small mb-1" }, "Sicherung wiederherstellen"), e)), q("Gerät", Z("Neustart", () => Y.device?.reboot(2), "outline-secondary", "fa-redo"), Z("Werkseinstellungen", () => {
 		confirm("Alle Einstellungen auf Werkseinstellungen zurücksetzen?") && Y.device?.factoryResetConfig();
 	}, "outline-danger", "fa-exclamation-triangle")));
 }
-function sg() {
+function pg() {
 	let e = Y.page;
-	return e === "device" ? Qh() : e === "channels" ? eg() : e.startsWith("cfg:") ? $h(e.slice(4)) : e === "modules" ? tg() : e === "waypoints" ? ng() : e === "canned" ? rg() : e === "thinkkira" ? ig() : og();
+	return e === "device" ? ig() : e === "channels" ? og() : e.startsWith("cfg:") ? ag(e.slice(4)) : e === "modules" ? sg() : e === "waypoints" ? cg() : e === "canned" ? lg() : e === "thinkkira" ? ug() : fg();
 }
-var cg;
+var mg;
 function Q(e, t = !1) {
-	let n = Sh.querySelector(".tk-msg");
-	n && (n.replaceChildren(K("div", { class: "alert py-2 mb-3 " + (t ? "alert-danger" : "alert-success") }, e)), clearTimeout(cg), cg = setTimeout(() => n.replaceChildren(), 5e3));
+	let n = Ch.querySelector(".tk-msg");
+	n && (n.replaceChildren(K("div", { class: "alert py-2 mb-3 " + (t ? "alert-danger" : "alert-success") }, e)), clearTimeout(mg), mg = setTimeout(() => n.replaceChildren(), 5e3));
 }
 function $() {
-	if (!Sh) return;
+	if (!Ch) return;
 	let e = !!Y.device, t = "serial" in navigator, n = "bluetooth" in navigator, r = Y.status === "verbunden", i = [K("div", { class: "d-flex flex-wrap gap-2 align-items-center mb-3" }, e ? null : K("button", {
 		type: "button",
 		class: "btn btn-primary",
 		disabled: t ? null : "",
-		onclick: () => Ch("serial")
-	}, qh("fa-plug"), "Per USB verbinden"), e ? null : K("button", {
+		onclick: () => wh("serial")
+	}, $h("fa-plug"), "Per USB verbinden"), e ? null : K("button", {
 		type: "button",
 		class: "btn btn-primary",
 		disabled: n ? null : "",
-		onclick: () => Ch("ble")
-	}, qh("fa-plug"), "Per Bluetooth verbinden"), e ? K("button", {
+		onclick: () => wh("ble")
+	}, $h("fa-plug"), "Per Bluetooth verbinden"), e ? K("button", {
 		type: "button",
 		class: "btn btn-outline-secondary",
-		onclick: Eh
-	}, qh("fa-times"), "Trennen") : null, K("span", { class: "badge " + (r ? "text-bg-success" : "text-bg-secondary") }, e ? Y.status : Y.status === "getrennt" ? "nicht verbunden" : Y.status)), Sh.querySelector(".tk-msg") ?? K("div", { class: "tk-msg" })];
+		onclick: Dh
+	}, $h("fa-times"), "Trennen") : null, K("span", { class: "badge " + (r ? "text-bg-success" : "text-bg-secondary") }, e ? Y.status : Y.status === "getrennt" ? "nicht verbunden" : Y.status)), Ch.querySelector(".tk-msg") ?? K("div", { class: "tk-msg" })];
 	if (!t && !n && i.push(K("div", { class: "alert alert-warning" }, "Dein Browser kann nicht auf USB oder Bluetooth zugreifen. Bitte Chrome oder Edge am Computer verwenden.")), !e) i.push(K("p", { class: "text-muted" }, "Gerät per USB-Kabel oder Bluetooth verbinden. Danach lassen sich alle Einstellungen ändern."));
 	else {
-		i.push(Zh());
+		i.push(rg());
 		let e = K("ul", { class: "nav nav-pills flex-wrap gap-1 mb-3" });
-		for (let t of Xh) e.append(K("li", { class: "nav-item" }, K("button", {
+		for (let t of ng) e.append(K("li", { class: "nav-item" }, K("button", {
 			type: "button",
 			class: "nav-link py-1 px-2" + (Y.page === t.id ? " active" : ""),
 			onclick: () => {
 				Y.page = t.id, $();
 			}
-		}, qh(t.ic), t.title)));
-		i.push(e, sg());
+		}, $h(t.ic), t.title)));
+		i.push(e, pg());
 	}
-	Sh.replaceChildren(...i.filter(Boolean));
+	Ch.replaceChildren(...i.filter(Boolean));
 }
-function lg(e = "#tk-config") {
-	Sh = typeof e == "string" ? document.querySelector(e) : e, Sh && $();
+function hg(e = "#tk-config") {
+	Ch = typeof e == "string" ? document.querySelector(e) : e, Ch && $();
 }
-typeof document < "u" && (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => lg()) : lg());
-export { lg as mount };
+typeof document < "u" && (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => hg()) : hg());
+export { hg as mount };

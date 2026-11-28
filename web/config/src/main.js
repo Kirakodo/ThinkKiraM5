@@ -7,8 +7,8 @@ import "./style.css";
 import { MeshDevice, Protobuf } from "@meshtastic/core";
 import { TransportWebSerial } from "@meshtastic/transport-web-serial";
 import { TransportWebBluetooth } from "@meshtastic/transport-web-bluetooth";
-import { create, toJson, fromJson, clone } from "@bufbuild/protobuf";
-import { renderMessage, el, group, fehlerText } from "./form.js";
+import { create, toJson, fromJson, clone, toBinary } from "@bufbuild/protobuf";
+import { renderMessage, el, group, fehlerText, deFehler } from "./form.js";
 import { SECTION_LABELS } from "./labels.js";
 import { parseUi, uiCommand, menuCommands, parseDesign, exportDesign, pickFile } from "./designer.js";
 import { parseMenu } from "./menu-model.js";
@@ -58,6 +58,8 @@ async function connect(kind) {
     state.menuText = state.menuBuf = null;
     state.devWps = state.wpBuf = null;
     state.wpAsked = false;
+    state.mapInfo = undefined;
+    state.mapAsked = false;
 
     device.events.onDeviceStatus.subscribe((s) => {
       if (s === STATUS_CONFIGURED) {
@@ -239,6 +241,88 @@ function toGpx(list) {
   return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="ThinkKira" xmlns="http://www.topografix.com/GPX/1/1">\n${wpts}\n</gpx>\n`;
 }
 
+// ---------- Offline-Karte ----------
+let mapWait = null;
+function waitDevice(ms, text) {
+  return new Promise((resolve, reject) => {
+    mapWait = { resolve, reject };
+    setTimeout(() => reject(new Error(text)), ms);
+  }).finally(() => (mapWait = null));
+}
+
+// Schnelles Senden vieler Port-287-Befehle direkt in den Datenstrom: die Meshtastic-Warteschlange
+// wartet 200 ms je Paket, das wäre für eine Karte (tausende Stücke) zu langsam.
+async function fastSend(cmds) {
+  const dev = state.device;
+  while (dev.queue?.lock) await new Promise((r) => setTimeout(r, 20));
+  const writer = dev.transport.toDevice.getWriter();
+  try {
+    for (const cmd of cmds) {
+      const packet = create(P.Mesh.MeshPacketSchema, {
+        payloadVariant: { case: "decoded", value: { payload: new TextEncoder().encode(cmd), portnum: KIRA_PORT } },
+        from: state.myNodeNum,
+        to: state.myNodeNum,
+        id: Math.floor(Math.random() * 0x7fffffff) + 1,
+        wantAck: false,
+      });
+      await writer.write(toBinary(P.Mesh.ToRadioSchema, create(P.Mesh.ToRadioSchema, { payloadVariant: { case: "packet", value: packet } })));
+    }
+  } finally {
+    writer.releaseLock();
+  }
+}
+
+const firmwareUrl = () => root?.dataset.firmware || "/_scripts/php/keylink/thinkkira/firmware.php";
+
+async function uploadMap(bytes, label) {
+  if (!state.device) return toast("Bitte zuerst das Gerät verbinden.", true);
+  if (bytes.length < 40 || new TextDecoder().decode(bytes.subarray(0, 4)) !== "TKM1") return toast("Das ist keine ThinkKira-Kartendatei (.tkm).", true);
+  state.mapUp = { total: bytes.length, sent: 0, label, cancel: false };
+  render();
+  try {
+    const ready = waitDevice(10000, "Das Gerät antwortet nicht.");
+    kiraSend("mapb|" + bytes.length);
+    await ready;
+    const CH = 168; // 168 Byte → 224 Zeichen Base64, passt mit Offset in ein Paket
+    // Go-Back-N: je 8 Stücke senden, dann mit mapq den Stand abfragen; ging etwas verloren, ab dort neu senden
+    let pos = 0,
+      fails = 0;
+    while (pos < bytes.length) {
+      if (state.mapUp.cancel) throw deFehler("Abgebrochen.");
+      const cmds = [];
+      for (let o = pos, k = 0; k < 8 && o < bytes.length; k++, o += CH) {
+        let bin = "";
+        for (const c of bytes.subarray(o, o + CH)) bin += String.fromCharCode(c);
+        cmds.push("mapd|" + o + "|" + btoa(bin));
+      }
+      cmds.push("mapq"); // Stand abfragen
+      const ack = waitDevice(8000, "Das Gerät quittiert nicht mehr – Verbindung prüfen.");
+      await fastSend(cmds);
+      let got;
+      try {
+        got = await ack;
+      } catch (e) {
+        if (++fails > 5) throw e;
+        continue; // Fenster ab pos erneut senden, mapq fragt den Stand neu ab
+      }
+      if (got > pos) fails = 0;
+      else if (++fails > 20) throw deFehler("Zu viele Übertragungsfehler. Bitte erneut versuchen (USB-Kabel prüfen).");
+      pos = got;
+      state.mapUp.sent = pos;
+      render();
+    }
+    const done = waitDevice(20000, "Das Gerät hat das Ende nicht bestätigt.");
+    kiraSend("mape");
+    await done;
+    toast("Karte „" + label + "“ übertragen (" + Math.round(bytes.length / 1024) + " KB).");
+  } catch (e) {
+    toast("Karte: " + fehlerText(e), true);
+  } finally {
+    state.mapUp = null;
+    render();
+  }
+}
+
 function trackGpx(pts) {
   const seg = pts
     .map(([la, lo, t]) => `    <trkpt lat="${(la * 1e-7).toFixed(7)}" lon="${(lo * 1e-7).toFixed(7)}">${t ? `<time>${new Date(t * 1000).toISOString()}</time>` : ""}</trkpt>`)
@@ -274,6 +358,17 @@ function onKiraPacket(p) {
   const [kind, a, b, ...rest] = text.split("|");
   if (kind === "m") {
     state.kira = { mode: a, version: b };
+    renderSoon();
+    return;
+  }
+  if (kind === "k") {
+    if (a === "info") state.mapInfo = { size: +b, level: +rest[0], bbox: rest.slice(1, 5).map((x) => +x * 1e-7) };
+    else if (a === "none") state.mapInfo = false;
+    else if (a === "ready") mapWait?.resolve("ready");
+    else if (a === "ok") {
+      mapWait?.resolve("ok");
+      kiraSend("mapi");
+    } else if (a === "a") mapWait?.resolve(+b);
     renderSoon();
     return;
   }
@@ -354,6 +449,7 @@ function onKiraPacket(p) {
     return;
   }
   if (kind === "err") {
+    if (a.startsWith("Karte")) mapWait?.reject(new Error(a));
     toast("Gerät meldet: " + a, true);
     return;
   }
@@ -775,7 +871,6 @@ function pageThinkKira() {
   );
 
   const later = [
-    ["Offline-Karte hochladen", "4b"],
     ["WLAN-Weboberfläche, Update aus GitHub-Release", 5],
     ["Energieprofile (Wandern / Basis / Maximal sparen)", 6],
     ["SOS-Einstellungen", 7],
@@ -834,7 +929,58 @@ function pageThinkKira() {
         )
       : null,
   );
-  return el("div", {}, grid(modeBox, statBox), grid(rangeBox, designBox), grid(group("Kommt noch", ul)));
+  // Offline-Karte
+  if (k && state.mapInfo === undefined && !state.mapAsked) {
+    state.mapAsked = true;
+    setTimeout(() => kiraSend("mapi"), 0);
+  }
+  const mi = state.mapInfo,
+    up = state.mapUp;
+  const mapBox = group(
+    "Offline-Karte",
+    mi
+      ? el("div", { class: "small mb-2" }, `Im Gerät: ${Math.round(mi.size / 1024)} KB, Detailstufe ${mi.level}, ${mi.bbox[0].toFixed(2)}–${mi.bbox[2].toFixed(2)} N, ${mi.bbox[1].toFixed(2)}–${mi.bbox[3].toFixed(2)} O`)
+      : el("div", { class: "small text-muted mb-2" }, mi === false ? "Keine Karte im Gerät." : "Frage das Gerät …"),
+    up
+      ? el(
+          "div",
+          {},
+          el("div", { class: "small mb-1" }, `Übertrage „${up.label}“ … ${Math.round(up.sent / 1024)} von ${Math.round(up.total / 1024)} KB`),
+          el("div", { class: "progress mb-2", role: "progressbar", "aria-label": "Fortschritt" }, el("div", { class: "progress-bar", style: `width:${Math.round((100 * up.sent) / up.total)}%` })),
+          btn("Abbrechen", () => (up.cancel = true), "outline-danger", "fa-times"),
+        )
+      : el(
+          "div",
+          {},
+          btn(
+            "Potsdam–Ludwigsfelde laden",
+            async () => {
+              try {
+                toast("Lade Karte …");
+                const r = await fetch(firmwareUrl() + "?map=potsdam-ludwigsfelde");
+                if (!r.ok) throw deFehler("Karte nicht erreichbar (" + r.status + ").");
+                await uploadMap(new Uint8Array(await r.arrayBuffer()), "Potsdam–Ludwigsfelde");
+              } catch (e) {
+                toast(fehlerText(e), true);
+              }
+            },
+            "primary",
+            "fa-map",
+          ),
+          btn(
+            "Kartendatei wählen …",
+            async () => {
+              const f = await pickFile(".tkm");
+              if (f) await uploadMap(new Uint8Array(await f.arrayBuffer()), f.name);
+            },
+            "outline-secondary",
+            "fa-folder-open",
+          ),
+          mi ? btn("Karte löschen", () => confirm("Die Offline-Karte im Gerät löschen?") && kiraSend("mapx"), "outline-danger", "fa-trash") : null,
+        ),
+    hint("Übertragung per USB dauert einige Minuten. Eigene Gebiete erzeugt das Werkzeug tools/mapgen. Kartendaten © OpenStreetMap-Mitwirkende (ODbL)."),
+  );
+  return el("div", {}, grid(modeBox, statBox), grid(rangeBox, designBox), grid(mapBox, group("Kommt noch", ul)));
 }
 
 function table(head, rows) {

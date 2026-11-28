@@ -88,6 +88,31 @@ class FakePort {
         wpl().forEach((t) => this.send(kiraPacket(t)));
         return;
       }
+      if (f[0] === "mapb") {
+        this.mapBytes = 0;
+        this.mapTotal = +f[1];
+        this.send(kiraPacket("k|ready"));
+        return;
+      }
+      if (f[0] === "mapd") {
+        if (+f[1] === this.mapBytes && Math.random() > (globalThis.__dropRate ?? 0)) this.mapBytes += atob(f[2]).length;
+        return;
+      }
+      if (f[0] === "mapq") {
+        this.send(kiraPacket("k|a|" + this.mapBytes));
+        return;
+      }
+      if (f[0] === "mape") {
+        if (this.mapBytes === this.mapTotal) {
+          this.map = this.mapBytes;
+          this.send(kiraPacket("k|ok|" + this.mapBytes));
+        } else this.send(kiraPacket("err|Karte: unvollständig"));
+        return;
+      }
+      if (f[0] === "mapi") {
+        this.send(kiraPacket(this.map ? `k|info|${this.map}|2|522600000|129500000|524500000|133200000` : "k|none"));
+        return;
+      }
       if (cmd === "mb") this.menuUp = "";
       if (cmd.startsWith("ml|")) this.menuUp += cmd.slice(3);
       if (cmd === "me") this.menu = this.menuUp;

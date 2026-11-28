@@ -27,6 +27,7 @@ class KiraModule : public SinglePortModule
   public:
     KiraModule() : SinglePortModule("thinkkira", KIRA_PORTNUM) {}
     bool sendPing(); // auch von Konsole/Bildschirm nutzbar
+    void replyNow(const char *text); // nur für die Warteschlange
 
   protected:
     ProcessMessage handleReceived(const meshtastic_MeshPacket &mp) override;
@@ -35,7 +36,6 @@ class KiraModule : public SinglePortModule
     void handleLocal(char *cmd);
     void handleRemote(const meshtastic_MeshPacket &mp, char *cmd);
     void reply(const char *text);
-    void replyNow(const char *text); // nur für die Warteschlange
     void sendRadio(uint32_t to, const char *text);
     void wifiScan();
     void sendStats();

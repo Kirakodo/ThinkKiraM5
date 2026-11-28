@@ -19,7 +19,20 @@ const TK_ASSETS = [
 ];
 
 $asset = $_GET['asset'] ?? '';
-if (!array_key_exists($asset, TK_ASSETS)) {
+$map = $_GET['map'] ?? '';
+$release = 'latest/download';
+if ($map !== '') {
+    // Offline-Karten liegen im Release „karten“: ?map=potsdam-ludwigsfelde → potsdam-ludwigsfelde.tkm
+    if (!preg_match('/^[a-z0-9-]{1,40}$/', $map)) {
+        http_response_code(404);
+        exit('unbekannte Karte');
+    }
+    $asset = $map . '.tkm';
+    $release = 'download/karten';
+    $mime = 'application/octet-stream';
+} elseif (array_key_exists($asset, TK_ASSETS)) {
+    $mime = TK_ASSETS[$asset];
+} else {
     http_response_code(404);
     exit('unbekannte Datei');
 }
@@ -31,7 +44,7 @@ if (!is_dir($cacheDir)) {
 $cacheFile = $cacheDir . '/' . $asset;
 
 if (!is_file($cacheFile) || filemtime($cacheFile) < time() - TK_CACHE_SECONDS) {
-    $url = 'https://github.com/' . TK_REPO . '/releases/latest/download/' . rawurlencode($asset);
+    $url = 'https://github.com/' . TK_REPO . '/releases/' . $release . '/' . rawurlencode($asset);
     $ch = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
@@ -55,7 +68,7 @@ if (!is_file($cacheFile) || filemtime($cacheFile) < time() - TK_CACHE_SECONDS) {
     }
 }
 
-header('Content-Type: ' . TK_ASSETS[$asset]);
+header('Content-Type: ' . $mime);
 header('Content-Length: ' . filesize($cacheFile));
 header('Cache-Control: no-cache');
 readfile($cacheFile);

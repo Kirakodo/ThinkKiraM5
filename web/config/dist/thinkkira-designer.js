@@ -30,7 +30,14 @@ var r = {
 	"nav.stop": ["Navigation beenden", "nav.stop"],
 	"nav.track": ["Track starten/stoppen", "Track starten"],
 	"track.clear": ["Track löschen", "track.clear"],
-	"map.offline": ["Offline-Karte (kommt bald)", "map.offline"],
+	"map.offline": ["Karten-Info", "map.offline"],
+	"map.move": ["Karte verschieben (Tasten-Modus)", "map.move"],
+	"map.zoomin": ["Hineinzoomen", "map.zoomin"],
+	"map.zoomout": ["Herauszoomen", "map.zoomout"],
+	"map.center": ["Zur eigenen Position", "map.center"],
+	"map.rotate": ["Ausrichtung Norden/Laufrichtung", "Ausrichtung: Laufrichtung"],
+	"map.wphere": ["Wegpunkt in Kartenmitte", "map.wphere"],
+	"map.gohere": ["Zur Kartenmitte navigieren", "map.gohere"],
 	"nodes.list": ["Knotenliste (mit Knoten-Menü)", "nodes.list"],
 	ping: ["Reichweitentest (Ping)", "ping"],
 	"radio.mode": ["Funkmodus wechseln", "Zu Kira-Funk wechseln"],
@@ -43,7 +50,7 @@ var r = {
 	"sys.off": ["Ausschalten", "sys.off"],
 	home: ["Zur Startseite", "Zur Startseite"],
 	sos: ["SOS auslösen", "SOS auslösen"]
-}, i = "P0\nIpos.send|Position senden\nIlight.toggle|\nIsound.toggle|\nIscreen.off|Bildschirm aus\nP1\nImsg.reply|Antworten\nImsg.new|Neue Nachricht (alle)\nImsg.chats|Alle Chats\nImsg.clear|Löschen\nP2\nInav.goto|Navigieren zu …\nInav.wpsave|Wegpunkt hier speichern\nIwp.manage|Wegpunkte verwalten\nInav.stop|Navigation beenden\nInav.track|\nIpos.send|Position senden\nP3\nImap.offline|Offline-Karte\nP4\nInodes.list|Knoten wählen …\nIping|Reichweitentest (Ping)\nP5\nSFunk\nIradio.mode|\nIradio.stats|Statistik\nIping|Reichweitentest (Ping)\nE\nSAnzeige & Töne\nIlight.cycle|\nIleds.toggle|\nIsound.toggle|\nIpages|Seiten ein/aus\nE\nSVerbindungen\nIbt.toggle|\nIwifi|WLAN & Web\nE\nSSystem\nIsys.info|Info\nIsys.reboot|Neustart\nIsys.off|Ausschalten\nE\n";
+}, i = "P0\nIpos.send|Position senden\nIlight.toggle|\nIsound.toggle|\nIscreen.off|Bildschirm aus\nP1\nImsg.reply|Antworten\nImsg.new|Neue Nachricht (alle)\nImsg.chats|Alle Chats\nImsg.clear|Löschen\nP2\nInav.goto|Navigieren zu …\nInav.wpsave|Wegpunkt hier speichern\nIwp.manage|Wegpunkte verwalten\nInav.stop|Navigation beenden\nInav.track|\nIpos.send|Position senden\nP3\nImap.move|Karte verschieben\nImap.zoomin|Hineinzoomen\nImap.zoomout|Herauszoomen\nImap.center|Zur eigenen Position\nImap.rotate|\nImap.wphere|Wegpunkt in Kartenmitte\nImap.gohere|Hierhin navigieren\nImap.offline|Karten-Info\nP4\nInodes.list|Knoten wählen …\nIping|Reichweitentest (Ping)\nP5\nSFunk\nIradio.mode|\nIradio.stats|Statistik\nIping|Reichweitentest (Ping)\nE\nSAnzeige & Töne\nIlight.cycle|\nIleds.toggle|\nIsound.toggle|\nIpages|Seiten ein/aus\nE\nSVerbindungen\nIbt.toggle|\nIwifi|WLAN & Web\nE\nSSystem\nIsys.info|Info\nIsys.reboot|Neustart\nIsys.off|Ausschalten\nE\n";
 function a(e) {
 	let t = [
 		[],

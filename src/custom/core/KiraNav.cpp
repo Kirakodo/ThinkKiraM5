@@ -9,6 +9,9 @@
 #include "SPILock.h"
 #include "buzz.h"
 #include "configuration.h"
+#ifndef FILE_O_APPEND
+#define FILE_O_APPEND "a"
+#endif
 #include "gps/GeoCoord.h"
 #include "main.h"
 #include "mesh/mesh-pb-constants.h"
