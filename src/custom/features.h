@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #pragma once
 
-#define THINKKIRA_VERSION "0.1.0"
+#define THINKKIRA_VERSION "0.1.1"
 
 // Phase 1
 #ifndef CUSTOM_FEATURE_STATUS_PAGE
@@ -14,4 +14,9 @@
 #endif
 #ifndef CUSTOM_FEATURE_BOOT_REPORT
 #define CUSTOM_FEATURE_BOOT_REPORT 1 // Hardware-Bericht im Boot-Log
+#endif
+
+// Phase 2+ / Konfigurator
+#ifndef CUSTOM_FEATURE_WIFI_SCAN
+#define CUSTOM_FEATURE_WIFI_SCAN 1 // WLAN-Suche für den Konfigurator (Port 287, Befehl "wifiscan")
 #endif

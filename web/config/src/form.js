@@ -114,7 +114,8 @@ export function renderMessage(schema, msg, opts = {}) {
 
     switch (field.fieldKind) {
       case "scalar": {
-        const { input, id } = scalarInput(field, field.scalar, get, set);
+        const custom = opts.custom?.[field.localName];
+        const { input, id } = custom ? custom(get, set) : scalarInput(field, field.scalar, get, set);
         box.append(row(label, input, id));
         break;
       }
@@ -158,4 +159,24 @@ export function renderMessage(schema, msg, opts = {}) {
     }
   }
   return box;
+}
+
+// Fehlermeldungen von Browser/Bibliotheken in verständliches Deutsch übersetzen.
+// Eigene, schon deutsche Meldungen: throw deFehler("…")
+export const deFehler = (text) => Object.assign(new Error(text), { de: true });
+
+export function fehlerText(e) {
+  if (e?.de) return e.message;
+  const name = e?.name ?? "";
+  const msg = String(e?.message ?? e ?? "");
+  if (name === "NotFoundError" || /No port selected|User cancelled/i.test(msg)) return "Kein Gerät ausgewählt.";
+  if (name === "SecurityError") return "Der Browser hat den Zugriff verweigert. Seite über https öffnen und erneut versuchen.";
+  if (name === "NetworkError" || /Failed to open serial port|already open/i.test(msg))
+    return "Der USB-Anschluss ist belegt. Andere Programme oder Browser-Tabs mit dem Gerät schließen und neu verbinden.";
+  if (name === "InvalidStateError") return "Die Verbindung ist schon offen. Erst trennen, dann neu verbinden.";
+  if (/timeout|timed out/i.test(msg)) return "Zeitüberschreitung: Das Gerät antwortet nicht. Kabel prüfen und neu verbinden.";
+  if (/Bluetooth|GATT/i.test(msg)) return "Bluetooth-Verbindung fehlgeschlagen. Gerät in der Nähe? Bluetooth am Gerät an?";
+  if (/Failed to connect|Couldn't sync|Invalid head of packet|Failed to read/i.test(msg))
+    return "Keine Verbindung zum Bootloader. Kabel neu stecken; falls nötig die Taste beim Einstecken gedrückt halten.";
+  return "Unerwarteter Fehler (" + msg + ").";
 }

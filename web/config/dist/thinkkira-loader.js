@@ -5181,7 +5181,20 @@ var Z = (e, t = {}, ...n) => {
 	for (let [e, n] of Object.entries(t)) e === "class" ? r.className = n : e.startsWith("on") ? r.addEventListener(e.slice(2), n) : n != null && r.setAttribute(e, n);
 	for (let e of n) e != null && r.append(e);
 	return r;
-}, lc, uc, dc, Q = {};
+}, lc = (e) => Object.assign(Error(e), { de: !0 });
+function uc(e) {
+	if (e?.de) return e.message;
+	let t = e?.name ?? "", n = String(e?.message ?? e ?? "");
+	return t === "NotFoundError" || /No port selected|User cancelled/i.test(n) ? "Kein Gerät ausgewählt." : t === "SecurityError" ? "Der Browser hat den Zugriff verweigert. Seite über https öffnen und erneut versuchen." : t === "NetworkError" || /Failed to open serial port|already open/i.test(n) ? "Der USB-Anschluss ist belegt. Andere Programme oder Browser-Tabs mit dem Gerät schließen und neu verbinden." : t === "InvalidStateError" ? "Die Verbindung ist schon offen. Erst trennen, dann neu verbinden." : /timeout|timed out/i.test(n) ? "Zeitüberschreitung: Das Gerät antwortet nicht. Kabel prüfen und neu verbinden." : /Bluetooth|GATT/i.test(n) ? "Bluetooth-Verbindung fehlgeschlagen. Gerät in der Nähe? Bluetooth am Gerät an?" : /Failed to connect|Couldn't sync|Invalid head of packet|Failed to read/i.test(n) ? "Keine Verbindung zum Bootloader. Kabel neu stecken; falls nötig die Taste beim Einstecken gedrückt halten." : "Unerwarteter Fehler (" + n + ").";
+}
+// src/loader.js
+var dc, fc, pc, mc = !1, Q = {}, hc = {
+	"2MB": 2,
+	"4MB": 4,
+	"8MB": 8,
+	"16MB": 16,
+	"32MB": 32
+}, gc = 262144;
 function $(e, t = "") {
 	let n = {
 		ok: "alert alert-success",
@@ -5189,63 +5202,118 @@ function $(e, t = "") {
 	}[t] || "text-muted";
 	Q.status.className = "mt-3 mb-0 " + n, Q.status.textContent = e;
 }
-function fc(e) {
-	Q.progress.classList.toggle("d-none", e <= 0), Q.bar.style.width = e + "%", Q.bar.textContent = e + " %", Q.progress.setAttribute("aria-valuenow", String(e));
+function _c(e, t = !1) {
+	Q.progress.classList.toggle("d-none", e <= 0), Q.bar.className = t ? "progress-bar bg-success" : "progress-bar progress-bar-striped progress-bar-animated", Q.bar.style.width = e + "%", Q.bar.textContent = e + " %", Q.progress.setAttribute("aria-valuenow", String(e));
 }
-async function pc() {
+function vc(e) {
+	mc = e;
+	let t = "serial" in navigator;
+	Q.btn.disabled = e || !t || !pc, Q.backup.disabled = e || !t, Q.restore.disabled = e || !t;
+}
+async function yc() {
 	try {
-		dc = await (await fetch(uc + "?asset=manifest.json", { cache: "no-store" })).json(), Q.version.textContent = dc.version, dc.release_url && (Q.gh.href = dc.release_url), Q.btn.disabled = !("serial" in navigator);
+		pc = await (await fetch(fc + "?asset=manifest.json", { cache: "no-store" })).json(), Q.version.textContent = pc.version, pc.release_url && (Q.gh.href = pc.release_url);
 	} catch {
-		Q.version.textContent = "nicht erreichbar", $("Das neueste Release konnte nicht geladen werden. Bitte später erneut versuchen.", "bad");
+		Q.version.textContent = "nicht erreichbar", $("Das neueste Release konnte nicht geladen werden. Backup geht trotzdem.", "bad");
 	}
+	vc(mc);
 }
-async function mc() {
-	let e = dc?.builds?.[0]?.parts?.[0];
-	if (!e) return;
-	Q.btn.disabled = !0, Q.bar.className = "progress-bar progress-bar-striped progress-bar-animated", fc(0);
+async function bc() {
+	$("Port auswählen …");
+	let e = await navigator.serial.requestPort();
+	$("Verbinde mit dem Gerät …");
+	let t = new bi(e, !1), n = new sc({
+		transport: t,
+		baudrate: 921600,
+		terminal: {
+			clean() {},
+			write() {},
+			writeLine() {}
+		}
+	});
+	try {
+		let e = await n.main();
+		if (!/ESP32-S3/i.test(e)) throw lc("Falscher Chip: " + e + " (erwartet ESP32-S3)");
+	} catch (e) {
+		throw await t.disconnect().catch(() => {}), e;
+	}
+	return {
+		loader: n,
+		transport: t
+	};
+}
+function xc(e) {
+	return console.error(e), "Fehler: " + uc(e);
+}
+async function Sc(e) {
+	if (mc) return;
+	vc(!0), _c(0);
 	let t;
 	try {
-		$("Port auswählen …");
-		let n = await navigator.serial.requestPort();
-		$("Firmware wird geladen …");
-		let r = new URL(e.path, new URL(uc + "?asset=manifest.json", location.href)).href, i = await fetch(r, { cache: "no-store" });
-		if (!i.ok) throw Error("Download fehlgeschlagen (" + i.status + ")");
-		let a = new Uint8Array(await i.arrayBuffer());
-		$("Verbinde mit dem Gerät …"), t = new bi(n, !1);
-		let o = new sc({
-			transport: t,
-			baudrate: 921600,
-			terminal: {
-				clean() {},
-				write() {},
-				writeLine() {}
-			}
-		}), s = await o.main();
-		if (!/ESP32-S3/i.test(s)) throw Error("Falscher Chip: " + s + " (erwartet ESP32-S3)");
-		Q.erase.checked && ($("Gerät wird komplett gelöscht (ca. 20 s) …"), await o.eraseFlash()), $("Firmware wird geschrieben …"), await o.writeFlash({
-			fileArray: [{
-				data: a,
-				address: e.offset ?? 0
-			}],
-			flashSize: "keep",
-			flashMode: "keep",
-			flashFreq: "keep",
-			eraseAll: !1,
-			compress: !0,
-			reportProgress: (e, t, n) => fc(Math.round(t / n * 100))
-		}), $("Neustart …"), await o.after(), fc(100), Q.bar.classList.remove("progress-bar-animated", "progress-bar-striped"), Q.bar.classList.add("bg-success"), $("Fertig! ThinkKira " + dc.version + " ist installiert. Das Gerät startet neu.", "ok");
+		await e((e) => t = e);
 	} catch (e) {
-		console.error(e), $("Fehler: " + (e?.name === "NotFoundError" ? "Kein Port ausgewählt." : e?.message ?? String(e)) + " – Kabel neu stecken und erneut versuchen.", "bad");
+		$(xc(e), "bad");
 	} finally {
-		try {
-			await t?.disconnect();
-		} catch {}
-		Q.btn.disabled = !1;
+		await t?.transport?.disconnect().catch(() => {}), vc(!1);
 	}
 }
-function hc(e = "#tk-loader") {
-	if (lc = typeof e == "string" ? document.querySelector(e) : e, !lc) return;
-	uc = lc.dataset.firmware || window.TK_FIRMWARE_PHP || "firmware.php", lc.classList.add("tk-loader");
+async function Cc(e, t, n, r) {
+	r && ($("Gerät wird komplett gelöscht (ca. 20 s) …"), await e.eraseFlash()), $("Wird geschrieben …"), await e.writeFlash({
+		fileArray: [{
+			data: t,
+			address: n
+		}],
+		flashSize: "keep",
+		flashMode: "keep",
+		flashFreq: "keep",
+		eraseAll: !1,
+		compress: !0,
+		reportProgress: (e, t, n) => _c(Math.round(t / n * 100))
+	}), $("Neustart …"), await e.after(), _c(100, !0);
+}
+function wc() {
+	let e = pc?.builds?.[0]?.parts?.[0];
+	e && Sc(async (t) => {
+		$("Firmware wird geladen …");
+		let n = new URL(e.path, new URL(fc + "?asset=manifest.json", location.href)).href, r = await fetch(n, { cache: "no-store" });
+		if (!r.ok) throw lc("Download fehlgeschlagen (" + r.status + ")");
+		let i = new Uint8Array(await r.arrayBuffer()), { loader: a } = t(await bc());
+		await Cc(a, i, e.offset ?? 0, Q.erase.checked), $("Fertig! ThinkKira " + pc.version + " ist installiert. Das Gerät startet neu.", "ok");
+	});
+}
+function Tc(e, t) {
+	let n = URL.createObjectURL(new Blob([e], { type: "application/octet-stream" })), r = Z("a", {
+		href: n,
+		download: t
+	});
+	document.body.append(r), r.click(), r.remove(), setTimeout(() => URL.revokeObjectURL(n), 1e4);
+}
+function Ec() {
+	Sc(async (e) => {
+		let { loader: t } = e(await bc()), n = await t.detectFlashSize() || "4MB", r = (hc[n] || 4) * 1024 * 1024, i = new Uint8Array(r);
+		$("Backup wird gelesen (" + n.replace("MB", " MB") + ", ca. 1–2 Minuten) …");
+		for (let e = 0; e < r; e += gc) {
+			let n = Math.min(gc, r - e);
+			i.set(await t.readFlash(e, n), e), _c(Math.round((e + n) / r * 100));
+		}
+		await t.after(), _c(100, !0), Tc(i, "thinkkira-backup-" + (/* @__PURE__ */ new Date()).toISOString().slice(0, 16).replace(/[:T]/g, "-") + ".bin"), $("Backup gespeichert (" + n.replace("MB", " MB") + "). Die Datei enthält Firmware, Einstellungen, Knoten und Schlüssel – sicher aufbewahren!", "ok");
+	});
+}
+function Dc() {
+	Q.file.value = "", Q.file.click();
+}
+function Oc() {
+	let e = Q.file.files?.[0];
+	e && Sc(async (t) => {
+		let n = new Uint8Array(await e.arrayBuffer());
+		if (n.length < 65536 || n.length % 4096) throw lc("Die Datei ist kein vollständiges Backup.");
+		let { loader: r } = t(await bc());
+		await Cc(r, n, 0, !1), $("Backup „" + e.name + "“ wurde zurückgespielt. Das Gerät startet neu.", "ok");
+	});
+}
+function kc(e = "#tk-loader") {
+	if (dc = typeof e == "string" ? document.querySelector(e) : e, !dc) return;
+	fc = dc.dataset.firmware || window.TK_FIRMWARE_PHP || "firmware.php", dc.classList.add("tk-loader");
 	let t = (e) => Z("i", { class: "fas fa-" + e + " me-1" });
 	Q.version = Z("strong", {}, "wird geladen …"), Q.gh = Z("a", {
 		href: "https://github.com/Kirakodo/ThinkKiraM5/releases/latest",
@@ -5258,13 +5326,25 @@ function hc(e = "#tk-loader") {
 	}), Q.erase.checked = !0, Q.btn = Z("button", {
 		type: "button",
 		class: "btn btn-primary",
-		disabled: "",
-		onclick: mc
-	}, t("download"), "Installieren / Aktualisieren"), Q.status = Z("p", {
+		onclick: wc
+	}, t("download"), "Installieren / Aktualisieren"), Q.backup = Z("button", {
+		type: "button",
+		class: "btn btn-outline-secondary",
+		onclick: Ec
+	}, t("save"), "Backup erstellen"), Q.restore = Z("button", {
+		type: "button",
+		class: "btn btn-outline-secondary",
+		onclick: Dc
+	}, t("upload"), "Backup zurückspielen"), Q.file = Z("input", {
+		type: "file",
+		accept: ".bin",
+		class: "d-none",
+		onchange: Oc
+	}), Q.status = Z("p", {
 		class: "mt-3 mb-0 text-muted",
 		role: "status"
 	}), Q.bar = Z("div", {
-		class: "progress-bar progress-bar-striped progress-bar-animated",
+		class: "progress-bar",
 		style: "width:0%"
 	}), Q.progress = Z("div", {
 		class: "progress mt-3 d-none",
@@ -5276,16 +5356,18 @@ function hc(e = "#tk-loader") {
 	let n = [
 		"serial" in navigator ? null : Z("div", { class: "alert alert-warning" }, t("exclamation-triangle"), "Dieser Browser kann keine USB-Geräte ansprechen. Bitte Chrome oder Edge am PC nutzen."),
 		Z("p", { class: "text-muted" }, "aktuelle Version ", Q.version, " · ", Q.gh),
-		Z("ol", {}, Z("li", {}, "Chrome oder Edge am PC verwenden."), Z("li", {}, "ThinkNode M5 per USB-C anschließen."), Z("li", {}, "„Installieren / Aktualisieren“ klicken und den Port wählen.")),
+		Z("ol", {}, Z("li", {}, "Chrome oder Edge am PC verwenden."), Z("li", {}, "ThinkNode M5 per USB-C anschließen."), Z("li", {}, "Vor dem ersten Aufspielen am besten „Backup erstellen“."), Z("li", {}, "„Installieren / Aktualisieren“ klicken und den Port wählen.")),
 		Z("div", { class: "form-check mb-3" }, Q.erase, Z("label", {
 			class: "form-check-label",
 			for: "tk-erase"
 		}, "Gerät vorher komplett löschen (empfohlen beim ersten Mal, löscht alle Einstellungen)")),
-		Q.btn,
+		Z("div", { class: "d-flex flex-wrap gap-2" }, Q.btn, Q.backup, Q.restore),
+		Z("p", { class: "form-text mb-0 mt-2" }, "Das Backup ist ein komplettes Abbild des Geräts (Firmware, Einstellungen, Knoten, Schlüssel) als .bin-Datei. Zurückspielen stellt genau diesen Stand wieder her."),
+		Q.file,
 		Q.progress,
 		Q.status
 	];
-	lc.replaceChildren(...n.filter(Boolean)), pc();
+	dc.replaceChildren(...n.filter(Boolean)), vc(!1), yc();
 }
-typeof document < "u" && (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => hc()) : hc());
-export { hc as mount };
+typeof document < "u" && (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => kc()) : kc());
+export { kc as mount };

@@ -8,7 +8,7 @@ import { MeshDevice, Protobuf } from "@meshtastic/core";
 import { TransportWebSerial } from "@meshtastic/transport-web-serial";
 import { TransportWebBluetooth } from "@meshtastic/transport-web-bluetooth";
 import { create, toJson, fromJson, clone } from "@bufbuild/protobuf";
-import { renderMessage, el, group } from "./form.js";
+import { renderMessage, el, group, fehlerText } from "./form.js";
 import { SECTION_LABELS } from "./labels.js";
 
 const P = Protobuf;
@@ -24,6 +24,8 @@ const state = {
   channels: [],
   nodes: new Map(),
   waypoints: new Map(),
+  wifiNets: null, // Ergebnis der WLAN-Suche: [{ ssid, rssi, open }]
+  wifiScanning: false,
   page: "device",
   dirty: false,
 };
@@ -43,33 +45,34 @@ async function connect(kind) {
     state.channels = [];
     state.nodes.clear();
 
-    device.onDeviceStatus.subscribe((s) => {
+    device.events.onDeviceStatus.subscribe((s) => {
       if (s === STATUS_CONFIGURED) setStatus("verbunden");
       else if (s === 2) setStatus("getrennt");
       else if (s === 6) setStatus("lese Einstellungen …");
     });
-    device.onMyNodeInfo.subscribe((i) => (state.myNodeNum = i.myNodeNum));
-    device.onDeviceMetadataPacket.subscribe((m) => {
+    device.events.onMyNodeInfo.subscribe((i) => (state.myNodeNum = i.myNodeNum));
+    device.events.onDeviceMetadataPacket.subscribe((m) => {
       state.metadata = m.data;
       render();
     });
-    device.onConfigPacket.subscribe((c) => {
+    device.events.onConfigPacket.subscribe((c) => {
       if (c.payloadVariant.case) state.config[c.payloadVariant.case] = c.payloadVariant.value;
       renderSoon();
     });
-    device.onModuleConfigPacket.subscribe((c) => {
+    device.events.onModuleConfigPacket.subscribe((c) => {
       if (c.payloadVariant.case) state.moduleConfig[c.payloadVariant.case] = c.payloadVariant.value;
       renderSoon();
     });
-    device.onChannelPacket.subscribe((ch) => {
+    device.events.onChannelPacket.subscribe((ch) => {
       state.channels[ch.index] = ch;
       renderSoon();
     });
-    device.onNodeInfoPacket.subscribe((n) => {
+    device.events.onNodeInfoPacket.subscribe((n) => {
       state.nodes.set(n.num, n);
       renderSoon();
     });
-    device.onWaypointPacket.subscribe((w) => {
+    device.events.onMeshPacket.subscribe(onKiraPacket);
+    device.events.onWaypointPacket.subscribe((w) => {
       state.waypoints.set(w.data.id, { ...w.data, from: w.from });
       renderSoon();
     });
@@ -78,7 +81,7 @@ async function connect(kind) {
     setStatus("verbunden");
   } catch (e) {
     console.error(e);
-    setStatus("Fehler: " + (e?.message ?? e));
+    setStatus("Fehler: " + fehlerText(e));
   }
 }
 
@@ -114,7 +117,7 @@ async function withEdit(fn) {
     state.dirty = false;
   } catch (e) {
     console.error(e);
-    toast("Fehler beim Speichern: " + (e?.message ?? e), true);
+    toast("Fehler beim Speichern: " + fehlerText(e), true);
   }
 }
 
@@ -190,6 +193,87 @@ async function sendWaypoint(w) {
   state.waypoints.set(wp.id, { ...wp, from: state.myNodeNum });
 }
 
+// ---------- ThinkKira-Befehle (Port 287) ----------
+
+const KIRA_PORT = 287;
+let scanTimer;
+
+function onKiraPacket(p) {
+  const d = p?.payloadVariant?.case === "decoded" ? p.payloadVariant.value : null;
+  if (!d || d.portnum !== KIRA_PORT) return;
+  const text = new TextDecoder().decode(d.payload);
+  const [kind, a, b, ...rest] = text.split("|");
+  if (kind !== "w") return;
+  if (a === "end") {
+    clearTimeout(scanTimer);
+    state.wifiScanning = false;
+    state.wifiNets.sort((x, y) => y.rssi - x.rssi);
+    render();
+    if (b === "-1") toast("Diese Firmware kann keine WLAN-Suche.", true);
+    else toast(state.wifiNets.length ? state.wifiNets.length + " WLAN-Netze gefunden. Bitte unten auswählen." : "Keine WLAN-Netze gefunden.");
+    return;
+  }
+  const ssid = rest.join("|");
+  if (state.wifiNets && !state.wifiNets.some((n) => n.ssid === ssid)) state.wifiNets.push({ ssid, rssi: parseInt(a, 10), open: b === "1" });
+}
+
+async function wifiScan() {
+  if (!state.device || state.wifiScanning) return;
+  state.wifiScanning = true;
+  state.wifiNets = [];
+  render();
+  try {
+    await state.device.sendPacket(new TextEncoder().encode("wifiscan"), KIRA_PORT, "self", 0, false, false);
+  } catch (e) {
+    console.error(e);
+  }
+  clearTimeout(scanTimer);
+  scanTimer = setTimeout(() => {
+    if (!state.wifiScanning) return;
+    state.wifiScanning = false;
+    render();
+    toast("Das Gerät antwortet nicht auf die WLAN-Suche. Bitte zuerst die neueste ThinkKira-Firmware über den Loader aufspielen.", true);
+  }, 12000);
+}
+
+// Auswahlfeld für den WLAN-Namen: gefundene Netze + „Anderes Netz (manuell)“
+function ssidPicker(get, set) {
+  const id = "tk-ssid";
+  const manualVal = "__manuell__";
+  const current = get() ?? "";
+  const nets = state.wifiNets ?? [];
+  const sel = el("select", { id, class: "form-select form-select-sm" });
+  sel.append(el("option", { value: "" }, nets.length ? "– Netz auswählen –" : "– erst „Netze suchen“ klicken –"));
+  for (const n of nets) {
+    const bars = n.rssi >= -60 ? "sehr gut" : n.rssi >= -70 ? "gut" : n.rssi >= -80 ? "mäßig" : "schwach";
+    sel.append(el("option", { value: n.ssid }, n.ssid + " (" + bars + ", " + n.rssi + " dBm" + (n.open ? ", offen" : "") + ")"));
+  }
+  if (current && !nets.some((n) => n.ssid === current)) sel.append(el("option", { value: current }, current + " (gespeichert)"));
+  sel.append(el("option", { value: manualVal }, "Anderes Netz (manuell eingeben) …"));
+  sel.value = current;
+
+  const manual = el("input", { type: "text", class: "form-control form-control-sm mt-2 d-none", placeholder: "WLAN-Name eingeben", maxlength: "32" });
+  manual.addEventListener("input", () => set(manual.value));
+  sel.addEventListener("change", () => {
+    const isManual = sel.value === manualVal;
+    manual.classList.toggle("d-none", !isManual);
+    if (isManual) {
+      manual.value = "";
+      manual.focus();
+    } else set(sel.value);
+  });
+
+  const scanBtn = el(
+    "button",
+    { type: "button", class: "btn btn-sm btn-outline-secondary", onclick: wifiScan },
+    state.wifiScanning ? el("span", { class: "spinner-border spinner-border-sm me-1" }) : icon("fa-search"),
+    state.wifiScanning ? "Suche …" : "Netze suchen",
+  );
+  if (state.wifiScanning || !state.device) scanBtn.disabled = true;
+  const box = el("div", {}, el("div", { class: "input-group input-group-sm" }, sel, scanBtn), manual);
+  return { input: box, id };
+}
+
 // ---------- Seiten ----------
 
 const icon = (name) => el("i", { class: "fas " + name + " me-1" });
@@ -255,7 +339,8 @@ function pageConfig(section) {
     group(
       SECTION_LABELS[section] ?? section,
       section === "lora" ? hint("Für Deutschland: Region EU_868. Der eigene ThinkKira-Funkmodus kommt mit Firmware-Phase 2.") : null,
-      renderMessage(schema, msg),
+      section === "network" ? hint("„Netze suchen“ lässt das Gerät die WLAN-Netze in der Nähe suchen (dauert ein paar Sekunden).") : null,
+      renderMessage(schema, msg, section === "network" ? { custom: { wifiSsid: ssidPicker } } : {}),
       btn("Speichern", () => saveConfig(section), "primary", "fa-save"),
     ),
   );
