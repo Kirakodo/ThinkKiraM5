@@ -127,6 +127,10 @@ class MeshService
     /// Return the next packet destined to the phone.  FIXME, somehow use fromNum to allow the phone to retry the
     /// last few packets if needs to.
     meshtastic_MeshPacket *getForPhone() { return toPhoneQueue.dequeuePtr(0); }
+#ifdef THINKKIRA
+    // freie Plätze in der Warteschlange zum Handy/Konfigurator (ThinkKira wartet lieber, statt Antworten zu verlieren)
+    int toPhoneFree() { return toPhoneQueue.numFree(); }
+#endif
 
     /// Allows the bluetooth handler to free packets after they have been sent
     void releaseToPool(meshtastic_MeshPacket *p) { packetPool.release(p); }

@@ -27,7 +27,10 @@ class KiraModule : public SinglePortModule
   public:
     KiraModule() : SinglePortModule("thinkkira", KIRA_PORTNUM) {}
     bool sendPing(); // auch von Konsole/Bildschirm nutzbar
-    void replyNow(const char *text); // nur für die Warteschlange
+    void replyNow(const char *text); // sofort, bei voller Warteschlange zum Handy über die Ausgangs-Warteschlange
+    bool sendRaw(const char *text);  // direkt in die Warteschlange zum Handy (nur KiraOutbox/replyNow)
+    // Diagnose (im Konfigurator-Fehlerprotokoll): Befehle empfangen, Antworten verzögert/verloren
+    uint32_t statCmds = 0, statDeferred = 0, statDropped = 0;
 
   protected:
     ProcessMessage handleReceived(const meshtastic_MeshPacket &mp) override;

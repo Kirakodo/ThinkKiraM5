@@ -469,7 +469,7 @@ async function uploadMap(bytes, label) {
     // Unterbrochene Übertragung derselben Datei? Dann dort weitermachen, statt neu anzufangen.
     let pos = 0;
     const st = await mapQuery();
-    mlog("Stand im Gerät:", st ? `${st.got}/${st.expected} läuft=${st.up}` : "keine Antwort");
+    mlog("Stand im Gerät:", st ? `${st.got}/${st.expected} läuft=${st.up} ${st.diag ?? ""}` : "keine Antwort");
     if (st?.up && st.expected === bytes.length && st.got > 0 && st.got < bytes.length && state.mapResume === label) {
       pos = st.got;
       mlog("Setze fort bei", pos);
@@ -507,14 +507,14 @@ async function uploadMap(bytes, label) {
       } catch (e) {
         mlog("keine Quittung bei", pos, "Versuch", fails + 1);
         if (e.message !== "keine Quittung") throw e; // z. B. Fehlermeldung des Geräts
-        if (++fails > 15)
+        if (++fails > 36)
           throw deFehler(
-            `Das Gerät quittiert seit 40 Sekunden nicht mehr (bei ${kb(pos)} von ${kb(bytes.length)} KB). Gerät neu starten, neu verbinden und nochmal „Karte laden“ drücken – die Übertragung macht dann an dieser Stelle weiter.`,
+            `Das Gerät quittiert seit 90 Sekunden nicht mehr (bei ${kb(pos)} von ${kb(bytes.length)} KB). Gerät neu starten, neu verbinden und nochmal „Karte laden“ drücken – die Übertragung macht dann an dieser Stelle weiter.`,
           );
         if (fails % 3 === 0) {
           // mehrfach nichts: Stand im Gerät abfragen und dort weitermachen
           const st = await mapQuery();
-          mlog("Stand im Gerät:", st ? `${st.got}/${st.expected} läuft=${st.up}` : "keine Antwort");
+          mlog("Stand im Gerät:", st ? `${st.got}/${st.expected} läuft=${st.up} ${st.diag ?? ""}` : "keine Antwort");
           if (st && !st.up) throw deFehler("Das Gerät hat den Kartenempfang abgebrochen. Bitte nochmal „Karte laden“ drücken.");
           if (st) pos = st.got;
         }
@@ -530,7 +530,7 @@ async function uploadMap(bytes, label) {
     mlog("alle Daten übertragen");
     // Abschluss: bis zu 3 Versuche; kommt keine Bestätigung, fragt mapi, ob die Karte trotzdem fertig ist
     let ok = false;
-    for (let i = 0; i < 3 && !ok; i++) {
+    for (let i = 0; i < 4 && !ok; i++) {
       const done = waitDevice(15000, "Das Gerät hat das Ende nicht bestätigt.", (r) => r === "ok");
       await fastSend(["mape"]);
       try {
@@ -544,12 +544,15 @@ async function uploadMap(bytes, label) {
     if (!ok) {
       // Bestätigung verloren? Stand abfragen: alles da und Empfang beendet heißt, die Karte ist gespeichert.
       const st = await mapQuery();
-      mlog("Stand nach Abschluss:", st ? `${st.got}/${st.expected} läuft=${st.up}` : "keine Antwort");
+      mlog("Stand nach Abschluss:", st ? `${st.got}/${st.expected} läuft=${st.up} ${st.diag ?? ""}` : "keine Antwort");
       ok = !!st && !st.up && st.got === bytes.length && st.expected === bytes.length;
     }
     state.mapResume = null;
     kiraSend("mapi");
-    if (!ok) throw deFehler("Das Gerät hat den Abschluss nicht bestätigt. Bitte prüfen, ob die Karte auf dem Gerät erscheint.");
+    if (!ok)
+      throw deFehler(
+        "Alle Daten sind übertragen, aber das Gerät hat den Abschluss nicht bestätigt. Meist ist die Karte trotzdem fertig: Gerät trennen, neu verbinden und unter „Offline-Karte“ nachsehen.",
+      );
     mlog("fertig");
     toast("Karte „" + label + "“ übertragen (" + kb(bytes.length) + " KB).");
   } catch (e) {
@@ -617,7 +620,8 @@ function onKiraPacket(p) {
     else if (a === "ok") {
       mapWait?.resolve("ok");
       kiraSend("mapi");
-    } else if (a === "a") mapWait?.resolve(rest.length >= 2 ? { got: +b, expected: +rest[0], up: rest[1] === "1" } : +b);
+    } else if (a === "a")
+      mapWait?.resolve(rest.length >= 2 ? { got: +b, expected: +rest[0], up: rest[1] === "1", diag: rest.length >= 6 ? `frei ${rest[2]}, Befehle ${rest[3]}, verzögert ${rest[4]}, verloren ${rest[5]}` : "" } : +b);
     renderSoon();
     return;
   }

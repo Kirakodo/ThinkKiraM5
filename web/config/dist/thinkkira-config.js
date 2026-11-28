@@ -13077,7 +13077,7 @@ async function mg(e, t) {
 	let r = (e) => Math.round(e / 1024);
 	try {
 		let n = 0, i = await pg();
-		if (Y("Stand im Gerät:", i ? `${i.got}/${i.expected} läuft=${i.up}` : "keine Antwort"), i?.up && i.expected === e.length && i.got > 0 && i.got < e.length && q.mapResume === t) n = i.got, Y("Setze fort bei", n);
+		if (Y("Stand im Gerät:", i ? `${i.got}/${i.expected} läuft=${i.up} ${i.diag ?? ""}` : "keine Antwort"), i?.up && i.expected === e.length && i.got > 0 && i.got < e.length && q.mapResume === t) n = i.got, Y("Setze fort bei", n);
 		else for (let t = 0;; t++) {
 			let n = sg(1e4, "Das Gerät antwortet nicht auf den Kartenstart. Bitte Gerät neu starten und erneut verbinden.", (e) => e === "ready");
 			await cg(["mapb|" + e.length]);
@@ -13101,10 +13101,10 @@ async function mg(e, t) {
 				o = await i;
 			} catch (t) {
 				if (Y("keine Quittung bei", n, "Versuch", a + 1), t.message !== "keine Quittung") throw t;
-				if (++a > 15) throw oh(`Das Gerät quittiert seit 40 Sekunden nicht mehr (bei ${r(n)} von ${r(e.length)} KB). Gerät neu starten, neu verbinden und nochmal „Karte laden“ drücken – die Übertragung macht dann an dieser Stelle weiter.`);
+				if (++a > 36) throw oh(`Das Gerät quittiert seit 90 Sekunden nicht mehr (bei ${r(n)} von ${r(e.length)} KB). Gerät neu starten, neu verbinden und nochmal „Karte laden“ drücken – die Übertragung macht dann an dieser Stelle weiter.`);
 				if (a % 3 == 0) {
 					let e = await pg();
-					if (Y("Stand im Gerät:", e ? `${e.got}/${e.expected} läuft=${e.up}` : "keine Antwort"), e && !e.up) throw oh("Das Gerät hat den Kartenempfang abgebrochen. Bitte nochmal „Karte laden“ drücken.");
+					if (Y("Stand im Gerät:", e ? `${e.got}/${e.expected} läuft=${e.up} ${e.diag ?? ""}` : "keine Antwort"), e && !e.up) throw oh("Das Gerät hat den Kartenempfang abgebrochen. Bitte nochmal „Karte laden“ drücken.");
 					e && (n = e.got);
 				}
 				continue;
@@ -13113,7 +13113,7 @@ async function mg(e, t) {
 		}
 		Y("alle Daten übertragen");
 		let o = !1;
-		for (let e = 0; e < 3 && !o; e++) {
+		for (let e = 0; e < 4 && !o; e++) {
 			let t = sg(15e3, "Das Gerät hat das Ende nicht bestätigt.", (e) => e === "ok");
 			await cg(["mape"]);
 			try {
@@ -13124,9 +13124,9 @@ async function mg(e, t) {
 		}
 		if (!o) {
 			let t = await pg();
-			Y("Stand nach Abschluss:", t ? `${t.got}/${t.expected} läuft=${t.up}` : "keine Antwort"), o = !!t && !t.up && t.got === e.length && t.expected === e.length;
+			Y("Stand nach Abschluss:", t ? `${t.got}/${t.expected} läuft=${t.up} ${t.diag ?? ""}` : "keine Antwort"), o = !!t && !t.up && t.got === e.length && t.expected === e.length;
 		}
-		if (q.mapResume = null, X("mapi"), !o) throw oh("Das Gerät hat den Abschluss nicht bestätigt. Bitte prüfen, ob die Karte auf dem Gerät erscheint.");
+		if (q.mapResume = null, X("mapi"), !o) throw oh("Alle Daten sind übertragen, aber das Gerät hat den Abschluss nicht bestätigt. Meist ist die Karte trotzdem fertig: Gerät trennen, neu verbinden und unter „Offline-Karte“ nachsehen.");
 		Y("fertig"), Q("Karte „" + t + "“ übertragen (" + r(e.length) + " KB).");
 	} catch (e) {
 		Y("Fehler:", e.message), Y(fg()), q.mapLogText = ug.join("\n"), Q("Karte: " + sh(e), !0);
@@ -13183,7 +13183,8 @@ function bg(e) {
 		} : i === "none" ? q.mapInfo = !1 : i === "ready" ? og?.resolve("ready") : i === "ok" ? (og?.resolve("ok"), X("mapi")) : i === "a" && og?.resolve(o.length >= 2 ? {
 			got: +a,
 			expected: +o[0],
-			up: o[1] === "1"
+			up: o[1] === "1",
+			diag: o.length >= 6 ? `frei ${o[2]}, Befehle ${o[3]}, verzögert ${o[4]}, verloren ${o[5]}` : ""
 		} : +a), J();
 		return;
 	}

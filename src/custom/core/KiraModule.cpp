@@ -35,6 +35,7 @@ ProcessMessage KiraModule::handleReceived(const meshtastic_MeshPacket &mp)
     size_t n = mp.decoded.payload.size < sizeof(cmd) - 1 ? mp.decoded.payload.size : sizeof(cmd) - 1;
     memcpy(cmd, mp.decoded.payload.bytes, n);
 
+    statCmds++;
     if (isFromUs(&mp))
         handleLocal(cmd);
     else
@@ -216,7 +217,7 @@ void KiraModule::waypointCommand(char *cmd)
 }
 
 // Offline-Karte: mapb|bytes (Beginn) · mapd|offset|base64 (Daten) · mapq (Stand) · mape (fertig) · mapx (löschen) · mapi (Info)
-// Antworten: k|ready · k|a|bytes (nach jedem mapd) bzw. k|a|bytes|erwartet|läuft (auf mapq) · k|ok|bytes · k|info|bytes|stufe|latMin|lonMin|latMax|lonMax · k|none
+// Antworten: k|ready · k|a|bytes (nach jedem mapd) bzw. k|a|bytes|erwartet|läuft|frei|befehle|verzögert|verloren (auf mapq) · k|ok|bytes · k|info|bytes|stufe|latMin|lonMin|latMax|lonMax · k|none
 void KiraModule::mapCommand(char *cmd)
 {
     KiraMapFile &m = mapFile();
@@ -233,7 +234,10 @@ void KiraModule::mapCommand(char *cmd)
         replyNow(b);
     } else if (!strcmp(cmd, "mapq")) {
         // Stand: empfangen|erwartet|1 = Empfang läuft (zum Fortsetzen nach einer Unterbrechung)
-        snprintf(b, sizeof(b), "k|a|%lu|%lu|%d", (unsigned long)m.received(), (unsigned long)m.expected(), m.isUploading() ? 1 : 0);
+        // + Diagnose: freie Plätze zum Handy, Befehle empfangen, Antworten verzögert, verloren
+        snprintf(b, sizeof(b), "k|a|%lu|%lu|%d|%d|%lu|%lu|%lu", (unsigned long)m.received(), (unsigned long)m.expected(),
+                 m.isUploading() ? 1 : 0, service->toPhoneFree(), (unsigned long)statCmds, (unsigned long)statDeferred,
+                 (unsigned long)statDropped);
         replyNow(b);
     } else if (!strncmp(cmd, "mapb|", 5)) {
         if (m.beginUpload(strtoul(cmd + 5, nullptr, 10), err))
@@ -394,15 +398,20 @@ class KiraOutbox : public concurrency::OSThread
     {
         if (q.size() < 400)
             q.emplace_back(t);
+        else if (kiraModule)
+            kiraModule->statDropped++;
         setIntervalFromNow(0);
     }
 
   protected:
     int32_t runOnce() override
     {
-        // je Durchlauf 2 Antworten, dann 50 ms Pause: so kommt die Verbindung zum Handy hinterher
+        // je Durchlauf 2 Antworten, dann 50 ms Pause: so kommt die Verbindung zum Handy hinterher.
+        // Ist die Warteschlange zum Handy fast voll, warten statt Antworten wegzuwerfen.
         for (int i = 0; i < 2 && !q.empty() && kiraModule; i++) {
-            kiraModule->replyNow(q.front().c_str());
+            if (service->toPhoneFree() <= 2)
+                return 100;
+            kiraModule->sendRaw(q.front().c_str());
             q.pop_front();
         }
         return q.empty() ? INT32_MAX : 50;
@@ -419,9 +428,22 @@ void KiraModule::reply(const char *text)
 
 void KiraModule::replyNow(const char *text)
 {
-    meshtastic_MeshPacket *p = allocDataPacket();
-    if (!p)
+    // Warteschlange zum Handy (fast) voll: die Antwort nicht verlieren, sondern später senden
+    if (service->toPhoneFree() <= 2) {
+        statDeferred++;
+        reply(text);
         return;
+    }
+    sendRaw(text);
+}
+
+bool KiraModule::sendRaw(const char *text)
+{
+    meshtastic_MeshPacket *p = allocDataPacket();
+    if (!p) {
+        statDropped++;
+        return false;
+    }
     p->from = nodeDB->getNodeNum();
     p->to = nodeDB->getNodeNum();
     size_t len = strlen(text);
@@ -430,6 +452,7 @@ void KiraModule::replyNow(const char *text)
     memcpy(p->decoded.payload.bytes, text, len);
     p->decoded.payload.size = len;
     service->sendToPhone(p);
+    return true;
 }
 
 void KiraModule::sendMode()
