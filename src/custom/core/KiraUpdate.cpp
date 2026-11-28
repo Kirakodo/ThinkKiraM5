@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #include "KiraUpdate.h"
+#include "NodeDB.h"
 #include "configuration.h"
 #include "custom/features.h"
 
