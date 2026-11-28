@@ -7,7 +7,7 @@ import "./style.css";
 import { MeshDevice, Protobuf } from "@meshtastic/core";
 import { TransportWebSerial } from "@meshtastic/transport-web-serial";
 import { TransportWebBluetooth } from "@meshtastic/transport-web-bluetooth";
-import { TransportHTTP } from "@meshtastic/transport-http";
+import { openWlan, cleanHost } from "./live.js";
 import { create, toJson, fromJson, clone, toBinary } from "@bufbuild/protobuf";
 import { renderMessage, el, group, fehlerText, deFehler } from "./form.js";
 import { SECTION_LABELS } from "./labels.js";
@@ -43,29 +43,21 @@ let root;
 
 // ---------- Verbindung ----------
 
-// WLAN: Das Gerät spricht HTTPS mit eigenem Zertifikat. Die Bibliothek fragt nur alle 3 s nach neuen
-// Daten – für Antworten (z. B. beim Kartenupload) viel zu langsam, daher öfter und direkt nach jedem Senden.
+// WLAN (siehe live.js); merkt sich die Adresse und zeigt bei Bedarf den Hinweis zum Zertifikat
 async function wlanTransport(host) {
-  host = host.trim().replace(/^https?:\/\//, "").replace(/\/.*$/, "");
-  if (!host) throw deFehler("Bitte die Adresse des Geräts eingeben (steht auf dem Gerät unter Menü → WLAN & Web).");
-  state.wlanHost = host;
-  localStorage.setItem("tk-wlan-host", host);
-  let t;
+  state.wlanHost = cleanHost(host);
+  localStorage.setItem("tk-wlan-host", state.wlanHost);
   try {
-    t = await TransportHTTP.create(host, true);
-  } catch {
-    state.wlanHelp = true;
-    throw deFehler(`Das Gerät unter ${host} ist nicht erreichbar. Siehe Hinweis unten.`);
+    const t = await openWlan(state.wlanHost);
+    state.wlanHelp = false;
+    return t;
+  } catch (e) {
+    if (e.unreachable) {
+      state.wlanHelp = true;
+      throw deFehler(e.message + " Siehe Hinweis unten.");
+    }
+    throw e;
   }
-  state.wlanHelp = false;
-  if (t.interval) clearInterval(t.interval);
-  t.interval = setInterval(() => void t.safePoll(), 400);
-  const write = t.writeToRadio.bind(t);
-  t.writeToRadio = async (d) => {
-    await write(d);
-    setTimeout(() => void t.safePoll(), 30);
-  };
-  return t;
 }
 
 async function connect(kind) {
