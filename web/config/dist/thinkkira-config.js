@@ -12693,7 +12693,14 @@ async function Ih(e) {
 			q.channels[e.index] = e, J();
 		}), n.events.onNodeInfoPacket.subscribe((e) => {
 			q.nodes.set(e.num, e), J();
-		}), n.events.onMeshPacket.subscribe(pg), n.events.onWaypointPacket.subscribe((e) => {
+		}), n.events.onMeshPacket.subscribe(mg), q.diag = {
+			frames: 0,
+			packets: 0,
+			kira: 0,
+			logs: []
+		}, n.events.onFromRadio.subscribe(() => q.diag.frames++), n.events.onMeshPacket.subscribe(() => q.diag.packets++), n.events.onLogRecord.subscribe((e) => {
+			/rate|queue|full|drop|ignore|kira|error|fail/i.test(e.message ?? "") && (q.diag.logs.push(e.message), q.diag.logs.length > 15 && q.diag.logs.shift());
+		}), n.events.onWaypointPacket.subscribe((e) => {
 			q.waypoints.set(e.data.id, {
 				...e.data,
 				from: e.from
@@ -12748,9 +12755,9 @@ async function Hh(e) {
 			if (Date.now() - i > 15e3) throw th("Das Gerät nimmt keine Daten an.");
 			await new Promise((e) => setTimeout(e, 100));
 		}
-		Q("Gespeichert und ans Gerät übertragen. Es übernimmt die Einstellungen (startet ggf. neu)."), q.dirty = !1, n && (n.replaceChildren(_g("fa-check"), "Gespeichert"), n.classList.add("btn-success"));
+		Q("Gespeichert und ans Gerät übertragen. Es übernimmt die Einstellungen (startet ggf. neu)."), q.dirty = !1, n && (n.replaceChildren(vg("fa-check"), "Gespeichert"), n.classList.add("btn-success"));
 	} catch (e) {
-		console.error(e), Q("Fehler beim Speichern: " + nh(e), !0), n && n.replaceChildren(_g("fa-exclamation-triangle"), "Fehler");
+		console.error(e), Q("Fehler beim Speichern: " + nh(e), !0), n && n.replaceChildren(vg("fa-exclamation-triangle"), "Fehler");
 	} finally {
 		n && setTimeout(() => {
 			n.disabled = !1, n.classList.remove("btn-success"), n.innerHTML = r;
@@ -12881,7 +12888,7 @@ async function ng(e) {
 					case: "decoded",
 					value: {
 						payload: new TextEncoder().encode(t),
-						portnum: dg
+						portnum: fg
 					}
 				},
 				from: q.myNodeNum,
@@ -12902,7 +12909,11 @@ var rg = () => Fh?.dataset.firmware || "/_scripts/php/keylink/thinkkira/firmware
 function Y(...e) {
 	ig.push(((Date.now() - ag) / 1e3).toFixed(1) + " s  " + e.join(" ")), ig.length > 300 && ig.splice(1, 1);
 }
-async function og() {
+function og() {
+	let e = q.diag;
+	return e ? `Empfangen: ${e.frames} Datenblöcke, ${e.packets} Pakete, ${e.kira} ThinkKira-Antworten (zuletzt: ${e.lastKira ?? "–"})` + (e.logs.length ? "\nGeräte-Log:\n" + e.logs.join("\n") : "") : "keine Diagnose";
+}
+async function sg() {
 	let e = tg(4e3, "keine Quittung", (e) => typeof e == "object");
 	await ng(["mapq"]);
 	try {
@@ -12916,7 +12927,7 @@ async function og() {
 		return null;
 	}
 }
-async function sg(e, t) {
+async function cg(e, t) {
 	if (!q.device) return Q("Bitte zuerst das Gerät verbinden.", !0);
 	if (q.status !== "verbunden") return Q("Das Gerät verbindet sich noch. Bitte warten, bis oben „verbunden“ steht.", !0);
 	if (!q.kira) {
@@ -12924,7 +12935,7 @@ async function sg(e, t) {
 		for (let e = 0; e < 25 && !q.kira; e++) await new Promise((e) => setTimeout(e, 200));
 		if (!q.kira) {
 			let e = q.device.queue;
-			return q.mapLogText = `ThinkKira antwortet nicht (get). Status ${q.status}, über ${q.transportKind ?? "?"}, Warteschlange ${e?.queue?.length ?? "?"}, gesperrt ${e?.lock ?? "?"}`, $(), Q("ThinkKira im Gerät antwortet nicht. Bitte Gerät neu starten (Taste lang drücken oder USB kurz trennen), neu verbinden und 10 Sekunden warten.", !0);
+			return q.mapLogText = `ThinkKira antwortet nicht (get). Status ${q.status}, über ${q.transportKind ?? "?"}, Warteschlange ${e?.queue?.length ?? "?"}, gesperrt ${e?.lock ?? "?"}\n${og()}`, $(), Q("ThinkKira im Gerät antwortet nicht. Bitte Gerät neu starten (Taste lang drücken oder USB kurz trennen), neu verbinden und 10 Sekunden warten.", !0);
 		}
 	}
 	if (e.length < 40 || new TextDecoder().decode(e.subarray(0, 4)) !== "TKM1") return Q("Das ist keine ThinkKira-Kartendatei (.tkm).", !0);
@@ -12938,7 +12949,7 @@ async function sg(e, t) {
 	}, q.mapLogText = null, ig.length = 0, ag = Date.now(), Y("Start", t, e.length, "Byte, Gerät", q.kira?.version ?? "?", "über", q.transportKind ?? "?", "Warteschlange", q.device.queue?.queue?.length ?? "?", "gesperrt", q.device.queue?.lock ?? "?"), $();
 	let r = (e) => Math.round(e / 1024);
 	try {
-		let n = 0, i = await og();
+		let n = 0, i = await sg();
 		if (Y("Stand im Gerät:", i ? `${i.got}/${i.expected} läuft=${i.up}` : "keine Antwort"), i?.up && i.expected === e.length && i.got > 0 && i.got < e.length && q.mapResume === t) n = i.got, Y("Setze fort bei", n);
 		else for (let t = 0;; t++) {
 			let n = tg(1e4, "Das Gerät antwortet nicht auf den Kartenstart. Bitte Gerät neu starten und erneut verbinden.", (e) => e === "ready");
@@ -12965,7 +12976,7 @@ async function sg(e, t) {
 				if (Y("keine Quittung bei", n, "Versuch", a + 1), t.message !== "keine Quittung") throw t;
 				if (++a > 15) throw th(`Das Gerät quittiert seit 40 Sekunden nicht mehr (bei ${r(n)} von ${r(e.length)} KB). Gerät neu starten, neu verbinden und nochmal „Karte laden“ drücken – die Übertragung macht dann an dieser Stelle weiter.`);
 				if (a % 3 == 0) {
-					let e = await og();
+					let e = await sg();
 					if (Y("Stand im Gerät:", e ? `${e.got}/${e.expected} läuft=${e.up}` : "keine Antwort"), e && !e.up) throw th("Das Gerät hat den Kartenempfang abgebrochen. Bitte nochmal „Karte laden“ drücken.");
 					e && (n = e.got);
 				}
@@ -12985,22 +12996,22 @@ async function sg(e, t) {
 			}
 		}
 		if (!o) {
-			let t = await og();
+			let t = await sg();
 			Y("Stand nach Abschluss:", t ? `${t.got}/${t.expected} läuft=${t.up}` : "keine Antwort"), o = !!t && !t.up && t.got === e.length && t.expected === e.length;
 		}
 		if (q.mapResume = null, X("mapi"), !o) throw th("Das Gerät hat den Abschluss nicht bestätigt. Bitte prüfen, ob die Karte auf dem Gerät erscheint.");
 		Y("fertig"), Q("Karte „" + t + "“ übertragen (" + r(e.length) + " KB).");
 	} catch (e) {
-		Y("Fehler:", e.message), q.mapLogText = ig.join("\n"), Q("Karte: " + nh(e), !0);
+		Y("Fehler:", e.message), Y(og()), q.mapLogText = ig.join("\n"), Q("Karte: " + nh(e), !0);
 	} finally {
 		q.mapUp = null, $();
 	}
 }
-function cg(e) {
+function lg(e) {
 	return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="ThinkKira" xmlns="http://www.topografix.com/GPX/1/1">\n<trk><name>ThinkKira Track</name><trkseg>\n${e.map(([e, t, n]) => `    <trkpt lat="${(e * 1e-7).toFixed(7)}" lon="${(t * 1e-7).toFixed(7)}">${n ? `<time>${(/* @__PURE__ */ new Date(n * 1e3)).toISOString()}</time>` : ""}</trkpt>`).join("\n")}\n</trkseg></trk>\n</gpx>\n`;
 }
-var lg = (e) => String(e).replace(/[|\n\r]/g, " ").trim().slice(0, 19) || "WP";
-async function ug(e) {
+var ug = (e) => String(e).replace(/[|\n\r]/g, " ").trim().slice(0, 19) || "WP";
+async function dg(e) {
 	let t = B(K.Mesh.WaypointSchema, {
 		id: Math.floor(Math.random() * 0x7fffffff),
 		name: e.name.slice(0, 29),
@@ -13015,11 +13026,13 @@ async function ug(e) {
 		from: q.myNodeNum
 	});
 }
-var dg = 287, fg;
-function pg(e) {
+var fg = 287, pg;
+function mg(e) {
 	let t = e?.payloadVariant?.case === "decoded" ? e.payloadVariant.value : null;
-	if (!t || t.portnum !== dg) return;
-	let n = new TextDecoder().decode(t.payload), [r, i, a, ...o] = n.split("|");
+	if (!t || t.portnum !== fg) return;
+	let n = new TextDecoder().decode(t.payload);
+	q.diag && (q.diag.kira++, q.diag.lastKira = n.slice(0, 30));
+	let [r, i, a, ...o] = n.split("|");
 	if (r === "m") {
 		q.kira = {
 			mode: i,
@@ -13058,7 +13071,7 @@ function pg(e) {
 		if (e.startsWith("end|")) {
 			let e = (q.trackBuf ?? "").split("\n").filter(Boolean).map((e) => e.split(",").map(Number));
 			if (q.trackBuf = null, !e.length) return Q("Der Track im Gerät ist leer.", !0);
-			let t = new Blob([cg(e)], { type: "application/gpx+xml" });
+			let t = new Blob([lg(e)], { type: "application/gpx+xml" });
 			W("a", {
 				href: URL.createObjectURL(t),
 				download: "thinkkira-track.gpx"
@@ -13129,7 +13142,7 @@ function pg(e) {
 			counters: null,
 			heard: [],
 			range: []
-		}, q.kiraStats.range.unshift(e), $(), Q("Antwort von " + mg(a) + ": " + e.rssiUs + " dBm"));
+		}, q.kiraStats.range.unshift(e), $(), Q("Antwort von " + hg(a) + ": " + e.rssiUs + " dBm"));
 		return;
 	}
 	if (r === "s" && i === "end") {
@@ -13142,7 +13155,7 @@ function pg(e) {
 	}
 	if (r !== "w") return;
 	if (i === "end") {
-		clearTimeout(fg), q.wifiScanning = !1, q.wifiNets.sort((e, t) => t.rssi - e.rssi), $(), a === "-1" ? Q("Diese Firmware kann keine WLAN-Suche.", !0) : Q(q.wifiNets.length ? q.wifiNets.length + " WLAN-Netze gefunden. Bitte unten auswählen." : "Keine WLAN-Netze gefunden.");
+		clearTimeout(pg), q.wifiScanning = !1, q.wifiNets.sort((e, t) => t.rssi - e.rssi), $(), a === "-1" ? Q("Diese Firmware kann keine WLAN-Suche.", !0) : Q(q.wifiNets.length ? q.wifiNets.length + " WLAN-Netze gefunden. Bitte unten auswählen." : "Keine WLAN-Netze gefunden.");
 		return;
 	}
 	let s = o.join("|");
@@ -13155,29 +13168,29 @@ function pg(e) {
 async function X(e) {
 	if (!q.device) return !1;
 	try {
-		return await q.device.sendPacket(new TextEncoder().encode(e), dg, "self", 0, !1, !1), !0;
+		return await q.device.sendPacket(new TextEncoder().encode(e), fg, "self", 0, !1, !1), !0;
 	} catch (e) {
 		return console.error(e), !1;
 	}
 }
-function mg(e) {
+function hg(e) {
 	let t = q.nodes.get(parseInt(e, 16));
 	return t?.user?.shortName || t?.user?.longName || "!" + e;
 }
-async function hg() {
+async function gg() {
 	if (q.device && !q.wifiScanning) {
 		q.wifiScanning = !0, q.wifiNets = [], $();
 		try {
-			await q.device.sendPacket(new TextEncoder().encode("wifiscan"), dg, "self", 0, !1, !1);
+			await q.device.sendPacket(new TextEncoder().encode("wifiscan"), fg, "self", 0, !1, !1);
 		} catch (e) {
 			console.error(e);
 		}
-		clearTimeout(fg), fg = setTimeout(() => {
+		clearTimeout(pg), pg = setTimeout(() => {
 			q.wifiScanning && (q.wifiScanning = !1, $(), Q("Das Gerät antwortet nicht auf die WLAN-Suche. Bitte zuerst die neueste ThinkKira-Firmware über den Loader aufspielen.", !0));
 		}, 12e3);
 	}
 }
-function gg(e, t) {
+function _g(e, t) {
 	let n = "tk-ssid", r = "__manuell__", i = e() ?? "", a = q.wifiNets ?? [], o = W("select", {
 		id: n,
 		class: "form-select form-select-sm"
@@ -13201,18 +13214,18 @@ function gg(e, t) {
 	let c = W("button", {
 		type: "button",
 		class: "btn btn-sm btn-outline-secondary",
-		onclick: hg
-	}, q.wifiScanning ? W("span", { class: "spinner-border spinner-border-sm me-1" }) : _g("fa-search"), q.wifiScanning ? "Suche …" : "Netze suchen");
+		onclick: gg
+	}, q.wifiScanning ? W("span", { class: "spinner-border spinner-border-sm me-1" }) : vg("fa-search"), q.wifiScanning ? "Suche …" : "Netze suchen");
 	return (q.wifiScanning || !q.device) && (c.disabled = !0), {
 		input: W("div", {}, W("div", { class: "input-group input-group-sm" }, o, c), s),
 		id: n
 	};
 }
-var _g = (e) => W("i", { class: "fas " + e + " me-1" }), Z = (e, t, n = "primary", r) => W("button", {
+var vg = (e) => W("i", { class: "fas " + e + " me-1" }), Z = (e, t, n = "primary", r) => W("button", {
 	type: "button",
 	class: "btn btn-sm btn-" + n + " me-2 mt-2",
 	onclick: t
-}, r ? _g(r) : null, e), vg = (...e) => W("div", { class: "row g-3 mb-3" }, ...e.filter(Boolean).map((e) => W("div", { class: "col-lg-6" }, e))), yg = (e) => W("div", { class: "form-text mb-2" }, e), bg = [
+}, r ? vg(r) : null, e), yg = (...e) => W("div", { class: "row g-3 mb-3" }, ...e.filter(Boolean).map((e) => W("div", { class: "col-lg-6" }, e))), bg = (e) => W("div", { class: "form-text mb-2" }, e), xg = [
 	{
 		id: "device",
 		title: "Gerät",
@@ -13284,11 +13297,11 @@ var _g = (e) => W("i", { class: "fas " + e + " me-1" }), Z = (e, t, n = "primary
 		ic: "fa-cog"
 	}
 ];
-function xg() {
+function Sg() {
 	let e = q.metadata, t = q.nodes.get(q.myNodeNum), n = (e, t) => W("div", { class: "col-6 col-md-3" }, W("div", { class: "small text-muted" }, e), W("div", { class: "fw-bold" }, t));
 	return W("div", { class: "row g-2 mb-3" }, n("Name", t?.user?.longName ?? "–"), n("Knoten-Nr.", q.myNodeNum ? "!" + q.myNodeNum.toString(16).padStart(8, "0") : "–"), n("Firmware", e?.firmwareVersion ?? "–"), n("Knoten bekannt", String(q.nodes.size)));
 }
-function Sg() {
+function Cg() {
 	let e = q.nodes.get(q.myNodeNum), t = null;
 	if (e?.user) {
 		let n = Ru(K.Mesh.UserSchema, e.user);
@@ -13301,31 +13314,31 @@ function Sg() {
 		] }), Z("Name speichern", () => Hh((e) => e.setOwner(n)), "primary", "fa-save"));
 	}
 	let n = q.config.device ? G("Geräte-Einstellungen", eh(K.Config.Config_DeviceConfigSchema, q.config.device), Z("Speichern", () => Uh("device"), "primary", "fa-save")) : null;
-	return vg(t, n);
+	return yg(t, n);
 }
-function Cg(e) {
+function wg(e) {
 	let t = q.config[e];
 	if (!t) return W("div", { class: "alert alert-warning" }, "Noch nicht vom Gerät geladen.");
 	let n = K.Config.ConfigSchema.fields.find((t) => t.localName === e).message;
-	return vg(G(Vm[e] ?? e, e === "lora" ? yg("Für Deutschland: Region EU_868. Der eigene ThinkKira-Funkmodus kommt mit Firmware-Phase 2.") : null, e === "network" ? yg("„Netze suchen“ lässt das Gerät die WLAN-Netze in der Nähe suchen (dauert ein paar Sekunden).") : null, eh(n, t, e === "network" ? { custom: { wifiSsid: gg } } : {}), Z("Speichern", () => Uh(e), "primary", "fa-save")));
+	return yg(G(Vm[e] ?? e, e === "lora" ? bg("Für Deutschland: Region EU_868. Der eigene ThinkKira-Funkmodus kommt mit Firmware-Phase 2.") : null, e === "network" ? bg("„Netze suchen“ lässt das Gerät die WLAN-Netze in der Nähe suchen (dauert ein paar Sekunden).") : null, eh(n, t, e === "network" ? { custom: { wifiSsid: _g } } : {}), Z("Speichern", () => Uh(e), "primary", "fa-save")));
 }
-function wg() {
+function Tg() {
 	let e = [];
 	for (let t = 0; t < 8; t++) {
 		let n = q.channels[t];
 		n && e.push(G(`Kanal ${t}${t === 0 ? " (primär)" : ""}`, eh(K.Channel.ChannelSchema, n, { skip: ["index"] }), Z(`Kanal ${t} speichern`, () => Hh((e) => e.setChannel(n)), "primary", "fa-save")));
 	}
-	return vg(...e);
+	return yg(...e);
 }
-function Tg() {
+function Eg() {
 	let e = [];
 	for (let t of K.ModuleConfig.ModuleConfigSchema.fields) {
 		let n = q.moduleConfig[t.localName];
 		n && e.push(G(Vm[t.localName] ?? t.localName, eh(t.message, n), Z("Speichern", () => Wh(t.localName), "primary", "fa-save")));
 	}
-	return vg(...e);
+	return yg(...e);
 }
-function Eg() {
+function Dg() {
 	let e = !!q.kira;
 	e && !q.devWps && !q.wpAsked && (q.wpAsked = !0, setTimeout(() => X("wpl"), 0));
 	let t = W("input", {
@@ -13348,7 +13361,7 @@ function Eg() {
 		class: "form-check-input",
 		id: "tk-wp-mesh"
 	}), a = () => !t.value || !n.value || !r.value ? (Q("Name, Breite und Länge ausfüllen", !0), null) : {
-		name: lg(t.value),
+		name: ug(t.value),
 		lat: parseFloat(n.value),
 		lon: parseFloat(r.value)
 	}, o = q.devWps ?? [], s = o.map((e) => {
@@ -13359,7 +13372,7 @@ function Eg() {
 			maxlength: "19",
 			"aria-label": "Name"
 		});
-		t.addEventListener("change", () => X("wpr|" + e.idx + "|" + lg(t.value)));
+		t.addEventListener("change", () => X("wpr|" + e.idx + "|" + ug(t.value)));
 		let n = (e, t, n) => W("button", {
 			type: "button",
 			class: "btn btn-sm btn-outline-secondary",
@@ -13385,7 +13398,7 @@ function Eg() {
 	});
 	c.addEventListener("change", async () => {
 		let e = Jh(await c.files[0].text()), t = 64 - o.length;
-		for (let n of e.slice(0, t)) X(`wpa|${lg(n.name)}|${Math.round(n.lat * 1e7)}|${Math.round(n.lon * 1e7)}`);
+		for (let n of e.slice(0, t)) X(`wpa|${ug(n.name)}|${Math.round(n.lat * 1e7)}|${Math.round(n.lon * 1e7)}`);
 		Q(e.length > t ? `${t} von ${e.length} Wegpunkten übernommen (Gerät hat Platz für 64).` : `${e.length} Wegpunkte ins Gerät übernommen.`);
 	});
 	let l = W("input", {
@@ -13395,7 +13408,7 @@ function Eg() {
 		max: "500",
 		value: String(q.arrive ?? 20),
 		id: "tk-arrive"
-	}), u = e ? G("Wegpunkte im Gerät (" + o.length + " von 64)", q.navTarget ? W("div", { class: "alert alert-info py-1 px-2 small" }, "Aktuelles Ziel: " + q.navTarget) : null, o.length ? kg([
+	}), u = e ? G("Wegpunkte im Gerät (" + o.length + " von 64)", q.navTarget ? W("div", { class: "alert alert-info py-1 px-2 small" }, "Aktuelles Ziel: " + q.navTarget) : null, o.length ? Ag([
 		"Name",
 		"Position",
 		""
@@ -13414,10 +13427,10 @@ function Eg() {
 		for: "tk-wp-mesh"
 	}, "Auch als Meshtastic-Wegpunkt an alle senden")), e ? Z("Im Gerät speichern", async () => {
 		let e = a();
-		e && (X(`wpa|${e.name}|${Math.round(e.lat * 1e7)}|${Math.round(e.lon * 1e7)}`), i.checked && await ug(e), Q("Wegpunkt gespeichert" + (i.checked ? " und gesendet" : "")));
+		e && (X(`wpa|${e.name}|${Math.round(e.lat * 1e7)}|${Math.round(e.lon * 1e7)}`), i.checked && await dg(e), Q("Wegpunkt gespeichert" + (i.checked ? " und gesendet" : "")));
 	}, "primary", "fa-save") : null, Z("Nur an alle senden", async () => {
 		let e = a();
-		e && (await ug(e), Q("Wegpunkt gesendet"), $());
+		e && (await dg(e), Q("Wegpunkt gesendet"), $());
 	}, "outline-secondary", "fa-paper-plane")), f = e ? G("Navigation & Track", W("label", {
 		class: "form-label small mb-1",
 		for: "tk-arrive"
@@ -13425,20 +13438,20 @@ function Eg() {
 		type: "button",
 		class: "btn btn-outline-secondary",
 		onclick: () => X("arrive|" + Math.round(+l.value || 20))
-	}, "Speichern")), yg("Innerhalb dieses Abstands meldet das Gerät „Ziel erreicht“ (Ton + LED) und beendet die Navigation."), Z("Track herunterladen (GPX)", () => {
+	}, "Speichern")), bg("Innerhalb dieses Abstands meldet das Gerät „Ziel erreicht“ (Ton + LED) und beendet die Navigation."), Z("Track herunterladen (GPX)", () => {
 		q.trackBuf = "", X("trk"), Q("Track wird gelesen …");
 	}, "outline-secondary", "fa-route"), Z("Track im Gerät löschen", () => confirm("Den aufgezeichneten Track im Gerät löschen?") && X("trc"), "outline-danger", "fa-trash")) : null;
-	return W("div", {}, vg(u, d), vg(f));
+	return W("div", {}, yg(u, d), yg(f));
 }
-function Dg() {
+function Og() {
 	let e = W("textarea", {
 		rows: "6",
 		class: "form-control form-control-sm",
 		placeholder: "Eine Nachricht pro Zeile, z. B.\nOK\nBin unterwegs\nBrauche Hilfe"
 	});
-	return vg(G("Schnellantworten", yg("Erscheinen auf dem Gerät unter Nachrichten → Antworten. Eine Nachricht pro Zeile."), e, Z("Speichern", () => Hh((t) => t.setCannedMessages(B(K.CannedMessages.CannedMessageModuleConfigSchema, { messages: e.value.split("\n").map((e) => e.trim()).filter(Boolean).join("|") }))), "primary", "fa-save")));
+	return yg(G("Schnellantworten", bg("Erscheinen auf dem Gerät unter Nachrichten → Antworten. Eine Nachricht pro Zeile."), e, Z("Speichern", () => Hh((t) => t.setCannedMessages(B(K.CannedMessages.CannedMessageModuleConfigSchema, { messages: e.value.split("\n").map((e) => e.trim()).filter(Boolean).join("|") }))), "primary", "fa-save")));
 }
-function Og() {
+function kg() {
 	let e = q.kira, t;
 	if (!e) t = G("Funkmodus", W("div", { class: "alert alert-warning mb-0" }, "Keine Antwort vom ThinkKira-Modul. Bitte die neueste ThinkKira-Firmware über den Loader aufspielen."));
 	else {
@@ -13449,7 +13462,7 @@ function Og() {
 		n.append(W("option", { value: "meshtastic" }, "Meshtastic (Standard, kompatibel mit allen Meshtastic-Geräten)")), n.append(W("option", { value: "kira" }, "Kira-Funk (eigenes Netz, nur ThinkKira-Geräte)")), n.value = e.mode, t = G("Funkmodus", W("div", { class: "mb-2" }, W("label", {
 			class: "form-label small mb-1",
 			for: "tk-mode"
-		}, "Modus"), n), yg("Kira-Funk nutzt ein eigenes Sync-Word: Die Geräte hören nur noch andere ThinkKira-Geräte im Kira-Funk, nicht mehr das Meshtastic-Netz. Kanäle und Verschlüsselung bleiben gleich. Beim Wechsel startet das Gerät neu."), Z("Modus speichern", async () => {
+		}, "Modus"), n), bg("Kira-Funk nutzt ein eigenes Sync-Word: Die Geräte hören nur noch andere ThinkKira-Geräte im Kira-Funk, nicht mehr das Meshtastic-Netz. Kanäle und Verschlüsselung bleiben gleich. Beim Wechsel startet das Gerät neu."), Z("Modus speichern", async () => {
 			if (n.value === e.mode) return Q("Der Modus ist schon eingestellt.");
 			await X("mode|" + n.value) && Q("Gespeichert. Das Gerät startet neu – danach bitte neu verbinden.");
 		}, "primary", "fa-save"), W("div", { class: "small text-muted mt-2" }, "ThinkKira " + e.version));
@@ -13459,26 +13472,26 @@ function Og() {
 		let e = n.counters, t = (e, t) => W("div", { class: "col-6 col-md-4" }, W("div", { class: "small text-muted" }, e), W("div", { class: "fw-bold" }, String(t)));
 		r.push(W("div", { class: "row g-2 mb-3" }, t("Empfangen", e.rxGood), t("Empfangsfehler", e.rxBad), t("Gesendet", e.tx), t("Weitergeleitet", e.relay), t("Pings", e.pings), t("Antworten", e.pongs)));
 	}
-	n?.heard?.length && (r.push(W("div", { class: "fw-bold small mb-1" }, "Zuletzt gehört")), r.push(kg([
+	n?.heard?.length && (r.push(W("div", { class: "fw-bold small mb-1" }, "Zuletzt gehört")), r.push(Ag([
 		"Knoten",
 		"RSSI",
 		"SNR",
 		"vor"
 	], n.heard.map((e) => [
-		mg(e.from),
+		hg(e.from),
 		e.rssi + " dBm",
 		e.snr.toFixed(1) + " dB",
 		e.ago + " s"
-	])))), n || r.push(yg("Noch keine Werte geladen."));
-	let i = G("Funk-Statistik", ...r, Z("Aktualisieren", () => X("stats"), "outline-secondary", "fa-sync")), a = [yg("Sendet einen Ping an alle direkt erreichbaren ThinkKira-Geräte (ohne Weiterleitung). Jede Antwort zeigt, wie gut beide Seiten sich hören.")];
-	n?.range?.length && a.push(kg([
+	])))), n || r.push(bg("Noch keine Werte geladen."));
+	let i = G("Funk-Statistik", ...r, Z("Aktualisieren", () => X("stats"), "outline-secondary", "fa-sync")), a = [bg("Sendet einen Ping an alle direkt erreichbaren ThinkKira-Geräte (ohne Weiterleitung). Jede Antwort zeigt, wie gut beide Seiten sich hören.")];
+	n?.range?.length && a.push(Ag([
 		"#",
 		"Gerät",
 		"dort gehört",
 		"hier gehört"
 	], n.range.map((e) => [
 		String(e.seq),
-		mg(e.from),
+		hg(e.from),
 		e.rssiThem + " dBm / " + e.snrThem.toFixed(1) + " dB",
 		e.rssiUs + " dBm / " + e.snrUs.toFixed(1) + " dB"
 	])));
@@ -13492,7 +13505,7 @@ function Og() {
 	], c = W("ul", { class: "list-group list-group-flush" });
 	for (let [e, t] of s) c.append(W("li", { class: "list-group-item px-0 d-flex justify-content-between align-items-center gap-2" }, e, W("span", { class: "badge text-bg-secondary" }, `ab Phase ${t}`)));
 	q.device && e && !n && !q.kiraStatsAsked && (q.kiraStatsAsked = !0, setTimeout(() => X("stats"), 0));
-	let l = q.ui, u = G("Design der Oberfläche", yg("Das Design erstellst du im ThinkKira Designer (geht auch ohne Gerät) und exportierst es als Datei. Hier überträgst du die Datei aufs Gerät. Das Gerät übernimmt sie sofort."), l ? W("div", { class: "small mb-1" }, W("div", {}, "Seiten: " + [...l.order].filter((e) => l.pages & 1 << e).map((e) => [
+	let l = q.ui, u = G("Design der Oberfläche", bg("Das Design erstellst du im ThinkKira Designer (geht auch ohne Gerät) und exportierst es als Datei. Hier überträgst du die Datei aufs Gerät. Das Gerät übernimmt sie sofort."), l ? W("div", { class: "small mb-1" }, W("div", {}, "Seiten: " + [...l.order].filter((e) => l.pages & 1 << e).map((e) => [
 		"Start",
 		"Nachrichten",
 		"Navigation",
@@ -13538,37 +13551,37 @@ function Og() {
 			Q("Lade Karte „" + e.title + "“ …");
 			let t = await fetch(rg() + "?map=" + encodeURIComponent(e.name));
 			if (!t.ok) throw th("Karte nicht erreichbar (" + t.status + ").");
-			await sg(new Uint8Array(await t.arrayBuffer()), e.title);
+			await cg(new Uint8Array(await t.arrayBuffer()), e.title);
 		} catch (e) {
 			Q(nh(e), !0);
 		}
 	}, "primary", "fa-map"), Z("Kartendatei wählen …", async () => {
 		let e = await Nh(".tkm");
-		e && await sg(new Uint8Array(await e.arrayBuffer()), e.name);
-	}, "outline-secondary", "fa-folder-open"), d ? Z("Karte löschen", () => confirm("Die Offline-Karte im Gerät löschen?") && X("mapx"), "outline-danger", "fa-trash") : null, q.mapLogText ? Z("Fehlerprotokoll kopieren", () => navigator.clipboard.writeText(q.mapLogText).then(() => Q("Protokoll kopiert – bitte an Sven/Claude schicken.")), "outline-secondary", "fa-clipboard") : null), yg("Übertragung per USB dauert einige Minuten. Detailkarten zeigen auch Wege und Pfade, die groben Karten nur Hauptstraßen, Flüsse und Orte. Kartendaten © OpenStreetMap-Mitwirkende (ODbL)."));
-	return W("div", {}, vg(t, i), vg(o, u), vg(ee, G("Kommt noch", c)));
+		e && await cg(new Uint8Array(await e.arrayBuffer()), e.name);
+	}, "outline-secondary", "fa-folder-open"), d ? Z("Karte löschen", () => confirm("Die Offline-Karte im Gerät löschen?") && X("mapx"), "outline-danger", "fa-trash") : null, q.mapLogText ? Z("Fehlerprotokoll kopieren", () => navigator.clipboard.writeText(q.mapLogText).then(() => Q("Protokoll kopiert – bitte an Sven/Claude schicken.")), "outline-secondary", "fa-clipboard") : null), bg("Übertragung per USB dauert einige Minuten. Detailkarten zeigen auch Wege und Pfade, die groben Karten nur Hauptstraßen, Flüsse und Orte. Kartendaten © OpenStreetMap-Mitwirkende (ODbL)."));
+	return W("div", {}, yg(t, i), yg(o, u), yg(ee, G("Kommt noch", c)));
 }
-function kg(e, t) {
+function Ag(e, t) {
 	return W("div", { class: "table-responsive" }, W("table", { class: "table table-sm table-striped mb-2" }, W("thead", {}, W("tr", {}, ...e.map((e) => W("th", {}, e)))), W("tbody", {}, ...t.map((e) => W("tr", {}, ...e.map((e) => W("td", {}, e)))))));
 }
-function Ag() {
+function jg() {
 	let e = W("input", {
 		type: "file",
 		class: "form-control form-control-sm",
 		accept: "application/json,.json"
 	});
-	return e.addEventListener("change", () => qh(e.files[0])), vg(G("Sicherung", yg("Alle Einstellungen, Kanäle und den Namen als Datei sichern oder zurückspielen."), Z("Alle Einstellungen sichern", Kh, "primary", "fa-download"), W("div", { class: "mt-3" }, W("label", { class: "form-label small mb-1" }, "Sicherung wiederherstellen"), e)), G("Gerät", Z("Neustart", () => q.device?.reboot(2), "outline-secondary", "fa-redo"), Z("Werkseinstellungen", () => {
+	return e.addEventListener("change", () => qh(e.files[0])), yg(G("Sicherung", bg("Alle Einstellungen, Kanäle und den Namen als Datei sichern oder zurückspielen."), Z("Alle Einstellungen sichern", Kh, "primary", "fa-download"), W("div", { class: "mt-3" }, W("label", { class: "form-label small mb-1" }, "Sicherung wiederherstellen"), e)), G("Gerät", Z("Neustart", () => q.device?.reboot(2), "outline-secondary", "fa-redo"), Z("Werkseinstellungen", () => {
 		confirm("Alle Einstellungen auf Werkseinstellungen zurücksetzen?") && q.device?.factoryResetConfig();
 	}, "outline-danger", "fa-exclamation-triangle")));
 }
-function jg() {
+function Mg() {
 	let e = q.page;
-	return e === "device" ? Sg() : e === "channels" ? wg() : e.startsWith("cfg:") ? Cg(e.slice(4)) : e === "modules" ? Tg() : e === "waypoints" ? Eg() : e === "canned" ? Dg() : e === "thinkkira" ? Og() : Ag();
+	return e === "device" ? Cg() : e === "channels" ? Tg() : e.startsWith("cfg:") ? wg(e.slice(4)) : e === "modules" ? Eg() : e === "waypoints" ? Dg() : e === "canned" ? Og() : e === "thinkkira" ? kg() : jg();
 }
-var Mg;
+var Ng;
 function Q(e, t = !1) {
 	let n = Fh.querySelector(".tk-msg");
-	n && (n.replaceChildren(W("div", { class: "alert shadow py-2 mb-0 " + (t ? "alert-danger" : "alert-success") }, e)), clearTimeout(Mg), Mg = setTimeout(() => n.replaceChildren(), 5e3));
+	n && (n.replaceChildren(W("div", { class: "alert shadow py-2 mb-0 " + (t ? "alert-danger" : "alert-success") }, e)), clearTimeout(Ng), Ng = setTimeout(() => n.replaceChildren(), 5e3));
 }
 function $() {
 	if (!Fh) return;
@@ -13577,37 +13590,37 @@ function $() {
 		class: "btn btn-primary",
 		disabled: t ? null : "",
 		onclick: () => Ih("serial")
-	}, _g("fa-plug"), "Per USB verbinden"), e ? null : W("button", {
+	}, vg("fa-plug"), "Per USB verbinden"), e ? null : W("button", {
 		type: "button",
 		class: "btn btn-primary",
 		disabled: n ? null : "",
 		onclick: () => Ih("ble")
-	}, _g("fa-plug"), "Per Bluetooth verbinden"), e ? W("button", {
+	}, vg("fa-plug"), "Per Bluetooth verbinden"), e ? W("button", {
 		type: "button",
 		class: "btn btn-outline-secondary",
 		onclick: zh
-	}, _g("fa-times"), "Trennen") : null, W("span", { class: "badge " + (r ? "text-bg-success" : "text-bg-secondary") }, e ? q.status : q.status === "getrennt" ? "nicht verbunden" : q.status)), Fh.querySelector(".tk-msg") ?? W("div", {
+	}, vg("fa-times"), "Trennen") : null, W("span", { class: "badge " + (r ? "text-bg-success" : "text-bg-secondary") }, e ? q.status : q.status === "getrennt" ? "nicht verbunden" : q.status)), Fh.querySelector(".tk-msg") ?? W("div", {
 		class: "tk-msg position-fixed bottom-0 end-0 p-3 z-3",
 		role: "status",
 		"aria-live": "polite"
 	})];
 	if (!t && !n && i.push(W("div", { class: "alert alert-warning" }, "Dein Browser kann nicht auf USB oder Bluetooth zugreifen. Bitte Chrome oder Edge am Computer verwenden.")), !e) i.push(W("p", { class: "text-muted" }, "Gerät per USB-Kabel oder Bluetooth verbinden. Danach lassen sich alle Einstellungen ändern."));
 	else {
-		i.push(xg());
+		i.push(Sg());
 		let e = W("ul", { class: "nav nav-pills flex-wrap gap-1 mb-3" });
-		for (let t of bg) e.append(W("li", { class: "nav-item" }, W("button", {
+		for (let t of xg) e.append(W("li", { class: "nav-item" }, W("button", {
 			type: "button",
 			class: "nav-link py-1 px-2" + (q.page === t.id ? " active" : ""),
 			onclick: () => {
 				q.page = t.id, $();
 			}
-		}, _g(t.ic), t.title)));
-		i.push(e, jg());
+		}, vg(t.ic), t.title)));
+		i.push(e, Mg());
 	}
 	Fh.replaceChildren(...i.filter(Boolean));
 }
-function Ng(e = "#tk-config") {
+function Pg(e = "#tk-config") {
 	Fh = typeof e == "string" ? document.querySelector(e) : e, Fh && $();
 }
-typeof document < "u" && (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => Ng()) : Ng());
-export { Ng as mount };
+typeof document < "u" && (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => Pg()) : Pg());
+export { Pg as mount };

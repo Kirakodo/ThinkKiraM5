@@ -100,6 +100,16 @@ async function connect(kind) {
       renderSoon();
     });
     device.events.onMeshPacket.subscribe(onKiraPacket);
+    // Diagnose fürs Fehlerprotokoll: was kommt überhaupt vom Gerät an?
+    state.diag = { frames: 0, packets: 0, kira: 0, logs: [] };
+    device.events.onFromRadio.subscribe(() => state.diag.frames++);
+    device.events.onMeshPacket.subscribe(() => state.diag.packets++);
+    device.events.onLogRecord.subscribe((r) => {
+      if (/rate|queue|full|drop|ignore|kira|error|fail/i.test(r.message ?? "")) {
+        state.diag.logs.push(r.message);
+        if (state.diag.logs.length > 15) state.diag.logs.shift();
+      }
+    });
     device.events.onWaypointPacket.subscribe((w) => {
       state.waypoints.set(w.data.id, { ...w.data, from: w.from });
       renderSoon();
@@ -381,6 +391,12 @@ function mlog(...t) {
   if (mapLog.length > 300) mapLog.splice(1, 1);
 }
 
+function diagText() {
+  const g = state.diag;
+  if (!g) return "keine Diagnose";
+  return `Empfangen: ${g.frames} Datenblöcke, ${g.packets} Pakete, ${g.kira} ThinkKira-Antworten (zuletzt: ${g.lastKira ?? "–"})` + (g.logs.length ? "\nGeräte-Log:\n" + g.logs.join("\n") : "");
+}
+
 // Stand im Gerät abfragen: { got, expected, up } oder null
 async function mapQuery() {
   const w = waitDevice(4000, "keine Quittung", (r) => typeof r === "object");
@@ -402,7 +418,7 @@ async function uploadMap(bytes, label) {
     for (let i = 0; i < 25 && !state.kira; i++) await new Promise((r) => setTimeout(r, 200));
     if (!state.kira) {
       const q = state.device.queue;
-      state.mapLogText = `ThinkKira antwortet nicht (get). Status ${state.status}, über ${state.transportKind ?? "?"}, Warteschlange ${q?.queue?.length ?? "?"}, gesperrt ${q?.lock ?? "?"}`;
+      state.mapLogText = `ThinkKira antwortet nicht (get). Status ${state.status}, über ${state.transportKind ?? "?"}, Warteschlange ${q?.queue?.length ?? "?"}, gesperrt ${q?.lock ?? "?"}\n${diagText()}`;
       render();
       return toast("ThinkKira im Gerät antwortet nicht. Bitte Gerät neu starten (Taste lang drücken oder USB kurz trennen), neu verbinden und 10 Sekunden warten.", true);
     }
@@ -507,6 +523,7 @@ async function uploadMap(bytes, label) {
     toast("Karte „" + label + "“ übertragen (" + kb(bytes.length) + " KB).");
   } catch (e) {
     mlog("Fehler:", e.message);
+    mlog(diagText());
     state.mapLogText = mapLog.join("\n");
     toast("Karte: " + fehlerText(e), true);
   } finally {
@@ -547,6 +564,10 @@ function onKiraPacket(p) {
   const d = p?.payloadVariant?.case === "decoded" ? p.payloadVariant.value : null;
   if (!d || d.portnum !== KIRA_PORT) return;
   const text = new TextDecoder().decode(d.payload);
+  if (state.diag) {
+    state.diag.kira++;
+    state.diag.lastKira = text.slice(0, 30);
+  }
   const [kind, a, b, ...rest] = text.split("|");
   if (kind === "m") {
     state.kira = { mode: a, version: b };
