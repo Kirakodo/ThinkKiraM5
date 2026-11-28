@@ -10,6 +10,7 @@ import { TransportWebBluetooth } from "@meshtastic/transport-web-bluetooth";
 import { create, toJson, fromJson, clone } from "@bufbuild/protobuf";
 import { renderMessage, el, group, fehlerText } from "./form.js";
 import { SECTION_LABELS } from "./labels.js";
+import { pageDesigner, parseUi } from "./designer.js";
 
 const P = Protobuf;
 const STATUS_CONFIGURED = 7;
@@ -52,11 +53,14 @@ async function connect(kind) {
     state.kiraStats = null;
     state.kiraStatsAsked = false;
     state.wifiNets = null;
+    state.ui = state.uiDraft = null;
+    state.uiPreview = 0;
 
     device.events.onDeviceStatus.subscribe((s) => {
       if (s === STATUS_CONFIGURED) {
         setStatus("verbunden");
         kiraSend("get");
+        kiraSend("ui");
       }
       else if (s === 2 && state.device === device && !state.closing) {
         // Gerät weg (Kabel gezogen, Neustart, Bluetooth aus): aufräumen
@@ -122,6 +126,7 @@ function resetConnection(status) {
   state.kiraStats = null;
   state.wifiNets = null;
   state.wifiScanning = false;
+  state.ui = state.uiDraft = null;
   setStatus(status);
 }
 
@@ -255,6 +260,12 @@ function onKiraPacket(p) {
   const [kind, a, b, ...rest] = text.split("|");
   if (kind === "m") {
     state.kira = { mode: a, version: b };
+    renderSoon();
+    return;
+  }
+  if (kind === "u") {
+    state.ui = parseUi([a, b, ...rest]);
+    if (!state.dirty) state.uiDraft = null; // neu vom Gerät übernehmen
     renderSoon();
     return;
   }
@@ -398,6 +409,7 @@ const PAGES = [
   { id: "waypoints", title: "Wegpunkte", ic: "fa-flag" },
   { id: "canned", title: "Schnellantworten", ic: "fa-reply" },
   { id: "thinkkira", title: "ThinkKira", ic: "fa-star" },
+  { id: "designer", title: "Designer", ic: "fa-paint-brush" },
   { id: "system", title: "System", ic: "fa-cog" },
 ];
 
@@ -700,6 +712,7 @@ function pageContent() {
   if (p === "waypoints") return pageWaypoints();
   if (p === "canned") return pageCanned();
   if (p === "thinkkira") return pageThinkKira();
+  if (p === "designer") return pageDesigner({ state, render, kiraSend, toast, btn, hint });
   return pageSystem();
 }
 
