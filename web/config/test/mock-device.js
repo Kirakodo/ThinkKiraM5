@@ -77,12 +77,24 @@ class FakePort {
         const f = cmd.split("|");
         this.ui = "u|" + f[1] + "|" + f[2] + "|" + f[3] + "|" + f.slice(4).join("|");
       }
+      this.wps ??= [{ name: "Haus", lat: 523906000, lon: 130645000 }];
+      const f = cmd.split("|");
+      if (f[0] === "wpa") this.wps.push({ name: f[1], lat: +f[2], lon: +f[3] });
+      if (f[0] === "wpr") this.wps[+f[1]].name = f[2];
+      if (f[0] === "wpd") this.wps.splice(+f[1], 1);
+      if (f[0] === "wpg") this.target = this.wps[+f[1]].name;
+      const wpl = () => [...this.wps.map((w, i) => `p|${i}|${w.name}|${w.lat}|${w.lon}|0`), `p|end|${this.wps.length}|20|${this.target ?? ""}`];
+      if (["wpa", "wpr", "wpd", "wpg", "wps", "wpl"].includes(f[0])) {
+        wpl().forEach((t) => this.send(kiraPacket(t)));
+        return;
+      }
       if (cmd === "mb") this.menuUp = "";
       if (cmd.startsWith("ml|")) this.menuUp += cmd.slice(3);
       if (cmd === "me") this.menu = this.menuUp;
       const replies = {
         mg: ["M|" + (this.menu ?? "P5\nIsys.info|Info\n"), "M|end"],
         me: ["M|ok"],
+        trk: ["t|523906000,130645000,1764300000\n523910000,130650000,1764300010\n", "t|end|2"],
         ui: [this.ui ?? "u|012345|63|cbgsknm|OK;Ja;Nein;Bin unterwegs"],
         wifiscan: ["w|-55|0|Heimnetz", "w|-78|1|Cafe Gast", "w|end|2"],
         get: ["m|meshtastic|0.2.1"],

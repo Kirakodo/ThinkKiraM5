@@ -24,10 +24,13 @@ var r = {
 	"msg.new": ["Neue Nachricht an alle", "msg.new"],
 	"msg.chats": ["Alle Chats anzeigen", "msg.chats"],
 	"msg.clear": ["Nachrichten löschen", "msg.clear"],
-	"nav.goto": ["Navigieren zu … (Phase 4)", "nav.goto"],
-	"nav.wpsave": ["Wegpunkt speichern (Phase 4)", "nav.wpsave"],
-	"nav.track": ["Track Start/Stopp (Phase 4)", "nav.track"],
-	"map.offline": ["Offline-Karte (Phase 4)", "map.offline"],
+	"nav.goto": ["Navigieren zu … (Wegpunkt/Knoten)", "nav.goto"],
+	"nav.wpsave": ["Wegpunkt hier speichern", "nav.wpsave"],
+	"wp.manage": ["Wegpunkte verwalten", "wp.manage"],
+	"nav.stop": ["Navigation beenden", "nav.stop"],
+	"nav.track": ["Track starten/stoppen", "Track starten"],
+	"track.clear": ["Track löschen", "track.clear"],
+	"map.offline": ["Offline-Karte (kommt bald)", "map.offline"],
 	"nodes.list": ["Knotenliste (mit Knoten-Menü)", "nodes.list"],
 	ping: ["Reichweitentest (Ping)", "ping"],
 	"radio.mode": ["Funkmodus wechseln", "Zu Kira-Funk wechseln"],
@@ -40,7 +43,7 @@ var r = {
 	"sys.off": ["Ausschalten", "sys.off"],
 	home: ["Zur Startseite", "Zur Startseite"],
 	sos: ["SOS auslösen", "SOS auslösen"]
-}, i = "P0\nIpos.send|Position senden\nIlight.toggle|\nIsound.toggle|\nIscreen.off|Bildschirm aus\nP1\nImsg.reply|Antworten\nImsg.new|Neue Nachricht (alle)\nImsg.chats|Alle Chats\nImsg.clear|Löschen\nP2\nIpos.send|Position senden\nInav.goto|Navigieren zu …\nInav.wpsave|Wegpunkt speichern\nInav.track|Track Start/Stopp\nP3\nImap.offline|Offline-Karte\nP4\nInodes.list|Knoten wählen …\nIping|Reichweitentest (Ping)\nP5\nSFunk\nIradio.mode|\nIradio.stats|Statistik\nIping|Reichweitentest (Ping)\nE\nSAnzeige & Töne\nIlight.cycle|\nIleds.toggle|\nIsound.toggle|\nIpages|Seiten ein/aus\nE\nSVerbindungen\nIbt.toggle|\nIwifi|WLAN & Web\nE\nSSystem\nIsys.info|Info\nIsys.reboot|Neustart\nIsys.off|Ausschalten\nE\n";
+}, i = "P0\nIpos.send|Position senden\nIlight.toggle|\nIsound.toggle|\nIscreen.off|Bildschirm aus\nP1\nImsg.reply|Antworten\nImsg.new|Neue Nachricht (alle)\nImsg.chats|Alle Chats\nImsg.clear|Löschen\nP2\nInav.goto|Navigieren zu …\nInav.wpsave|Wegpunkt hier speichern\nIwp.manage|Wegpunkte verwalten\nInav.stop|Navigation beenden\nInav.track|\nIpos.send|Position senden\nP3\nImap.offline|Offline-Karte\nP4\nInodes.list|Knoten wählen …\nIping|Reichweitentest (Ping)\nP5\nSFunk\nIradio.mode|\nIradio.stats|Statistik\nIping|Reichweitentest (Ping)\nE\nSAnzeige & Töne\nIlight.cycle|\nIleds.toggle|\nIsound.toggle|\nIpages|Seiten ein/aus\nE\nSVerbindungen\nIbt.toggle|\nIwifi|WLAN & Web\nE\nSSystem\nIsys.info|Info\nIsys.reboot|Neustart\nIsys.off|Ausschalten\nE\n";
 function a(e) {
 	let t = [
 		[],
@@ -119,6 +122,7 @@ var m = [
 ], h = [0, 5], g = {
 	c: "Uhr (groß)",
 	b: "Akku",
+	t: "Ziel und Entfernung",
 	g: "GPS-Status",
 	s: "Letztes Signal",
 	k: "Knoten online",
@@ -126,6 +130,7 @@ var m = [
 	m: "Funkmodus",
 	p: "Position (Koordinaten)"
 }, _ = {
+	t: "→ WP03 1,2 km",
 	b: "Akku 87%",
 	g: "GPS: Fix, 9 Sat.",
 	s: "Signal: -92 dBm (vor 2m)",
@@ -136,7 +141,7 @@ var m = [
 }, v = 169, y = {
 	order: "012345",
 	pages: 63,
-	start: "cbgsknm",
+	start: "cbtgsknm",
 	replies: [
 		"OK",
 		"Ja",

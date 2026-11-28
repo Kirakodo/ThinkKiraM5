@@ -56,6 +56,8 @@ async function connect(kind) {
     state.wifiNets = null;
     state.ui = null;
     state.menuText = state.menuBuf = null;
+    state.devWps = state.wpBuf = null;
+    state.wpAsked = false;
 
     device.events.onDeviceStatus.subscribe((s) => {
       if (s === STATUS_CONFIGURED) {
@@ -237,6 +239,15 @@ function toGpx(list) {
   return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="ThinkKira" xmlns="http://www.topografix.com/GPX/1/1">\n${wpts}\n</gpx>\n`;
 }
 
+function trackGpx(pts) {
+  const seg = pts
+    .map(([la, lo, t]) => `    <trkpt lat="${(la * 1e-7).toFixed(7)}" lon="${(lo * 1e-7).toFixed(7)}">${t ? `<time>${new Date(t * 1000).toISOString()}</time>` : ""}</trkpt>`)
+    .join("\n");
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="ThinkKira" xmlns="http://www.topografix.com/GPX/1/1">\n<trk><name>ThinkKira Track</name><trkseg>\n${seg}\n</trkseg></trk>\n</gpx>\n`;
+}
+
+const wpName = (n) => String(n).replace(/[|\n\r]/g, " ").trim().slice(0, 19) || "WP";
+
 async function sendWaypoint(w) {
   const wp = create(P.Mesh.WaypointSchema, {
     id: Math.floor(Math.random() * 0x7fffffff),
@@ -264,6 +275,37 @@ function onKiraPacket(p) {
   if (kind === "m") {
     state.kira = { mode: a, version: b };
     renderSoon();
+    return;
+  }
+  if (kind === "p") {
+    if (a === "end") {
+      state.devWps = state.wpBuf ?? [];
+      state.wpBuf = null;
+      state.arrive = +rest[0] || 20;
+      state.navTarget = rest[1] ?? "";
+      renderSoon();
+    } else (state.wpBuf ??= []).push({ idx: +a, name: b, lat: +rest[0] * 1e-7, lon: +rest[1] * 1e-7, time: +rest[2] });
+    return;
+  }
+  if (kind === "t") {
+    const chunk = text.slice(2);
+    if (chunk === "cleared") {
+      toast("Track im Gerät gelöscht.");
+      return;
+    }
+    if (chunk.startsWith("end|")) {
+      const pts = (state.trackBuf ?? "")
+        .split("\n")
+        .filter(Boolean)
+        .map((l) => l.split(",").map(Number));
+      state.trackBuf = null;
+      if (!pts.length) return toast("Der Track im Gerät ist leer.", true);
+      const blob = new Blob([trackGpx(pts)], { type: "application/gpx+xml" });
+      el("a", { href: URL.createObjectURL(blob), download: "thinkkira-track.gpx" }).click();
+      toast(pts.length + " Track-Punkte heruntergeladen.");
+      return;
+    }
+    state.trackBuf = (state.trackBuf ?? "") + chunk;
     return;
   }
   if (kind === "M") {
@@ -501,55 +543,128 @@ function pageModules() {
 }
 
 function pageWaypoints() {
-  const name = el("input", { type: "text", class: "form-control form-control-sm", placeholder: "Name", maxlength: "29" });
+  const kiraOk = !!state.kira;
+  if (kiraOk && !state.devWps && !state.wpAsked) {
+    state.wpAsked = true;
+    setTimeout(() => kiraSend("wpl"), 0);
+  }
+  const name = el("input", { type: "text", class: "form-control form-control-sm", placeholder: "Name", maxlength: "19" });
   const lat = el("input", { type: "number", class: "form-control form-control-sm", step: "any", placeholder: "Breite, z. B. 52.3906" });
   const lon = el("input", { type: "number", class: "form-control form-control-sm", step: "any", placeholder: "Länge, z. B. 13.0645" });
+  const toMesh = el("input", { type: "checkbox", class: "form-check-input", id: "tk-wp-mesh" });
+  const read = () => {
+    if (!name.value || !lat.value || !lon.value) {
+      toast("Name, Breite und Länge ausfüllen", true);
+      return null;
+    }
+    return { name: wpName(name.value), lat: parseFloat(lat.value), lon: parseFloat(lon.value) };
+  };
+
+  // Wegpunkte im Gerät
+  const list = state.devWps ?? [];
+  const rows = list.map((w) => {
+    const inp = el("input", { type: "text", class: "form-control form-control-sm", value: w.name, maxlength: "19", "aria-label": "Name" });
+    inp.addEventListener("change", () => kiraSend("wpr|" + w.idx + "|" + wpName(inp.value)));
+    const act = (ic, title, cmd) => el("button", { type: "button", class: "btn btn-sm btn-outline-secondary", title, "aria-label": title, onclick: () => kiraSend(cmd) }, el("i", { class: "fas " + ic }));
+    return [
+      inp,
+      `${w.lat.toFixed(5)}, ${w.lon.toFixed(5)}`,
+      el(
+        "div",
+        { class: "btn-group btn-group-sm" },
+        act("fa-location-arrow", "Als Ziel", "wpg|" + w.idx),
+        act("fa-paper-plane", "Ins Mesh senden", "wps|" + w.idx),
+        el(
+          "button",
+          {
+            type: "button",
+            class: "btn btn-sm btn-outline-danger",
+            title: "Löschen",
+            "aria-label": "Löschen",
+            onclick: () => confirm("Wegpunkt „" + w.name + "“ löschen?") && kiraSend("wpd|" + w.idx),
+          },
+          el("i", { class: "fas fa-trash" }),
+        ),
+      ),
+    ];
+  });
   const gpxIn = el("input", { type: "file", class: "form-control form-control-sm", accept: ".gpx,application/gpx+xml" });
   gpxIn.addEventListener("change", async () => {
-    const list = parseGpx(await gpxIn.files[0].text());
-    for (const w of list) await sendWaypoint(w);
-    toast(`${list.length} Wegpunkte gesendet`);
-    render();
+    const wl = parseGpx(await gpxIn.files[0].text());
+    const room = 64 - list.length;
+    for (const w of wl.slice(0, room)) kiraSend(`wpa|${wpName(w.name)}|${Math.round(w.lat * 1e7)}|${Math.round(w.lon * 1e7)}`);
+    toast(wl.length > room ? `${room} von ${wl.length} Wegpunkten übernommen (Gerät hat Platz für 64).` : `${wl.length} Wegpunkte ins Gerät übernommen.`);
   });
-  const ul = el("ul", { class: "list-group list-group-flush" });
-  for (const w of state.waypoints.values())
-    ul.append(el("li", { class: "list-group-item px-0" }, `${w.name} – ${(w.latitudeI * 1e-7).toFixed(5)}, ${(w.longitudeI * 1e-7).toFixed(5)}`));
-  if (!state.waypoints.size) ul.append(el("li", { class: "list-group-item px-0 text-muted" }, "Noch keine Wegpunkte in dieser Sitzung."));
+  const arrive = el("input", { type: "number", class: "form-control form-control-sm", min: "5", max: "500", value: String(state.arrive ?? 20), id: "tk-arrive" });
 
-  return grid(
-    group(
-      "Wegpunkt senden",
-      hint("Wird als Meshtastic-Wegpunkt an alle gesendet. Liste und Navigation im Gerät kommen mit Firmware-Phase 4."),
-      el("div", { class: "mb-2" }, el("label", { class: "form-label small mb-1" }, "Name"), name),
-      el("div", { class: "row g-2" }, el("div", { class: "col-6" }, lat), el("div", { class: "col-6" }, lon)),
-      btn(
-        "Wegpunkt senden",
-        async () => {
-          if (!name.value || !lat.value || !lon.value) return toast("Name, Breite und Länge ausfüllen", true);
-          await sendWaypoint({ name: name.value, lat: parseFloat(lat.value), lon: parseFloat(lon.value) });
-          toast("Wegpunkt gesendet");
-          render();
-        },
-        "primary",
-        "fa-paper-plane",
-      ),
-    ),
-    group(
-      "GPX",
-      el("div", { class: "mb-2" }, el("label", { class: "form-label small mb-1" }, "GPX-Datei importieren und senden"), gpxIn),
-      btn(
-        "GPX exportieren",
-        () => {
-          const blob = new Blob([toGpx([...state.waypoints.values()])], { type: "application/gpx+xml" });
-          el("a", { href: URL.createObjectURL(blob), download: "thinkkira-wegpunkte.gpx" }).click();
-        },
-        "outline-secondary",
-        "fa-file-export",
-      ),
-      el("div", { class: "mt-3 small fw-bold" }, "Bekannte Wegpunkte"),
-      ul,
+  const deviceBox = kiraOk
+    ? group(
+        "Wegpunkte im Gerät (" + list.length + " von 64)",
+        state.navTarget ? el("div", { class: "alert alert-info py-1 px-2 small" }, "Aktuelles Ziel: " + state.navTarget) : null,
+        list.length ? table(["Name", "Position", ""], rows) : el("p", { class: "text-muted small" }, state.devWps ? "Noch keine Wegpunkte im Gerät." : "Lese Wegpunkte …"),
+        el("div", { class: "mb-2" }, el("label", { class: "form-label small mb-1" }, "GPX-Datei ins Gerät übernehmen"), gpxIn),
+        btn(
+          "Als GPX exportieren",
+          () => {
+            const blob = new Blob([toGpx(list.map((w) => ({ name: w.name, latitudeI: w.lat * 1e7, longitudeI: w.lon * 1e7 })))], { type: "application/gpx+xml" });
+            el("a", { href: URL.createObjectURL(blob), download: "thinkkira-wegpunkte.gpx" }).click();
+          },
+          "outline-secondary",
+          "fa-file-export",
+        ),
+        btn("Neu laden", () => kiraSend("wpl"), "outline-secondary", "fa-sync"),
+      )
+    : group("Wegpunkte im Gerät", el("div", { class: "alert alert-warning mb-0" }, "Braucht ThinkKira 0.4.0 oder neuer – bitte über den Loader aktualisieren."));
+
+  const addBox = group(
+    "Wegpunkt anlegen",
+    el("div", { class: "mb-2" }, el("label", { class: "form-label small mb-1" }, "Name"), name),
+    el("div", { class: "row g-2 mb-2" }, el("div", { class: "col-6" }, lat), el("div", { class: "col-6" }, lon)),
+    el("div", { class: "form-check mb-1" }, toMesh, el("label", { class: "form-check-label small", for: "tk-wp-mesh" }, "Auch als Meshtastic-Wegpunkt an alle senden")),
+    kiraOk
+      ? btn(
+          "Im Gerät speichern",
+          async () => {
+            const w = read();
+            if (!w) return;
+            kiraSend(`wpa|${w.name}|${Math.round(w.lat * 1e7)}|${Math.round(w.lon * 1e7)}`);
+            if (toMesh.checked) await sendWaypoint(w);
+            toast("Wegpunkt gespeichert" + (toMesh.checked ? " und gesendet" : ""));
+          },
+          "primary",
+          "fa-save",
+        )
+      : null,
+    btn(
+      "Nur an alle senden",
+      async () => {
+        const w = read();
+        if (!w) return;
+        await sendWaypoint(w);
+        toast("Wegpunkt gesendet");
+        render();
+      },
+      "outline-secondary",
+      "fa-paper-plane",
     ),
   );
+
+  const navBox = kiraOk
+    ? group(
+        "Navigation & Track",
+        el("label", { class: "form-label small mb-1", for: "tk-arrive" }, "Ankunftsradius (Meter)"),
+        el("div", { class: "input-group input-group-sm mb-2" }, arrive, el("button", { type: "button", class: "btn btn-outline-secondary", onclick: () => kiraSend("arrive|" + Math.round(+arrive.value || 20)) }, "Speichern")),
+        hint("Innerhalb dieses Abstands meldet das Gerät „Ziel erreicht“ (Ton + LED) und beendet die Navigation."),
+        btn("Track herunterladen (GPX)", () => {
+          state.trackBuf = "";
+          kiraSend("trk");
+          toast("Track wird gelesen …");
+        }, "outline-secondary", "fa-route"),
+        btn("Track im Gerät löschen", () => confirm("Den aufgezeichneten Track im Gerät löschen?") && kiraSend("trc"), "outline-danger", "fa-trash"),
+      )
+    : null;
+
+  return el("div", {}, grid(deviceBox, addBox), grid(navBox));
 }
 
 function pageCanned() {
@@ -660,8 +775,7 @@ function pageThinkKira() {
   );
 
   const later = [
-    ["Kompass, Ankunftsradius, Track", 4],
-    ["Offline-Karte hochladen", 4],
+    ["Offline-Karte hochladen", "4b"],
     ["WLAN-Weboberfläche, Update aus GitHub-Release", 5],
     ["Energieprofile (Wandern / Basis / Maximal sparen)", 6],
     ["SOS-Einstellungen", 7],

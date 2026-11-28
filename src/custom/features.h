@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #pragma once
 
-#define THINKKIRA_VERSION "0.3.2"
+#define THINKKIRA_VERSION "0.4.0"
 
 // Phase 1
 #ifndef CUSTOM_FEATURE_STATUS_PAGE

@@ -13,10 +13,13 @@ export const ACTIONS = {
   "msg.new": ["Neue Nachricht an alle", "msg.new"],
   "msg.chats": ["Alle Chats anzeigen", "msg.chats"],
   "msg.clear": ["Nachrichten löschen", "msg.clear"],
-  "nav.goto": ["Navigieren zu … (Phase 4)", "nav.goto"],
-  "nav.wpsave": ["Wegpunkt speichern (Phase 4)", "nav.wpsave"],
-  "nav.track": ["Track Start/Stopp (Phase 4)", "nav.track"],
-  "map.offline": ["Offline-Karte (Phase 4)", "map.offline"],
+  "nav.goto": ["Navigieren zu … (Wegpunkt/Knoten)", "nav.goto"],
+  "nav.wpsave": ["Wegpunkt hier speichern", "nav.wpsave"],
+  "wp.manage": ["Wegpunkte verwalten", "wp.manage"],
+  "nav.stop": ["Navigation beenden", "nav.stop"],
+  "nav.track": ["Track starten/stoppen", "Track starten"],
+  "track.clear": ["Track löschen", "track.clear"],
+  "map.offline": ["Offline-Karte (kommt bald)", "map.offline"],
   "nodes.list": ["Knotenliste (mit Knoten-Menü)", "nodes.list"],
   ping: ["Reichweitentest (Ping)", "ping"],
   "radio.mode": ["Funkmodus wechseln", "Zu Kira-Funk wechseln"],
@@ -42,10 +45,12 @@ Imsg.new|Neue Nachricht (alle)
 Imsg.chats|Alle Chats
 Imsg.clear|Löschen
 P2
-Ipos.send|Position senden
 Inav.goto|Navigieren zu …
-Inav.wpsave|Wegpunkt speichern
-Inav.track|Track Start/Stopp
+Inav.wpsave|Wegpunkt hier speichern
+Iwp.manage|Wegpunkte verwalten
+Inav.stop|Navigation beenden
+Inav.track|
+Ipos.send|Position senden
 P3
 Imap.offline|Offline-Karte
 P4

@@ -11,6 +11,7 @@ const FIXED = [0, 5]; // Start und Einstellungen sind immer an
 export const WIDGETS = {
   c: "Uhr (groß)",
   b: "Akku",
+  t: "Ziel und Entfernung",
   g: "GPS-Status",
   s: "Letztes Signal",
   k: "Knoten online",
@@ -19,6 +20,7 @@ export const WIDGETS = {
   p: "Position (Koordinaten)",
 };
 const SAMPLE = {
+  t: "→ WP03 1,2 km",
   b: "Akku 87%",
   g: "GPS: Fix, 9 Sat.",
   s: "Signal: -92 dBm (vor 2m)",
@@ -32,7 +34,7 @@ export const MAX_LEN = 169;
 export const DEFAULT_UI = {
   order: "012345",
   pages: 63,
-  start: "cbgsknm",
+  start: "cbtgsknm",
   replies: ["OK", "Ja", "Nein", "Bin unterwegs", "Komme gleich", "Alles gut", "Wo bist du?", "Brauche Hilfe"],
   keys: DEFAULT_KEYS,
   menus: parseMenu(DEFAULT_MENU_TEXT),
