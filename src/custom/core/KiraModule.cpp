@@ -11,6 +11,7 @@
 #include "KiraRadio.h"
 #include "KiraSettings.h"
 #include "KiraSystem.h"
+#include "KiraTips.h"
 #include "PowerStatus.h"
 #include "MeshService.h"
 #include "NodeDB.h"
@@ -92,6 +93,23 @@ void KiraModule::handleLocal(char *cmd)
             reply("M|ok");
         } else
             reply(("err|Menü: " + err).c_str());
+    }
+    // eigene Start-Tipps: tg (holen) · tb (Beginn) · tl|stück · te (fertig) → T|stück … T|end bzw. T|ok|anzahl
+    else if (!strcmp(cmd, "tg"))
+        sendTips();
+    else if (!strcmp(cmd, "tb"))
+        tipsUpload.clear();
+    else if (!strncmp(cmd, "tl|", 3)) {
+        if (tipsUpload.size() < TIPS_MAX_TEXT + 256)
+            tipsUpload += cmd + 3;
+    } else if (!strcmp(cmd, "te")) {
+        std::string err;
+        bool ok = setTipsText(tipsUpload, err);
+        tipsUpload.clear();
+        if (ok)
+            reply(("T|ok|" + std::to_string(tips().size())).c_str());
+        else
+            reply(("err|Tipps: " + err).c_str());
     }
     else if (!strncmp(cmd, "ui|", 3)) {
         // ui|reihenfolge|seitenbits|startbausteine|antworten|tasten|statuszeile (leere Felder bleiben unverändert)
@@ -198,7 +216,7 @@ void KiraModule::waypointCommand(char *cmd)
 }
 
 // Offline-Karte: mapb|bytes (Beginn) · mapd|offset|base64 (Daten) · mapq (Stand) · mape (fertig) · mapx (löschen) · mapi (Info)
-// Antworten: k|ready · k|a|bytes (Stand nach jedem mapd und auf mapq) · k|ok|bytes · k|info|bytes|stufe|latMin|lonMin|latMax|lonMax · k|none
+// Antworten: k|ready · k|a|bytes (nach jedem mapd) bzw. k|a|bytes|erwartet|läuft (auf mapq) · k|ok|bytes · k|info|bytes|stufe|latMin|lonMin|latMax|lonMax · k|none
 void KiraModule::mapCommand(char *cmd)
 {
     KiraMapFile &m = mapFile();
@@ -214,29 +232,34 @@ void KiraModule::mapCommand(char *cmd)
         snprintf(b, sizeof(b), "k|a|%lu", (unsigned long)m.received());
         replyNow(b);
     } else if (!strcmp(cmd, "mapq")) {
-        snprintf(b, sizeof(b), "k|a|%lu", (unsigned long)m.received());
+        // Stand: empfangen|erwartet|1 = Empfang läuft (zum Fortsetzen nach einer Unterbrechung)
+        snprintf(b, sizeof(b), "k|a|%lu|%lu|%d", (unsigned long)m.received(), (unsigned long)m.expected(), m.isUploading() ? 1 : 0);
         replyNow(b);
     } else if (!strncmp(cmd, "mapb|", 5)) {
         if (m.beginUpload(strtoul(cmd + 5, nullptr, 10), err))
-            reply("k|ready");
+            replyNow("k|ready");
         else
-            reply(("err|Karte: " + err).c_str());
+            replyNow(("err|Karte: " + err).c_str());
     } else if (!strcmp(cmd, "mape")) {
-        if (m.finishUpload(err)) {
+        // wiederholbar: kam die erste Bestätigung nicht an, meldet ein zweites mape einfach wieder „ok“
+        if (!m.isUploading() && m.available() && m.fileSize() == m.expected()) {
             snprintf(b, sizeof(b), "k|ok|%lu", (unsigned long)m.fileSize());
-            reply(b);
+            replyNow(b);
+        } else if (m.finishUpload(err)) {
+            snprintf(b, sizeof(b), "k|ok|%lu", (unsigned long)m.fileSize());
+            replyNow(b);
         } else
-            reply(("err|Karte: " + err).c_str());
+            replyNow(("err|Karte: " + err).c_str());
     } else if (!strcmp(cmd, "mapx")) {
         m.remove();
-        reply("k|none");
+        replyNow("k|none");
     } else if (!strcmp(cmd, "mapi")) {
         if (!m.available())
-            return reply("k|none");
+            return replyNow("k|none");
         const MapHeader &h = m.header();
         snprintf(b, sizeof(b), "k|info|%lu|%u|%ld|%ld|%ld|%ld", (unsigned long)m.fileSize(), (unsigned)h.level, (long)h.latMin,
                  (long)h.lonMin, (long)h.latMax, (long)h.lonMax);
-        reply(b);
+        replyNow(b);
     }
 }
 
@@ -261,6 +284,20 @@ void KiraModule::sendMenu()
     for (size_t i = 0; i < t.size(); i += 200)
         reply(("M|" + t.substr(i, 200)).c_str());
     reply("M|end");
+}
+
+void KiraModule::sendTips()
+{
+    // in Stücken; nie mitten in einem UTF-8-Zeichen trennen (jedes Stück wird einzeln dekodiert)
+    std::string t = tipsText();
+    for (size_t i = 0; i < t.size();) {
+        size_t n = std::min<size_t>(200, t.size() - i);
+        while (n > 1 && i + n < t.size() && (t[i + n] & 0xC0) == 0x80)
+            n--;
+        reply(("T|" + t.substr(i, n)).c_str());
+        i += n;
+    }
+    reply("T|end");
 }
 
 void KiraModule::sendUi()

@@ -6585,7 +6585,7 @@ function pl(e, t, n) {
 		value: n
 	} : e[t.localName] = n;
 }
-function B(e, t, n) {
+function ml(e, t, n) {
 	t === "__proto__" ? Object.defineProperty(e, "__proto__", {
 		value: n,
 		writable: !0,
@@ -6593,10 +6593,10 @@ function B(e, t, n) {
 		configurable: !0
 	}) : e[t] = n;
 }
-function ml(e, t) {
+function hl(e, t) {
 	return Object.prototype.hasOwnProperty.call(e, t) ? e[t] : void 0;
 }
-function hl(e, t) {
+function gl(e, t) {
 	let n = t.localName;
 	if (t.oneof) {
 		let r = t.oneof.localName;
@@ -6616,11 +6616,11 @@ function hl(e, t) {
 	}
 }
 // node_modules/@bufbuild/protobuf/dist/esm/reflect/guard.js
-function gl(e) {
+function _l(e) {
 	return typeof e == "object" && !!e && !Array.isArray(e);
 }
-function _l(e, t) {
-	if (gl(e) && z in e && "add" in e && "field" in e && typeof e.field == "function") {
+function vl(e, t) {
+	if (_l(e) && z in e && "add" in e && "field" in e && typeof e.field == "function") {
 		if (t !== void 0) {
 			let n = t, r = e.field();
 			return n.listKind == r.listKind && n.scalar === r.scalar && n.message?.typeName === r.message?.typeName && n.enum?.typeName === r.enum?.typeName;
@@ -6629,8 +6629,8 @@ function _l(e, t) {
 	}
 	return !1;
 }
-function vl(e, t) {
-	if (gl(e) && z in e && "has" in e && "field" in e && typeof e.field == "function") {
+function yl(e, t) {
+	if (_l(e) && z in e && "has" in e && "field" in e && typeof e.field == "function") {
 		if (t !== void 0) {
 			let n = t, r = e.field();
 			return n.mapKey === r.mapKey && n.mapKind == r.mapKind && n.scalar === r.scalar && n.message?.typeName === r.message?.typeName && n.enum?.typeName === r.enum?.typeName;
@@ -6639,18 +6639,18 @@ function vl(e, t) {
 	}
 	return !1;
 }
-function yl(e, t) {
-	return gl(e) && z in e && "desc" in e && gl(e.desc) && e.desc.kind === "message" && (t === void 0 || e.desc.typeName == t.typeName);
+function bl(e, t) {
+	return _l(e) && z in e && "desc" in e && _l(e.desc) && e.desc.kind === "message" && (t === void 0 || e.desc.typeName == t.typeName);
 }
 // node_modules/@bufbuild/protobuf/dist/esm/wkt/wrappers.js
-function bl(e) {
-	return wl(e.$typeName);
-}
 function xl(e) {
-	let t = e.fields[0];
-	return wl(e.typeName) && t !== void 0 && t.fieldKind == "scalar" && t.name == "value" && t.number == 1;
+	return Tl(e.$typeName);
 }
 function Sl(e) {
+	let t = e.fields[0];
+	return Tl(e.typeName) && t !== void 0 && t.fieldKind == "scalar" && t.name == "value" && t.number == 1;
+}
+function Cl(e) {
 	switch (e.typeName) {
 		case "google.protobuf.Any":
 		case "google.protobuf.Timestamp":
@@ -6659,10 +6659,10 @@ function Sl(e) {
 		case "google.protobuf.Struct":
 		case "google.protobuf.Value":
 		case "google.protobuf.ListValue": return !0;
-		default: return xl(e);
+		default: return Sl(e);
 	}
 }
-var Cl = /*@__PURE__*/ new Set([
+var wl = /*@__PURE__*/ new Set([
 	"google.protobuf.DoubleValue",
 	"google.protobuf.FloatValue",
 	"google.protobuf.Int64Value",
@@ -6673,43 +6673,43 @@ var Cl = /*@__PURE__*/ new Set([
 	"google.protobuf.StringValue",
 	"google.protobuf.BytesValue"
 ]);
-function wl(e) {
-	return Cl.has(e);
+function Tl(e) {
+	return wl.has(e);
 }
 // node_modules/@bufbuild/protobuf/dist/esm/create.js
-var Tl = 999, El = 998, Dl = 2;
-function V(e, t) {
-	return Gc(t, e) ? t : kl(e)(t);
+var El = 999, Dl = 998, Ol = 2;
+function B(e, t) {
+	return Gc(t, e) ? t : Al(e)(t);
 }
-var Ol = /* @__PURE__ */ new WeakMap();
-function kl(e) {
-	let t = Ol.get(e);
-	return t === void 0 && (t = Pl(e), Ol.set(e, t)), t;
+var kl = /* @__PURE__ */ new WeakMap();
+function Al(e) {
+	let t = kl.get(e);
+	return t === void 0 && (t = Fl(e), kl.set(e, t)), t;
 }
-var Al = 0, jl = 1, Ml = 2, Nl = 3;
-function Pl(e) {
-	let t = e.typeName, { properties: n, prototype: r } = Fl(e);
+var jl = 0, Ml = 1, Nl = 2, Pl = 3;
+function Fl(e) {
+	let t = e.typeName, { properties: n, prototype: r } = Il(e);
 	return (e) => {
 		let i;
 		r === void 0 ? i = { $typeName: t } : (i = Object.create(r), i.$typeName = t);
 		for (let t = 0; t < n.length; t++) {
 			let r = n[t], a = r.name, o = e?.[a];
 			switch (r.kind) {
-				case Al:
+				case jl:
 					o == null ? r.constant !== void 0 && (i[a] = r.constant) : i[a] = r.convert === void 0 ? o : r.convert(o);
 					break;
-				case jl:
+				case Ml:
 					i[a] = r.convert !== void 0 && Array.isArray(o) ? o.map(r.convert) : o ?? [];
 					break;
-				case Ml:
-					if (r.convert === void 0 || !gl(o)) i[a] = o ?? {};
+				case Nl:
+					if (r.convert === void 0 || !_l(o)) i[a] = o ?? {};
 					else {
 						let e = {}, t = Object.keys(o);
-						for (let n = 0; n < t.length; n++) B(e, t[n], r.convert(o[t[n]]));
+						for (let n = 0; n < t.length; n++) ml(e, t[n], r.convert(o[t[n]]));
 						i[a] = e;
 					}
 					break;
-				case Nl: {
+				case Pl: {
 					let e = o;
 					if (e?.case != null) {
 						let t = r.convert.get(e.case);
@@ -6729,48 +6729,48 @@ function Pl(e) {
 		return i;
 	};
 }
-function Fl(e) {
-	let t = [], n = {}, r = zl(e);
+function Il(e) {
+	let t = [], n = {}, r = Bl(e);
 	for (let i of e.members) {
 		let e = i.localName;
 		if (i.kind == "oneof") t.push({
 			name: e,
-			kind: Nl,
+			kind: Pl,
 			constant: void 0,
-			convert: Il(i)
+			convert: Ll(i)
 		});
 		else switch (i.fieldKind) {
 			case "message":
 				t.push({
 					name: e,
-					kind: Al,
+					kind: jl,
 					constant: void 0,
-					convert: Ll(i)
+					convert: Rl(i)
 				});
 				break;
 			case "list":
 				t.push({
 					name: e,
-					kind: jl,
+					kind: Ml,
 					constant: void 0,
-					convert: i.listKind == "message" ? Ll(i) ?? ((e) => e) : i.scalar == L.BYTES ? Rl : void 0
+					convert: i.listKind == "message" ? Rl(i) ?? ((e) => e) : i.scalar == L.BYTES ? zl : void 0
 				});
 				break;
 			case "map":
 				t.push({
 					name: e,
-					kind: Ml,
+					kind: Nl,
 					constant: void 0,
-					convert: i.mapKind == "message" ? Ll(i) ?? ((e) => e) : i.scalar == L.BYTES ? Rl : void 0
+					convert: i.mapKind == "message" ? Rl(i) ?? ((e) => e) : i.scalar == L.BYTES ? zl : void 0
 				});
 				break;
 			default: {
-				let a = Bl(i);
+				let a = Vl(i);
 				t.push({
 					name: e,
-					kind: Al,
-					constant: i.presence == Dl ? a : void 0,
-					convert: i.fieldKind == "scalar" && i.scalar == L.BYTES ? Rl : void 0
+					kind: jl,
+					constant: i.presence == Ol ? a : void 0,
+					convert: i.fieldKind == "scalar" && i.scalar == L.BYTES ? zl : void 0
 				}), r && (n[e] = a);
 				break;
 			}
@@ -6781,54 +6781,54 @@ function Fl(e) {
 		prototype: r ? n : void 0
 	};
 }
-function Il(e) {
+function Ll(e) {
 	let t = /* @__PURE__ */ new Map();
 	for (let n of e.fields) {
 		let e;
-		n.fieldKind == "message" ? e = Ll(n) : n.fieldKind == "scalar" && n.scalar == L.BYTES && (e = Rl), t.set(n.localName, e ?? ((e) => e));
+		n.fieldKind == "message" ? e = Rl(n) : n.fieldKind == "scalar" && n.scalar == L.BYTES && (e = zl), t.set(n.localName, e ?? ((e) => e));
 	}
 	return t;
 }
-function Ll(e) {
-	if (e.fieldKind == "message" && !e.oneof && xl(e.message)) return e.message.fields[0].scalar == L.BYTES ? Rl : void 0;
+function Rl(e) {
+	if (e.fieldKind == "message" && !e.oneof && Sl(e.message)) return e.message.fields[0].scalar == L.BYTES ? zl : void 0;
 	if (e.message.typeName == "google.protobuf.Struct" && e.parent.typeName !== "google.protobuf.Value") return;
 	let t = e.message, n;
-	return (e) => !gl(e) || Gc(e, t) ? e : (n ??= kl(t), n(e));
-}
-function Rl(e) {
-	return Array.isArray(e) ? new Uint8Array(e) : e;
+	return (e) => !_l(e) || Gc(e, t) ? e : (n ??= Al(t), n(e));
 }
 function zl(e) {
-	switch (e.file.edition) {
-		case Tl: return !1;
-		case El: return !0;
-		default: return e.fields.some((e) => e.presence != Dl && e.fieldKind != "message" && !e.oneof);
-	}
+	return Array.isArray(e) ? new Uint8Array(e) : e;
 }
 function Bl(e) {
+	switch (e.file.edition) {
+		case El: return !1;
+		case Dl: return !0;
+		default: return e.fields.some((e) => e.presence != Ol && e.fieldKind != "message" && !e.oneof);
+	}
+}
+function Vl(e) {
 	let t = e.getDefaultValue();
 	return t === void 0 ? e.fieldKind == "scalar" ? ol(e.scalar, e.longAsString) : e.enum.values[0].number : e.fieldKind == "scalar" && e.longAsString ? t.toString() : t;
 }
 // node_modules/@bufbuild/protobuf/dist/esm/reflect/error.js
-var Vl = [
+var Hl = [
 	"FieldValueInvalidError",
 	"FieldListRangeError",
 	"ForeignFieldError"
-], H = class extends Error {
+], V = class extends Error {
 	constructor(e, t, n = "FieldValueInvalidError") {
 		super(t), this.name = n, this.field = () => e;
 	}
 };
-function Hl(e) {
-	return e instanceof Error && Vl.includes(e.name) && "field" in e && typeof e.field == "function";
+function Ul(e) {
+	return e instanceof Error && Hl.includes(e.name) && "field" in e && typeof e.field == "function";
 }
 // node_modules/@bufbuild/protobuf/dist/esm/wire/text-encoding.js
-var Ul;
-function Wl(e) {
-	Ul = Object.assign(Object.assign({}, e), { encodeUtf8Into: e.encodeUtf8Into ?? Kl(e.encodeUtf8.bind(e)) });
+var Wl;
+function Gl(e) {
+	Wl = Object.assign(Object.assign({}, e), { encodeUtf8Into: e.encodeUtf8Into ?? ql(e.encodeUtf8.bind(e)) });
 }
-function Gl() {
-	if (!Ul) {
+function Kl() {
+	if (!Wl) {
 		let e = globalThis;
 		if (!e.TextEncoder || !e.TextDecoder) throw Error("encoding API missing: install TextEncoder and TextDecoder on globalThis");
 		let t = new e.TextEncoder(), n = new e.TextDecoder("utf-8", { ignoreBOM: !0 }), r, i = {
@@ -6851,29 +6851,29 @@ function Gl() {
 		};
 		t.encodeInto && (i.encodeUtf8Into = t.encodeInto.bind(t));
 		let a = String.prototype.isWellFormed;
-		a && (i.checkUtf8 = (e) => a.call(e)), Wl(i);
+		a && (i.checkUtf8 = (e) => a.call(e)), Gl(i);
 	}
-	return Ul;
+	return Wl;
 }
-function Kl(e) {
+function ql(e) {
 	return (t, n) => {
 		let r = e(t);
 		return n.set(r), { written: r.byteLength };
 	};
 }
 // node_modules/@bufbuild/protobuf/dist/esm/wire/binary-encoding.js
-var U;
+var H;
 (function(e) {
 	e[e.Varint = 0] = "Varint", e[e.Bit64 = 1] = "Bit64", e[e.LengthDelimited = 2] = "LengthDelimited", e[e.StartGroup = 3] = "StartGroup", e[e.EndGroup = 4] = "EndGroup", e[e.Bit32 = 5] = "Bit32";
-})(U ||= {});
-var ql = class {
+})(H ||= {});
+var Jl = class {
 	constructor(e) {
-		this.stackPos = [], this.encodeUtf8Into = e ? Kl(e) : Gl().encodeUtf8Into, this.buffer = Xl, this.viewCache = Zl, this.pos = 0;
+		this.stackPos = [], this.encodeUtf8Into = e ? ql(e) : Kl().encodeUtf8Into, this.buffer = Zl, this.viewCache = Ql, this.pos = 0;
 	}
 	ensureCapacity(e) {
 		let t = this.pos + e;
 		if (t > this.buffer.length) {
-			let e = this.buffer.length || Jl;
+			let e = this.buffer.length || Yl;
 			for (; e < t;) e *= 2;
 			let n = new Uint8Array(e);
 			this.pos > 0 && n.set(this.buffer), this.buffer = n;
@@ -6890,13 +6890,13 @@ var ql = class {
 		return this.pos = 0, this.stackPos = [], e;
 	}
 	fork() {
-		return this.stackPos.push(this.pos), this.ensureCapacity(Yl), this.buffer[this.pos++] = 0, this;
+		return this.stackPos.push(this.pos), this.ensureCapacity(Xl), this.buffer[this.pos++] = 0, this;
 	}
 	join() {
 		let e = this.stackPos.pop();
 		if (e === void 0) throw Error("invalid state, fork stack empty");
-		let t = this.pos - e - Yl, n = $l(t);
-		return n > Yl && (this.ensureCapacity(n - Yl), this.buffer.copyWithin(e + n, e + Yl, this.pos)), this.pos = e, this.uint32(t), this.pos += t, this;
+		let t = this.pos - e - Xl, n = eu(t);
+		return n > Xl && (this.ensureCapacity(n - Xl), this.buffer.copyWithin(e + n, e + Xl, this.pos)), this.pos = e, this.uint32(t), this.pos += t, this;
 	}
 	tag(e, t) {
 		return this.uint32((e << 3 | t) >>> 0);
@@ -6905,12 +6905,12 @@ var ql = class {
 		return this.ensureCapacity(e.length), this.buffer.set(e, this.pos), this.pos += e.length, this;
 	}
 	uint32(e) {
-		if (nu(e), this.ensureCapacity(5), e < 128) return this.buffer[this.pos++] = e, this;
+		if (ru(e), this.ensureCapacity(5), e < 128) return this.buffer[this.pos++] = e, this;
 		for (; e > 127;) this.buffer[this.pos++] = e & 127 | 128, e >>>= 7;
 		return this.buffer[this.pos++] = e, this;
 	}
 	int32(e) {
-		if (tu(e), e >= 0) return this.uint32(e);
+		if (nu(e), e >= 0) return this.uint32(e);
 		this.ensureCapacity(10);
 		for (let t = 0; t < 9; t++) this.buffer[this.pos++] = e & 127 | 128, e >>= 7;
 		return this.buffer[this.pos++] = 1, this;
@@ -6924,7 +6924,7 @@ var ql = class {
 	string(e) {
 		typeof e != "string" && (e = String(e));
 		let t = e.length;
-		if (t <= Ql) {
+		if (t <= $l) {
 			this.ensureCapacity(t + 1);
 			let n = this.buffer, r = this.pos;
 			n[r++] = t;
@@ -6937,23 +6937,23 @@ var ql = class {
 			if (i == t) return this.pos = r, this;
 		}
 		this.ensureCapacity(t * 3 + 5);
-		let n = $l(t), r = this.buffer, i = this.pos, { written: a } = this.encodeUtf8Into(e, r.subarray(i + n)), o = $l(a);
+		let n = eu(t), r = this.buffer, i = this.pos, { written: a } = this.encodeUtf8Into(e, r.subarray(i + n)), o = eu(a);
 		return o != n && r.copyWithin(i + o, i + n, i + n + a), this.uint32(a), this.pos += a, this;
 	}
 	float(e) {
-		return ru(e), this.ensureCapacity(4), this.view().setFloat32(this.pos, e, !0), this.pos += 4, this;
+		return iu(e), this.ensureCapacity(4), this.view().setFloat32(this.pos, e, !0), this.pos += 4, this;
 	}
 	double(e) {
 		return this.ensureCapacity(8), this.view().setFloat64(this.pos, e, !0), this.pos += 8, this;
 	}
 	fixed32(e) {
-		return nu(e), this.ensureCapacity(4), this.view().setUint32(this.pos, e, !0), this.pos += 4, this;
+		return ru(e), this.ensureCapacity(4), this.view().setUint32(this.pos, e, !0), this.pos += 4, this;
 	}
 	sfixed32(e) {
-		return tu(e), this.ensureCapacity(4), this.view().setInt32(this.pos, e, !0), this.pos += 4, this;
+		return nu(e), this.ensureCapacity(4), this.view().setInt32(this.pos, e, !0), this.pos += 4, this;
 	}
 	sint32(e) {
-		return tu(e), this.uint32((e << 1 ^ e >> 31) >>> 0);
+		return nu(e), this.uint32((e << 1 ^ e >> 31) >>> 0);
 	}
 	sfixed64(e) {
 		let t = R.enc(e);
@@ -6994,12 +6994,12 @@ var ql = class {
 		}
 		return n[r++] = t >>> 31 & 1, this.pos = r, this;
 	}
-}, Jl = 128, Yl = 1, Xl = /* @__PURE__ */ new Uint8Array(), Zl = new DataView(Xl.buffer), Ql = 32;
-function $l(e) {
+}, Yl = 128, Xl = 1, Zl = /* @__PURE__ */ new Uint8Array(), Ql = new DataView(Zl.buffer), $l = 32;
+function eu(e) {
 	return e < 128 ? 1 : e < 16384 ? 2 : e < 2097152 ? 3 : e < 268435456 ? 4 : 5;
 }
-var eu = class {
-	constructor(e, t = Gl().decodeUtf8) {
+var tu = class {
+	constructor(e, t = Kl().decodeUtf8) {
 		this.decodeUtf8 = t, this.varint64Lo = 0, this.varint64Hi = 0, this.varint64 = Kc, this.uint32 = nl, this.buf = e, this.len = e.length, this.pos = 0, this.view = new DataView(e.buffer, e.byteOffset, e.byteLength);
 	}
 	tag() {
@@ -7012,22 +7012,22 @@ var eu = class {
 	skip(e, t, n = 100) {
 		let r = this.pos;
 		switch (e) {
-			case U.Varint:
+			case H.Varint:
 				for (; this.buf[this.pos++] & 128;);
 				break;
-			case U.Bit64: this.pos += 4;
-			case U.Bit32:
+			case H.Bit64: this.pos += 4;
+			case H.Bit32:
 				this.pos += 4;
 				break;
-			case U.LengthDelimited:
+			case H.LengthDelimited:
 				let r = this.uint32();
 				this.pos += r;
 				break;
-			case U.StartGroup:
+			case H.StartGroup:
 				if (n <= 0) throw Error("maximum recursion depth reached");
 				for (;;) {
 					let [e, r] = this.tag();
-					if (r === U.EndGroup) {
+					if (r === H.EndGroup) {
 						if (t !== void 0 && e !== t) throw Error("invalid end group tag");
 						break;
 					}
@@ -7089,7 +7089,7 @@ var eu = class {
 		let t = this.uint32(), n = this.pos;
 		this.pos += t, this.assertBounds();
 		let r = this.buf;
-		if (t <= Ql) {
+		if (t <= $l) {
 			let i = Array(t);
 			for (let a = 0; a < t; a++) {
 				let t = r[n + a];
@@ -7101,17 +7101,17 @@ var eu = class {
 		return this.decodeUtf8(r.subarray(n, this.pos), e);
 	}
 };
-function tu(e) {
+function nu(e) {
 	if (typeof e == "string") e = Number(e);
 	else if (typeof e != "number") throw Error("invalid int32: " + typeof e);
 	if (!Number.isInteger(e) || e > 0x7fffffff || e < -0x80000000) throw Error("invalid int32: " + e);
 }
-function nu(e) {
+function ru(e) {
 	if (typeof e == "string") e = Number(e);
 	else if (typeof e != "number") throw Error("invalid uint32: " + typeof e);
 	if (!Number.isInteger(e) || e > 0xffffffff || e < 0) throw Error("invalid uint32: " + e);
 }
-function ru(e) {
+function iu(e) {
 	if (typeof e == "string") {
 		let t = e;
 		if (e = Number(e), Number.isNaN(e) && t !== "NaN") throw Error("invalid float32: " + t);
@@ -7119,35 +7119,35 @@ function ru(e) {
 	if (!Number.isFinite(Math.fround(e)) && Number.isFinite(e)) throw Error("invalid float32: " + e);
 }
 // node_modules/@bufbuild/protobuf/dist/esm/reflect/reflect-check.js
-function iu(e, t) {
-	let n = e.fieldKind == "list" ? _l(t, e) : e.fieldKind == "map" ? vl(t, e) : su(e, t);
+function au(e, t) {
+	let n = e.fieldKind == "list" ? vl(t, e) : e.fieldKind == "map" ? yl(t, e) : cu(e, t);
 	if (n === !0) return;
 	let r;
 	switch (e.fieldKind) {
 		case "list":
-			r = `expected ${uu(e)}, got ${G(t)}`;
+			r = `expected ${fu(e)}, got ${U(t)}`;
 			break;
 		case "map":
-			r = `expected ${du(e)}, got ${G(t)}`;
+			r = `expected ${pu(e)}, got ${U(t)}`;
 			break;
-		default: r = W(e, t, n);
+		default: r = uu(e, t, n);
 	}
-	return new H(e, r);
-}
-function au(e, t, n) {
-	let r = su(e, n);
-	if (r !== !0) return new H(e, `list item #${t + 1}: ${W(e, n, r)}`);
+	return new V(e, r);
 }
 function ou(e, t, n) {
-	let r = cu(e.mapKey)(t);
-	if (r !== !0) return new H(e, `invalid map key: ${W({ scalar: e.mapKey }, t, r)}`);
-	let i = su(e, n);
-	if (i !== !0) return new H(e, `map entry ${G(t)}: ${W(e, n, i)}`);
+	let r = cu(e, n);
+	if (r !== !0) return new V(e, `list item #${t + 1}: ${uu(e, n, r)}`);
 }
-function su(e, t) {
-	return e.scalar === void 0 ? e.enum === void 0 ? yl(t, e.message) : e.enum.open ? cu(L.INT32)(t) : e.enum.values.some((e) => e.number === t) : cu(e.scalar)(t);
+function su(e, t, n) {
+	let r = lu(e.mapKey)(t);
+	if (r !== !0) return new V(e, `invalid map key: ${uu({ scalar: e.mapKey }, t, r)}`);
+	let i = cu(e, n);
+	if (i !== !0) return new V(e, `map entry ${U(t)}: ${uu(e, n, i)}`);
 }
-function cu(e) {
+function cu(e, t) {
+	return e.scalar === void 0 ? e.enum === void 0 ? bl(t, e.message) : e.enum.open ? lu(L.INT32)(t) : e.enum.values.some((e) => e.number === t) : lu(e.scalar)(t);
+}
+function lu(e) {
 	switch (e) {
 		case L.DOUBLE: return (e) => typeof e == "number";
 		case L.FLOAT: return (e) => typeof e == "number" ? !Number.isFinite(Math.fround(e)) && Number.isFinite(e) ? `${e.toFixed()} out of range` : !0 : !1;
@@ -7157,7 +7157,7 @@ function cu(e) {
 		case L.FIXED32:
 		case L.UINT32: return (e) => typeof e != "number" || !Number.isInteger(e) ? !1 : e > 0xffffffff || e < 0 ? `${e.toFixed()} out of range` : !0;
 		case L.BOOL: return (e) => typeof e == "boolean";
-		case L.STRING: return (e) => typeof e == "string" ? Gl().checkUtf8(e) || "invalid UTF8" : !1;
+		case L.STRING: return (e) => typeof e == "string" ? Kl().checkUtf8(e) || "invalid UTF8" : !1;
 		case L.BYTES: return (e) => e instanceof Uint8Array;
 		case L.INT64:
 		case L.SFIXED64:
@@ -7180,12 +7180,12 @@ function cu(e) {
 		};
 	}
 }
-function W(e, t, n) {
-	return n = typeof n == "string" ? `: ${n}` : `, got ${G(t)}`, e.scalar === void 0 ? e.enum === void 0 ? `expected ${lu(e.message)}` + n : `expected ${e.enum.toString()}` + n : `expected ${fu(e.scalar)}` + n;
+function uu(e, t, n) {
+	return n = typeof n == "string" ? `: ${n}` : `, got ${U(t)}`, e.scalar === void 0 ? e.enum === void 0 ? `expected ${du(e.message)}` + n : `expected ${e.enum.toString()}` + n : `expected ${mu(e.scalar)}` + n;
 }
-function G(e) {
+function U(e) {
 	switch (typeof e) {
-		case "object": return e === null ? "null" : e instanceof Uint8Array ? `Uint8Array(${e.length})` : Array.isArray(e) ? `Array(${e.length})` : _l(e) ? uu(e.field()) : vl(e) ? du(e.field()) : yl(e) ? lu(e.desc) : Gc(e) ? `message ${e.$typeName}` : "object";
+		case "object": return e === null ? "null" : e instanceof Uint8Array ? `Uint8Array(${e.length})` : Array.isArray(e) ? `Array(${e.length})` : vl(e) ? fu(e.field()) : yl(e) ? pu(e.field()) : bl(e) ? du(e.desc) : Gc(e) ? `message ${e.$typeName}` : "object";
 		case "string": return e.length > 30 ? "string" : `"${e.split("\"").join("\\\"")}"`;
 		case "boolean":
 		case "number": return String(e);
@@ -7193,24 +7193,24 @@ function G(e) {
 		default: return typeof e;
 	}
 }
-function lu(e) {
+function du(e) {
 	return `ReflectMessage (${e.typeName})`;
 }
-function uu(e) {
+function fu(e) {
 	switch (e.listKind) {
 		case "message": return `ReflectList (${e.message.toString()})`;
 		case "enum": return `ReflectList (${e.enum.toString()})`;
 		case "scalar": return `ReflectList (${L[e.scalar]})`;
 	}
 }
-function du(e) {
+function pu(e) {
 	switch (e.mapKind) {
 		case "message": return `ReflectMap (${L[e.mapKey]}, ${e.message.toString()})`;
 		case "enum": return `ReflectMap (${L[e.mapKey]}, ${e.enum.toString()})`;
 		case "scalar": return `ReflectMap (${L[e.mapKey]}, ${L[e.scalar]})`;
 	}
 }
-function fu(e) {
+function mu(e) {
 	switch (e) {
 		case L.STRING: return "string";
 		case L.BOOL: return "boolean";
@@ -7230,17 +7230,17 @@ function fu(e) {
 	}
 }
 // node_modules/@bufbuild/protobuf/dist/esm/reflect/message.js
-var pu = 0;
-function mu(e) {
-	if (hu(e)) return {
-		toMessage: (e) => gu(e),
-		toLocal: (e) => _u(e)
+var hu = 0;
+function gu(e) {
+	if (_u(e)) return {
+		toMessage: (e) => vu(e),
+		toLocal: (e) => yu(e)
 	};
-	if (e.fieldKind == "message" && !e.oneof && xl(e.message)) {
+	if (e.fieldKind == "message" && !e.oneof && Sl(e.message)) {
 		let t = e.message, n = t.fields[0].localName;
 		return {
 			toMessage: (e) => {
-				let r = V(t);
+				let r = B(t);
 				return e !== void 0 && (r[n] = e), r;
 			},
 			toLocal: (e) => e[n]
@@ -7248,36 +7248,36 @@ function mu(e) {
 	}
 	let t = e.message;
 	return {
-		toMessage: (e) => e === void 0 ? V(t) : e,
+		toMessage: (e) => e === void 0 ? B(t) : e,
 		toLocal: (e) => e
 	};
 }
-function hu(e) {
+function _u(e) {
 	return e.message.typeName == "google.protobuf.Struct" && e.parent.typeName != "google.protobuf.Value";
 }
-function gu(e) {
+function vu(e) {
 	let t = {
 		$typeName: "google.protobuf.Struct",
 		fields: {}
 	};
-	if (gl(e)) for (let n of Object.keys(e)) B(t.fields, n, yu(e[n]));
+	if (_l(e)) for (let n of Object.keys(e)) ml(t.fields, n, xu(e[n]));
 	return t;
 }
-function _u(e) {
+function yu(e) {
 	let t = {};
-	for (let n of Object.keys(e.fields)) B(t, n, vu(e.fields[n]));
+	for (let n of Object.keys(e.fields)) ml(t, n, bu(e.fields[n]));
 	return t;
 }
-function vu(e) {
+function bu(e) {
 	switch (e.kind.case) {
-		case "structValue": return _u(e.kind.value);
-		case "listValue": return e.kind.value.values.map(vu);
+		case "structValue": return yu(e.kind.value);
+		case "listValue": return e.kind.value.values.map(bu);
 		case "nullValue":
 		case void 0: return null;
 		default: return e.kind.value;
 	}
 }
-function yu(e) {
+function xu(e) {
 	let t = {
 		$typeName: "google.protobuf.Value",
 		kind: { case: void 0 }
@@ -7303,73 +7303,73 @@ function yu(e) {
 			break;
 		case "object": if (e === null) t.kind = {
 			case: "nullValue",
-			value: pu
+			value: hu
 		};
 		else if (Array.isArray(e)) {
 			let n = {
 				$typeName: "google.protobuf.ListValue",
 				values: []
 			};
-			if (Array.isArray(e)) for (let t of e) n.values.push(yu(t));
+			if (Array.isArray(e)) for (let t of e) n.values.push(xu(t));
 			t.kind = {
 				case: "listValue",
 				value: n
 			};
 		} else t.kind = {
 			case: "structValue",
-			value: gu(e)
+			value: vu(e)
 		};
 	}
 	return t;
 }
 // node_modules/@bufbuild/protobuf/dist/esm/reflect/reflect.js
-function bu(e, t, n = !0) {
-	return new Su(e, t, n);
+function Su(e, t, n = !0) {
+	return new wu(e, t, n);
 }
-var xu = /* @__PURE__ */ new WeakMap(), Su = class {
+var Cu = /* @__PURE__ */ new WeakMap(), wu = class {
 	get sortedFields() {
-		let e = xu.get(this.desc);
+		let e = Cu.get(this.desc);
 		if (e) return e;
 		let t = this.desc.fields.concat().sort((e, t) => e.number - t.number);
-		return xu.set(this.desc, t), t;
+		return Cu.set(this.desc, t), t;
 	}
 	constructor(e, t, n = !0) {
-		this.lists = /* @__PURE__ */ new Map(), this.maps = /* @__PURE__ */ new Map(), this.check = n, this.desc = e, this.message = this[z] = t ?? V(e), this.fields = e.fields, this.oneofs = e.oneofs, this.members = e.members;
+		this.lists = /* @__PURE__ */ new Map(), this.maps = /* @__PURE__ */ new Map(), this.check = n, this.desc = e, this.message = this[z] = t ?? B(e), this.fields = e.fields, this.oneofs = e.oneofs, this.members = e.members;
 	}
 	findNumber(e) {
 		return this._fieldsByNumber ||= new Map(this.desc.fields.map((e) => [e.number, e])), this._fieldsByNumber.get(e);
 	}
 	oneofCase(e) {
-		return Cu(this.message, e), ll(this.message, e);
+		return Tu(this.message, e), ll(this.message, e);
 	}
 	isSet(e) {
-		return Cu(this.message, e), ul(this.message, e);
+		return Tu(this.message, e), ul(this.message, e);
 	}
 	clear(e) {
-		Cu(this.message, e), hl(this.message, e);
+		Tu(this.message, e), gl(this.message, e);
 	}
 	get(e) {
-		Cu(this.message, e);
+		Tu(this.message, e);
 		let t = fl(this.message, e);
 		switch (e.fieldKind) {
 			case "list":
 				let n = this.lists.get(e);
-				return n && n[z] === t || this.lists.set(e, n = new wu(e, t, this.check)), n;
+				return n && n[z] === t || this.lists.set(e, n = new Eu(e, t, this.check)), n;
 			case "map":
 				let r = this.maps.get(e);
-				return r && r[z] === t || this.maps.set(e, r = new Tu(e, t, this.check)), r;
-			case "message": return Du(e, t, this.check);
-			case "scalar": return t === void 0 ? ol(e.scalar, !1) : Pu(e, t);
+				return r && r[z] === t || this.maps.set(e, r = new Du(e, t, this.check)), r;
+			case "message": return ku(e, t, this.check);
+			case "scalar": return t === void 0 ? ol(e.scalar, !1) : Iu(e, t);
 			case "enum": return t ?? e.enum.values[0].number;
 		}
 	}
 	set(e, t) {
-		if (Cu(this.message, e), this.check) {
-			let n = iu(e, t);
+		if (Tu(this.message, e), this.check) {
+			let n = au(e, t);
 			if (n) throw n;
 		}
 		let n;
-		n = e.fieldKind == "message" ? Eu(e, t) : vl(t) || _l(t) ? t[z] : Fu(e, t), pl(this.message, e, n);
+		n = e.fieldKind == "message" ? Ou(e, t) : yl(t) || vl(t) ? t[z] : Lu(e, t), pl(this.message, e, n);
 	}
 	getUnknown() {
 		return this.message.$unknown;
@@ -7378,10 +7378,10 @@ var xu = /* @__PURE__ */ new WeakMap(), Su = class {
 		this.message.$unknown = e;
 	}
 };
-function Cu(e, t) {
-	if (t.parent.typeName !== e.$typeName) throw new H(t, `cannot use ${t.toString()} with message ${e.$typeName}`, "ForeignFieldError");
+function Tu(e, t) {
+	if (t.parent.typeName !== e.$typeName) throw new V(t, `cannot use ${t.toString()} with message ${e.$typeName}`, "ForeignFieldError");
 }
-var wu = class {
+var Eu = class {
 	field() {
 		return this._field;
 	}
@@ -7393,22 +7393,22 @@ var wu = class {
 	}
 	get(e) {
 		let t = this._arr[e];
-		return t === void 0 ? void 0 : ku(this._field, t, this.check);
+		return t === void 0 ? void 0 : ju(this._field, t, this.check);
 	}
 	set(e, t) {
-		if (e < 0 || e >= this._arr.length) throw new H(this._field, `list item #${e + 1}: out of range`);
+		if (e < 0 || e >= this._arr.length) throw new V(this._field, `list item #${e + 1}: out of range`);
 		if (this.check) {
-			let n = au(this._field, e, t);
+			let n = ou(this._field, e, t);
 			if (n) throw n;
 		}
-		this._arr[e] = Ou(this._field, t);
+		this._arr[e] = Au(this._field, t);
 	}
 	add(e) {
 		if (this.check) {
-			let t = au(this._field, this._arr.length, e);
+			let t = ou(this._field, this._arr.length, e);
 			if (t) throw t;
 		}
-		this._arr.push(Ou(this._field, e));
+		this._arr.push(Au(this._field, e));
 	}
 	clear() {
 		this._arr.splice(0, this._arr.length);
@@ -7420,12 +7420,12 @@ var wu = class {
 		return this._arr.keys();
 	}
 	*values() {
-		for (let e of this._arr) yield ku(this._field, e, this.check);
+		for (let e of this._arr) yield ju(this._field, e, this.check);
 	}
 	*entries() {
-		for (let e = 0; e < this._arr.length; e++) yield [e, ku(this._field, this._arr[e], this.check)];
+		for (let e = 0; e < this._arr.length; e++) yield [e, ju(this._field, this._arr[e], this.check)];
 	}
-}, Tu = class {
+}, Du = class {
 	constructor(e, t, n = !0) {
 		this.obj = this[z] = t ?? {}, this.check = n, this._field = e;
 	}
@@ -7434,30 +7434,30 @@ var wu = class {
 	}
 	set(e, t) {
 		if (this.check) {
-			let n = ou(this._field, e, t);
+			let n = su(this._field, e, t);
 			if (n) throw n;
 		}
-		return B(this.obj, Mu(e), Au(this._field, t)), this;
+		return ml(this.obj, Pu(e), Mu(this._field, t)), this;
 	}
 	delete(e) {
-		let t = Mu(e), n = Object.prototype.hasOwnProperty.call(this.obj, t);
+		let t = Pu(e), n = Object.prototype.hasOwnProperty.call(this.obj, t);
 		return n && delete this.obj[t], n;
 	}
 	clear() {
 		for (let e of Object.keys(this.obj)) delete this.obj[e];
 	}
 	get(e) {
-		let t = ml(this.obj, Mu(e));
-		return t !== void 0 && (t = ju(this._field, t, this.check)), t;
+		let t = hl(this.obj, Pu(e));
+		return t !== void 0 && (t = Nu(this._field, t, this.check)), t;
 	}
 	has(e) {
-		return Object.prototype.hasOwnProperty.call(this.obj, Mu(e));
+		return Object.prototype.hasOwnProperty.call(this.obj, Pu(e));
 	}
 	*keys() {
-		for (let e of Object.keys(this.obj)) yield Nu(e, this._field.mapKey);
+		for (let e of Object.keys(this.obj)) yield Fu(e, this._field.mapKey);
 	}
 	*entries() {
-		for (let e of Object.entries(this.obj)) yield [Nu(e[0], this._field.mapKey), ju(this._field, e[1], this.check)];
+		for (let e of Object.entries(this.obj)) yield [Fu(e[0], this._field.mapKey), Nu(this._field, e[1], this.check)];
 	}
 	[Symbol.iterator]() {
 		return this.entries();
@@ -7466,37 +7466,37 @@ var wu = class {
 		return Object.keys(this.obj).length;
 	}
 	*values() {
-		for (let e of Object.values(this.obj)) yield ju(this._field, e, this.check);
+		for (let e of Object.values(this.obj)) yield Nu(this._field, e, this.check);
 	}
 	forEach(e, t) {
 		for (let n of this.entries()) e.call(t, n[1], n[0], this);
 	}
 };
-function Eu(e, t) {
-	return yl(t) ? bl(t.message) && !e.oneof && e.fieldKind == "message" ? t.message.value : t.desc.typeName == "google.protobuf.Struct" && e.parent.typeName != "google.protobuf.Value" ? _u(t.message) : t.message : t;
-}
-function Du(e, t, n) {
-	return t !== void 0 && (xl(e.message) && !e.oneof && e.fieldKind == "message" ? t = {
-		$typeName: e.message.typeName,
-		value: Pu(e.message.fields[0], t)
-	} : e.message.typeName == "google.protobuf.Struct" && e.parent.typeName != "google.protobuf.Value" && gl(t) && (t = gu(t))), new Su(e.message, t, n);
-}
 function Ou(e, t) {
-	return e.listKind == "message" ? Eu(e, t) : Fu(e, t);
+	return bl(t) ? xl(t.message) && !e.oneof && e.fieldKind == "message" ? t.message.value : t.desc.typeName == "google.protobuf.Struct" && e.parent.typeName != "google.protobuf.Value" ? yu(t.message) : t.message : t;
 }
 function ku(e, t, n) {
-	return e.listKind == "message" ? Du(e, t, n) : Pu(e, t);
+	return t !== void 0 && (Sl(e.message) && !e.oneof && e.fieldKind == "message" ? t = {
+		$typeName: e.message.typeName,
+		value: Iu(e.message.fields[0], t)
+	} : e.message.typeName == "google.protobuf.Struct" && e.parent.typeName != "google.protobuf.Value" && _l(t) && (t = vu(t))), new wu(e.message, t, n);
 }
 function Au(e, t) {
-	return e.mapKind == "message" ? Eu(e, t) : Fu(e, t);
+	return e.listKind == "message" ? Ou(e, t) : Lu(e, t);
 }
 function ju(e, t, n) {
-	return e.mapKind == "message" ? Du(e, t, n) : t;
+	return e.listKind == "message" ? ku(e, t, n) : Iu(e, t);
 }
-function Mu(e) {
+function Mu(e, t) {
+	return e.mapKind == "message" ? Ou(e, t) : Lu(e, t);
+}
+function Nu(e, t, n) {
+	return e.mapKind == "message" ? ku(e, t, n) : t;
+}
+function Pu(e) {
 	return typeof e == "string" || typeof e == "number" ? e : String(e);
 }
-function Nu(e, t) {
+function Fu(e, t) {
 	switch (t) {
 		case L.STRING: return e;
 		case L.INT32:
@@ -7526,7 +7526,7 @@ function Nu(e, t) {
 	}
 	return e;
 }
-function Pu(e, t) {
+function Iu(e, t) {
 	switch (e.scalar) {
 		case L.INT64:
 		case L.SFIXED64:
@@ -7538,7 +7538,7 @@ function Pu(e, t) {
 	}
 	return t;
 }
-function Fu(e, t) {
+function Lu(e, t) {
 	switch (e.scalar) {
 		case L.INT64:
 		case L.SFIXED64:
@@ -7551,42 +7551,42 @@ function Fu(e, t) {
 	return t;
 }
 // node_modules/@bufbuild/protobuf/dist/esm/clone.js
-function Iu(e, t) {
-	return Lu(bu(e, t)).message;
+function Ru(e, t) {
+	return zu(Su(e, t)).message;
 }
-function Lu(e) {
-	let t = bu(e.desc);
+function zu(e) {
+	let t = Su(e.desc);
 	for (let n of e.fields) if (e.isSet(n)) switch (n.fieldKind) {
 		case "list":
 			let r = t.get(n);
-			for (let t of e.get(n)) r.add(Ru(n, t));
+			for (let t of e.get(n)) r.add(Bu(n, t));
 			break;
 		case "map":
 			let i = t.get(n);
-			for (let t of e.get(n).entries()) i.set(t[0], Ru(n, t[1]));
+			for (let t of e.get(n).entries()) i.set(t[0], Bu(n, t[1]));
 			break;
-		default: t.set(n, Ru(n, e.get(n)));
+		default: t.set(n, Bu(n, e.get(n)));
 	}
 	let n = e.getUnknown();
 	return n && n.length > 0 && t.setUnknown([...n]), t;
 }
-function Ru(e, t) {
-	return e.message !== void 0 && yl(t) ? Lu(t) : e.scalar == L.BYTES && t instanceof Uint8Array ? t.slice() : t;
+function Bu(e, t) {
+	return e.message !== void 0 && bl(t) ? zu(t) : e.scalar == L.BYTES && t instanceof Uint8Array ? t.slice() : t;
 }
 // node_modules/@bufbuild/protobuf/dist/esm/wire/base64-encoding.js
-var zu = Uint8Array.prototype.setFromBase64;
-function Bu(e) {
+var Vu = Uint8Array.prototype.setFromBase64;
+function Hu(e) {
 	let t = e.length, n = t - (t + 3 >> 2);
 	!(t & 3) && e[t - 1] == "=" && (n -= e[t - 2] == "=" ? 2 : 1);
 	let r = new Uint8Array(n), i = -1;
-	if (zu) try {
-		let n = zu.call(r, e);
+	if (Vu) try {
+		let n = Vu.call(r, e);
 		n.read == t && (i = n.written);
 	} catch {}
-	return i < 0 && (i = Vu(r, e)), i == n ? r : r.subarray(0, i);
+	return i < 0 && (i = Uu(r, e)), i == n ? r : r.subarray(0, i);
 }
-function Vu(e, t) {
-	let n = Yu(), r = 0, i = 0, a, o = 0;
+function Uu(e, t) {
+	let n = Zu(), r = 0, i = 0, a, o = 0;
 	for (let s = 0; s < t.length; s++) {
 		if (a = n[t.charCodeAt(s)], a === void 0) switch (t[s]) {
 			case "=": i = 0;
@@ -7612,7 +7612,7 @@ function Vu(e, t) {
 	if (i == 1) throw Error("invalid base64 string");
 	return r;
 }
-var Hu = Uint8Array.prototype.toBase64, Uu = {
+var Wu = Uint8Array.prototype.toBase64, Gu = {
 	std: {
 		alphabet: "base64",
 		omitPadding: !1
@@ -7626,9 +7626,9 @@ var Hu = Uint8Array.prototype.toBase64, Uu = {
 		omitPadding: !0
 	}
 };
-function Wu(e, t = "std") {
-	if (Hu) return Hu.call(e, Uu[t]);
-	let n = Ju(t), r = t == "std", i = "", a = 0, o, s = 0;
+function Ku(e, t = "std") {
+	if (Wu) return Wu.call(e, Gu[t]);
+	let n = Xu(t), r = t == "std", i = "", a = 0, o, s = 0;
 	for (let t = 0; t < e.length; t++) switch (o = e[t], a) {
 		case 0:
 			i += n[o >> 2], s = (o & 3) << 4, a = 1;
@@ -7640,21 +7640,21 @@ function Wu(e, t = "std") {
 	}
 	return a && (i += n[s], r && (i += "=", a == 1 && (i += "="))), i;
 }
-var Gu, Ku, qu;
-function Ju(e) {
-	return Gu || (Gu = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".split(""), Ku = Gu.slice(0, -2).concat("-", "_")), e == "url" ? Ku : Gu;
+var qu, Ju, Yu;
+function Xu(e) {
+	return qu || (qu = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".split(""), Ju = qu.slice(0, -2).concat("-", "_")), e == "url" ? Ju : qu;
 }
-function Yu() {
-	if (!qu) {
-		qu = [];
-		let e = Ju("std");
-		for (let t = 0; t < e.length; t++) qu[e[t].charCodeAt(0)] = t;
-		qu[45] = e.indexOf("+"), qu[95] = e.indexOf("/");
+function Zu() {
+	if (!Yu) {
+		Yu = [];
+		let e = Xu("std");
+		for (let t = 0; t < e.length; t++) Yu[e[t].charCodeAt(0)] = t;
+		Yu[45] = e.indexOf("+"), Yu[95] = e.indexOf("/");
 	}
-	return qu;
+	return Yu;
 }
 // node_modules/@bufbuild/protobuf/dist/esm/reflect/names.js
-function Xu(e) {
+function Qu(e) {
 	let t = !1, n = [];
 	for (let r = 0; r < e.length; r++) {
 		let i = e.charAt(r);
@@ -7679,34 +7679,34 @@ function Xu(e) {
 	}
 	return n.join("");
 }
-function Zu(e) {
+function $u(e) {
 	return e.replace(/[A-Z]/g, (e) => "_" + e.toLowerCase());
 }
-var Qu = /* @__PURE__ */ new Set([
+var ed = /* @__PURE__ */ new Set([
 	"constructor",
 	"toString",
 	"toJSON",
 	"valueOf"
 ]);
-function $u(e) {
-	return Qu.has(e) ? e + "$" : e;
+function td(e) {
+	return ed.has(e) ? e + "$" : e;
 }
 // node_modules/@bufbuild/protobuf/dist/esm/codegenv2/restore-json-names.js
-function ed(e) {
-	for (let t of e.field) dl(t, "jsonName") || (t.jsonName = Xu(t.name));
-	e.nestedType.forEach(ed);
+function nd(e) {
+	for (let t of e.field) dl(t, "jsonName") || (t.jsonName = Qu(t.name));
+	e.nestedType.forEach(nd);
 }
 // node_modules/@bufbuild/protobuf/dist/esm/wire/text-format.js
-function td(e, t) {
+function rd(e, t) {
 	let n = e.values.find((e) => e.name === t);
 	if (!n) throw Error(`cannot parse ${e} default value: ${t}`);
 	return n.number;
 }
-function nd(e, t) {
+function id(e, t) {
 	switch (e) {
 		case L.STRING: return t;
 		case L.BYTES: {
-			let n = rd(t);
+			let n = ad(t);
 			if (n === !1) throw Error(`cannot parse ${L[e]} default value: ${t}`);
 			return n;
 		}
@@ -7730,7 +7730,7 @@ function nd(e, t) {
 		case L.SFIXED32: return parseInt(t, 10);
 	}
 }
-function rd(e) {
+function ad(e) {
 	let t = [], n = {
 		tail: e,
 		c: "",
@@ -7812,26 +7812,26 @@ function rd(e) {
 	return new Uint8Array(t);
 }
 // node_modules/@bufbuild/protobuf/dist/esm/reflect/nested-types.js
-function* id(e) {
+function* od(e) {
 	switch (e.kind) {
 		case "file":
-			for (let t of e.messages) yield t, yield* id(t);
+			for (let t of e.messages) yield t, yield* od(t);
 			yield* e.enums, yield* e.services, yield* e.extensions;
 			break;
 		case "message":
-			for (let t of e.nestedMessages) yield t, yield* id(t);
+			for (let t of e.nestedMessages) yield t, yield* od(t);
 			yield* e.nestedEnums, yield* e.nestedExtensions;
 	}
 }
 // node_modules/@bufbuild/protobuf/dist/esm/registry.js
-function ad(e, t) {
-	return od([e, t]);
+function sd(e, t) {
+	return cd([e, t]);
 }
-function od(e, t) {
-	let n = sd();
+function cd(e, t) {
+	let n = ld();
 	if (!e.length) return n;
 	if ("$typeName" in e[0] && e[0].$typeName == "google.protobuf.FileDescriptorSet") {
-		for (let r of e[0].file) t?.(r), kd(r, n);
+		for (let r of e[0].file) t?.(r), jd(r, n);
 		return n;
 	}
 	if ("$typeName" in e[0]) {
@@ -7846,11 +7846,11 @@ function od(e, t) {
 			}
 			return t.concat(...t.map(o));
 		}
-		for (let e of [r, ...o(r)].reverse()) t?.(e), kd(e, n);
+		for (let e of [r, ...o(r)].reverse()) t?.(e), jd(e, n);
 	} else for (let t of e) for (let e of t.files) n.addFile(e);
 	return n;
 }
-function sd() {
+function ld() {
 	let e = /* @__PURE__ */ new Map(), t = /* @__PURE__ */ new Map(), n = /* @__PURE__ */ new Map();
 	return {
 		kind: "registry",
@@ -7863,7 +7863,7 @@ function sd() {
 			return n.values();
 		},
 		addFile(e, t, r) {
-			if (n.set(e.proto.name, e), !t) for (let t of id(e)) this.add(t);
+			if (n.set(e.proto.name, e), !t) for (let t of od(e)) this.add(t);
 			if (r) for (let n of e.dependencies) this.addFile(n, t, r);
 		},
 		add(n) {
@@ -7900,7 +7900,7 @@ function sd() {
 		}
 	};
 }
-var cd = 998, ld = 999, ud = 9999, dd = 9, fd = 10, pd = 11, md = 12, hd = 14, gd = 3, _d = 2, vd = 1, yd = 0, bd = 1, xd = 2, Sd = 3, Cd = 1, wd = 2, Td = 1, Ed = 2, Dd = 1002, Od = {
+var ud = 998, dd = 999, fd = 9999, pd = 9, md = 10, hd = 11, gd = 12, _d = 14, vd = 3, yd = 2, bd = 1, xd = 0, Sd = 1, Cd = 2, wd = 3, Td = 1, Ed = 2, Dd = 1, Od = 2, kd = 1002, Ad = {
 	998: {
 		fieldPresence: 1,
 		enumType: 2,
@@ -7957,14 +7957,14 @@ var cd = 998, ld = 999, ud = 9999, dd = 9, fd = 10, pd = 11, md = 12, hd = 14, g
 		enforceProtoLimits: 2
 	}
 };
-function kd(e, t) {
+function jd(e, t) {
 	let n = {
 		kind: "file",
 		proto: e,
 		deprecated: e.options?.deprecated ?? !1,
-		edition: Rd(e),
+		edition: Bd(e),
 		name: e.name.replace(/\.proto$/, ""),
-		dependencies: zd(e, t),
+		dependencies: Vd(e, t),
 		enums: [],
 		messages: [],
 		extensions: [],
@@ -7977,45 +7977,45 @@ function kd(e, t) {
 			return r.get(e);
 		},
 		add(e) {
-			$d(e.proto.options?.mapEntry === !0), r.set(e.typeName, e);
+			tf(e.proto.options?.mapEntry === !0), r.set(e.typeName, e);
 		}
 	};
-	for (let r of e.enumType) Md(r, n, void 0, t);
-	for (let r of e.messageType) Nd(r, n, void 0, t, i);
-	for (let r of e.service) Pd(r, n, t);
-	Ad(n, t);
-	for (let e of r.values()) jd(e, t, i);
-	for (let e of n.messages) jd(e, t, i), Ad(e, t);
+	for (let r of e.enumType) Pd(r, n, void 0, t);
+	for (let r of e.messageType) Fd(r, n, void 0, t, i);
+	for (let r of e.service) Id(r, n, t);
+	Md(n, t);
+	for (let e of r.values()) Nd(e, t, i);
+	for (let e of n.messages) Nd(e, t, i), Md(e, t);
 	t.addFile(n, !0);
 }
-function Ad(e, t) {
+function Md(e, t) {
 	switch (e.kind) {
 		case "file":
 			for (let n of e.proto.extension) {
-				let r = Ld(n, e, t);
+				let r = zd(n, e, t);
 				e.extensions.push(r), t.add(r);
 			}
 			break;
 		case "message":
 			for (let n of e.proto.extension) {
-				let r = Ld(n, e, t);
+				let r = zd(n, e, t);
 				e.nestedExtensions.push(r), t.add(r);
 			}
-			for (let n of e.nestedMessages) Ad(n, t);
+			for (let n of e.nestedMessages) Md(n, t);
 	}
 }
-function jd(e, t, n) {
-	let r = e.proto.oneofDecl.map((t) => Id(t, e)), i = /* @__PURE__ */ new Set();
+function Nd(e, t, n) {
+	let r = e.proto.oneofDecl.map((t) => Rd(t, e)), i = /* @__PURE__ */ new Set();
 	for (let a of e.proto.field) {
-		let o = Gd(a, r), s = Ld(a, e, t, o, n);
+		let o = qd(a, r), s = zd(a, e, t, o, n);
 		e.fields.push(s), e.field[s.localName] = s, o === void 0 ? e.members.push(s) : (o.fields.push(s), i.has(o) || (i.add(o), e.members.push(o)));
 	}
 	for (let t of r.filter((e) => i.has(e))) e.oneofs.push(t);
-	for (let r of e.nestedMessages) jd(r, t, n);
+	for (let r of e.nestedMessages) Nd(r, t, n);
 }
-function Md(e, t, n, r) {
+function Pd(e, t, n, r) {
 	var i, a;
-	let o = Bd(e.name, e.value), s = {
+	let o = Hd(e.name, e.value), s = {
 		kind: "enum",
 		proto: e,
 		deprecated: e.options?.deprecated ?? !1,
@@ -8023,7 +8023,7 @@ function Md(e, t, n, r) {
 		parent: n,
 		open: !0,
 		name: e.name,
-		typeName: Ud(e, n, t),
+		typeName: Gd(e, n, t),
 		value: {},
 		values: [],
 		sharedPrefix: o,
@@ -8031,7 +8031,7 @@ function Md(e, t, n, r) {
 			return `enum ${this.typeName}`;
 		}
 	};
-	s.open = Yd(s), r.add(s);
+	s.open = Zd(s), r.add(s);
 	for (let t of e.value) {
 		let e = t.name, n = {
 			kind: "enum_value",
@@ -8039,9 +8039,9 @@ function Md(e, t, n, r) {
 			deprecated: t.options?.deprecated ?? !1,
 			parent: s,
 			name: e,
-			localName: $u(o == null ? e : e.substring(o.length)),
+			localName: td(o == null ? e : e.substring(o.length)),
 			number: t.number,
-			jsonName: Vd(t) ?? e,
+			jsonName: Ud(t) ?? e,
 			toString() {
 				return `enum value ${s.typeName}.${e}`;
 			}
@@ -8050,7 +8050,7 @@ function Md(e, t, n, r) {
 	}
 	(n?.nestedEnums ?? t.enums).push(s);
 }
-function Nd(e, t, n, r, i) {
+function Fd(e, t, n, r, i) {
 	let a = {
 		kind: "message",
 		proto: e,
@@ -8058,7 +8058,7 @@ function Nd(e, t, n, r, i) {
 		file: t,
 		parent: n,
 		name: e.name,
-		typeName: Ud(e, n, t),
+		typeName: Gd(e, n, t),
 		fields: [],
 		field: {},
 		oneofs: [],
@@ -8071,17 +8071,17 @@ function Nd(e, t, n, r, i) {
 		}
 	};
 	e.options?.mapEntry === !0 ? i.add(a) : ((n?.nestedMessages ?? t.messages).push(a), r.add(a));
-	for (let n of e.enumType) Md(n, t, a, r);
-	for (let n of e.nestedType) Nd(n, t, a, r, i);
+	for (let n of e.enumType) Pd(n, t, a, r);
+	for (let n of e.nestedType) Fd(n, t, a, r, i);
 }
-function Pd(e, t, n) {
+function Id(e, t, n) {
 	let r = {
 		kind: "service",
 		proto: e,
 		deprecated: e.options?.deprecated ?? !1,
 		file: t,
 		name: e.name,
-		typeName: Ud(e, void 0, t),
+		typeName: Gd(e, void 0, t),
 		methods: [],
 		method: {},
 		toString() {
@@ -8090,15 +8090,15 @@ function Pd(e, t, n) {
 	};
 	t.services.push(r), n.add(r);
 	for (let t of e.method) {
-		let e = Fd(t, r, n);
+		let e = Ld(t, r, n);
 		r.methods.push(e), r.method[e.localName] = e;
 	}
 }
-function Fd(e, t, n) {
+function Ld(e, t, n) {
 	let r;
 	r = e.clientStreaming && e.serverStreaming ? "bidi_streaming" : e.clientStreaming ? "client_streaming" : e.serverStreaming ? "server_streaming" : "unary";
-	let i = n.getMessage(Wd(e.inputType)), a = n.getMessage(Wd(e.outputType));
-	$d(i, `invalid MethodDescriptorProto: input_type ${e.inputType} not found`), $d(a, `invalid MethodDescriptorProto: output_type ${e.inputType} not found`);
+	let i = n.getMessage(Kd(e.inputType)), a = n.getMessage(Kd(e.outputType));
+	tf(i, `invalid MethodDescriptorProto: input_type ${e.inputType} not found`), tf(a, `invalid MethodDescriptorProto: output_type ${e.inputType} not found`);
 	let o = e.name;
 	return {
 		kind: "rpc",
@@ -8106,17 +8106,17 @@ function Fd(e, t, n) {
 		deprecated: e.options?.deprecated ?? !1,
 		parent: t,
 		name: o,
-		localName: $u(o.length ? $u(o[0].toLowerCase() + o.substring(1)) : o),
+		localName: td(o.length ? td(o[0].toLowerCase() + o.substring(1)) : o),
 		methodKind: r,
 		input: i,
 		output: a,
-		idempotency: e.options?.idempotencyLevel ?? yd,
+		idempotency: e.options?.idempotencyLevel ?? xd,
 		toString() {
 			return `rpc ${t.typeName}.${o}`;
 		}
 	};
 }
-function Id(e, t) {
+function Rd(e, t) {
 	return {
 		kind: "oneof",
 		proto: e,
@@ -8124,13 +8124,13 @@ function Id(e, t) {
 		parent: t,
 		fields: [],
 		name: e.name,
-		localName: $u(Xu(e.name)),
+		localName: td(Qu(e.name)),
 		toString() {
 			return `oneof ${t.typeName}.${this.name}`;
 		}
 	};
 }
-function Ld(e, t, n, r, i) {
+function zd(e, t, n, r, i) {
 	let a = i === void 0, o = {
 		kind: "field",
 		proto: e,
@@ -8140,8 +8140,8 @@ function Ld(e, t, n, r, i) {
 		scalar: void 0,
 		message: void 0,
 		enum: void 0,
-		presence: Kd(e, r, a, t),
-		utf8Validation: Zd(e, t),
+		presence: Jd(e, r, a, t),
+		utf8Validation: $d(e, t),
 		listKind: void 0,
 		mapKind: void 0,
 		mapKey: void 0,
@@ -8151,13 +8151,13 @@ function Ld(e, t, n, r, i) {
 		getDefaultValue: void 0
 	}, s;
 	if (a) {
-		let r = t.kind == "file" ? t : t.file, i = t.kind == "file" ? void 0 : t, a = Ud(e, i, r);
+		let r = t.kind == "file" ? t : t.file, i = t.kind == "file" ? void 0 : t, a = Gd(e, i, r);
 		o.kind = "extension", o.file = r, o.parent = i, o.oneof = void 0, o.typeName = a, o.jsonName = `[${a}]`, s = () => `extension ${a}`;
-		let c = n.getMessage(Wd(e.extendee));
-		$d(c, `invalid FieldDescriptorProto: extendee ${e.extendee} not found`), o.extendee = c;
+		let c = n.getMessage(Kd(e.extendee));
+		tf(c, `invalid FieldDescriptorProto: extendee ${e.extendee} not found`), o.extendee = c;
 	} else {
 		let n = t;
-		$d(n.kind == "message"), o.parent = n, o.oneof = r, o.localName = r ? Xu(e.name) : $u(Xu(e.name)), o.jsonName = e.jsonName, s = () => `field ${n.typeName}.${e.name}`;
+		tf(n.kind == "message"), o.parent = n, o.oneof = r, o.localName = r ? Qu(e.name) : td(Qu(e.name)), o.jsonName = e.jsonName, s = () => `field ${n.typeName}.${e.name}`;
 	}
 	Object.defineProperty(o, "toString", {
 		value: s,
@@ -8166,60 +8166,60 @@ function Ld(e, t, n, r, i) {
 		configurable: !0
 	});
 	let c = e.label, l = e.type, u = e.options?.jstype;
-	if (c === gd) {
-		let r = l == pd ? i?.get(Wd(e.typeName)) : void 0;
+	if (c === vd) {
+		let r = l == hd ? i?.get(Kd(e.typeName)) : void 0;
 		if (r) {
 			o.fieldKind = "map";
-			let { key: e, value: t } = Jd(r);
+			let { key: e, value: t } = Xd(r);
 			return o.mapKey = e.scalar, o.mapKind = t.fieldKind, o.message = t.message, o.delimitedEncoding = !1, o.enum = t.enum, o.scalar = t.scalar, o;
 		}
 		switch (o.fieldKind = "list", l) {
-			case pd:
-			case fd:
-				o.listKind = "message", o.message = n.getMessage(Wd(e.typeName)), $d(o.message), o.delimitedEncoding = Xd(e, t);
-				break;
 			case hd:
-				o.listKind = "enum", o.enum = n.getEnum(Wd(e.typeName)), $d(o.enum);
+			case md:
+				o.listKind = "message", o.message = n.getMessage(Kd(e.typeName)), tf(o.message), o.delimitedEncoding = Qd(e, t);
 				break;
-			default: o.listKind = "scalar", o.scalar = l, o.longAsString = u == vd;
+			case _d:
+				o.listKind = "enum", o.enum = n.getEnum(Kd(e.typeName)), tf(o.enum);
+				break;
+			default: o.listKind = "scalar", o.scalar = l, o.longAsString = u == bd;
 		}
-		return o.packed = qd(e, t), o;
+		return o.packed = Yd(e, t), o;
 	}
 	switch (l) {
-		case pd:
-		case fd:
-			o.fieldKind = "message", o.message = n.getMessage(Wd(e.typeName)), $d(o.message, `invalid FieldDescriptorProto: type_name ${e.typeName} not found`), o.delimitedEncoding = Xd(e, t), o.getDefaultValue = () => void 0;
+		case hd:
+		case md:
+			o.fieldKind = "message", o.message = n.getMessage(Kd(e.typeName)), tf(o.message, `invalid FieldDescriptorProto: type_name ${e.typeName} not found`), o.delimitedEncoding = Qd(e, t), o.getDefaultValue = () => void 0;
 			break;
-		case hd: {
-			let t = n.getEnum(Wd(e.typeName));
-			$d(t !== void 0, `invalid FieldDescriptorProto: type_name ${e.typeName} not found`), o.fieldKind = "enum", o.enum = n.getEnum(Wd(e.typeName)), o.getDefaultValue = () => dl(e, "defaultValue") ? td(t, e.defaultValue) : void 0;
+		case _d: {
+			let t = n.getEnum(Kd(e.typeName));
+			tf(t !== void 0, `invalid FieldDescriptorProto: type_name ${e.typeName} not found`), o.fieldKind = "enum", o.enum = n.getEnum(Kd(e.typeName)), o.getDefaultValue = () => dl(e, "defaultValue") ? rd(t, e.defaultValue) : void 0;
 			break;
 		}
-		default: o.fieldKind = "scalar", o.scalar = l, o.longAsString = u == vd, o.getDefaultValue = () => dl(e, "defaultValue") ? nd(l, e.defaultValue) : void 0;
+		default: o.fieldKind = "scalar", o.scalar = l, o.longAsString = u == bd, o.getDefaultValue = () => dl(e, "defaultValue") ? id(l, e.defaultValue) : void 0;
 	}
 	return o;
 }
-function Rd(e) {
+function Bd(e) {
 	switch (e.syntax) {
 		case "":
-		case "proto2": return cd;
-		case "proto3": return ld;
+		case "proto2": return ud;
+		case "proto3": return dd;
 		case "editions":
-			if (e.edition === ud) return Dd;
-			if (e.edition in Od) return e.edition;
+			if (e.edition === fd) return kd;
+			if (e.edition in Ad) return e.edition;
 			throw Error(`${e.name}: unsupported edition`);
 		default: throw Error(`${e.name}: unsupported syntax "${e.syntax}"`);
 	}
 }
-function zd(e, t) {
+function Vd(e, t) {
 	return e.dependency.map((n) => {
 		let r = t.getFile(n);
 		if (!r) throw Error(`Cannot find ${n}, imported by ${e.name}`);
 		return r;
 	});
 }
-function Bd(e, t) {
-	let n = Hd(e) + "_";
+function Hd(e, t) {
+	let n = Wd(e) + "_";
 	for (let e of t) {
 		if (!e.name.toLowerCase().startsWith(n)) return;
 		let t = e.name.substring(n.length);
@@ -8227,105 +8227,105 @@ function Bd(e, t) {
 	}
 	return n;
 }
-function Vd(e) {
+function Ud(e) {
 	let t;
 	for (let n of e.options?.$unknown ?? []) {
-		if (n.no !== 998 || n.wireType !== U.LengthDelimited) continue;
-		let e = new eu(new eu(n.data).bytes());
+		if (n.no !== 998 || n.wireType !== H.LengthDelimited) continue;
+		let e = new tu(new tu(n.data).bytes());
 		for (; e.pos < e.len;) {
 			let [n, r] = e.tag();
-			n === 1 && r === U.LengthDelimited ? t = e.string() : e.skip(r, n);
+			n === 1 && r === H.LengthDelimited ? t = e.string() : e.skip(r, n);
 		}
 	}
 	return t;
 }
-function Hd(e) {
+function Wd(e) {
 	return (e.substring(0, 1) + e.substring(1).replace(/[A-Z]/g, (e) => "_" + e)).toLowerCase();
 }
-function Ud(e, t, n) {
+function Gd(e, t, n) {
 	let r;
 	return r = t ? `${t.typeName}.${e.name}` : n.proto.package.length > 0 ? `${n.proto.package}.${e.name}` : `${e.name}`, r;
 }
-function Wd(e) {
+function Kd(e) {
 	return e.startsWith(".") ? e.substring(1) : e;
 }
-function Gd(e, t) {
+function qd(e, t) {
 	if (!dl(e, "oneofIndex") || e.proto3Optional) return;
 	let n = t[e.oneofIndex];
-	return $d(n, `invalid FieldDescriptorProto: oneof #${e.oneofIndex} for field #${e.number} not found`), n;
+	return tf(n, `invalid FieldDescriptorProto: oneof #${e.oneofIndex} for field #${e.number} not found`), n;
 }
-function Kd(e, t, n, r) {
-	if (e.label == _d) return Sd;
-	if (e.label == gd) return xd;
-	if (t || e.proto3Optional || n) return bd;
-	let i = Qd("fieldPresence", {
+function Jd(e, t, n, r) {
+	if (e.label == yd) return wd;
+	if (e.label == vd) return Cd;
+	if (t || e.proto3Optional || n) return Sd;
+	let i = ef("fieldPresence", {
 		proto: e,
 		parent: r
 	});
-	return i == xd && (e.type == pd || e.type == fd) ? bd : i;
+	return i == Cd && (e.type == hd || e.type == md) ? Sd : i;
 }
-function qd(e, t) {
-	if (e.label != gd) return !1;
+function Yd(e, t) {
+	if (e.label != vd) return !1;
 	switch (e.type) {
-		case dd:
+		case pd:
+		case gd:
 		case md:
-		case fd:
-		case pd: return !1;
+		case hd: return !1;
 	}
 	let n = e.options;
-	return n && dl(n, "packed") ? n.packed : Cd == Qd("repeatedFieldEncoding", {
+	return n && dl(n, "packed") ? n.packed : Td == ef("repeatedFieldEncoding", {
 		proto: e,
 		parent: t
 	});
 }
-function Jd(e) {
+function Xd(e) {
 	let t = e.fields.find((e) => e.number === 1), n = e.fields.find((e) => e.number === 2);
-	return $d(t && t.fieldKind == "scalar" && t.scalar != L.BYTES && t.scalar != L.FLOAT && t.scalar != L.DOUBLE && n && n.fieldKind != "list" && n.fieldKind != "map"), {
+	return tf(t && t.fieldKind == "scalar" && t.scalar != L.BYTES && t.scalar != L.FLOAT && t.scalar != L.DOUBLE && n && n.fieldKind != "list" && n.fieldKind != "map"), {
 		key: t,
 		value: n
 	};
 }
-function Yd(e) {
-	return Td == Qd("enumType", {
+function Zd(e) {
+	return Dd == ef("enumType", {
 		proto: e.proto,
 		parent: e.parent ?? e.file
 	});
 }
-function Xd(e, t) {
-	return e.type == fd || wd == Qd("messageEncoding", {
-		proto: e,
-		parent: t
-	});
-}
-function Zd(e, t) {
-	return Ed == Qd("utf8Validation", {
-		proto: e,
-		parent: t
-	});
-}
 function Qd(e, t) {
+	return e.type == md || Ed == ef("messageEncoding", {
+		proto: e,
+		parent: t
+	});
+}
+function $d(e, t) {
+	return Od == ef("utf8Validation", {
+		proto: e,
+		parent: t
+	});
+}
+function ef(e, t) {
 	let n = t.proto.options?.features;
 	if (n) {
 		let t = n[e];
 		if (t != 0) return t;
 	}
 	if ("kind" in t) {
-		if (t.kind == "message") return Qd(e, t.parent ?? t.file);
-		let n = Od[t.edition];
+		if (t.kind == "message") return ef(e, t.parent ?? t.file);
+		let n = Ad[t.edition];
 		if (!n) throw Error(`feature default for edition ${t.edition} not found`);
 		return n[e];
 	}
-	return Qd(e, t.parent);
+	return ef(e, t.parent);
 }
-function $d(e, t) {
+function tf(e, t) {
 	if (!e) throw Error(t);
 }
 // node_modules/@bufbuild/protobuf/dist/esm/codegenv2/boot.js
-function ef(e) {
-	let t = tf(e);
-	return t.messageType.forEach(ed), ad(t, () => void 0).getFile(t.name);
+function nf(e) {
+	let t = rf(e);
+	return t.messageType.forEach(nd), sd(t, () => void 0).getFile(t.name);
 }
-function tf(e) {
+function rf(e) {
 	return Object.assign(Object.create({
 		syntax: "",
 		edition: 0
@@ -8338,25 +8338,25 @@ function tf(e) {
 		service: [],
 		extension: []
 	}, e), {
-		messageType: e.messageType.map(nf),
-		enumType: e.enumType.map(of)
+		messageType: e.messageType.map(af),
+		enumType: e.enumType.map(cf)
 	}));
 }
-function nf(e) {
+function af(e) {
 	return Object.assign(Object.create({ visibility: 0 }), {
 		$typeName: "google.protobuf.DescriptorProto",
 		name: e.name,
-		field: e.field?.map(rf) ?? [],
+		field: e.field?.map(of) ?? [],
 		extension: [],
-		nestedType: e.nestedType?.map(nf) ?? [],
-		enumType: e.enumType?.map(of) ?? [],
+		nestedType: e.nestedType?.map(af) ?? [],
+		enumType: e.enumType?.map(cf) ?? [],
 		extensionRange: e.extensionRange?.map((e) => Object.assign({ $typeName: "google.protobuf.DescriptorProto.ExtensionRange" }, e)) ?? [],
 		oneofDecl: [],
 		reservedRange: [],
 		reservedName: []
 	});
 }
-function rf(e) {
+function of(e) {
 	return Object.assign(Object.create({
 		label: 1,
 		typeName: "",
@@ -8365,9 +8365,9 @@ function rf(e) {
 		oneofIndex: 0,
 		jsonName: "",
 		proto3Optional: !1
-	}), Object.assign(Object.assign({ $typeName: "google.protobuf.FieldDescriptorProto" }, e), { options: e.options ? af(e.options) : void 0 }));
+	}), Object.assign(Object.assign({ $typeName: "google.protobuf.FieldDescriptorProto" }, e), { options: e.options ? sf(e.options) : void 0 }));
 }
-function af(e) {
+function sf(e) {
 	return Object.assign(Object.create({
 		ctype: 0,
 		packed: !1,
@@ -8384,7 +8384,7 @@ function af(e) {
 		uninterpretedOption: []
 	}));
 }
-function of(e) {
+function cf(e) {
 	return Object.assign(Object.create({ visibility: 0 }), {
 		$typeName: "google.protobuf.EnumDescriptorProto",
 		name: e.name,
@@ -8394,10 +8394,10 @@ function of(e) {
 	});
 }
 // node_modules/@bufbuild/protobuf/dist/esm/codegenv2/message.js
-function sf(e, t, ...n) {
+function lf(e, t, ...n) {
 	return n.reduce((e, t) => e.nestedMessages[t], e.messages[t]);
 }
-var cf = /*@__PURE__*/ sf(/* @__PURE__ */ ef({
+var uf = /*@__PURE__*/ lf(/* @__PURE__ */ nf({
 	name: "google/protobuf/descriptor.proto",
 	package: "google.protobuf",
 	messageType: [
@@ -10449,116 +10449,116 @@ var cf = /*@__PURE__*/ sf(/* @__PURE__ */ ef({
 			}
 		]
 	}]
-}), 1), lf;
+}), 1), df;
 (function(e) {
 	e[e.DECLARATION = 0] = "DECLARATION", e[e.UNVERIFIED = 1] = "UNVERIFIED";
-})(lf ||= {});
-var uf;
-(function(e) {
-	e[e.DOUBLE = 1] = "DOUBLE", e[e.FLOAT = 2] = "FLOAT", e[e.INT64 = 3] = "INT64", e[e.UINT64 = 4] = "UINT64", e[e.INT32 = 5] = "INT32", e[e.FIXED64 = 6] = "FIXED64", e[e.FIXED32 = 7] = "FIXED32", e[e.BOOL = 8] = "BOOL", e[e.STRING = 9] = "STRING", e[e.GROUP = 10] = "GROUP", e[e.MESSAGE = 11] = "MESSAGE", e[e.BYTES = 12] = "BYTES", e[e.UINT32 = 13] = "UINT32", e[e.ENUM = 14] = "ENUM", e[e.SFIXED32 = 15] = "SFIXED32", e[e.SFIXED64 = 16] = "SFIXED64", e[e.SINT32 = 17] = "SINT32", e[e.SINT64 = 18] = "SINT64";
-})(uf ||= {});
-var df;
-(function(e) {
-	e[e.OPTIONAL = 1] = "OPTIONAL", e[e.REPEATED = 3] = "REPEATED", e[e.REQUIRED = 2] = "REQUIRED";
 })(df ||= {});
 var ff;
 (function(e) {
-	e[e.SPEED = 1] = "SPEED", e[e.CODE_SIZE = 2] = "CODE_SIZE", e[e.LITE_RUNTIME = 3] = "LITE_RUNTIME";
+	e[e.DOUBLE = 1] = "DOUBLE", e[e.FLOAT = 2] = "FLOAT", e[e.INT64 = 3] = "INT64", e[e.UINT64 = 4] = "UINT64", e[e.INT32 = 5] = "INT32", e[e.FIXED64 = 6] = "FIXED64", e[e.FIXED32 = 7] = "FIXED32", e[e.BOOL = 8] = "BOOL", e[e.STRING = 9] = "STRING", e[e.GROUP = 10] = "GROUP", e[e.MESSAGE = 11] = "MESSAGE", e[e.BYTES = 12] = "BYTES", e[e.UINT32 = 13] = "UINT32", e[e.ENUM = 14] = "ENUM", e[e.SFIXED32 = 15] = "SFIXED32", e[e.SFIXED64 = 16] = "SFIXED64", e[e.SINT32 = 17] = "SINT32", e[e.SINT64 = 18] = "SINT64";
 })(ff ||= {});
 var pf;
 (function(e) {
-	e[e.STRING = 0] = "STRING", e[e.CORD = 1] = "CORD", e[e.STRING_PIECE = 2] = "STRING_PIECE";
+	e[e.OPTIONAL = 1] = "OPTIONAL", e[e.REPEATED = 3] = "REPEATED", e[e.REQUIRED = 2] = "REQUIRED";
 })(pf ||= {});
 var mf;
 (function(e) {
-	e[e.JS_NORMAL = 0] = "JS_NORMAL", e[e.JS_STRING = 1] = "JS_STRING", e[e.JS_NUMBER = 2] = "JS_NUMBER";
+	e[e.SPEED = 1] = "SPEED", e[e.CODE_SIZE = 2] = "CODE_SIZE", e[e.LITE_RUNTIME = 3] = "LITE_RUNTIME";
 })(mf ||= {});
 var hf;
 (function(e) {
-	e[e.RETENTION_UNKNOWN = 0] = "RETENTION_UNKNOWN", e[e.RETENTION_RUNTIME = 1] = "RETENTION_RUNTIME", e[e.RETENTION_SOURCE = 2] = "RETENTION_SOURCE";
+	e[e.STRING = 0] = "STRING", e[e.CORD = 1] = "CORD", e[e.STRING_PIECE = 2] = "STRING_PIECE";
 })(hf ||= {});
 var gf;
 (function(e) {
-	e[e.TARGET_TYPE_UNKNOWN = 0] = "TARGET_TYPE_UNKNOWN", e[e.TARGET_TYPE_FILE = 1] = "TARGET_TYPE_FILE", e[e.TARGET_TYPE_EXTENSION_RANGE = 2] = "TARGET_TYPE_EXTENSION_RANGE", e[e.TARGET_TYPE_MESSAGE = 3] = "TARGET_TYPE_MESSAGE", e[e.TARGET_TYPE_FIELD = 4] = "TARGET_TYPE_FIELD", e[e.TARGET_TYPE_ONEOF = 5] = "TARGET_TYPE_ONEOF", e[e.TARGET_TYPE_ENUM = 6] = "TARGET_TYPE_ENUM", e[e.TARGET_TYPE_ENUM_ENTRY = 7] = "TARGET_TYPE_ENUM_ENTRY", e[e.TARGET_TYPE_SERVICE = 8] = "TARGET_TYPE_SERVICE", e[e.TARGET_TYPE_METHOD = 9] = "TARGET_TYPE_METHOD";
+	e[e.JS_NORMAL = 0] = "JS_NORMAL", e[e.JS_STRING = 1] = "JS_STRING", e[e.JS_NUMBER = 2] = "JS_NUMBER";
 })(gf ||= {});
 var _f;
 (function(e) {
-	e[e.IDEMPOTENCY_UNKNOWN = 0] = "IDEMPOTENCY_UNKNOWN", e[e.NO_SIDE_EFFECTS = 1] = "NO_SIDE_EFFECTS", e[e.IDEMPOTENT = 2] = "IDEMPOTENT";
+	e[e.RETENTION_UNKNOWN = 0] = "RETENTION_UNKNOWN", e[e.RETENTION_RUNTIME = 1] = "RETENTION_RUNTIME", e[e.RETENTION_SOURCE = 2] = "RETENTION_SOURCE";
 })(_f ||= {});
 var vf;
 (function(e) {
-	e[e.DEFAULT_SYMBOL_VISIBILITY_UNKNOWN = 0] = "DEFAULT_SYMBOL_VISIBILITY_UNKNOWN", e[e.EXPORT_ALL = 1] = "EXPORT_ALL", e[e.EXPORT_TOP_LEVEL = 2] = "EXPORT_TOP_LEVEL", e[e.LOCAL_ALL = 3] = "LOCAL_ALL", e[e.STRICT = 4] = "STRICT";
+	e[e.TARGET_TYPE_UNKNOWN = 0] = "TARGET_TYPE_UNKNOWN", e[e.TARGET_TYPE_FILE = 1] = "TARGET_TYPE_FILE", e[e.TARGET_TYPE_EXTENSION_RANGE = 2] = "TARGET_TYPE_EXTENSION_RANGE", e[e.TARGET_TYPE_MESSAGE = 3] = "TARGET_TYPE_MESSAGE", e[e.TARGET_TYPE_FIELD = 4] = "TARGET_TYPE_FIELD", e[e.TARGET_TYPE_ONEOF = 5] = "TARGET_TYPE_ONEOF", e[e.TARGET_TYPE_ENUM = 6] = "TARGET_TYPE_ENUM", e[e.TARGET_TYPE_ENUM_ENTRY = 7] = "TARGET_TYPE_ENUM_ENTRY", e[e.TARGET_TYPE_SERVICE = 8] = "TARGET_TYPE_SERVICE", e[e.TARGET_TYPE_METHOD = 9] = "TARGET_TYPE_METHOD";
 })(vf ||= {});
 var yf;
 (function(e) {
-	e[e.PROTO_LIMITS_UNKNOWN = 0] = "PROTO_LIMITS_UNKNOWN", e[e.LEGACY_NO_EXPLICIT_LIMITS = 1] = "LEGACY_NO_EXPLICIT_LIMITS", e[e.PROTO_LIMITS2026 = 2] = "PROTO_LIMITS2026";
+	e[e.IDEMPOTENCY_UNKNOWN = 0] = "IDEMPOTENCY_UNKNOWN", e[e.NO_SIDE_EFFECTS = 1] = "NO_SIDE_EFFECTS", e[e.IDEMPOTENT = 2] = "IDEMPOTENT";
 })(yf ||= {});
 var bf;
 (function(e) {
-	e[e.FIELD_PRESENCE_UNKNOWN = 0] = "FIELD_PRESENCE_UNKNOWN", e[e.EXPLICIT = 1] = "EXPLICIT", e[e.IMPLICIT = 2] = "IMPLICIT", e[e.LEGACY_REQUIRED = 3] = "LEGACY_REQUIRED";
+	e[e.DEFAULT_SYMBOL_VISIBILITY_UNKNOWN = 0] = "DEFAULT_SYMBOL_VISIBILITY_UNKNOWN", e[e.EXPORT_ALL = 1] = "EXPORT_ALL", e[e.EXPORT_TOP_LEVEL = 2] = "EXPORT_TOP_LEVEL", e[e.LOCAL_ALL = 3] = "LOCAL_ALL", e[e.STRICT = 4] = "STRICT";
 })(bf ||= {});
 var xf;
 (function(e) {
-	e[e.ENUM_TYPE_UNKNOWN = 0] = "ENUM_TYPE_UNKNOWN", e[e.OPEN = 1] = "OPEN", e[e.CLOSED = 2] = "CLOSED";
+	e[e.PROTO_LIMITS_UNKNOWN = 0] = "PROTO_LIMITS_UNKNOWN", e[e.LEGACY_NO_EXPLICIT_LIMITS = 1] = "LEGACY_NO_EXPLICIT_LIMITS", e[e.PROTO_LIMITS2026 = 2] = "PROTO_LIMITS2026";
 })(xf ||= {});
 var Sf;
 (function(e) {
-	e[e.REPEATED_FIELD_ENCODING_UNKNOWN = 0] = "REPEATED_FIELD_ENCODING_UNKNOWN", e[e.PACKED = 1] = "PACKED", e[e.EXPANDED = 2] = "EXPANDED";
+	e[e.FIELD_PRESENCE_UNKNOWN = 0] = "FIELD_PRESENCE_UNKNOWN", e[e.EXPLICIT = 1] = "EXPLICIT", e[e.IMPLICIT = 2] = "IMPLICIT", e[e.LEGACY_REQUIRED = 3] = "LEGACY_REQUIRED";
 })(Sf ||= {});
 var Cf;
 (function(e) {
-	e[e.UTF8_VALIDATION_UNKNOWN = 0] = "UTF8_VALIDATION_UNKNOWN", e[e.VERIFY = 2] = "VERIFY", e[e.NONE = 3] = "NONE";
+	e[e.ENUM_TYPE_UNKNOWN = 0] = "ENUM_TYPE_UNKNOWN", e[e.OPEN = 1] = "OPEN", e[e.CLOSED = 2] = "CLOSED";
 })(Cf ||= {});
 var wf;
 (function(e) {
-	e[e.MESSAGE_ENCODING_UNKNOWN = 0] = "MESSAGE_ENCODING_UNKNOWN", e[e.LENGTH_PREFIXED = 1] = "LENGTH_PREFIXED", e[e.DELIMITED = 2] = "DELIMITED";
+	e[e.REPEATED_FIELD_ENCODING_UNKNOWN = 0] = "REPEATED_FIELD_ENCODING_UNKNOWN", e[e.PACKED = 1] = "PACKED", e[e.EXPANDED = 2] = "EXPANDED";
 })(wf ||= {});
 var Tf;
 (function(e) {
-	e[e.JSON_FORMAT_UNKNOWN = 0] = "JSON_FORMAT_UNKNOWN", e[e.ALLOW = 1] = "ALLOW", e[e.LEGACY_BEST_EFFORT = 2] = "LEGACY_BEST_EFFORT";
+	e[e.UTF8_VALIDATION_UNKNOWN = 0] = "UTF8_VALIDATION_UNKNOWN", e[e.VERIFY = 2] = "VERIFY", e[e.NONE = 3] = "NONE";
 })(Tf ||= {});
 var Ef;
 (function(e) {
-	e[e.ENFORCE_NAMING_STYLE_UNKNOWN = 0] = "ENFORCE_NAMING_STYLE_UNKNOWN", e[e.STYLE2024 = 1] = "STYLE2024", e[e.STYLE_LEGACY = 2] = "STYLE_LEGACY", e[e.STYLE2026 = 3] = "STYLE2026";
+	e[e.MESSAGE_ENCODING_UNKNOWN = 0] = "MESSAGE_ENCODING_UNKNOWN", e[e.LENGTH_PREFIXED = 1] = "LENGTH_PREFIXED", e[e.DELIMITED = 2] = "DELIMITED";
 })(Ef ||= {});
 var Df;
 (function(e) {
-	e[e.NONE = 0] = "NONE", e[e.SET = 1] = "SET", e[e.ALIAS = 2] = "ALIAS";
+	e[e.JSON_FORMAT_UNKNOWN = 0] = "JSON_FORMAT_UNKNOWN", e[e.ALLOW = 1] = "ALLOW", e[e.LEGACY_BEST_EFFORT = 2] = "LEGACY_BEST_EFFORT";
 })(Df ||= {});
 var Of;
 (function(e) {
-	e[e.EDITION_UNKNOWN = 0] = "EDITION_UNKNOWN", e[e.EDITION_LEGACY = 900] = "EDITION_LEGACY", e[e.EDITION_PROTO2 = 998] = "EDITION_PROTO2", e[e.EDITION_PROTO3 = 999] = "EDITION_PROTO3", e[e.EDITION_2023 = 1e3] = "EDITION_2023", e[e.EDITION_2024 = 1001] = "EDITION_2024", e[e.EDITION_2026 = 1002] = "EDITION_2026", e[e.EDITION_UNSTABLE = 9999] = "EDITION_UNSTABLE", e[e.EDITION_1_TEST_ONLY = 1] = "EDITION_1_TEST_ONLY", e[e.EDITION_2_TEST_ONLY = 2] = "EDITION_2_TEST_ONLY", e[e.EDITION_99997_TEST_ONLY = 99997] = "EDITION_99997_TEST_ONLY", e[e.EDITION_99998_TEST_ONLY = 99998] = "EDITION_99998_TEST_ONLY", e[e.EDITION_99999_TEST_ONLY = 99999] = "EDITION_99999_TEST_ONLY", e[e.EDITION_MAX = 0x7fffffff] = "EDITION_MAX";
+	e[e.ENFORCE_NAMING_STYLE_UNKNOWN = 0] = "ENFORCE_NAMING_STYLE_UNKNOWN", e[e.STYLE2024 = 1] = "STYLE2024", e[e.STYLE_LEGACY = 2] = "STYLE_LEGACY", e[e.STYLE2026 = 3] = "STYLE2026";
 })(Of ||= {});
 var kf;
 (function(e) {
-	e[e.VISIBILITY_UNSET = 0] = "VISIBILITY_UNSET", e[e.VISIBILITY_LOCAL = 1] = "VISIBILITY_LOCAL", e[e.VISIBILITY_EXPORT = 2] = "VISIBILITY_EXPORT";
+	e[e.NONE = 0] = "NONE", e[e.SET = 1] = "SET", e[e.ALIAS = 2] = "ALIAS";
 })(kf ||= {});
+var Af;
+(function(e) {
+	e[e.EDITION_UNKNOWN = 0] = "EDITION_UNKNOWN", e[e.EDITION_LEGACY = 900] = "EDITION_LEGACY", e[e.EDITION_PROTO2 = 998] = "EDITION_PROTO2", e[e.EDITION_PROTO3 = 999] = "EDITION_PROTO3", e[e.EDITION_2023 = 1e3] = "EDITION_2023", e[e.EDITION_2024 = 1001] = "EDITION_2024", e[e.EDITION_2026 = 1002] = "EDITION_2026", e[e.EDITION_UNSTABLE = 9999] = "EDITION_UNSTABLE", e[e.EDITION_1_TEST_ONLY = 1] = "EDITION_1_TEST_ONLY", e[e.EDITION_2_TEST_ONLY = 2] = "EDITION_2_TEST_ONLY", e[e.EDITION_99997_TEST_ONLY = 99997] = "EDITION_99997_TEST_ONLY", e[e.EDITION_99998_TEST_ONLY = 99998] = "EDITION_99998_TEST_ONLY", e[e.EDITION_99999_TEST_ONLY = 99999] = "EDITION_99999_TEST_ONLY", e[e.EDITION_MAX = 0x7fffffff] = "EDITION_MAX";
+})(Af ||= {});
+var jf;
+(function(e) {
+	e[e.VISIBILITY_UNSET = 0] = "VISIBILITY_UNSET", e[e.VISIBILITY_LOCAL = 1] = "VISIBILITY_LOCAL", e[e.VISIBILITY_EXPORT = 2] = "VISIBILITY_EXPORT";
+})(jf ||= {});
 // node_modules/@bufbuild/protobuf/dist/esm/from-binary.js
-function Af(e) {
+function Mf(e) {
 	return Object.assign(Object.assign({
 		readUnknownFields: !0,
 		recursionLimit: 100
 	}, e), { depth: 0 });
 }
-function jf(e, t, n) {
-	let r = V(e);
-	return Nf(e).read(r, new eu(t), Af(n), t.byteLength), r;
+function Nf(e, t, n) {
+	let r = B(e);
+	return Ff(e).read(r, new tu(t), Mf(n), t.byteLength), r;
 }
-var Mf = /* @__PURE__ */ new WeakMap();
-function Nf(e) {
-	let t = Mf.get(e);
-	return t === void 0 && (t = Pf(e)), t;
+var Pf = /* @__PURE__ */ new WeakMap();
+function Ff(e) {
+	let t = Pf.get(e);
+	return t === void 0 && (t = If(e)), t;
 }
-function Pf(e) {
+function If(e) {
 	let t = String(e), n = /* @__PURE__ */ new Map(), r = {
-		read: Ff(t, n),
-		readGroup: If(t, n)
+		read: Lf(t, n),
+		readGroup: Rf(t, n)
 	};
-	Mf.set(e, r);
-	for (let t of e.fields) n.set(t.number, Rf(t));
+	Pf.set(e, r);
+	for (let t of e.fields) n.set(t.number, Bf(t));
 	return r;
 }
-function Ff(e, t) {
+function Lf(e, t) {
 	return (n, r, i, a) => {
 		if (++i.depth > i.recursionLimit) throw Error(`cannot decode ${e} from binary: maximum recursion depth of ${i.recursionLimit} reached`);
 		let o = r.pos + a, s = n.$unknown ?? [];
@@ -10576,11 +10576,11 @@ function Ff(e, t) {
 		s.length > 0 && (n.$unknown = s), i.depth--;
 	};
 }
-function If(e, t) {
+function Rf(e, t) {
 	return (n, r, i, a) => {
 		if (++i.depth > i.recursionLimit) throw Error(`cannot decode ${e} from binary: maximum recursion depth of ${i.recursionLimit} reached`);
 		let o, s, c = n.$unknown ?? [];
-		for (; r.pos < r.len && ([o, s] = r.tag(), s != U.EndGroup);) {
+		for (; r.pos < r.len && ([o, s] = r.tag(), s != H.EndGroup);) {
 			let e = t.get(o);
 			if (e === void 0) {
 				let e = r.skip(s, o, i.recursionLimit - i.depth);
@@ -10591,24 +10591,24 @@ function If(e, t) {
 				});
 			} else e(n, r, i, s);
 		}
-		if (s != U.EndGroup || o !== a) throw Error("invalid end group tag");
+		if (s != H.EndGroup || o !== a) throw Error("invalid end group tag");
 		c.length > 0 && (n.$unknown = c), i.depth--;
 	};
 }
-function Lf(e, t, n, r, i) {
-	Rf(n)(e[z], t, i, r);
+function zf(e, t, n, r, i) {
+	Bf(n)(e[z], t, i, r);
 }
-function Rf(e) {
+function Bf(e) {
 	switch (e.fieldKind) {
-		case "scalar": return zf(e);
-		case "enum": return Bf(e);
-		case "message": return Vf(e);
-		case "list": return Uf(e);
-		case "map": return Wf(e);
+		case "scalar": return Vf(e);
+		case "enum": return Hf(e);
+		case "message": return Uf(e);
+		case "list": return Gf(e);
+		case "map": return Kf(e);
 	}
 }
-function zf(e) {
-	let t = Gf(e.scalar, e.utf8Validation, e.longAsString), n = e.localName;
+function Vf(e) {
+	let t = qf(e.scalar, e.utf8Validation, e.longAsString), n = e.localName;
 	if (e.oneof) {
 		let r = e.oneof.localName;
 		return (e, i) => {
@@ -10622,7 +10622,7 @@ function zf(e) {
 		e[n] = t(r);
 	};
 }
-function Bf(e) {
+function Hf(e) {
 	let t = e.localName, n = e.oneof?.localName;
 	if (e.enum.open) return n === void 0 ? (e, n) => {
 		e[t] = n.int32();
@@ -10651,8 +10651,8 @@ function Bf(e) {
 		}
 	};
 }
-function Vf(e) {
-	let t = e.localName, { toMessage: n, toLocal: r } = mu(e), i = Hf(e);
+function Uf(e) {
+	let t = e.localName, { toMessage: n, toLocal: r } = gu(e), i = Wf(e);
 	if (e.oneof) {
 		let a = e.oneof.localName;
 		return (e, o, s) => {
@@ -10668,37 +10668,37 @@ function Vf(e) {
 		i(s, a, o), e[t] = r(s);
 	};
 }
-function Hf(e) {
-	let t = Nf(e.message);
+function Wf(e) {
+	let t = Ff(e.message);
 	if (e.delimitedEncoding) {
 		let n = e.number;
 		return (e, r, i) => t.readGroup(e, r, i, n);
 	}
 	return (e, n, r) => t.read(e, n, r, n.uint32());
 }
-function Uf(e) {
+function Gf(e) {
 	let t = e.localName;
 	if (e.listKind == "message") {
-		let { toMessage: n, toLocal: r } = mu(e), i = Hf(e);
+		let { toMessage: n, toLocal: r } = gu(e), i = Wf(e);
 		return (e, a, o) => {
 			let s = n(void 0);
 			i(s, a, o), e[t].push(r(s));
 		};
 	}
-	let n = e.listKind == "enum" ? L.INT32 : e.scalar, r = e.listKind == "scalar" && e.longAsString, i = Gf(n, e.utf8Validation, r), a = n != L.STRING && n != L.BYTES;
+	let n = e.listKind == "enum" ? L.INT32 : e.scalar, r = e.listKind == "scalar" && e.longAsString, i = qf(n, e.utf8Validation, r), a = n != L.STRING && n != L.BYTES;
 	return (e, n, r, o) => {
 		let s = e[t];
-		if (o == U.LengthDelimited && a) {
+		if (o == H.LengthDelimited && a) {
 			let e = n.uint32() + n.pos;
 			for (; n.pos < e;) s.push(i(n));
 		} else s.push(i(n));
 	};
 }
-function Wf(e) {
-	let t = e.localName, n = Gf(e.mapKey, e.utf8Validation, !1), r = ol(e.mapKey, !1), i, a;
+function Kf(e) {
+	let t = e.localName, n = qf(e.mapKey, e.utf8Validation, !1), r = ol(e.mapKey, !1), i, a;
 	switch (e.mapKind) {
 		case "scalar": {
-			let t = e.scalar, n = Gf(t, e.utf8Validation, !1);
+			let t = e.scalar, n = qf(t, e.utf8Validation, !1);
 			if (i = (e) => n(e), t == L.BYTES) a = () => /* @__PURE__ */ new Uint8Array();
 			else {
 				let e = ol(t, !1);
@@ -10712,7 +10712,7 @@ function Wf(e) {
 			break;
 		}
 		case "message": {
-			let { toMessage: t, toLocal: n } = mu(e), r = Nf(e.message).read;
+			let { toMessage: t, toLocal: n } = gu(e), r = Ff(e.message).read;
 			i = (e, i, a) => {
 				let o = t(a);
 				return r(o, e, i, e.uint32()), n(o);
@@ -10734,10 +10734,10 @@ function Wf(e) {
 				default: o.skip(t, e, s.recursionLimit - s.depth);
 			}
 		}
-		l === void 0 && (l = r), u === void 0 && (u = a()), B(c, l, u);
+		l === void 0 && (l = r), u === void 0 && (u = a()), ml(c, l, u);
 	};
 }
-function Gf(e, t, n) {
+function qf(e, t, n) {
 	switch (e) {
 		case L.STRING: return (e) => e.string(t);
 		case L.BOOL: return (e) => e.bool();
@@ -10757,26 +10757,26 @@ function Gf(e, t, n) {
 	}
 }
 // node_modules/@bufbuild/protobuf/dist/esm/codegenv2/file.js
-function Kf(e, t) {
-	let n = jf(cf, Bu(e));
-	return n.messageType.forEach(ed), n.dependency = t?.map((e) => e.proto.name) ?? [], ad(n, (e) => t?.find((t) => t.proto.name === e)).getFile(n.name);
+function Jf(e, t) {
+	let n = Nf(uf, Hu(e));
+	return n.messageType.forEach(nd), n.dependency = t?.map((e) => e.proto.name) ?? [], sd(n, (e) => t?.find((t) => t.proto.name === e)).getFile(n.name);
 }
-var qf = /*@__PURE__*/ sf(/* @__PURE__ */ Kf("Chlnb29nbGUvcHJvdG9idWYvYW55LnByb3RvEg9nb29nbGUucHJvdG9idWYiJgoDQW55EhAKCHR5cGVfdXJsGAEgASgJEg0KBXZhbHVlGAIgASgMQnYKE2NvbS5nb29nbGUucHJvdG9idWZCCEFueVByb3RvUAFaLGdvb2dsZS5nb2xhbmcub3JnL3Byb3RvYnVmL3R5cGVzL2tub3duL2FueXBiogIDR1BCqgIeR29vZ2xlLlByb3RvYnVmLldlbGxLbm93blR5cGVzYgZwcm90bzM"), 0), Jf = 2, Yf = 3, Xf = { writeUnknownFields: !0 };
-function Zf(e) {
-	return e ? Object.assign(Object.assign({}, Xf), e) : Xf;
+var Yf = /*@__PURE__*/ lf(/* @__PURE__ */ Jf("Chlnb29nbGUvcHJvdG9idWYvYW55LnByb3RvEg9nb29nbGUucHJvdG9idWYiJgoDQW55EhAKCHR5cGVfdXJsGAEgASgJEg0KBXZhbHVlGAIgASgMQnYKE2NvbS5nb29nbGUucHJvdG9idWZCCEFueVByb3RvUAFaLGdvb2dsZS5nb2xhbmcub3JnL3Byb3RvYnVmL3R5cGVzL2tub3duL2FueXBiogIDR1BCqgIeR29vZ2xlLlByb3RvYnVmLldlbGxLbm93blR5cGVzYgZwcm90bzM"), 0), Xf = 2, Zf = 3, Qf = { writeUnknownFields: !0 };
+function $f(e) {
+	return e ? Object.assign(Object.assign({}, Qf), e) : Qf;
 }
-function Qf(e, t, n) {
-	let r = new ql();
-	return ep(e)(r, Zf(n), t), r.finish();
+function ep(e, t, n) {
+	let r = new Jl();
+	return np(e)(r, $f(n), t), r.finish();
 }
-var $f = /* @__PURE__ */ new WeakMap();
-function ep(e) {
-	let t = $f.get(e);
-	return t === void 0 && (t = tp(e)), t;
+var tp = /* @__PURE__ */ new WeakMap();
+function np(e) {
+	let t = tp.get(e);
+	return t === void 0 && (t = rp(e)), t;
 }
-function tp(e) {
+function rp(e) {
 	let t = e.typeName, n = e.fields.concat().sort((e, t) => e.number - t.number), r = n[0], i = [], a = (e, n, a) => {
-		if (a.$typeName !== t && r !== void 0) throw new H(r, `cannot use ${r} with message ${a.$typeName}`, "ForeignFieldError");
+		if (a.$typeName !== t && r !== void 0) throw new V(r, `cannot use ${r} with message ${a.$typeName}`, "ForeignFieldError");
 		for (let t = 0; t < i.length; t++) i[t](e, n, a);
 		let o = a.$unknown;
 		if (o !== void 0 && n.writeUnknownFields) for (let t = 0; t < o.length; t++) {
@@ -10784,21 +10784,21 @@ function tp(e) {
 			e.tag(n, r).raw(i);
 		}
 	};
-	$f.set(e, a);
-	for (let e of n) i.push(np(e));
+	tp.set(e, a);
+	for (let e of n) i.push(ip(e));
 	return a;
 }
-function np(e) {
+function ip(e) {
 	switch (e.fieldKind) {
 		case "message":
 		case "scalar":
-		case "enum": return rp(e);
-		case "list": return ap(e);
-		case "map": return op(e);
+		case "enum": return ap(e);
+		case "list": return sp(e);
+		case "map": return cp(e);
 	}
 }
-function rp(e) {
-	let t = ip(e), n = e.localName;
+function ap(e) {
+	let t = op(e), n = e.localName;
 	if (e.oneof) {
 		let r = e.oneof.localName;
 		return (e, i, a) => {
@@ -10806,8 +10806,8 @@ function rp(e) {
 			o.case === n && t(e, i, o.value);
 		};
 	}
-	if (e.presence != Jf) {
-		let r = e.presence == Yf ? `cannot encode ${e} to binary: required field not set` : void 0;
+	if (e.presence != Xf) {
+		let r = e.presence == Zf ? `cannot encode ${e} to binary: required field not set` : void 0;
 		return (e, i, a) => {
 			let o = a[n];
 			if (o !== void 0 && Object.prototype.hasOwnProperty.call(a, n)) t(e, i, o);
@@ -10845,28 +10845,28 @@ function rp(e) {
 		};
 	}
 }
-function ip(e) {
+function op(e) {
 	switch (e.fieldKind) {
 		case "message": {
-			let { toMessage: t } = mu(e), n = fp(e);
+			let { toMessage: t } = gu(e), n = mp(e);
 			return (e, r, i) => {
 				n(e, r, t(i));
 			};
 		}
 		case "scalar":
 		case "enum": {
-			let t = e.fieldKind == "enum" ? L.INT32 : e.scalar, n = e.number, r = pp(t), i = lp(t, e.parent.typeName, e.name);
+			let t = e.fieldKind == "enum" ? L.INT32 : e.scalar, n = e.number, r = hp(t), i = dp(t, e.parent.typeName, e.name);
 			return (e, t, a) => {
 				e.tag(n, r), i(e, a);
 			};
 		}
 	}
 }
-function ap(e) {
+function sp(e) {
 	let t = e.localName, n = e.number;
 	switch (e.listKind) {
 		case "message": {
-			let { toMessage: n } = mu(e), r = fp(e);
+			let { toMessage: n } = gu(e), r = mp(e);
 			return (e, i, a) => {
 				let o = a[t];
 				for (let t = 0; t < o.length; t++) r(e, i, n(o[t]));
@@ -10874,16 +10874,16 @@ function ap(e) {
 		}
 		case "scalar":
 		case "enum": {
-			let r = e.listKind == "enum" ? L.INT32 : e.scalar, i = lp(r, e.parent.typeName, e.name);
+			let r = e.listKind == "enum" ? L.INT32 : e.scalar, i = dp(r, e.parent.typeName, e.name);
 			if (e.packed) return (e, r, a) => {
 				let o = a[t];
 				if (o.length != 0) {
-					e.tag(n, U.LengthDelimited).fork();
+					e.tag(n, H.LengthDelimited).fork();
 					for (let t = 0; t < o.length; t++) i(e, o[t]);
 					e.join();
 				}
 			};
-			let a = pp(r);
+			let a = hp(r);
 			return (e, r, o) => {
 				let s = o[t];
 				for (let t = 0; t < s.length; t++) e.tag(n, a), i(e, s[t]);
@@ -10891,34 +10891,34 @@ function ap(e) {
 		}
 	}
 }
-function op(e) {
-	let t = e.localName, n = e.number, r = sp(e);
+function cp(e) {
+	let t = e.localName, n = e.number, r = lp(e);
 	if (e.mapKind == "message") {
-		let { toMessage: i } = mu(e), a = ep(e.message);
+		let { toMessage: i } = gu(e), a = np(e.message);
 		return (e, o, s) => {
 			let c = s[t], l = Object.keys(c);
 			for (let t = 0; t < l.length; t++) {
 				let s = l[t];
-				e.tag(n, U.LengthDelimited).fork(), r(e, s), e.tag(2, U.LengthDelimited).fork(), a(e, o, i(c[s])), e.join(), e.join();
+				e.tag(n, H.LengthDelimited).fork(), r(e, s), e.tag(2, H.LengthDelimited).fork(), a(e, o, i(c[s])), e.join(), e.join();
 			}
 		};
 	}
-	let i = e.mapKind == "enum" ? L.INT32 : e.scalar, a = pp(i), o = lp(i, e.parent.typeName, e.name);
+	let i = e.mapKind == "enum" ? L.INT32 : e.scalar, a = hp(i), o = dp(i, e.parent.typeName, e.name);
 	return (e, i, s) => {
 		let c = s[t], l = Object.keys(c);
 		for (let t = 0; t < l.length; t++) {
 			let i = l[t];
-			e.tag(n, U.LengthDelimited).fork(), r(e, i), e.tag(2, a), o(e, c[i]), e.join();
+			e.tag(n, H.LengthDelimited).fork(), r(e, i), e.tag(2, a), o(e, c[i]), e.join();
 		}
 	};
 }
-function sp(e) {
-	let t = pp(e.mapKey), n = lp(e.mapKey, e.parent.typeName, e.name), r = cp(e.mapKey);
+function lp(e) {
+	let t = hp(e.mapKey), n = dp(e.mapKey, e.parent.typeName, e.name), r = up(e.mapKey);
 	return (e, i) => {
 		e.tag(1, t), n(e, r(i));
 	};
 }
-function cp(e) {
+function up(e) {
 	switch (e) {
 		case L.STRING: return (e) => e;
 		case L.BOOL: return (e) => e === "true" || e !== "false" && e;
@@ -10945,8 +10945,8 @@ function cp(e) {
 		};
 	}
 }
-function lp(e, t, n) {
-	let r = up(e);
+function dp(e, t, n) {
+	let r = fp(e);
 	return (e, i) => {
 		try {
 			r(e, i);
@@ -10955,7 +10955,7 @@ function lp(e, t, n) {
 		}
 	};
 }
-function up(e) {
+function fp(e) {
 	switch (e) {
 		case L.STRING: return (e, t) => e.string(t);
 		case L.BOOL: return (e, t) => e.bool(t);
@@ -10974,68 +10974,68 @@ function up(e) {
 		case L.SINT32: return (e, t) => e.sint32(t);
 	}
 }
-function dp(e, t, n, r) {
-	np(r)(e, t, n[z]);
+function pp(e, t, n, r) {
+	ip(r)(e, t, n[z]);
 }
-function fp(e) {
-	let t = e.number, n = ep(e.message);
+function mp(e) {
+	let t = e.number, n = np(e.message);
 	return e.delimitedEncoding ? (e, r, i) => {
-		e.tag(t, U.StartGroup), n(e, r, i), e.tag(t, U.EndGroup);
+		e.tag(t, H.StartGroup), n(e, r, i), e.tag(t, H.EndGroup);
 	} : (e, r, i) => {
-		e.tag(t, U.LengthDelimited).fork(), n(e, r, i), e.join();
+		e.tag(t, H.LengthDelimited).fork(), n(e, r, i), e.join();
 	};
 }
-function pp(e) {
+function hp(e) {
 	switch (e) {
 		case L.BYTES:
-		case L.STRING: return U.LengthDelimited;
+		case L.STRING: return H.LengthDelimited;
 		case L.DOUBLE:
 		case L.FIXED64:
-		case L.SFIXED64: return U.Bit64;
+		case L.SFIXED64: return H.Bit64;
 		case L.FIXED32:
 		case L.SFIXED32:
-		case L.FLOAT: return U.Bit32;
-		default: return U.Varint;
+		case L.FLOAT: return H.Bit32;
+		default: return H.Varint;
 	}
 }
 // node_modules/@bufbuild/protobuf/dist/esm/wkt/any.js
-function mp(e, t, n) {
+function gp(e, t, n) {
 	let r = !1;
-	return n || (n = V(qf), r = !0), n.value = Qf(e, t), n.typeUrl = _p(t.$typeName), r ? n : void 0;
+	return n || (n = B(Yf), r = !0), n.value = ep(e, t), n.typeUrl = yp(t.$typeName), r ? n : void 0;
 }
-function hp(e, t) {
-	return e.typeUrl !== "" && (typeof t == "string" ? t : t.typeName) === vp(e.typeUrl);
+function _p(e, t) {
+	return e.typeUrl !== "" && (typeof t == "string" ? t : t.typeName) === bp(e.typeUrl);
 }
-function gp(e, t) {
+function vp(e, t) {
 	if (e.typeUrl === "") return;
-	let n = t.kind == "message" ? t : t.getMessage(vp(e.typeUrl));
-	if (n && hp(e, n)) return jf(n, e.value);
+	let n = t.kind == "message" ? t : t.getMessage(bp(e.typeUrl));
+	if (n && _p(e, n)) return Nf(n, e.value);
 }
-function _p(e) {
+function yp(e) {
 	return `type.googleapis.com/${e}`;
 }
-function vp(e) {
+function bp(e) {
 	let t = e.lastIndexOf("/"), n = t >= 0 ? e.substring(t + 1) : e;
 	if (!n.length) throw Error(`invalid type url: ${e}`);
 	return n;
 }
 // node_modules/@bufbuild/protobuf/dist/esm/wkt/google/protobuf/struct_pb.js
-var yp = /*@__PURE__*/ Kf("Chxnb29nbGUvcHJvdG9idWYvc3RydWN0LnByb3RvEg9nb29nbGUucHJvdG9idWYihAEKBlN0cnVjdBIzCgZmaWVsZHMYASADKAsyIy5nb29nbGUucHJvdG9idWYuU3RydWN0LkZpZWxkc0VudHJ5GkUKC0ZpZWxkc0VudHJ5EgsKA2tleRgBIAEoCRIlCgV2YWx1ZRgCIAEoCzIWLmdvb2dsZS5wcm90b2J1Zi5WYWx1ZToCOAEi6gEKBVZhbHVlEjAKCm51bGxfdmFsdWUYASABKA4yGi5nb29nbGUucHJvdG9idWYuTnVsbFZhbHVlSAASFgoMbnVtYmVyX3ZhbHVlGAIgASgBSAASFgoMc3RyaW5nX3ZhbHVlGAMgASgJSAASFAoKYm9vbF92YWx1ZRgEIAEoCEgAEi8KDHN0cnVjdF92YWx1ZRgFIAEoCzIXLmdvb2dsZS5wcm90b2J1Zi5TdHJ1Y3RIABIwCgpsaXN0X3ZhbHVlGAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLkxpc3RWYWx1ZUgAQgYKBGtpbmQiMwoJTGlzdFZhbHVlEiYKBnZhbHVlcxgBIAMoCzIWLmdvb2dsZS5wcm90b2J1Zi5WYWx1ZSobCglOdWxsVmFsdWUSDgoKTlVMTF9WQUxVRRAAQn8KE2NvbS5nb29nbGUucHJvdG9idWZCC1N0cnVjdFByb3RvUAFaL2dvb2dsZS5nb2xhbmcub3JnL3Byb3RvYnVmL3R5cGVzL2tub3duL3N0cnVjdHBi+AEBogIDR1BCqgIeR29vZ2xlLlByb3RvYnVmLldlbGxLbm93blR5cGVzYgZwcm90bzM"), bp = /*@__PURE__*/ sf(yp, 0), xp = /*@__PURE__*/ sf(yp, 1), Sp = /*@__PURE__*/ sf(yp, 2), Cp;
+var xp = /*@__PURE__*/ Jf("Chxnb29nbGUvcHJvdG9idWYvc3RydWN0LnByb3RvEg9nb29nbGUucHJvdG9idWYihAEKBlN0cnVjdBIzCgZmaWVsZHMYASADKAsyIy5nb29nbGUucHJvdG9idWYuU3RydWN0LkZpZWxkc0VudHJ5GkUKC0ZpZWxkc0VudHJ5EgsKA2tleRgBIAEoCRIlCgV2YWx1ZRgCIAEoCzIWLmdvb2dsZS5wcm90b2J1Zi5WYWx1ZToCOAEi6gEKBVZhbHVlEjAKCm51bGxfdmFsdWUYASABKA4yGi5nb29nbGUucHJvdG9idWYuTnVsbFZhbHVlSAASFgoMbnVtYmVyX3ZhbHVlGAIgASgBSAASFgoMc3RyaW5nX3ZhbHVlGAMgASgJSAASFAoKYm9vbF92YWx1ZRgEIAEoCEgAEi8KDHN0cnVjdF92YWx1ZRgFIAEoCzIXLmdvb2dsZS5wcm90b2J1Zi5TdHJ1Y3RIABIwCgpsaXN0X3ZhbHVlGAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLkxpc3RWYWx1ZUgAQgYKBGtpbmQiMwoJTGlzdFZhbHVlEiYKBnZhbHVlcxgBIAMoCzIWLmdvb2dsZS5wcm90b2J1Zi5WYWx1ZSobCglOdWxsVmFsdWUSDgoKTlVMTF9WQUxVRRAAQn8KE2NvbS5nb29nbGUucHJvdG9idWZCC1N0cnVjdFByb3RvUAFaL2dvb2dsZS5nb2xhbmcub3JnL3Byb3RvYnVmL3R5cGVzL2tub3duL3N0cnVjdHBi+AEBogIDR1BCqgIeR29vZ2xlLlByb3RvYnVmLldlbGxLbm93blR5cGVzYgZwcm90bzM"), Sp = /*@__PURE__*/ lf(xp, 0), Cp = /*@__PURE__*/ lf(xp, 1), wp = /*@__PURE__*/ lf(xp, 2), Tp;
 (function(e) {
 	e[e.NULL_VALUE = 0] = "NULL_VALUE";
-})(Cp ||= {});
+})(Tp ||= {});
 // node_modules/@bufbuild/protobuf/dist/esm/extensions.js
-function wp(e, t, n) {
-	Op(t, e);
-	let r = Ep(e.$unknown, t), [i, a, o] = Dp(t), s = Af(n);
-	for (let e of r) Lf(i, new eu(e.data), a, e.wireType, s);
+function Ep(e, t, n) {
+	Ap(t, e);
+	let r = Op(e.$unknown, t), [i, a, o] = kp(t), s = Mf(n);
+	for (let e of r) zf(i, new tu(e.data), a, e.wireType, s);
 	return o();
 }
-function Tp(e, t, n) {
-	Op(t, e);
-	let r = (e.$unknown ?? []).filter((e) => e.no !== t.number), [i, a] = Dp(t, n), o = new ql();
-	dp(o, { writeUnknownFields: !0 }, i, a);
-	let s = new eu(o.finish());
+function Dp(e, t, n) {
+	Ap(t, e);
+	let r = (e.$unknown ?? []).filter((e) => e.no !== t.number), [i, a] = kp(t, n), o = new Jl();
+	pp(o, { writeUnknownFields: !0 }, i, a);
+	let s = new tu(o.finish());
 	for (; s.pos < s.len;) {
 		let [e, t] = s.tag(), n = s.skip(t, e);
 		r.push({
@@ -11046,7 +11046,7 @@ function Tp(e, t, n) {
 	}
 	e.$unknown = r;
 }
-function Ep(e, t) {
+function Op(e, t) {
 	if (e === void 0) return [];
 	if (t.fieldKind === "enum" || t.fieldKind === "scalar") {
 		for (let n = e.length - 1; n >= 0; --n) if (e[n].no == t.number) return [e[n]];
@@ -11054,7 +11054,7 @@ function Ep(e, t) {
 	}
 	return e.filter((e) => e.no === t.number);
 }
-function Dp(e, t) {
+function kp(e, t) {
 	let n = e.typeName, r = Object.assign(Object.assign({}, e), {
 		kind: "field",
 		parent: e.extendee,
@@ -11063,81 +11063,81 @@ function Dp(e, t) {
 		fields: [r],
 		members: [r],
 		oneofs: []
-	}), a = V(i, t === void 0 ? void 0 : { [n]: t });
+	}), a = B(i, t === void 0 ? void 0 : { [n]: t });
 	return [
-		bu(i, a),
+		Su(i, a),
 		r,
 		() => {
 			let t = a[n];
 			if (t === void 0) {
 				let t = e.message;
-				return xl(t) ? ol(t.fields[0].scalar, t.fields[0].longAsString) : V(t);
+				return Sl(t) ? ol(t.fields[0].scalar, t.fields[0].longAsString) : B(t);
 			}
 			return t;
 		}
 	];
 }
-function Op(e, t) {
+function Ap(e, t) {
 	if (e.extendee.typeName != t.$typeName) throw Error(`extension ${e.typeName} can only be applied to message ${e.extendee.typeName}`);
 }
 // node_modules/@bufbuild/protobuf/dist/esm/wkt/json.js
-var kp = /*@__PURE__*/ Date.parse("0001-01-01T00:00:00Z"), Ap = /*@__PURE__*/ Date.parse("9999-12-31T23:59:59Z"), jp = 3, Mp = 2, Np = {
+var jp = /*@__PURE__*/ Date.parse("0001-01-01T00:00:00Z"), Mp = /*@__PURE__*/ Date.parse("9999-12-31T23:59:59Z"), Np = 3, Pp = 2, Fp = {
 	alwaysEmitImplicit: !1,
 	enumAsInteger: !1,
 	useProtoFieldName: !1
 };
-function Pp(e) {
-	return e ? Object.assign(Object.assign({}, Np), e) : Np;
+function Ip(e) {
+	return e ? Object.assign(Object.assign({}, Fp), e) : Fp;
 }
-function Fp(e, t, n) {
-	return Lp(e)(Pp(n), t);
+function Lp(e, t, n) {
+	return zp(e)(Ip(n), t);
 }
-var Ip = /* @__PURE__ */ new WeakMap();
-function Lp(e) {
-	let t = Ip.get(e);
-	return t === void 0 && (t = Rp(e)), t;
+var Rp = /* @__PURE__ */ new WeakMap();
+function zp(e) {
+	let t = Rp.get(e);
+	return t === void 0 && (t = Bp(e)), t;
 }
-function Rp(e) {
-	let t = e.typeName, n = Bp(e);
+function Bp(e) {
+	let t = e.typeName, n = Hp(e);
 	if (n !== void 0) {
 		let r = e.fields[0], i = (e, i) => {
-			if (i.$typeName !== t && r !== void 0) throw new H(r, `cannot use ${r} with message ${i.$typeName}`, "ForeignFieldError");
+			if (i.$typeName !== t && r !== void 0) throw new V(r, `cannot use ${r} with message ${i.$typeName}`, "ForeignFieldError");
 			return n(e, i);
 		};
-		return Ip.set(e, i), i;
+		return Rp.set(e, i), i;
 	}
 	let r = e.fields.concat().sort((e, t) => e.number - t.number), i = r[0], a = [], o = (n, r) => {
-		if (r.$typeName !== t && i !== void 0) throw new H(i, `cannot use ${i} with message ${r.$typeName}`, "ForeignFieldError");
+		if (r.$typeName !== t && i !== void 0) throw new V(i, `cannot use ${i} with message ${r.$typeName}`, "ForeignFieldError");
 		let o = {};
 		for (let e = 0; e < a.length; e++) a[e](n, r, o);
-		return n.registry && em(o, n, n.registry, r, e), o;
+		return n.registry && nm(o, n, n.registry, r, e), o;
 	};
-	Ip.set(e, o);
+	Rp.set(e, o);
 	for (let e of r) {
-		let t = Vp(e);
-		a.push(e.jsonName === "__proto__" || e.name === "__proto__" ? zp(t) : t);
+		let t = Up(e);
+		a.push(e.jsonName === "__proto__" || e.name === "__proto__" ? Vp(t) : t);
 	}
 	return o;
 }
-function zp(e) {
+function Vp(e) {
 	return (t, n, r) => {
 		let i = Object.create(null);
 		e(t, n, i);
-		for (let e of Object.keys(i)) B(r, e, i[e]);
+		for (let e of Object.keys(i)) ml(r, e, i[e]);
 	};
 }
-function Bp(e) {
+function Hp(e) {
 	if (e.typeName.startsWith("google.protobuf.")) switch (e.typeName) {
-		case "google.protobuf.Any": return (e, t) => tm(t, e);
-		case "google.protobuf.Timestamp": return (e, t) => sm(t);
-		case "google.protobuf.Duration": return (e, t) => nm(t);
-		case "google.protobuf.FieldMask": return (e, t) => rm(t);
-		case "google.protobuf.Struct": return (e, t) => im(t);
-		case "google.protobuf.Value": return (e, t) => am(t);
-		case "google.protobuf.ListValue": return (e, t) => om(t);
+		case "google.protobuf.Any": return (e, t) => rm(t, e);
+		case "google.protobuf.Timestamp": return (e, t) => lm(t);
+		case "google.protobuf.Duration": return (e, t) => im(t);
+		case "google.protobuf.FieldMask": return (e, t) => am(t);
+		case "google.protobuf.Struct": return (e, t) => om(t);
+		case "google.protobuf.Value": return (e, t) => sm(t);
+		case "google.protobuf.ListValue": return (e, t) => cm(t);
 		default:
-			if (xl(e)) {
-				let t = e.fields[0], n = t.localName, r = ol(t.scalar, !1), i = Qp(t);
+			if (Sl(e)) {
+				let t = e.fields[0], n = t.localName, r = ol(t.scalar, !1), i = em(t);
 				return (e, t) => {
 					let a = t[n];
 					return i(e, a === void 0 ? r : a);
@@ -11146,14 +11146,14 @@ function Bp(e) {
 			return;
 	}
 }
-function Vp(e) {
+function Up(e) {
 	switch (e.fieldKind) {
 		case "scalar":
 		case "enum":
-		case "message": return Hp(e);
+		case "message": return Wp(e);
 		case "list":
 		case "map": {
-			let t = e.fieldKind == "list" ? Kp(e) : Jp(e), n = e.name, r = e.jsonName, i = e.localName;
+			let t = e.fieldKind == "list" ? Jp(e) : Xp(e), n = e.name, r = e.jsonName, i = e.localName;
 			return (e, a, o) => {
 				let s = t(e, a[i]);
 				s !== void 0 && (o[e.useProtoFieldName ? n : r] = s);
@@ -11161,8 +11161,8 @@ function Vp(e) {
 		}
 	}
 }
-function Hp(e) {
-	let t = Wp(e), n = e.name, r = e.jsonName, i = e.localName;
+function Wp(e) {
+	let t = Kp(e), n = e.name, r = e.jsonName, i = e.localName;
 	if (e.oneof) {
 		let a = e.oneof.localName;
 		return (e, o, s) => {
@@ -11170,8 +11170,8 @@ function Hp(e) {
 			c.case === i && (s[e.useProtoFieldName ? n : r] = t(e, c.value));
 		};
 	}
-	if (e.presence != Mp) {
-		let a = e.presence == jp ? `cannot encode ${e} to JSON: required field not set` : void 0;
+	if (e.presence != Pp) {
+		let a = e.presence == Np ? `cannot encode ${e} to JSON: required field not set` : void 0;
 		return (e, o, s) => {
 			let c = o[i];
 			if (c !== void 0 && Object.prototype.hasOwnProperty.call(o, i)) s[e.useProtoFieldName ? n : r] = t(e, c);
@@ -11209,28 +11209,28 @@ function Hp(e) {
 		};
 	}
 }
-function Up(e) {
+function Gp(e) {
 	switch (e.fieldKind) {
 		case "scalar":
 		case "enum":
-		case "message": return Wp(e);
-		case "list": return Kp(e);
-		case "map": return Jp(e);
+		case "message": return Kp(e);
+		case "list": return Jp(e);
+		case "map": return Xp(e);
 	}
-}
-function Wp(e) {
-	switch (e.fieldKind) {
-		case "scalar": return Qp(e);
-		case "enum": return Xp(e);
-		case "message": return Gp(e);
-	}
-}
-function Gp(e) {
-	let { toMessage: t } = mu(e), n = Lp(e.message);
-	return (e, r) => n(e, t(r));
 }
 function Kp(e) {
-	let t = qp(e);
+	switch (e.fieldKind) {
+		case "scalar": return em(e);
+		case "enum": return Qp(e);
+		case "message": return qp(e);
+	}
+}
+function qp(e) {
+	let { toMessage: t } = gu(e), n = zp(e.message);
+	return (e, r) => n(e, t(r));
+}
+function Jp(e) {
+	let t = Yp(e);
 	return (e, n) => {
 		let r = n;
 		if (r.length == 0 && !e.alwaysEmitImplicit) return;
@@ -11239,67 +11239,67 @@ function Kp(e) {
 		return i;
 	};
 }
-function qp(e) {
+function Yp(e) {
 	switch (e.listKind) {
-		case "scalar": return Qp(e);
-		case "enum": return Xp(e);
-		case "message": return Gp(e);
+		case "scalar": return em(e);
+		case "enum": return Qp(e);
+		case "message": return qp(e);
 	}
 }
-function Jp(e) {
-	let t = Yp(e);
+function Xp(e) {
+	let t = Zp(e);
 	return (e, n) => {
 		let r = n, i = Object.keys(r);
 		if (i.length == 0 && !e.alwaysEmitImplicit) return;
 		let a = {};
 		for (let n = 0; n < i.length; n++) {
 			let o = i[n];
-			B(a, o, t(e, r[o]));
+			ml(a, o, t(e, r[o]));
 		}
 		return a;
 	};
 }
-function Yp(e) {
+function Zp(e) {
 	switch (e.mapKind) {
-		case "scalar": return Qp(e);
-		case "enum": return Xp(e);
-		case "message": return Gp(e);
+		case "scalar": return em(e);
+		case "enum": return Qp(e);
+		case "message": return qp(e);
 	}
 }
-function Xp(e) {
+function Qp(e) {
 	let t = e.enum;
 	return t.typeName == "google.protobuf.NullValue" ? (e, n) => {
-		if (typeof n != "number") throw Zp(t, n);
+		if (typeof n != "number") throw $p(t, n);
 		return null;
 	} : (e, n) => {
-		if (typeof n != "number") throw Zp(t, n);
+		if (typeof n != "number") throw $p(t, n);
 		return e.enumAsInteger ? n : t.value[n]?.jsonName ?? n;
 	};
 }
-function Zp(e, t) {
-	return /* @__PURE__ */ Error(`cannot encode ${e} to JSON: expected number, got ${G(t)}`);
+function $p(e, t) {
+	return /* @__PURE__ */ Error(`cannot encode ${e} to JSON: expected number, got ${U(t)}`);
 }
-function Qp(e) {
+function em(e) {
 	switch (e.scalar) {
 		case L.INT32:
 		case L.SFIXED32:
 		case L.SINT32:
 		case L.FIXED32:
 		case L.UINT32: return (t, n) => {
-			if (typeof n != "number") throw $p(e, n);
+			if (typeof n != "number") throw tm(e, n);
 			return n;
 		};
 		case L.FLOAT:
 		case L.DOUBLE: return (t, n) => {
-			if (typeof n != "number") throw $p(e, n);
+			if (typeof n != "number") throw tm(e, n);
 			return Number.isNaN(n) ? "NaN" : n === 1e400 ? "Infinity" : n === -1e400 ? "-Infinity" : n;
 		};
 		case L.STRING: return (t, n) => {
-			if (typeof n != "string") throw $p(e, n);
+			if (typeof n != "string") throw tm(e, n);
 			return n;
 		};
 		case L.BOOL: return (t, n) => {
-			if (typeof n != "boolean") throw $p(e, n);
+			if (typeof n != "boolean") throw tm(e, n);
 			return n;
 		};
 		case L.UINT64:
@@ -11308,18 +11308,18 @@ function Qp(e) {
 		case L.SFIXED64:
 		case L.SINT64: return (t, n) => {
 			if (typeof n == "bigint" || typeof n == "string" || typeof n == "number" && Number.isInteger(n)) return n.toString();
-			throw $p(e, n);
+			throw tm(e, n);
 		};
 		case L.BYTES: return (t, n) => {
-			if (n instanceof Uint8Array) return Wu(n);
-			throw $p(e, n);
+			if (n instanceof Uint8Array) return Ku(n);
+			throw tm(e, n);
 		};
 	}
 }
-function $p(e, t) {
-	return /* @__PURE__ */ Error(`cannot encode ${e} to JSON: ${iu(e, t)?.message}`);
+function tm(e, t) {
+	return /* @__PURE__ */ Error(`cannot encode ${e} to JSON: ${au(e, t)?.message}`);
 }
-function em(e, t, n, r, i) {
+function nm(e, t, n, r, i) {
 	let a = r.$unknown;
 	if (a === void 0) return;
 	let o = /* @__PURE__ */ new Set();
@@ -11329,19 +11329,19 @@ function em(e, t, n, r, i) {
 			o.add(c);
 			let a = n.getExtensionFor(i, c);
 			if (!a) continue;
-			let [s, l] = Dp(a, wp(r, a)), u = s[z], d = Up(l)(t, u[l.localName]);
+			let [s, l] = kp(a, Ep(r, a)), u = s[z], d = Gp(l)(t, u[l.localName]);
 			d !== void 0 && (e[a.jsonName] = d);
 		}
 	}
 }
-function tm(e, t) {
+function rm(e, t) {
 	if (e.typeUrl === "") return {};
 	let { registry: n } = t, r, i;
-	if (n && (r = gp(e, n), r && (i = n.getMessage(r.$typeName))), !i || !r) throw Error(`cannot encode message ${e.$typeName} to JSON: "${e.typeUrl}" is not in the type registry`);
-	let a = Sl(i) ? { value: Lp(i)(t, r) } : Lp(i)(t, r);
+	if (n && (r = vp(e, n), r && (i = n.getMessage(r.$typeName))), !i || !r) throw Error(`cannot encode message ${e.$typeName} to JSON: "${e.typeUrl}" is not in the type registry`);
+	let a = Cl(i) ? { value: zp(i)(t, r) } : zp(i)(t, r);
 	return a["@type"] = e.typeUrl, a;
 }
-function nm(e) {
+function im(e) {
 	let t = Number(e.seconds), n = e.nanos;
 	if (t > 315576e6 || t < -315576e6) throw Error(`cannot encode message ${e.$typeName} to JSON: value out of range`);
 	if (t > 0 && n < 0 || t < 0 && n > 0) throw Error(`cannot encode message ${e.$typeName} to JSON: nanos sign must match seconds sign`);
@@ -11352,21 +11352,21 @@ function nm(e) {
 	}
 	return r + "s";
 }
-function rm(e) {
+function am(e) {
 	return e.paths.map((t) => {
-		if (Zu(Xu(t)) !== t) throw Error(`cannot encode message ${e.$typeName} to JSON: lowerCamelCase of path name "${t}" is irreversible`);
-		return Xu(t);
+		if ($u(Qu(t)) !== t) throw Error(`cannot encode message ${e.$typeName} to JSON: lowerCamelCase of path name "${t}" is irreversible`);
+		return Qu(t);
 	}).join(",");
 }
-function im(e) {
+function om(e) {
 	let t = {}, n = Object.keys(e.fields);
 	for (let r = 0; r < n.length; r++) {
 		let i = n[r];
-		B(t, i, am(e.fields[i]));
+		ml(t, i, sm(e.fields[i]));
 	}
 	return t;
 }
-function am(e) {
+function sm(e) {
 	switch (e.kind.case) {
 		case "nullValue": return null;
 		case "numberValue":
@@ -11374,17 +11374,17 @@ function am(e) {
 			return e.kind.value;
 		case "boolValue":
 		case "stringValue": return e.kind.value;
-		case "structValue": return im(e.kind.value);
-		case "listValue": return om(e.kind.value);
+		case "structValue": return om(e.kind.value);
+		case "listValue": return cm(e.kind.value);
 		default: throw Error(`${e.$typeName} must have a value`);
 	}
 }
-function om(e) {
-	return e.values.map(am);
+function cm(e) {
+	return e.values.map(sm);
 }
-function sm(e) {
+function lm(e) {
 	let t = Number(e.seconds) * 1e3;
-	if (t < kp || t > Ap) throw Error(`cannot encode message ${e.$typeName} to JSON: must be from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59Z inclusive`);
+	if (t < jp || t > Mp) throw Error(`cannot encode message ${e.$typeName} to JSON: must be from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59Z inclusive`);
 	if (e.nanos < 0) throw Error(`cannot encode message ${e.$typeName} to JSON: nanos must not be negative`);
 	if (e.nanos > 999999999) throw Error(`cannot encode message ${e.$typeName} to JSON: nanos must not be greater than 999999999`);
 	let n = "Z";
@@ -11395,69 +11395,69 @@ function sm(e) {
 	return new Date(t).toISOString().replace(".000Z", n);
 }
 // node_modules/@bufbuild/protobuf/dist/esm/from-json.js
-var cm = 2;
-function lm(e) {
+var um = 2;
+function dm(e) {
 	return Object.assign(Object.assign({
 		ignoreUnknownFields: !1,
 		recursionLimit: 100
 	}, e), { depth: 0 });
 }
-function um(e, t, n) {
-	let r = V(e);
-	return dm(e, r, t, n), r;
+function fm(e, t, n) {
+	let r = B(e);
+	return pm(e, r, t, n), r;
 }
-function dm(e, t, n, r) {
+function pm(e, t, n, r) {
 	try {
-		pm(e)(t, n, lm(r));
+		hm(e)(t, n, dm(r));
 	} catch (e) {
-		throw Hl(e) ? Error(`cannot decode ${e.field()} from JSON: ${e.message}`, { cause: e }) : e;
+		throw Ul(e) ? Error(`cannot decode ${e.field()} from JSON: ${e.message}`, { cause: e }) : e;
 	}
 }
-var fm = /* @__PURE__ */ new WeakMap();
-function pm(e) {
-	let t = fm.get(e);
-	return t === void 0 && (t = mm(e)), t;
+var mm = /* @__PURE__ */ new WeakMap();
+function hm(e) {
+	let t = mm.get(e);
+	return t === void 0 && (t = gm(e)), t;
 }
-function mm(e) {
-	let t = String(e), n = hm(e);
+function gm(e) {
+	let t = String(e), n = _m(e);
 	if (n !== void 0) {
 		let r = (e, r, i) => {
 			if (++i.depth > i.recursionLimit) throw Error(`cannot decode ${t} from JSON: maximum recursion depth of ${i.recursionLimit} reached`);
 			n(e, r, i), i.depth--;
 		};
-		return fm.set(e, r), r;
+		return mm.set(e, r), r;
 	}
 	let r = e.typeName, i = /* @__PURE__ */ new Map(), a = (e, n, a) => {
 		if (++a.depth > a.recursionLimit) throw Error(`cannot decode ${t} from JSON: maximum recursion depth of ${a.recursionLimit} reached`);
-		if (n == null || Array.isArray(n) || typeof n != "object") throw Error(`cannot decode ${t} from JSON: ${G(n)}`);
+		if (n == null || Array.isArray(n) || typeof n != "object") throw Error(`cannot decode ${t} from JSON: ${U(n)}`);
 		let o = /* @__PURE__ */ new Map(), s = /* @__PURE__ */ new Set(), c = Object.keys(n);
 		for (let l = 0; l < c.length; l++) {
 			let u = c[l], d = n[u], f = i.get(u);
 			if (f !== void 0) {
 				let t = f.field;
-				if (s.has(t)) throw new H(t, "set multiple times");
+				if (s.has(t)) throw new V(t, "set multiple times");
 				if (s.add(t), f.oneofScalarNullSkip && d === null) continue;
 				if (f.oneof) {
 					let e = o.get(f.oneof);
-					if (e !== void 0) throw new H(f.oneof, `oneof set multiple times by ${e.name} and ${t.name}`);
+					if (e !== void 0) throw new V(f.oneof, `oneof set multiple times by ${e.name} and ${t.name}`);
 					o.set(f.oneof, t);
 				}
 				f.read(e, d, a);
 			} else {
 				let n = u.startsWith("[") && u.endsWith("]") ? a.registry?.getExtension(u.substring(1, u.length - 1)) : void 0;
 				if (n?.extendee.typeName == r) {
-					let [t, r, i] = Dp(n);
-					gm(r)(t[z], d, a), Tp(e, n, i());
+					let [t, r, i] = kp(n);
+					vm(r)(t[z], d, a), Dp(e, n, i());
 				}
 				if (n === void 0 && !a.ignoreUnknownFields) throw Error(`cannot decode ${t} from JSON: key "${u}" is unknown`);
 			}
 		}
 		a.depth--;
 	};
-	fm.set(e, a);
+	mm.set(e, a);
 	for (let t of e.fields) {
 		let e = {
-			read: gm(t),
+			read: vm(t),
 			field: t,
 			oneof: t.oneof,
 			oneofScalarNullSkip: t.oneof !== void 0 && t.fieldKind == "scalar"
@@ -11466,18 +11466,18 @@ function mm(e) {
 	}
 	return a;
 }
-function hm(e) {
+function _m(e) {
 	if (e.typeName.startsWith("google.protobuf.")) switch (e.typeName) {
-		case "google.protobuf.Any": return (e, t, n) => Mm(e, t, n);
-		case "google.protobuf.Timestamp": return (e, t) => Nm(e, t);
-		case "google.protobuf.Duration": return (e, t) => Pm(e, t);
-		case "google.protobuf.FieldMask": return (e, t) => Fm(e, t);
-		case "google.protobuf.Struct": return (e, t, n) => Im(e, t, n);
-		case "google.protobuf.Value": return (e, t, n) => Lm(e, t, n);
-		case "google.protobuf.ListValue": return (e, t, n) => Rm(e, t, n);
+		case "google.protobuf.Any": return (e, t, n) => Pm(e, t, n);
+		case "google.protobuf.Timestamp": return (e, t) => Fm(e, t);
+		case "google.protobuf.Duration": return (e, t) => Im(e, t);
+		case "google.protobuf.FieldMask": return (e, t) => Lm(e, t);
+		case "google.protobuf.Struct": return (e, t, n) => Rm(e, t, n);
+		case "google.protobuf.Value": return (e, t, n) => zm(e, t, n);
+		case "google.protobuf.ListValue": return (e, t, n) => Bm(e, t, n);
 		default:
-			if (xl(e)) {
-				let t = e.fields[0], n = t.localName, r = t.scalar, i = t.longAsString, a = Dm(t);
+			if (Sl(e)) {
+				let t = e.fields[0], n = t.localName, r = t.scalar, i = t.longAsString, a = km(t);
 				return (e, t) => {
 					t === null ? e[n] = ol(r, i) : e[n] = a(t);
 				};
@@ -11485,17 +11485,17 @@ function hm(e) {
 			return;
 	}
 }
-function gm(e) {
+function vm(e) {
 	switch (e.fieldKind) {
-		case "scalar": return _m(e);
-		case "enum": return ym(e);
-		case "message": return bm(e);
-		case "list": return xm(e);
-		case "map": return Cm(e);
+		case "scalar": return ym(e);
+		case "enum": return xm(e);
+		case "message": return Sm(e);
+		case "list": return Cm(e);
+		case "map": return Tm(e);
 	}
 }
-function _m(e) {
-	let t = Dm(e), n = e.localName;
+function ym(e) {
+	let t = km(e), n = e.localName;
 	if (e.oneof) {
 		let r = e.oneof.localName;
 		return (e, i) => {
@@ -11505,14 +11505,14 @@ function _m(e) {
 			};
 		};
 	}
-	let r = vm(e);
+	let r = bm(e);
 	return (e, i) => {
 		i === null ? r(e) : e[n] = t(i);
 	};
 }
-function vm(e) {
+function bm(e) {
 	let t = e.localName;
-	if (e.presence != cm) return (e) => {
+	if (e.presence != um) return (e) => {
 		delete e[t];
 	};
 	if (e.fieldKind == "enum") {
@@ -11526,8 +11526,8 @@ function vm(e) {
 		e[t] = ol(n, r);
 	};
 }
-function ym(e) {
-	let t = Tm(e.enum), n = Em(e.enum), r = e.localName, i = e.enum.typeName != "google.protobuf.NullValue";
+function xm(e) {
+	let t = Dm(e.enum), n = Om(e.enum), r = e.localName, i = e.enum.typeName != "google.protobuf.NullValue";
 	if (e.oneof) {
 		let a = e.oneof.localName;
 		return (o, s, c) => {
@@ -11536,30 +11536,30 @@ function ym(e) {
 				return;
 			}
 			let l = t(s, c.ignoreUnknownFields);
-			if (l === wm) return;
+			if (l === Em) return;
 			let u = n(l);
-			if (u !== !0) throw new H(e, W(e, l, u));
+			if (u !== !0) throw new V(e, uu(e, l, u));
 			o[a] = {
 				case: r,
 				value: l
 			};
 		};
 	}
-	let a = vm(e);
+	let a = bm(e);
 	return (o, s, c) => {
 		if (s === null && i) {
 			a(o);
 			return;
 		}
 		let l = t(s, c.ignoreUnknownFields);
-		if (l === wm) return;
+		if (l === Em) return;
 		let u = n(l);
-		if (u !== !0) throw new H(e, W(e, l, u));
+		if (u !== !0) throw new V(e, uu(e, l, u));
 		o[r] = l;
 	};
 }
-function bm(e) {
-	let t = e.localName, { toMessage: n, toLocal: r } = mu(e), i = pm(e.message), a = e.message.typeName != "google.protobuf.Value";
+function Sm(e) {
+	let t = e.localName, { toMessage: n, toLocal: r } = gu(e), i = hm(e.message), a = e.message.typeName != "google.protobuf.Value";
 	if (e.oneof) {
 		let o = e.oneof.localName;
 		return (e, s, c) => {
@@ -11584,63 +11584,63 @@ function bm(e) {
 		i(c, o, s), e[t] = r(c);
 	};
 }
-function xm(e) {
-	let t = e.localName, n = Sm(e);
+function Cm(e) {
+	let t = e.localName, n = wm(e);
 	return (r, i, a) => {
 		if (i === null) return;
-		if (!Array.isArray(i)) throw new H(e, "expected Array, got " + G(i));
+		if (!Array.isArray(i)) throw new V(e, "expected Array, got " + U(i));
 		let o = r[t];
 		for (let e = 0; e < i.length; e++) {
 			let t = n(i[e], a, o.length);
-			t !== wm && o.push(t);
+			t !== Em && o.push(t);
 		}
 	};
 }
-function Sm(e) {
+function wm(e) {
 	switch (e.listKind) {
 		case "scalar": {
-			let t = Om(e), n = cu(e.scalar), r = km(e);
+			let t = Am(e), n = lu(e.scalar), r = jm(e);
 			return (i, a, o) => {
-				if (i === null) throw new H(e, "list item must not be null");
+				if (i === null) throw new V(e, "list item must not be null");
 				let s = t(i), c = n(s);
-				if (c !== !0) throw new H(e, `list item #${o + 1}: ${W(e, s, c)}`);
+				if (c !== !0) throw new V(e, `list item #${o + 1}: ${uu(e, s, c)}`);
 				return r(s);
 			};
 		}
 		case "enum": {
-			let t = Tm(e.enum), n = Em(e.enum), r = e.enum.typeName != "google.protobuf.NullValue";
+			let t = Dm(e.enum), n = Om(e.enum), r = e.enum.typeName != "google.protobuf.NullValue";
 			return (i, a, o) => {
-				if (i === null && r) throw new H(e, "list item must not be null");
+				if (i === null && r) throw new V(e, "list item must not be null");
 				let s = t(i, a.ignoreUnknownFields);
-				if (s === wm) return s;
+				if (s === Em) return s;
 				let c = n(s);
-				if (c !== !0) throw new H(e, `list item #${o + 1}: ${W(e, s, c)}`);
+				if (c !== !0) throw new V(e, `list item #${o + 1}: ${uu(e, s, c)}`);
 				return s;
 			};
 		}
 		case "message": {
-			let { toMessage: t, toLocal: n } = mu(e), r = pm(e.message), i = e.message.typeName != "google.protobuf.Value";
+			let { toMessage: t, toLocal: n } = gu(e), r = hm(e.message), i = e.message.typeName != "google.protobuf.Value";
 			return (a, o) => {
-				if (a === null && i) throw new H(e, "list item must not be null");
+				if (a === null && i) throw new V(e, "list item must not be null");
 				let s = t(void 0);
 				return r(s, a, o), n(s);
 			};
 		}
 	}
 }
-function Cm(e) {
-	let t = e.localName, n = e.mapKey, r = Am(n), i = cu(n), a, o, s = (e) => e, c = !0;
+function Tm(e) {
+	let t = e.localName, n = e.mapKey, r = Mm(n), i = lu(n), a, o, s = (e) => e, c = !0;
 	switch (e.mapKind) {
 		case "scalar":
-			a = Om(e), o = cu(e.scalar), s = km(e);
+			a = Am(e), o = lu(e.scalar), s = jm(e);
 			break;
 		case "enum": {
-			let t = Tm(e.enum);
-			a = (e, n) => t(e, n.ignoreUnknownFields), o = Em(e.enum), c = e.enum.typeName != "google.protobuf.NullValue";
+			let t = Dm(e.enum);
+			a = (e, n) => t(e, n.ignoreUnknownFields), o = Om(e.enum), c = e.enum.typeName != "google.protobuf.NullValue";
 			break;
 		}
 		case "message": {
-			let { toMessage: t, toLocal: n } = mu(e), r = pm(e.message);
+			let { toMessage: t, toLocal: n } = gu(e), r = hm(e.message);
 			c = e.message.typeName != "google.protobuf.Value", a = (e, i) => {
 				let a = t(void 0);
 				return r(a, e, i), n(a);
@@ -11650,26 +11650,26 @@ function Cm(e) {
 	}
 	return (l, u, d) => {
 		if (u === null) return;
-		if (typeof u != "object" || Array.isArray(u)) throw new H(e, "expected object, got " + G(u));
+		if (typeof u != "object" || Array.isArray(u)) throw new V(e, "expected object, got " + U(u));
 		let f = l[t], ee = /* @__PURE__ */ new Set(), te = Object.keys(u);
 		for (let t = 0; t < te.length; t++) {
 			let l = te[t], ne = u[l], re = r(l);
-			if (ee.has(re)) throw new H(e, `duplicate map key "${l}"`);
-			if (ee.add(re), ne === null && c) throw new H(e, "map value must not be null");
+			if (ee.has(re)) throw new V(e, `duplicate map key "${l}"`);
+			if (ee.add(re), ne === null && c) throw new V(e, "map value must not be null");
 			let ie = a(ne, d);
-			if (ie === wm) continue;
+			if (ie === Em) continue;
 			let p = i(re);
-			if (p !== !0) throw new H(e, `invalid map key: ${W({ scalar: n }, re, p)}`);
+			if (p !== !0) throw new V(e, `invalid map key: ${uu({ scalar: n }, re, p)}`);
 			if (o !== void 0) {
 				let t = o(ie);
-				if (t !== !0) throw new H(e, `map entry ${G(re)}: ${W(e, ie, t)}`);
+				if (t !== !0) throw new V(e, `map entry ${U(re)}: ${uu(e, ie, t)}`);
 			}
-			B(f, re, s(ie));
+			ml(f, re, s(ie));
 		}
 	};
 }
-var wm = Symbol();
-function Tm(e) {
+var Em = Symbol();
+function Dm(e) {
 	let t = e.values[0].number, n = /* @__PURE__ */ new Map();
 	for (let t of e.values) n.set(t.jsonName, t.number);
 	for (let t of e.values) n.set(t.name, t.number);
@@ -11682,27 +11682,27 @@ function Tm(e) {
 			case "string": {
 				let e = n.get(r);
 				if (e !== void 0) return e;
-				if (i) return wm;
+				if (i) return Em;
 				break;
 			}
 		}
-		throw Error(`cannot decode ${e} from JSON: ${G(r)}`);
-	};
-}
-function Em(e) {
-	if (e.open) return cu(L.INT32);
-	let t = e.values;
-	return (e) => t.some((t) => t.number === e);
-}
-function Dm(e) {
-	let t = Om(e), n = cu(e.scalar), r = km(e);
-	return (i) => {
-		let a = t(i), o = n(a);
-		if (o !== !0) throw new H(e, W(e, a, o));
-		return r(a);
+		throw Error(`cannot decode ${e} from JSON: ${U(r)}`);
 	};
 }
 function Om(e) {
+	if (e.open) return lu(L.INT32);
+	let t = e.values;
+	return (e) => t.some((t) => t.number === e);
+}
+function km(e) {
+	let t = Am(e), n = lu(e.scalar), r = jm(e);
+	return (i) => {
+		let a = t(i), o = n(a);
+		if (o !== !0) throw new V(e, uu(e, a, o));
+		return r(a);
+	};
+}
+function Am(e) {
 	switch (e.scalar) {
 		case L.DOUBLE:
 		case L.FLOAT: return (t) => {
@@ -11710,8 +11710,8 @@ function Om(e) {
 			if (t === "Infinity") return 1e400;
 			if (t === "-Infinity") return -1e400;
 			if (typeof t == "number") {
-				if (Number.isNaN(t)) throw new H(e, "unexpected NaN number");
-				if (!Number.isFinite(t)) throw new H(e, "unexpected infinite number");
+				if (Number.isNaN(t)) throw new V(e, "unexpected NaN number");
+				if (!Number.isFinite(t)) throw new V(e, "unexpected infinite number");
 				return t;
 			}
 			if (typeof t == "string") {
@@ -11725,14 +11725,14 @@ function Om(e) {
 		case L.FIXED32:
 		case L.SFIXED32:
 		case L.SINT32:
-		case L.UINT32: return jm;
+		case L.UINT32: return Nm;
 		case L.BYTES: return (t) => {
 			if (typeof t == "string") {
 				if (t === "") return /* @__PURE__ */ new Uint8Array();
 				try {
-					return Bu(t);
+					return Hu(t);
 				} catch (t) {
-					throw new H(e, t instanceof Error ? t.message : String(t));
+					throw new V(e, t instanceof Error ? t.message : String(t));
 				}
 			}
 			return t;
@@ -11740,7 +11740,7 @@ function Om(e) {
 		default: return (e) => e;
 	}
 }
-function km(e) {
+function jm(e) {
 	let t = e.fieldKind !== "map" && e.longAsString;
 	switch (e.scalar) {
 		case L.INT64:
@@ -11751,7 +11751,7 @@ function km(e) {
 		default: return (e) => e;
 	}
 }
-function Am(e) {
+function Mm(e) {
 	switch (e) {
 		case L.BOOL: return (e) => {
 			switch (e) {
@@ -11764,7 +11764,7 @@ function Am(e) {
 		case L.FIXED32:
 		case L.UINT32:
 		case L.SFIXED32:
-		case L.SINT32: return jm;
+		case L.SINT32: return Nm;
 		case L.INT64:
 		case L.SINT64:
 		case L.SFIXED64:
@@ -11773,7 +11773,7 @@ function Am(e) {
 		default: return (e) => e;
 	}
 }
-function jm(e) {
+function Nm(e) {
 	if (typeof e == "string") {
 		if (e === "" || e.trim().length !== e.length) return e;
 		let t = Number(e);
@@ -11781,8 +11781,8 @@ function jm(e) {
 	}
 	return e;
 }
-function Mm(e, t, n) {
-	if (t === null || Array.isArray(t) || typeof t != "object") throw Error(`cannot decode message ${e.$typeName} from JSON: expected object but got ${G(t)}`);
+function Pm(e, t, n) {
+	if (t === null || Array.isArray(t) || typeof t != "object") throw Error(`cannot decode message ${e.$typeName} from JSON: expected object but got ${U(t)}`);
 	if (Object.keys(t).length == 0) return;
 	let r = t["@type"];
 	if (typeof r != "string" || r == "") throw Error(`cannot decode message ${e.$typeName} from JSON: "@type" is empty`);
@@ -11790,50 +11790,50 @@ function Mm(e, t, n) {
 	if (!i.length) throw Error(`cannot decode message ${e.$typeName} from JSON: "@type" is invalid`);
 	let a = n.registry?.getMessage(i);
 	if (!a) throw Error(`cannot decode message ${e.$typeName} from JSON: ${r} is not in the type registry`);
-	let o = V(a);
-	if (Sl(a) && Object.prototype.hasOwnProperty.call(t, "value")) pm(a)(o, t.value, n);
+	let o = B(a);
+	if (Cl(a) && Object.prototype.hasOwnProperty.call(t, "value")) hm(a)(o, t.value, n);
 	else {
 		let e = {};
-		for (let n of Object.keys(t)) n !== "@type" && B(e, n, t[n]);
-		pm(a)(o, e, n);
+		for (let n of Object.keys(t)) n !== "@type" && ml(e, n, t[n]);
+		hm(a)(o, e, n);
 	}
-	mp(a, o, e);
+	gp(a, o, e);
 }
-function Nm(e, t) {
-	if (typeof t != "string") throw Error(`cannot decode message ${e.$typeName} from JSON: ${G(t)}`);
+function Fm(e, t) {
+	if (typeof t != "string") throw Error(`cannot decode message ${e.$typeName} from JSON: ${U(t)}`);
 	let n = t.match(/^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})(?:\.([0-9]{1,9}))?(?:Z|([+-][0-9][0-9]:[0-9][0-9]))$/);
 	if (!n) throw Error(`cannot decode message ${e.$typeName} from JSON: invalid RFC 3339 string`);
 	let r = Date.parse(n[1] + "-" + n[2] + "-" + n[3] + "T" + n[4] + ":" + n[5] + ":" + n[6] + (n[8] ? n[8] : "Z"));
 	if (Number.isNaN(r)) throw Error(`cannot decode message ${e.$typeName} from JSON: invalid RFC 3339 string`);
-	if (r < kp || r > Ap) throw Error(`cannot decode message ${e.$typeName} from JSON: must be from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59Z inclusive`);
+	if (r < jp || r > Mp) throw Error(`cannot decode message ${e.$typeName} from JSON: must be from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59Z inclusive`);
 	e.seconds = R.parse(r / 1e3), e.nanos = 0, n[7] && (e.nanos = parseInt("1" + n[7] + "0".repeat(9 - n[7].length)) - 1e9);
 }
-function Pm(e, t) {
-	if (typeof t != "string") throw Error(`cannot decode message ${e.$typeName} from JSON: ${G(t)}`);
+function Im(e, t) {
+	if (typeof t != "string") throw Error(`cannot decode message ${e.$typeName} from JSON: ${U(t)}`);
 	let n = t.match(/^(-?[0-9]+)(?:\.([0-9]+))?s/);
-	if (n === null) throw Error(`cannot decode message ${e.$typeName} from JSON: ${G(t)}`);
+	if (n === null) throw Error(`cannot decode message ${e.$typeName} from JSON: ${U(t)}`);
 	let r = Number(n[1]);
-	if (r > 315576e6 || r < -315576e6) throw Error(`cannot decode message ${e.$typeName} from JSON: ${G(t)}`);
+	if (r > 315576e6 || r < -315576e6) throw Error(`cannot decode message ${e.$typeName} from JSON: ${U(t)}`);
 	if (e.seconds = R.parse(r), typeof n[2] != "string") return;
 	let i = n[2] + "0".repeat(9 - n[2].length);
 	e.nanos = parseInt(i), (r < 0 || Object.is(r, -0)) && (e.nanos = -e.nanos);
 }
-function Fm(e, t) {
-	if (typeof t != "string") throw Error(`cannot decode message ${e.$typeName} from JSON: ${G(t)}`);
+function Lm(e, t) {
+	if (typeof t != "string") throw Error(`cannot decode message ${e.$typeName} from JSON: ${U(t)}`);
 	t !== "" && (e.paths = t.split(",").map((t) => {
 		if (t.includes("_")) throw Error(`cannot decode message ${e.$typeName} from JSON: path names must be lowerCamelCase`);
-		return Zu(t);
+		return $u(t);
 	}));
 }
-function Im(e, t, n) {
-	if (typeof t != "object" || !t || Array.isArray(t)) throw Error(`cannot decode message ${e.$typeName} from JSON ${G(t)}`);
+function Rm(e, t, n) {
+	if (typeof t != "object" || !t || Array.isArray(t)) throw Error(`cannot decode message ${e.$typeName} from JSON ${U(t)}`);
 	let r = Object.keys(t);
 	for (let i = 0; i < r.length; i++) {
-		let a = r[i], o = V(xp);
-		Lm(o, t[a], n), B(e.fields, a, o);
+		let a = r[i], o = B(Cp);
+		zm(o, t[a], n), ml(e.fields, a, o);
 	}
 }
-function Lm(e, t, n) {
+function zm(e, t, n) {
 	if (++n.depth > n.recursionLimit) throw Error(`cannot decode ${e.$typeName} from JSON: maximum recursion depth of ${n.recursionLimit} reached`);
 	switch (typeof t) {
 		case "number":
@@ -11857,35 +11857,35 @@ function Lm(e, t, n) {
 		case "object":
 			if (t === null) e.kind = {
 				case: "nullValue",
-				value: Cp.NULL_VALUE
+				value: Tp.NULL_VALUE
 			};
 			else if (Array.isArray(t)) {
-				let r = V(Sp);
-				Rm(r, t, n), e.kind = {
+				let r = B(wp);
+				Bm(r, t, n), e.kind = {
 					case: "listValue",
 					value: r
 				};
 			} else {
-				let r = V(bp);
-				Im(r, t, n), e.kind = {
+				let r = B(Sp);
+				Rm(r, t, n), e.kind = {
 					case: "structValue",
 					value: r
 				};
 			}
 			break;
-		default: throw Error(`cannot decode message ${e.$typeName} from JSON ${G(t)}`);
+		default: throw Error(`cannot decode message ${e.$typeName} from JSON ${U(t)}`);
 	}
 	return n.depth--, e;
 }
-function Rm(e, t, n) {
-	if (!Array.isArray(t)) throw Error(`cannot decode message ${e.$typeName} from JSON ${G(t)}`);
+function Bm(e, t, n) {
+	if (!Array.isArray(t)) throw Error(`cannot decode message ${e.$typeName} from JSON ${U(t)}`);
 	for (let r = 0; r < t.length; r++) {
-		let i = V(xp);
-		Lm(i, t[r], n), e.values.push(i);
+		let i = B(Cp);
+		zm(i, t[r], n), e.values.push(i);
 	}
 }
 // src/labels.js
-var zm = {
+var Vm = {
 	device: "Gerät",
 	position: "Position & GPS",
 	power: "Energie",
@@ -11911,7 +11911,7 @@ var zm = {
 	trafficManagement: "Verkehrssteuerung",
 	tak: "TAK",
 	meshBeacon: "Mesh-Bake"
-}, Bm = {
+}, Hm = {
 	role: "Rolle",
 	rebroadcastMode: "Weiterleiten",
 	nodeInfoBroadcastSecs: "Knoten-Info senden alle (s)",
@@ -12131,18 +12131,18 @@ var zm = {
 	isClientMuted: "Stumm (Client)",
 	hwModel: "Hardware"
 };
-function Vm(e) {
-	if (Bm[e]) return Bm[e];
+function Um(e) {
+	if (Hm[e]) return Hm[e];
 	let t = e.replace(/([a-z0-9])([A-Z])/g, "$1 $2").replace(/_/g, " ");
 	return t.charAt(0).toUpperCase() + t.slice(1);
 }
-function Hm(e) {
-	if (Um[e.name]) return Um[e.name];
+function Wm(e) {
+	if (Gm[e.name]) return Gm[e.name];
 	if (/\d/.test(e.name) || /^[A-Z]{2,3}$/.test(e.name)) return e.name.replace(/^BAUD_/, "").replace(/_/g, " ");
 	let t = e.name.replace(/_/g, " ").toLowerCase();
 	return t.charAt(0).toUpperCase() + t.slice(1);
 }
-var Um = {
+var Gm = {
 	CLIENT: "Teilnehmer (Standard)",
 	CLIENT_MUTE: "Teilnehmer stumm (leitet nicht weiter)",
 	ROUTER: "Router",
@@ -12250,68 +12250,68 @@ var Um = {
 	EITHER_EDGE_ACTIVE_HIGH: "Beide Flanken (aktiv HIGH)",
 	PRIMARY: "Primär",
 	SECONDARY: "Sekundär"
-}, Wm = /* @__PURE__ */ new Set([
+}, Km = /* @__PURE__ */ new Set([
 	L.INT64,
 	L.UINT64,
 	L.FIXED64,
 	L.SFIXED64,
 	L.SINT64
-]), Gm = /* @__PURE__ */ new Set([L.FLOAT, L.DOUBLE]), Km = /psk|password|privateKey/i, K = (e, t = {}, ...n) => {
+]), qm = /* @__PURE__ */ new Set([L.FLOAT, L.DOUBLE]), Jm = /psk|password|privateKey/i, W = (e, t = {}, ...n) => {
 	let r = document.createElement(e);
 	for (let [e, n] of Object.entries(t)) e === "class" ? r.className = n : e.startsWith("on") ? r.addEventListener(e.slice(2), n) : n != null && r.setAttribute(e, n);
 	for (let e of n) e != null && r.append(e);
 	return r;
 };
-function qm(e) {
+function Ym(e) {
 	let t = "";
 	for (let n of e ?? []) t += String.fromCharCode(n);
 	return btoa(t);
 }
-function Jm(e) {
+function Xm(e) {
 	let t = atob(e.trim());
 	return Uint8Array.from(t, (e) => e.charCodeAt(0));
 }
-function Ym(e, t, n, r) {
+function Zm(e, t, n, r) {
 	let i = "tk-" + Math.random().toString(36).slice(2), a;
-	return t === L.BOOL ? (a = K("input", {
+	return t === L.BOOL ? (a = W("input", {
 		type: "checkbox",
 		id: i,
 		class: "form-check-input",
 		role: "switch"
-	}), a.checked = !!n(), a.addEventListener("change", () => r(a.checked))) : t === L.STRING ? (a = K("input", {
-		type: Km.test(e.localName) ? "password" : "text",
+	}), a.checked = !!n(), a.addEventListener("change", () => r(a.checked))) : t === L.STRING ? (a = W("input", {
+		type: Jm.test(e.localName) ? "password" : "text",
 		id: i,
 		class: "form-control form-control-sm"
-	}), a.value = n() ?? "", a.addEventListener("input", () => r(a.value))) : t === L.BYTES ? (a = K("input", {
-		type: Km.test(e.localName) ? "password" : "text",
+	}), a.value = n() ?? "", a.addEventListener("input", () => r(a.value))) : t === L.BYTES ? (a = W("input", {
+		type: Jm.test(e.localName) ? "password" : "text",
 		id: i,
 		class: "form-control form-control-sm",
 		placeholder: "Schlüssel (Base64)"
-	}), a.value = qm(n()), a.addEventListener("change", () => {
+	}), a.value = Ym(n()), a.addEventListener("change", () => {
 		try {
-			r(Jm(a.value)), a.classList.remove("is-invalid");
+			r(Xm(a.value)), a.classList.remove("is-invalid");
 		} catch {
 			a.classList.add("is-invalid");
 		}
-	})) : (a = K("input", {
+	})) : (a = W("input", {
 		type: "number",
 		id: i,
 		class: "form-control form-control-sm",
-		step: Gm.has(t) ? "any" : "1"
+		step: qm.has(t) ? "any" : "1"
 	}), a.value = String(n() ?? 0), a.addEventListener("input", () => {
-		a.value !== "" && (Wm.has(t) ? r(BigInt(a.value)) : r(Gm.has(t) ? parseFloat(a.value) : parseInt(a.value, 10)));
+		a.value !== "" && (Km.has(t) ? r(BigInt(a.value)) : r(qm.has(t) ? parseFloat(a.value) : parseInt(a.value, 10)));
 	})), {
 		input: a,
 		id: i
 	};
 }
-function Xm(e, t, n) {
-	let r = "tk-" + Math.random().toString(36).slice(2), i = K("select", {
+function Qm(e, t, n) {
+	let r = "tk-" + Math.random().toString(36).slice(2), i = W("select", {
 		id: r,
 		class: "form-select form-select-sm"
 	});
 	for (let t of e.values) {
-		let e = K("option", { value: String(t.number) }, Hm(t));
+		let e = W("option", { value: String(t.number) }, Wm(t));
 		i.append(e);
 	}
 	return i.value = String(t() ?? 0), i.addEventListener("change", () => n(parseInt(i.value, 10))), {
@@ -12319,68 +12319,68 @@ function Xm(e, t, n) {
 		id: r
 	};
 }
-function Zm(e, t, n, r) {
-	return t.type === "checkbox" ? K("div", { class: "form-check form-switch mb-2" }, t, K("label", {
+function $m(e, t, n, r) {
+	return t.type === "checkbox" ? W("div", { class: "form-check form-switch mb-2" }, t, W("label", {
 		class: "form-check-label",
 		for: n
-	}, e)) : K("div", { class: "mb-2" }, K("label", {
+	}, e)) : W("div", { class: "mb-2" }, W("label", {
 		class: "form-label small mb-1",
 		for: n
-	}, e), t, r ? K("div", { class: "form-text" }, r) : null);
+	}, e), t, r ? W("div", { class: "form-text" }, r) : null);
 }
-function q(e, ...t) {
-	return K("fieldset", { class: "border rounded p-3 h-100" }, K("legend", { class: "float-none w-auto px-1 fs-6 fw-bold" }, e), ...t);
+function G(e, ...t) {
+	return W("fieldset", { class: "border rounded p-3 h-100" }, W("legend", { class: "float-none w-auto px-1 fs-6 fw-bold" }, e), ...t);
 }
-function Qm(e, t, n = {}) {
-	let r = K("div");
+function eh(e, t, n = {}) {
+	let r = W("div");
 	for (let i of e.fields) {
 		if (i.deprecated || n.skip?.includes(i.localName)) continue;
-		let e = Vm(i.localName), a = () => t[i.localName], o = (e) => {
+		let e = Um(i.localName), a = () => t[i.localName], o = (e) => {
 			t[i.localName] = e, n.onChange?.();
 		};
 		if (!i.oneof) switch (i.fieldKind) {
 			case "scalar": {
-				let t = n.custom?.[i.localName], { input: s, id: c } = t ? t(a, o) : Ym(i, i.scalar, a, o);
-				r.append(Zm(e, s, c));
+				let t = n.custom?.[i.localName], { input: s, id: c } = t ? t(a, o) : Zm(i, i.scalar, a, o);
+				r.append($m(e, s, c));
 				break;
 			}
 			case "enum": {
-				let { input: t, id: n } = Xm(i.enum, a, o);
-				r.append(Zm(e, t, n));
+				let { input: t, id: n } = Qm(i.enum, a, o);
+				r.append($m(e, t, n));
 				break;
 			}
 			case "message": {
-				t[i.localName] || (t[i.localName] = V(i.message));
-				let a = K("fieldset", { class: "border rounded p-2 mb-2" }, K("legend", { class: "float-none w-auto px-1 fs-6 fw-bold" }, e));
-				a.append(Qm(i.message, t[i.localName], n)), r.append(a);
+				t[i.localName] || (t[i.localName] = B(i.message));
+				let a = W("fieldset", { class: "border rounded p-2 mb-2" }, W("legend", { class: "float-none w-auto px-1 fs-6 fw-bold" }, e));
+				a.append(eh(i.message, t[i.localName], n)), r.append(a);
 				break;
 			}
 			case "list": {
 				if (i.listKind === "message") break;
-				let t = "tk-" + Math.random().toString(36).slice(2), n = K("textarea", {
+				let t = "tk-" + Math.random().toString(36).slice(2), n = W("textarea", {
 					id: t,
 					rows: "2",
 					class: "form-control form-control-sm",
 					placeholder: "ein Wert pro Zeile"
 				});
-				n.value = (a() ?? []).map((e) => i.scalar === L.BYTES ? qm(e) : String(e)).join("\n"), n.addEventListener("change", () => {
+				n.value = (a() ?? []).map((e) => i.scalar === L.BYTES ? Ym(e) : String(e)).join("\n"), n.addEventListener("change", () => {
 					let e = n.value.split("\n").map((e) => e.trim()).filter(Boolean), t;
-					t = i.listKind === "enum" ? e.map((e) => parseInt(e, 10)) : i.scalar === L.BYTES ? e.map(Jm) : i.scalar === L.STRING ? e : Wm.has(i.scalar) ? e.map((e) => BigInt(e)) : e.map(Number), o(t);
-				}), r.append(Zm(e, n, t, "ein Wert pro Zeile"));
+					t = i.listKind === "enum" ? e.map((e) => parseInt(e, 10)) : i.scalar === L.BYTES ? e.map(Xm) : i.scalar === L.STRING ? e : Km.has(i.scalar) ? e.map((e) => BigInt(e)) : e.map(Number), o(t);
+				}), r.append($m(e, n, t, "ein Wert pro Zeile"));
 				break;
 			}
 		}
 	}
 	return r;
 }
-var $m = (e) => Object.assign(Error(e), { de: !0 });
-function eh(e) {
+var th = (e) => Object.assign(Error(e), { de: !0 });
+function nh(e) {
 	if (e?.de) return e.message;
 	let t = e?.name ?? "", n = String(e?.message ?? e ?? "");
 	return t === "NotFoundError" || /No port selected|User cancelled/i.test(n) ? "Kein Gerät ausgewählt." : t === "SecurityError" ? "Der Browser hat den Zugriff verweigert. Seite über https öffnen und erneut versuchen." : t === "NetworkError" || /Failed to open serial port|already open/i.test(n) ? "Der USB-Anschluss ist belegt. Andere Programme oder Browser-Tabs mit dem Gerät schließen und neu verbinden." : t === "InvalidStateError" ? "Die Verbindung ist schon offen. Erst trennen, dann neu verbinden." : /timeout|timed out/i.test(n) ? "Zeitüberschreitung: Das Gerät antwortet nicht. Kabel prüfen und neu verbinden." : /Bluetooth|GATT/i.test(n) ? "Bluetooth-Verbindung fehlgeschlagen. Gerät in der Nähe? Bluetooth am Gerät an?" : /Failed to connect|Couldn't sync|Invalid head of packet|Failed to read/i.test(n) ? "Keine Verbindung zum Bootloader. Kabel neu stecken; falls nötig die Taste beim Einstecken gedrückt halten." : "Unerwarteter Fehler (" + n + ").";
 }
 // src/menu-model.js
-var th = {
+var rh = {
 	"pos.send": ["Position senden", "Position senden"],
 	"light.toggle": ["Licht: immer an ↔ bei Taste", "Licht: bei Taste"],
 	"light.cycle": ["Licht: aus / bei Taste / immer", "Licht: bei Taste"],
@@ -12417,8 +12417,8 @@ var th = {
 	"sys.off": ["Ausschalten", "sys.off"],
 	home: ["Zur Startseite", "Zur Startseite"],
 	sos: ["SOS auslösen", "SOS auslösen"]
-}, nh = "P0\nIpos.send|Position senden\nIlight.toggle|\nIsound.toggle|\nIscreen.off|Bildschirm aus\nP1\nImsg.reply|Antworten\nImsg.new|Neue Nachricht (alle)\nImsg.chats|Alle Chats\nImsg.clear|Löschen\nP2\nInav.goto|Navigieren zu …\nInav.wpsave|Wegpunkt hier speichern\nIwp.manage|Wegpunkte verwalten\nInav.stop|Navigation beenden\nInav.track|\nIpos.send|Position senden\nP3\nImap.move|Karte verschieben\nImap.zoomin|Hineinzoomen\nImap.zoomout|Herauszoomen\nImap.center|Zur eigenen Position\nImap.rotate|\nImap.wphere|Wegpunkt in Kartenmitte\nImap.gohere|Hierhin navigieren\nImap.offline|Karten-Info\nP4\nInodes.list|Knoten wählen …\nIping|Reichweitentest (Ping)\nP5\nSFunk\nIradio.mode|\nIradio.stats|Statistik\nIping|Reichweitentest (Ping)\nE\nSAnzeige & Töne\nIlight.cycle|\nIleds.toggle|\nIsound.toggle|\nIpages|Seiten ein/aus\nE\nSVerbindungen\nIbt.toggle|\nIwifi|WLAN & Web\nE\nSSystem\nIsys.info|Info\nIsys.reboot|Neustart\nIsys.off|Ausschalten\nE\n";
-function rh(e) {
+}, ih = "P0\nIpos.send|Position senden\nIlight.toggle|\nIsound.toggle|\nIscreen.off|Bildschirm aus\nP1\nImsg.reply|Antworten\nImsg.new|Neue Nachricht (alle)\nImsg.chats|Alle Chats\nImsg.clear|Löschen\nP2\nInav.goto|Navigieren zu …\nInav.wpsave|Wegpunkt hier speichern\nIwp.manage|Wegpunkte verwalten\nInav.stop|Navigation beenden\nInav.track|\nIpos.send|Position senden\nP3\nImap.move|Karte verschieben\nImap.zoomin|Hineinzoomen\nImap.zoomout|Herauszoomen\nImap.center|Zur eigenen Position\nImap.rotate|\nImap.wphere|Wegpunkt in Kartenmitte\nImap.gohere|Hierhin navigieren\nImap.offline|Karten-Info\nP4\nInodes.list|Knoten wählen …\nIping|Reichweitentest (Ping)\nP5\nSFunk\nIradio.mode|\nIradio.stats|Statistik\nIping|Reichweitentest (Ping)\nE\nSAnzeige & Töne\nIlight.cycle|\nIleds.toggle|\nIsound.toggle|\nIpages|Seiten ein/aus\nE\nSVerbindungen\nIbt.toggle|\nIwifi|WLAN & Web\nE\nSSystem\nIsys.info|Info\nIsys.reboot|Neustart\nIsys.off|Ausschalten\nE\n";
+function ah(e) {
 	let t = [
 		[],
 		[],
@@ -12440,7 +12440,7 @@ function rh(e) {
 				action: e < 0 ? s : s.slice(0, e),
 				label: e < 0 ? "" : s.slice(e + 1)
 			};
-			th[i.action] || c("unbekannte Aktion " + i.action), (r ? r.sub : t[n]).push(i);
+			rh[i.action] || c("unbekannte Aktion " + i.action), (r ? r.sub : t[n]).push(i);
 		} else o === "S" ? (r && c("höchstens 2 Menü-Ebenen"), r = {
 			label: s || "Untermenü",
 			sub: []
@@ -12448,38 +12448,38 @@ function rh(e) {
 	}), !t[5].length) throw Error("Das Menü der Einstellungen darf nicht leer sein.");
 	return t;
 }
-var ih = (e) => String(e ?? "").replace(/[\n\r|]/g, "").trim();
-function ah(e) {
+var oh = (e) => String(e ?? "").replace(/[\n\r|]/g, "").trim();
+function sh(e) {
 	let t = "";
 	return e.forEach((e, n) => {
 		t += "P" + n + "\n";
 		for (let n of e) if (n.sub) {
-			t += "S" + (ih(n.label) || "Untermenü") + "\n";
-			for (let e of n.sub) t += "I" + e.action + "|" + (ih(e.label) || (th[e.action][1] === e.action ? th[e.action][0] : "")) + "\n";
+			t += "S" + (oh(n.label) || "Untermenü") + "\n";
+			for (let e of n.sub) t += "I" + e.action + "|" + (oh(e.label) || (rh[e.action][1] === e.action ? rh[e.action][0] : "")) + "\n";
 			t += "E\n";
-		} else t += "I" + n.action + "|" + (ih(n.label) || (th[n.action][1] === n.action ? th[n.action][0] : "")) + "\n";
+		} else t += "I" + n.action + "|" + (oh(n.label) || (rh[n.action][1] === n.action ? rh[n.action][0] : "")) + "\n";
 	}), t;
 }
-var oh = (e) => e.map((e) => e.map((e) => e.sub ? {
+var ch = (e) => e.map((e) => e.map((e) => e.sub ? {
 	label: e.label,
 	sub: e.sub.map((e) => ({ ...e }))
-} : { ...e })), sh = "nmphos", ch = {
+} : { ...e })), lh = "nmphos", uh = {
 	n: "Weiter / nächster Eintrag",
 	p: "Zurück / eine Ebene zurück",
 	m: "Menü öffnen / auswählen",
 	h: "Zur Startseite",
 	l: "Licht an/aus",
 	x: "nichts"
-}, lh = {
+}, dh = {
 	o: "Ausschalten",
 	s: "SOS (5 s Countdown)",
 	x: "nichts"
 };
-function uh(e) {
-	return typeof e != "string" || e.length !== 6 || [...e.slice(0, 4)].some((e) => !ch[e]) || [...e.slice(4)].some((e) => !lh[e]) ? "Tastenbelegung ungültig." : e.slice(0, 4).includes("m") ? e.slice(0, 4).includes("n") ? null : "„Weiter / nächster Eintrag“ muss auf einer Taste liegen." : "„Menü öffnen / auswählen“ muss auf einer Taste liegen.";
+function fh(e) {
+	return typeof e != "string" || e.length !== 6 || [...e.slice(0, 4)].some((e) => !uh[e]) || [...e.slice(4)].some((e) => !dh[e]) ? "Tastenbelegung ungültig." : e.slice(0, 4).includes("m") ? e.slice(0, 4).includes("n") ? null : "„Weiter / nächster Eintrag“ muss auf einer Taste liegen." : "„Menü öffnen / auswählen“ muss auf einer Taste liegen.";
 }
 // src/designer.js
-var dh = {
+var ph = {
 	c: "Uhr (groß)",
 	b: "Akku",
 	t: "Ziel und Entfernung",
@@ -12489,7 +12489,7 @@ var dh = {
 	n: "Ungelesene Nachrichten",
 	m: "Funkmodus",
 	p: "Position (Koordinaten)"
-}, fh = {
+}, mh = {
 	n: "Seitenname",
 	f: "Schriftzug „ThinkKira“",
 	c: "Uhrzeit",
@@ -12501,11 +12501,11 @@ var dh = {
 	m: "Ungelesene Nachrichten (Brief)",
 	k: "Knoten online",
 	r: "Funkmodus (M/K)"
-}, ph = "n|mgwlcB", mh = 15;
-function hh(e) {
-	return typeof e != "string" || e.length > mh || e.split("|").length > 2 || [...e.replace("|", "")].some((e) => !fh[e]) ? "Die Statuszeile ist ungültig." : null;
+}, hh = "n|mgwlcB", gh = 15;
+function _h(e) {
+	return typeof e != "string" || e.length > gh || e.split("|").length > 2 || [...e.replace("|", "")].some((e) => !mh[e]) ? "Die Statuszeile ist ungültig." : null;
 }
-var gh = 169, _h = {
+var vh = 169, yh = {
 	order: "012345",
 	pages: 63,
 	start: "cbtgsknm",
@@ -12519,11 +12519,41 @@ var gh = 169, _h = {
 		"Wo bist du?",
 		"Brauche Hilfe"
 	],
-	keys: sh,
-	bar: ph,
-	menus: rh(nh)
-};
-function vh(e) {
+	keys: lh,
+	bar: hh,
+	menus: ah(ih),
+	tips: []
+}, bh = 2e3, xh = (e) => ({
+	title: String(e?.title ?? "").replace(/[\r\n]/g, " ").trim(),
+	text: String(e?.text ?? "").replace(/\r/g, "").trim()
+});
+function Sh(e) {
+	return e.map((e) => "T" + e.title + "\n" + (e.text ? e.text.split("\n").map((e) => "L" + e + "\n").join("") : "")).join("");
+}
+function Ch(e) {
+	let t = [];
+	for (let n of e.split("\n")) n[0] === "T" ? t.push({
+		title: n.slice(1),
+		text: ""
+	}) : n[0] === "L" && t.length && (t.at(-1).text += (t.at(-1).text ? "\n" : "") + n.slice(1));
+	return t;
+}
+function wh(e) {
+	if (!Array.isArray(e)) return "Die Tipps sind ungültig.";
+	if (e.length > 8) return "Höchstens 8 Tipps.";
+	for (let [t, n] of e.entries()) {
+		if (!n.title) return `Tipp ${t + 1} braucht eine Überschrift.`;
+		if (n.title.length > 40) return `Die Überschrift von Tipp ${t + 1} ist zu lang (höchstens 40 Zeichen).`;
+		if (n.text.length > 300) return `Der Text von Tipp ${t + 1} ist zu lang (höchstens 300 Zeichen).`;
+	}
+	return new TextEncoder().encode(Sh(e)).length > bh ? "Die Tipps sind zusammen zu lang. Bitte kürzen." : null;
+}
+function Th(e) {
+	let t = Sh(e.map(xh)), n = ["tb"];
+	for (let e = 0; e < t.length; e += 70) n.push("tl|" + t.slice(e, e + 70));
+	return n.push("te"), n;
+}
+function Eh(e) {
 	let [t, n, r, i, a, o] = e;
 	return {
 		order: t,
@@ -12534,7 +12564,7 @@ function vh(e) {
 		bar: o || "n|mgwlcB"
 	};
 }
-function yh(e) {
+function Dh(e) {
 	return [
 		"ui",
 		e.order,
@@ -12545,42 +12575,47 @@ function yh(e) {
 		e.bar ?? "n|mgwlcB"
 	].join("|");
 }
-function bh(e) {
-	let t = ah(e), n = ["mb"];
+function Oh(e) {
+	let t = sh(e), n = ["mb"];
 	for (let e = 0; e < t.length; e += 200) n.push("ml|" + t.slice(e, e + 200));
 	return n.push("me"), n;
 }
-var xh = (e) => ({
+var kh = (e) => ({
 	order: e.order,
 	pages: e.pages,
 	start: e.start,
 	replies: [...e.replies],
 	keys: e.keys ?? "nmphos",
 	bar: e.bar ?? "n|mgwlcB",
-	menus: oh(e.menus ?? _h.menus)
+	menus: ch(e.menus ?? yh.menus),
+	tips: (e.tips ?? []).map((e) => ({
+		title: e.title,
+		text: e.text
+	}))
 });
-function Sh(e) {
-	let t = xh(e);
+function Ah(e) {
+	let t = kh(e);
 	return {
 		format: "thinkkira-design",
-		version: 3,
+		version: 4,
 		order: t.order,
 		pages: t.pages,
 		start: t.start,
 		replies: t.replies,
 		keys: t.keys,
 		bar: t.bar,
-		menu: ah(t.menus).split("\n").filter(Boolean)
+		menu: sh(t.menus).split("\n").filter(Boolean),
+		tips: t.tips.map(xh)
 	};
 }
-function Ch(e, t = "thinkkira-design.json") {
-	let n = JSON.stringify(Sh(e), null, 2), r = K("a", {
+function jh(e, t = "thinkkira-design.json") {
+	let n = JSON.stringify(Ah(e), null, 2), r = W("a", {
 		href: URL.createObjectURL(new Blob([n], { type: "application/json" })),
 		download: t
 	});
 	r.click(), setTimeout(() => URL.revokeObjectURL(r.href), 1e3);
 }
-function wh(e) {
+function Mh(e) {
 	let t;
 	try {
 		t = JSON.parse(e);
@@ -12591,13 +12626,18 @@ function wh(e) {
 	let n = String(t.order ?? "");
 	if (n.length !== 6 || [...n].sort().join("") !== "012345") throw Error("Die Seiten-Reihenfolge in der Datei ist ungültig.");
 	let r = String(t.start ?? "");
-	if (r.length > 11 || [...r].some((e) => !dh[e])) throw Error("Die Startseiten-Bausteine in der Datei sind ungültig.");
+	if (r.length > 11 || [...r].some((e) => !ph[e])) throw Error("Die Startseiten-Bausteine in der Datei sind ungültig.");
 	let i = (Array.isArray(t.replies) ? t.replies : []).map((e) => String(e).replace(/[;|\n]/g, "").trim()).filter(Boolean);
-	if (!i.length || i.join(";").length > gh) throw Error("Die Schnellantworten in der Datei fehlen oder sind zu lang.");
-	let a = t.keys ?? "nmphos", o = uh(a);
+	if (!i.length || i.join(";").length > vh) throw Error("Die Schnellantworten in der Datei fehlen oder sind zu lang.");
+	let a = t.keys ?? "nmphos", o = fh(a);
 	if (o) throw Error(o);
-	let s = t.menu ? rh(Array.isArray(t.menu) ? t.menu.join("\n") : t.menu) : rh(nh), c = t.bar ?? "n|mgwlcB", l = hh(c);
+	let s = t.menu ? ah(Array.isArray(t.menu) ? t.menu.join("\n") : t.menu) : ah(ih), c = t.bar ?? "n|mgwlcB", l = _h(c);
 	if (l) throw Error(l);
+	let u = Array.isArray(t.tips) ? t.tips.map(xh) : void 0;
+	if (u) {
+		let e = wh(u);
+		if (e) throw Error(e);
+	}
 	return {
 		order: n,
 		pages: t.pages & 63 | 33,
@@ -12605,12 +12645,13 @@ function wh(e) {
 		replies: i,
 		keys: a,
 		bar: c,
-		menus: s
+		menus: s,
+		tips: u
 	};
 }
-function Th(e = ".json,application/json") {
+function Nh(e = ".json,application/json") {
 	return new Promise((t) => {
-		let n = K("input", {
+		let n = W("input", {
 			type: "file",
 			accept: e
 		});
@@ -12618,7 +12659,7 @@ function Th(e = ".json,application/json") {
 	});
 }
 // src/main.js
-var J = Rr, Eh = 7, Y = {
+var K = Rr, Ph = 7, q = {
 	device: null,
 	status: "getrennt",
 	myNodeNum: 0,
@@ -12635,34 +12676,34 @@ var J = Rr, Eh = 7, Y = {
 	kiraPending: null,
 	page: "device",
 	dirty: !1
-}, Dh;
-async function Oh(e) {
+}, Fh;
+async function Ih(e) {
 	try {
-		Mh("verbinde …");
+		Bh("verbinde …");
 		let t = e === "serial" ? await Hc.create(115200) : await Wc.create(), n = new Vc(t);
-		Y.device = n, Y.transport = t, Y.config = {}, Y.moduleConfig = {}, Y.channels = [], Y.nodes.clear(), Y.kira = null, Y.kiraStats = null, Y.kiraStatsAsked = !1, Y.wifiNets = null, Y.ui = null, Y.menuText = Y.menuBuf = null, Y.devWps = Y.wpBuf = null, Y.wpAsked = !1, Y.mapInfo = void 0, Y.mapAsked = !1, n.events.onDeviceStatus.subscribe((e) => {
-			e === Eh ? (Mh("verbunden"), X("get"), X("ui"), X("mg")) : e === 2 && Y.device === n && !Y.closing ? (kh(n, t), Ah("Verbindung verloren")) : e === 6 && Mh("lese Einstellungen …");
-		}), n.events.onMyNodeInfo.subscribe((e) => Y.myNodeNum = e.myNodeNum), n.events.onDeviceMetadataPacket.subscribe((e) => {
-			Y.metadata = e.data, $();
+		q.device = n, q.transport = t, q.transportKind = e === "serial" ? "USB" : "Bluetooth", q.config = {}, q.moduleConfig = {}, q.channels = [], q.nodes.clear(), q.kira = null, q.kiraStats = null, q.kiraStatsAsked = !1, q.wifiNets = null, q.ui = null, q.menuText = q.menuBuf = null, q.tips = q.tipsBuf = null, q.devWps = q.wpBuf = null, q.wpAsked = !1, q.mapInfo = void 0, q.mapAsked = !1, n.events.onDeviceStatus.subscribe((e) => {
+			e === Ph ? (Bh("verbunden"), X("get"), X("ui"), X("mg"), X("tg")) : e === 2 && q.device === n && !q.closing ? (Lh(n, t), Rh("Verbindung verloren")) : e === 6 && Bh("lese Einstellungen …");
+		}), n.events.onMyNodeInfo.subscribe((e) => q.myNodeNum = e.myNodeNum), n.events.onDeviceMetadataPacket.subscribe((e) => {
+			q.metadata = e.data, $();
 		}), n.events.onConfigPacket.subscribe((e) => {
-			e.payloadVariant.case && (Y.config[e.payloadVariant.case] = e.payloadVariant.value), Ph();
+			e.payloadVariant.case && (q.config[e.payloadVariant.case] = e.payloadVariant.value), J();
 		}), n.events.onModuleConfigPacket.subscribe((e) => {
-			e.payloadVariant.case && (Y.moduleConfig[e.payloadVariant.case] = e.payloadVariant.value), Ph();
+			e.payloadVariant.case && (q.moduleConfig[e.payloadVariant.case] = e.payloadVariant.value), J();
 		}), n.events.onChannelPacket.subscribe((e) => {
-			Y.channels[e.index] = e, Ph();
+			q.channels[e.index] = e, J();
 		}), n.events.onNodeInfoPacket.subscribe((e) => {
-			Y.nodes.set(e.num, e), Ph();
-		}), n.events.onMeshPacket.subscribe(rg), n.events.onWaypointPacket.subscribe((e) => {
-			Y.waypoints.set(e.data.id, {
+			q.nodes.set(e.num, e), J();
+		}), n.events.onMeshPacket.subscribe(pg), n.events.onWaypointPacket.subscribe((e) => {
+			q.waypoints.set(e.data.id, {
 				...e.data,
 				from: e.from
-			}), Ph();
-		}), await n.configure(), Mh("verbunden");
+			}), J();
+		}), await n.configure(), Bh("verbunden");
 	} catch (e) {
-		console.error(e), Y.device && await kh(Y.device, Y.transport), Ah("Fehler: " + eh(e));
+		console.error(e), q.device && await Lh(q.device, q.transport), Rh("Fehler: " + nh(e));
 	}
 }
-async function kh(e, t) {
+async function Lh(e, t) {
 	try {
 		e?.complete?.();
 	} catch {}
@@ -12673,29 +12714,29 @@ async function kh(e, t) {
 		await t?.disconnect();
 	} catch {}
 }
-function Ah(e) {
-	Y.device = null, Y.transport = null, Y.dirty = !1, Y.kira = null, Y.kiraStats = null, Y.wifiNets = null, Y.wifiScanning = !1, Y.ui = null, Y.menuText = Y.menuBuf = null, Mh(e);
+function Rh(e) {
+	q.device = null, q.transport = null, q.dirty = !1, q.kira = null, q.kiraStats = null, q.wifiNets = null, q.wifiScanning = !1, q.ui = null, q.menuText = q.menuBuf = null, q.tips = q.tipsBuf = null, Bh(e);
 }
-async function jh() {
-	Y.device && (!Y.dirty || confirm("Es gibt ungespeicherte Änderungen. Trotzdem trennen und verwerfen?")) && (Y.closing = !0, Mh("trenne …"), await kh(Y.device, Y.transport), Y.closing = !1, Ah("getrennt – das Gerät kann jetzt abgezogen werden"));
+async function zh() {
+	q.device && (!q.dirty || confirm("Es gibt ungespeicherte Änderungen. Trotzdem trennen und verwerfen?")) && (q.closing = !0, Bh("trenne …"), await Lh(q.device, q.transport), q.closing = !1, Rh("getrennt – das Gerät kann jetzt abgezogen werden"));
 }
 window.addEventListener("beforeunload", (e) => {
-	Y.device && Y.dirty && e.preventDefault();
+	q.device && q.dirty && e.preventDefault();
 }), window.addEventListener("pagehide", () => {
-	Y.device && kh(Y.device, Y.transport);
+	q.device && Lh(q.device, q.transport);
 });
-function Mh(e) {
-	Y.status = e, $();
+function Bh(e) {
+	q.status = e, $();
 }
-var Nh;
-function Ph() {
-	clearTimeout(Nh), Nh = setTimeout($, 150);
+var Vh;
+function J() {
+	clearTimeout(Vh), Vh = setTimeout($, 150);
 }
-async function Fh(e) {
-	let t = Y.device;
+async function Hh(e) {
+	let t = q.device;
 	if (!t) return Q("Bitte zuerst das Gerät verbinden.", !0);
 	let n = document.activeElement?.tagName === "BUTTON" ? document.activeElement : null, r = n?.innerHTML;
-	n && (n.disabled = !0, n.replaceChildren(K("span", {
+	n && (n.disabled = !0, n.replaceChildren(W("span", {
 		class: "spinner-border spinner-border-sm me-1",
 		"aria-hidden": "true"
 	}), "Speichere …")), Q("Speichere …");
@@ -12704,26 +12745,26 @@ async function Fh(e) {
 		r(t.beginEditSettings?.()), r(e(t)), r(t.commitEditSettings());
 		let i = Date.now();
 		for (; t.queue?.queue?.some((e) => !e.sent);) {
-			if (Date.now() - i > 15e3) throw $m("Das Gerät nimmt keine Daten an.");
+			if (Date.now() - i > 15e3) throw th("Das Gerät nimmt keine Daten an.");
 			await new Promise((e) => setTimeout(e, 100));
 		}
-		Q("Gespeichert und ans Gerät übertragen. Es übernimmt die Einstellungen (startet ggf. neu)."), Y.dirty = !1, n && (n.replaceChildren(sg("fa-check"), "Gespeichert"), n.classList.add("btn-success"));
+		Q("Gespeichert und ans Gerät übertragen. Es übernimmt die Einstellungen (startet ggf. neu)."), q.dirty = !1, n && (n.replaceChildren(_g("fa-check"), "Gespeichert"), n.classList.add("btn-success"));
 	} catch (e) {
-		console.error(e), Q("Fehler beim Speichern: " + eh(e), !0), n && n.replaceChildren(sg("fa-exclamation-triangle"), "Fehler");
+		console.error(e), Q("Fehler beim Speichern: " + nh(e), !0), n && n.replaceChildren(_g("fa-exclamation-triangle"), "Fehler");
 	} finally {
 		n && setTimeout(() => {
 			n.disabled = !1, n.classList.remove("btn-success"), n.innerHTML = r;
 		}, 3e3);
 	}
 }
-var Ih = (e) => Fh((t) => t.setConfig(V(J.Config.ConfigSchema, { payloadVariant: {
+var Uh = (e) => Hh((t) => t.setConfig(B(K.Config.ConfigSchema, { payloadVariant: {
 	case: e,
-	value: Y.config[e]
-} }))), Lh = (e) => Fh((t) => t.setModuleConfig(V(J.ModuleConfig.ModuleConfigSchema, { payloadVariant: {
+	value: q.config[e]
+} }))), Wh = (e) => Hh((t) => t.setModuleConfig(B(K.ModuleConfig.ModuleConfigSchema, { payloadVariant: {
 	case: e,
-	value: Y.moduleConfig[e]
+	value: q.moduleConfig[e]
 } })));
-function Rh() {
+function Gh() {
 	let e = {
 		thinkkira: 1,
 		created: (/* @__PURE__ */ new Date()).toISOString(),
@@ -12732,37 +12773,37 @@ function Rh() {
 		channels: [],
 		owner: null
 	};
-	for (let [t, n] of Object.entries(Y.config)) e.config[t] = Fp(J.Config.ConfigSchema, V(J.Config.ConfigSchema, { payloadVariant: {
+	for (let [t, n] of Object.entries(q.config)) e.config[t] = Lp(K.Config.ConfigSchema, B(K.Config.ConfigSchema, { payloadVariant: {
 		case: t,
 		value: n
 	} }));
-	for (let [t, n] of Object.entries(Y.moduleConfig)) e.moduleConfig[t] = Fp(J.ModuleConfig.ModuleConfigSchema, V(J.ModuleConfig.ModuleConfigSchema, { payloadVariant: {
+	for (let [t, n] of Object.entries(q.moduleConfig)) e.moduleConfig[t] = Lp(K.ModuleConfig.ModuleConfigSchema, B(K.ModuleConfig.ModuleConfigSchema, { payloadVariant: {
 		case: t,
 		value: n
 	} }));
-	for (let t of Y.channels) t && e.channels.push(Fp(J.Channel.ChannelSchema, t));
-	let t = Y.nodes.get(Y.myNodeNum);
-	return t?.user && (e.owner = Fp(J.Mesh.UserSchema, t.user)), e;
+	for (let t of q.channels) t && e.channels.push(Lp(K.Channel.ChannelSchema, t));
+	let t = q.nodes.get(q.myNodeNum);
+	return t?.user && (e.owner = Lp(K.Mesh.UserSchema, t.user)), e;
 }
-function zh() {
-	let e = new Blob([JSON.stringify(Rh(), null, 2)], { type: "application/json" });
-	K("a", {
+function Kh() {
+	let e = new Blob([JSON.stringify(Gh(), null, 2)], { type: "application/json" });
+	W("a", {
 		href: URL.createObjectURL(e),
 		download: `thinkkira-backup-${(/* @__PURE__ */ new Date()).toISOString().slice(0, 10)}.json`
 	}).click();
 }
-async function Bh(e) {
+async function qh(e) {
 	let t = JSON.parse(await e.text());
 	if (!t.config) return Q("Keine gültige Sicherung", !0);
-	await Fh((e) => {
+	await Hh((e) => {
 		let n = [];
-		for (let r of Object.values(t.config)) n.push(e.setConfig(um(J.Config.ConfigSchema, r)));
-		for (let r of Object.values(t.moduleConfig ?? {})) n.push(e.setModuleConfig(um(J.ModuleConfig.ModuleConfigSchema, r)));
-		for (let r of t.channels ?? []) n.push(e.setChannel(um(J.Channel.ChannelSchema, r)));
-		return t.owner && n.push(e.setOwner(um(J.Mesh.UserSchema, t.owner))), Promise.all(n);
+		for (let r of Object.values(t.config)) n.push(e.setConfig(fm(K.Config.ConfigSchema, r)));
+		for (let r of Object.values(t.moduleConfig ?? {})) n.push(e.setModuleConfig(fm(K.ModuleConfig.ModuleConfigSchema, r)));
+		for (let r of t.channels ?? []) n.push(e.setChannel(fm(K.Channel.ChannelSchema, r)));
+		return t.owner && n.push(e.setOwner(fm(K.Mesh.UserSchema, t.owner))), Promise.all(n);
 	});
 }
-function Vh(e) {
+function Jh(e) {
 	return [...new DOMParser().parseFromString(e, "application/xml").querySelectorAll("wpt")].map((e) => ({
 		lat: parseFloat(e.getAttribute("lat")),
 		lon: parseFloat(e.getAttribute("lon")),
@@ -12770,7 +12811,7 @@ function Vh(e) {
 		description: e.querySelector("desc")?.textContent ?? ""
 	}));
 }
-function Hh(e) {
+function Yh(e) {
 	let t = (e) => String(e).replace(/[<>&"]/g, (e) => ({
 		"<": "&lt;",
 		">": "&gt;",
@@ -12779,7 +12820,7 @@ function Hh(e) {
 	})[e]);
 	return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="ThinkKira" xmlns="http://www.topografix.com/GPX/1/1">\n${e.map((e) => `  <wpt lat="${(e.latitudeI * 1e-7).toFixed(7)}" lon="${(e.longitudeI * 1e-7).toFixed(7)}"><name>${t(e.name)}</name><desc>${t(e.description ?? "")}</desc></wpt>`).join("\n")}\n</gpx>\n`;
 }
-var Uh = [{
+var Xh = [{
 	name: "potsdam-ludwigsfelde",
 	title: "Potsdam – Ludwigsfelde",
 	kind: "region",
@@ -12790,65 +12831,65 @@ var Uh = [{
 		13.32
 	]
 }];
-function Wh() {
-	Y.mapList === void 0 && (Y.mapList = null, fetch(Xh() + "?maps=1").then((e) => e.ok ? e.json() : Promise.reject()).then((e) => {
-		Y.mapList = Array.isArray(e.maps) && e.maps.length ? e.maps : null, Ph();
+function Zh() {
+	q.mapList === void 0 && (q.mapList = null, fetch(rg() + "?maps=1").then((e) => e.ok ? e.json() : Promise.reject()).then((e) => {
+		q.mapList = Array.isArray(e.maps) && e.maps.length ? e.maps : null, J();
 	}).catch(() => {}));
 }
-function Gh(e) {
-	let t = Y.nodes.get(Y.myNodeNum)?.position;
+function Qh(e) {
+	let t = q.nodes.get(q.myNodeNum)?.position;
 	if (!t?.latitudeI) return null;
 	let n = t.latitudeI * 1e-7, r = t.longitudeI * 1e-7, i = e.filter((e) => n >= e.bbox[0] && n <= e.bbox[2] && r >= e.bbox[1] && r <= e.bbox[3]);
 	return i.sort((e, t) => (e.kind !== "region") - (t.kind !== "region") || (e.bbox[2] - e.bbox[0]) * (e.bbox[3] - e.bbox[1]) - (t.bbox[2] - t.bbox[0]) * (t.bbox[3] - t.bbox[1])), i[0] ?? null;
 }
-function Kh() {
-	Wh();
-	let e = Y.mapList || Uh, t = Gh(e);
-	Y.mapPick && e.some((e) => e.name === Y.mapPick) || (Y.mapPick = (t ?? e[0]).name);
-	let n = K("select", {
+function $h() {
+	Zh();
+	let e = q.mapList || Xh, t = Qh(e);
+	q.mapPick && e.some((e) => e.name === q.mapPick) || (q.mapPick = (t ?? e[0]).name);
+	let n = W("select", {
 		class: "form-select form-select-sm mb-2",
 		"aria-label": "Karte",
-		onchange: (e) => Y.mapPick = e.target.value
+		onchange: (e) => q.mapPick = e.target.value
 	}), r = (e) => e.bytes ? " (" + Math.round(e.bytes / 1024) + " KB)" : "", i = [["Detailkarten (Städte und Wandergebiete)", e.filter((e) => e.kind === "region")], ["Ganz Deutschland, grob (ca. 50 × 50 km)", e.filter((e) => e.kind !== "region")]];
 	for (let [e, a] of i) {
 		if (!a.length) continue;
-		let i = K("optgroup", { label: e });
-		for (let e of a) i.append(K("option", { value: e.name }, (t && e.name === t.name ? "📍 " : "") + e.title + r(e)));
+		let i = W("optgroup", { label: e });
+		for (let e of a) i.append(W("option", { value: e.name }, (t && e.name === t.name ? "📍 " : "") + e.title + r(e)));
 		n.append(i);
 	}
-	return n.value = Y.mapPick, K("div", {}, n, t ? K("div", { class: "small text-muted mb-2" }, "📍 = passt zur aktuellen Position des Geräts") : null);
+	return n.value = q.mapPick, W("div", {}, n, t ? W("div", { class: "small text-muted mb-2" }, "📍 = passt zur aktuellen Position des Geräts") : null);
 }
-var qh = null;
-function Jh(e, t) {
-	return new Promise((n, r) => {
-		qh = {
-			resolve: n,
-			reject: r
-		}, setTimeout(() => r(Error(t)), e);
-	}).finally(() => qh = null);
+var eg = null;
+function tg(e, t, n = () => !0) {
+	return new Promise((r, i) => {
+		eg = {
+			resolve: (e) => n(e) && r(e),
+			reject: i
+		}, setTimeout(() => i(Error(t)), e);
+	}).finally(() => eg = null);
 }
-async function Yh(e) {
-	let t = Y.device, n = t.queue, r = Date.now();
+async function ng(e) {
+	let t = q.device, n = t.queue, r = Date.now();
 	for (; n?.lock && Date.now() - r < 15e3;) await new Promise((e) => setTimeout(e, 20));
 	n && (n.lock = !0);
 	let i;
 	try {
 		i = t.transport.toDevice.getWriter();
 		for (let t of e) {
-			let e = V(J.Mesh.MeshPacketSchema, {
+			let e = B(K.Mesh.MeshPacketSchema, {
 				payloadVariant: {
 					case: "decoded",
 					value: {
 						payload: new TextEncoder().encode(t),
-						portnum: tg
+						portnum: dg
 					}
 				},
-				from: Y.myNodeNum,
-				to: Y.myNodeNum,
+				from: q.myNodeNum,
+				to: q.myNodeNum,
 				id: Math.floor(Math.random() * 0x7fffffff) + 1,
 				wantAck: !1
 			});
-			await i.write(Qf(J.Mesh.ToRadioSchema, V(J.Mesh.ToRadioSchema, { payloadVariant: {
+			await i.write(ep(K.Mesh.ToRadioSchema, B(K.Mesh.ToRadioSchema, { payloadVariant: {
 				case: "packet",
 				value: e
 			} })));
@@ -12857,64 +12898,101 @@ async function Yh(e) {
 		i?.releaseLock(), n && (n.lock = !1, n.queue?.some((e) => !e.sent) && n.processQueue(t.transport.toDevice).catch((e) => console.warn(e)));
 	}
 }
-var Xh = () => Dh?.dataset.firmware || "/_scripts/php/keylink/thinkkira/firmware.php";
-async function Zh(e, t) {
-	if (!Y.device) return Q("Bitte zuerst das Gerät verbinden.", !0);
+var rg = () => Fh?.dataset.firmware || "/_scripts/php/keylink/thinkkira/firmware.php", ig = [], ag = 0;
+function Y(...e) {
+	ig.push(((Date.now() - ag) / 1e3).toFixed(1) + " s  " + e.join(" ")), ig.length > 300 && ig.splice(1, 1);
+}
+async function og() {
+	let e = tg(4e3, "keine Quittung", (e) => typeof e == "object");
+	await ng(["mapq"]);
+	try {
+		let t = await e;
+		return typeof t == "object" ? t : {
+			got: t,
+			expected: 0,
+			up: !1
+		};
+	} catch {
+		return null;
+	}
+}
+async function sg(e, t) {
+	if (!q.device) return Q("Bitte zuerst das Gerät verbinden.", !0);
 	if (e.length < 40 || new TextDecoder().decode(e.subarray(0, 4)) !== "TKM1") return Q("Das ist keine ThinkKira-Kartendatei (.tkm).", !0);
-	let n = (Y.kira?.version ?? "0").split(".").map(Number);
-	if (n[0] === 0 && (n[1] < 4 || n[1] === 4 && (n[2] || 0) < 1)) return Q("Auf dem Gerät läuft ThinkKira " + (Y.kira?.version ?? "?") + ". Für Karten bitte zuerst im Loader die neueste Version installieren.", !0);
-	Y.mapUp = {
+	let n = (q.kira?.version ?? "0").split(".").map(Number);
+	if (n[0] === 0 && (n[1] < 4 || n[1] === 4 && (n[2] || 0) < 1)) return Q("Auf dem Gerät läuft ThinkKira " + (q.kira?.version ?? "?") + ". Für Karten bitte zuerst im Loader die neueste Version installieren.", !0);
+	q.mapUp = {
 		total: e.length,
 		sent: 0,
 		label: t,
 		cancel: !1
-	}, $();
+	}, q.mapLogText = null, ig.length = 0, ag = Date.now(), Y("Start", t, e.length, "Byte, Gerät", q.kira?.version ?? "?", "über", q.transportKind ?? "?"), $();
+	let r = (e) => Math.round(e / 1024);
 	try {
-		for (let t = 0;; t++) {
-			let n = Jh(1e4, "Das Gerät antwortet nicht auf den Kartenstart. Bitte Gerät neu starten und erneut verbinden.");
-			X("mapb|" + e.length);
+		let n = 0, i = await og();
+		if (Y("Stand im Gerät:", i ? `${i.got}/${i.expected} läuft=${i.up}` : "keine Antwort"), i?.up && i.expected === e.length && i.got > 0 && i.got < e.length && q.mapResume === t) n = i.got, Y("Setze fort bei", n);
+		else for (let t = 0;; t++) {
+			let n = tg(1e4, "Das Gerät antwortet nicht auf den Kartenstart. Bitte Gerät neu starten und erneut verbinden.", (e) => e === "ready");
+			await ng(["mapb|" + e.length]);
 			try {
-				await n;
+				await n, Y("Gerät bereit");
 				break;
 			} catch (e) {
-				if (t >= 2 || Y.mapUp.cancel) throw e;
+				if (Y("Kartenstart ohne Antwort, Versuch", t + 1, e.message), t >= 2 || q.mapUp.cancel) throw e;
 			}
 		}
-		let n = 0, r = 0;
+		q.mapResume = t;
+		let a = 0;
 		for (; n < e.length;) {
-			if (Y.mapUp.cancel) throw $m("Abgebrochen.");
+			if (q.mapUp.cancel) throw th("Abgebrochen.");
 			let t = "";
 			for (let r of e.subarray(n, n + 162)) t += String.fromCharCode(r);
-			let i = Jh(4e3, "keine Quittung");
-			await Yh(r ? ["mapd|" + n + "|" + btoa(t), "mapq"] : ["mapd|" + n + "|" + btoa(t)]);
-			let a;
+			let i = tg(2500, "keine Quittung", (e) => typeof e == "number" && e > n);
+			await ng(["mapd|" + n + "|" + btoa(t)]);
+			let o;
 			try {
-				a = await i;
+				o = await i;
 			} catch (t) {
-				if (console.warn("Karte: keine Quittung bei Byte", n, "Versuch", r + 1), t.message !== "keine Quittung") throw t;
-				if (++r > 15) throw $m("Das Gerät quittiert seit einer Minute nicht mehr (bei " + Math.round(n / 1024) + " von " + Math.round(e.length / 1024) + " KB). Bitte Gerät neu starten, Seite neu laden und erneut versuchen.");
+				if (Y("keine Quittung bei", n, "Versuch", a + 1), t.message !== "keine Quittung") throw t;
+				if (++a > 15) throw th(`Das Gerät quittiert seit 40 Sekunden nicht mehr (bei ${r(n)} von ${r(e.length)} KB). Gerät neu starten, neu verbinden und nochmal „Karte laden“ drücken – die Übertragung macht dann an dieser Stelle weiter.`);
+				if (a % 3 == 0) {
+					let e = await og();
+					if (Y("Stand im Gerät:", e ? `${e.got}/${e.expected} läuft=${e.up}` : "keine Antwort"), e && !e.up) throw th("Das Gerät hat den Kartenempfang abgebrochen. Bitte nochmal „Karte laden“ drücken.");
+					e && (n = e.got);
+				}
 				continue;
 			}
-			if (typeof a == "number") {
-				if (a > n) r = 0;
-				else if (++r > 20) throw $m("Zu viele Übertragungsfehler. Bitte erneut versuchen (USB-Kabel prüfen).");
-				n = a, (n - Y.mapUp.sent >= 4096 || n >= e.length) && (Y.mapUp.sent = n, $());
+			a = 0, n = o, (n - q.mapUp.sent >= 4096 || n >= e.length) && (q.mapUp.sent = n, $());
+		}
+		Y("alle Daten übertragen");
+		let o = !1;
+		for (let e = 0; e < 3 && !o; e++) {
+			let t = tg(15e3, "Das Gerät hat das Ende nicht bestätigt.", (e) => e === "ok");
+			await ng(["mape"]);
+			try {
+				await t, o = !0;
+			} catch (t) {
+				if (Y("Abschluss ohne Bestätigung, Versuch", e + 1, t.message), !t.message.includes("bestätigt")) throw t;
 			}
 		}
-		let i = Jh(2e4, "Das Gerät hat das Ende nicht bestätigt.");
-		X("mape"), await i, Q("Karte „" + t + "“ übertragen (" + Math.round(e.length / 1024) + " KB).");
+		if (!o) {
+			let t = await og();
+			Y("Stand nach Abschluss:", t ? `${t.got}/${t.expected} läuft=${t.up}` : "keine Antwort"), o = !!t && !t.up && t.got === e.length && t.expected === e.length;
+		}
+		if (q.mapResume = null, X("mapi"), !o) throw th("Das Gerät hat den Abschluss nicht bestätigt. Bitte prüfen, ob die Karte auf dem Gerät erscheint.");
+		Y("fertig"), Q("Karte „" + t + "“ übertragen (" + r(e.length) + " KB).");
 	} catch (e) {
-		Q("Karte: " + eh(e), !0);
+		Y("Fehler:", e.message), q.mapLogText = ig.join("\n"), Q("Karte: " + nh(e), !0);
 	} finally {
-		Y.mapUp = null, $();
+		q.mapUp = null, $();
 	}
 }
-function Qh(e) {
+function cg(e) {
 	return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="ThinkKira" xmlns="http://www.topografix.com/GPX/1/1">\n<trk><name>ThinkKira Track</name><trkseg>\n${e.map(([e, t, n]) => `    <trkpt lat="${(e * 1e-7).toFixed(7)}" lon="${(t * 1e-7).toFixed(7)}">${n ? `<time>${(/* @__PURE__ */ new Date(n * 1e3)).toISOString()}</time>` : ""}</trkpt>`).join("\n")}\n</trkseg></trk>\n</gpx>\n`;
 }
-var $h = (e) => String(e).replace(/[|\n\r]/g, " ").trim().slice(0, 19) || "WP";
-async function eg(e) {
-	let t = V(J.Mesh.WaypointSchema, {
+var lg = (e) => String(e).replace(/[|\n\r]/g, " ").trim().slice(0, 19) || "WP";
+async function ug(e) {
+	let t = B(K.Mesh.WaypointSchema, {
 		id: Math.floor(Math.random() * 0x7fffffff),
 		name: e.name.slice(0, 29),
 		description: (e.description ?? "").slice(0, 99),
@@ -12923,33 +13001,37 @@ async function eg(e) {
 		expire: 0,
 		lockedTo: 0
 	});
-	await Y.device.sendWaypoint(t, "broadcast", 0), Y.waypoints.set(t.id, {
+	await q.device.sendWaypoint(t, "broadcast", 0), q.waypoints.set(t.id, {
 		...t,
-		from: Y.myNodeNum
+		from: q.myNodeNum
 	});
 }
-var tg = 287, ng;
-function rg(e) {
+var dg = 287, fg;
+function pg(e) {
 	let t = e?.payloadVariant?.case === "decoded" ? e.payloadVariant.value : null;
-	if (!t || t.portnum !== tg) return;
+	if (!t || t.portnum !== dg) return;
 	let n = new TextDecoder().decode(t.payload), [r, i, a, ...o] = n.split("|");
 	if (r === "m") {
-		Y.kira = {
+		q.kira = {
 			mode: i,
 			version: a
-		}, Ph();
+		}, J();
 		return;
 	}
 	if (r === "k") {
-		i === "info" ? Y.mapInfo = {
+		i === "info" ? q.mapInfo = {
 			size: +a,
 			level: +o[0],
 			bbox: o.slice(1, 5).map((e) => e * 1e-7)
-		} : i === "none" ? Y.mapInfo = !1 : i === "ready" ? qh?.resolve("ready") : i === "ok" ? (qh?.resolve("ok"), X("mapi")) : i === "a" && qh?.resolve(+a), Ph();
+		} : i === "none" ? q.mapInfo = !1 : i === "ready" ? eg?.resolve("ready") : i === "ok" ? (eg?.resolve("ok"), X("mapi")) : i === "a" && eg?.resolve(o.length >= 2 ? {
+			got: +a,
+			expected: +o[0],
+			up: o[1] === "1"
+		} : +a), J();
 		return;
 	}
 	if (r === "p") {
-		i === "end" ? (Y.devWps = Y.wpBuf ?? [], Y.wpBuf = null, Y.arrive = +o[0] || 20, Y.navTarget = o[1] ?? "", Ph()) : (Y.wpBuf ??= []).push({
+		i === "end" ? (q.devWps = q.wpBuf ?? [], q.wpBuf = null, q.arrive = +o[0] || 20, q.navTarget = o[1] ?? "", J()) : (q.wpBuf ??= []).push({
 			idx: +i,
 			name: a,
 			lat: o[0] * 1e-7,
@@ -12965,29 +13047,34 @@ function rg(e) {
 			return;
 		}
 		if (e.startsWith("end|")) {
-			let e = (Y.trackBuf ?? "").split("\n").filter(Boolean).map((e) => e.split(",").map(Number));
-			if (Y.trackBuf = null, !e.length) return Q("Der Track im Gerät ist leer.", !0);
-			let t = new Blob([Qh(e)], { type: "application/gpx+xml" });
-			K("a", {
+			let e = (q.trackBuf ?? "").split("\n").filter(Boolean).map((e) => e.split(",").map(Number));
+			if (q.trackBuf = null, !e.length) return Q("Der Track im Gerät ist leer.", !0);
+			let t = new Blob([cg(e)], { type: "application/gpx+xml" });
+			W("a", {
 				href: URL.createObjectURL(t),
 				download: "thinkkira-track.gpx"
 			}).click(), Q(e.length + " Track-Punkte heruntergeladen.");
 			return;
 		}
-		Y.trackBuf = (Y.trackBuf ?? "") + e;
+		q.trackBuf = (q.trackBuf ?? "") + e;
 		return;
 	}
 	if (r === "M") {
 		let e = n.slice(2);
-		e === "end" ? (Y.menuText = Y.menuBuf ?? "", Y.menuBuf = "", Ph()) : e === "ok" ? (Q("Design übertragen. Das Gerät zeigt die neue Oberfläche sofort."), X("ui"), X("mg")) : Y.menuBuf = (Y.menuBuf ?? "") + e;
+		e === "end" ? (q.menuText = q.menuBuf ?? "", q.menuBuf = "", J()) : e === "ok" ? (Q("Design übertragen. Das Gerät zeigt die neue Oberfläche sofort."), X("ui"), X("mg")) : q.menuBuf = (q.menuBuf ?? "") + e;
+		return;
+	}
+	if (r === "T") {
+		let e = n.slice(2);
+		e === "end" ? (q.tips = Ch(q.tipsBuf ?? ""), q.tipsBuf = "", J()) : /^ok\|\d+$/.test(e) ? (Q(+e.slice(3) ? `${e.slice(3)} Tipps gespeichert.` : "Keine Tipps mehr im Gerät."), X("tg")) : q.tipsBuf = (q.tipsBuf ?? "") + e;
 		return;
 	}
 	if (r === "u") {
-		Y.ui = vh([
+		q.ui = Eh([
 			i,
 			a,
 			...o
-		]), Ph();
+		]), J();
 		return;
 	}
 	if (r === "s" && i !== "end") {
@@ -12996,7 +13083,7 @@ function rg(e) {
 			a,
 			...o
 		].map((e) => parseInt(e, 10));
-		Y.kiraPending = {
+		q.kiraPending = {
 			counters: {
 				rxGood: e[0],
 				rxBad: e[1],
@@ -13010,8 +13097,8 @@ function rg(e) {
 		};
 		return;
 	}
-	if (r === "h" && Y.kiraPending) {
-		Y.kiraPending.heard.push({
+	if (r === "h" && q.kiraPending) {
+		q.kiraPending.heard.push({
 			from: i,
 			rssi: +a,
 			snr: +o[0],
@@ -13029,70 +13116,70 @@ function rg(e) {
 			snrUs: +o[3],
 			ago: +o[4]
 		};
-		Y.kiraPending ? Y.kiraPending.range.push(e) : (Y.kiraStats ??= {
+		q.kiraPending ? q.kiraPending.range.push(e) : (q.kiraStats ??= {
 			counters: null,
 			heard: [],
 			range: []
-		}, Y.kiraStats.range.unshift(e), $(), Q("Antwort von " + ig(a) + ": " + e.rssiUs + " dBm"));
+		}, q.kiraStats.range.unshift(e), $(), Q("Antwort von " + mg(a) + ": " + e.rssiUs + " dBm"));
 		return;
 	}
 	if (r === "s" && i === "end") {
-		Y.kiraStats = Y.kiraPending, Y.kiraPending = null, $();
+		q.kiraStats = q.kiraPending, q.kiraPending = null, $();
 		return;
 	}
 	if (r === "err") {
-		i.startsWith("Karte") && qh?.reject(Error(i)), Q("Gerät meldet: " + i, !0);
+		i.startsWith("Karte") && (Y("Gerät meldet:", i), eg?.reject(Error(i))), Q("Gerät meldet: " + i, !0);
 		return;
 	}
 	if (r !== "w") return;
 	if (i === "end") {
-		clearTimeout(ng), Y.wifiScanning = !1, Y.wifiNets.sort((e, t) => t.rssi - e.rssi), $(), a === "-1" ? Q("Diese Firmware kann keine WLAN-Suche.", !0) : Q(Y.wifiNets.length ? Y.wifiNets.length + " WLAN-Netze gefunden. Bitte unten auswählen." : "Keine WLAN-Netze gefunden.");
+		clearTimeout(fg), q.wifiScanning = !1, q.wifiNets.sort((e, t) => t.rssi - e.rssi), $(), a === "-1" ? Q("Diese Firmware kann keine WLAN-Suche.", !0) : Q(q.wifiNets.length ? q.wifiNets.length + " WLAN-Netze gefunden. Bitte unten auswählen." : "Keine WLAN-Netze gefunden.");
 		return;
 	}
 	let s = o.join("|");
-	Y.wifiNets && !Y.wifiNets.some((e) => e.ssid === s) && Y.wifiNets.push({
+	q.wifiNets && !q.wifiNets.some((e) => e.ssid === s) && q.wifiNets.push({
 		ssid: s,
 		rssi: parseInt(i, 10),
 		open: a === "1"
 	});
 }
 async function X(e) {
-	if (!Y.device) return !1;
+	if (!q.device) return !1;
 	try {
-		return await Y.device.sendPacket(new TextEncoder().encode(e), tg, "self", 0, !1, !1), !0;
+		return await q.device.sendPacket(new TextEncoder().encode(e), dg, "self", 0, !1, !1), !0;
 	} catch (e) {
 		return console.error(e), !1;
 	}
 }
-function ig(e) {
-	let t = Y.nodes.get(parseInt(e, 16));
+function mg(e) {
+	let t = q.nodes.get(parseInt(e, 16));
 	return t?.user?.shortName || t?.user?.longName || "!" + e;
 }
-async function ag() {
-	if (Y.device && !Y.wifiScanning) {
-		Y.wifiScanning = !0, Y.wifiNets = [], $();
+async function hg() {
+	if (q.device && !q.wifiScanning) {
+		q.wifiScanning = !0, q.wifiNets = [], $();
 		try {
-			await Y.device.sendPacket(new TextEncoder().encode("wifiscan"), tg, "self", 0, !1, !1);
+			await q.device.sendPacket(new TextEncoder().encode("wifiscan"), dg, "self", 0, !1, !1);
 		} catch (e) {
 			console.error(e);
 		}
-		clearTimeout(ng), ng = setTimeout(() => {
-			Y.wifiScanning && (Y.wifiScanning = !1, $(), Q("Das Gerät antwortet nicht auf die WLAN-Suche. Bitte zuerst die neueste ThinkKira-Firmware über den Loader aufspielen.", !0));
+		clearTimeout(fg), fg = setTimeout(() => {
+			q.wifiScanning && (q.wifiScanning = !1, $(), Q("Das Gerät antwortet nicht auf die WLAN-Suche. Bitte zuerst die neueste ThinkKira-Firmware über den Loader aufspielen.", !0));
 		}, 12e3);
 	}
 }
-function og(e, t) {
-	let n = "tk-ssid", r = "__manuell__", i = e() ?? "", a = Y.wifiNets ?? [], o = K("select", {
+function gg(e, t) {
+	let n = "tk-ssid", r = "__manuell__", i = e() ?? "", a = q.wifiNets ?? [], o = W("select", {
 		id: n,
 		class: "form-select form-select-sm"
 	});
-	o.append(K("option", { value: "" }, a.length ? "– Netz auswählen –" : "– erst „Netze suchen“ klicken –"));
+	o.append(W("option", { value: "" }, a.length ? "– Netz auswählen –" : "– erst „Netze suchen“ klicken –"));
 	for (let e of a) {
 		let t = e.rssi >= -60 ? "sehr gut" : e.rssi >= -70 ? "gut" : e.rssi >= -80 ? "mäßig" : "schwach";
-		o.append(K("option", { value: e.ssid }, e.ssid + " (" + t + ", " + e.rssi + " dBm" + (e.open ? ", offen" : "") + ")"));
+		o.append(W("option", { value: e.ssid }, e.ssid + " (" + t + ", " + e.rssi + " dBm" + (e.open ? ", offen" : "") + ")"));
 	}
-	i && !a.some((e) => e.ssid === i) && o.append(K("option", { value: i }, i + " (gespeichert)")), o.append(K("option", { value: r }, "Anderes Netz (manuell eingeben) …")), o.value = i;
-	let s = K("input", {
+	i && !a.some((e) => e.ssid === i) && o.append(W("option", { value: i }, i + " (gespeichert)")), o.append(W("option", { value: r }, "Anderes Netz (manuell eingeben) …")), o.value = i;
+	let s = W("input", {
 		type: "text",
 		class: "form-control form-control-sm mt-2 d-none",
 		placeholder: "WLAN-Name eingeben",
@@ -13102,21 +13189,21 @@ function og(e, t) {
 		let e = o.value === r;
 		s.classList.toggle("d-none", !e), e ? (s.value = "", s.focus()) : t(o.value);
 	});
-	let c = K("button", {
+	let c = W("button", {
 		type: "button",
 		class: "btn btn-sm btn-outline-secondary",
-		onclick: ag
-	}, Y.wifiScanning ? K("span", { class: "spinner-border spinner-border-sm me-1" }) : sg("fa-search"), Y.wifiScanning ? "Suche …" : "Netze suchen");
-	return (Y.wifiScanning || !Y.device) && (c.disabled = !0), {
-		input: K("div", {}, K("div", { class: "input-group input-group-sm" }, o, c), s),
+		onclick: hg
+	}, q.wifiScanning ? W("span", { class: "spinner-border spinner-border-sm me-1" }) : _g("fa-search"), q.wifiScanning ? "Suche …" : "Netze suchen");
+	return (q.wifiScanning || !q.device) && (c.disabled = !0), {
+		input: W("div", {}, W("div", { class: "input-group input-group-sm" }, o, c), s),
 		id: n
 	};
 }
-var sg = (e) => K("i", { class: "fas " + e + " me-1" }), Z = (e, t, n = "primary", r) => K("button", {
+var _g = (e) => W("i", { class: "fas " + e + " me-1" }), Z = (e, t, n = "primary", r) => W("button", {
 	type: "button",
 	class: "btn btn-sm btn-" + n + " me-2 mt-2",
 	onclick: t
-}, r ? sg(r) : null, e), cg = (...e) => K("div", { class: "row g-3 mb-3" }, ...e.filter(Boolean).map((e) => K("div", { class: "col-lg-6" }, e))), lg = (e) => K("div", { class: "form-text mb-2" }, e), ug = [
+}, r ? _g(r) : null, e), vg = (...e) => W("div", { class: "row g-3 mb-3" }, ...e.filter(Boolean).map((e) => W("div", { class: "col-lg-6" }, e))), yg = (e) => W("div", { class: "form-text mb-2" }, e), bg = [
 	{
 		id: "device",
 		title: "Gerät",
@@ -13188,227 +13275,231 @@ var sg = (e) => K("i", { class: "fas " + e + " me-1" }), Z = (e, t, n = "primary
 		ic: "fa-cog"
 	}
 ];
-function dg() {
-	let e = Y.metadata, t = Y.nodes.get(Y.myNodeNum), n = (e, t) => K("div", { class: "col-6 col-md-3" }, K("div", { class: "small text-muted" }, e), K("div", { class: "fw-bold" }, t));
-	return K("div", { class: "row g-2 mb-3" }, n("Name", t?.user?.longName ?? "–"), n("Knoten-Nr.", Y.myNodeNum ? "!" + Y.myNodeNum.toString(16).padStart(8, "0") : "–"), n("Firmware", e?.firmwareVersion ?? "–"), n("Knoten bekannt", String(Y.nodes.size)));
+function xg() {
+	let e = q.metadata, t = q.nodes.get(q.myNodeNum), n = (e, t) => W("div", { class: "col-6 col-md-3" }, W("div", { class: "small text-muted" }, e), W("div", { class: "fw-bold" }, t));
+	return W("div", { class: "row g-2 mb-3" }, n("Name", t?.user?.longName ?? "–"), n("Knoten-Nr.", q.myNodeNum ? "!" + q.myNodeNum.toString(16).padStart(8, "0") : "–"), n("Firmware", e?.firmwareVersion ?? "–"), n("Knoten bekannt", String(q.nodes.size)));
 }
-function fg() {
-	let e = Y.nodes.get(Y.myNodeNum), t = null;
+function Sg() {
+	let e = q.nodes.get(q.myNodeNum), t = null;
 	if (e?.user) {
-		let n = Iu(J.Mesh.UserSchema, e.user);
-		t = q("Name", Qm(J.Mesh.UserSchema, n, { skip: [
+		let n = Ru(K.Mesh.UserSchema, e.user);
+		t = G("Name", eh(K.Mesh.UserSchema, n, { skip: [
 			"id",
 			"macaddr",
 			"hwModel",
 			"publicKey",
 			"role"
-		] }), Z("Name speichern", () => Fh((e) => e.setOwner(n)), "primary", "fa-save"));
+		] }), Z("Name speichern", () => Hh((e) => e.setOwner(n)), "primary", "fa-save"));
 	}
-	let n = Y.config.device ? q("Geräte-Einstellungen", Qm(J.Config.Config_DeviceConfigSchema, Y.config.device), Z("Speichern", () => Ih("device"), "primary", "fa-save")) : null;
-	return cg(t, n);
+	let n = q.config.device ? G("Geräte-Einstellungen", eh(K.Config.Config_DeviceConfigSchema, q.config.device), Z("Speichern", () => Uh("device"), "primary", "fa-save")) : null;
+	return vg(t, n);
 }
-function pg(e) {
-	let t = Y.config[e];
-	if (!t) return K("div", { class: "alert alert-warning" }, "Noch nicht vom Gerät geladen.");
-	let n = J.Config.ConfigSchema.fields.find((t) => t.localName === e).message;
-	return cg(q(zm[e] ?? e, e === "lora" ? lg("Für Deutschland: Region EU_868. Der eigene ThinkKira-Funkmodus kommt mit Firmware-Phase 2.") : null, e === "network" ? lg("„Netze suchen“ lässt das Gerät die WLAN-Netze in der Nähe suchen (dauert ein paar Sekunden).") : null, Qm(n, t, e === "network" ? { custom: { wifiSsid: og } } : {}), Z("Speichern", () => Ih(e), "primary", "fa-save")));
+function Cg(e) {
+	let t = q.config[e];
+	if (!t) return W("div", { class: "alert alert-warning" }, "Noch nicht vom Gerät geladen.");
+	let n = K.Config.ConfigSchema.fields.find((t) => t.localName === e).message;
+	return vg(G(Vm[e] ?? e, e === "lora" ? yg("Für Deutschland: Region EU_868. Der eigene ThinkKira-Funkmodus kommt mit Firmware-Phase 2.") : null, e === "network" ? yg("„Netze suchen“ lässt das Gerät die WLAN-Netze in der Nähe suchen (dauert ein paar Sekunden).") : null, eh(n, t, e === "network" ? { custom: { wifiSsid: gg } } : {}), Z("Speichern", () => Uh(e), "primary", "fa-save")));
 }
-function mg() {
+function wg() {
 	let e = [];
 	for (let t = 0; t < 8; t++) {
-		let n = Y.channels[t];
-		n && e.push(q(`Kanal ${t}${t === 0 ? " (primär)" : ""}`, Qm(J.Channel.ChannelSchema, n, { skip: ["index"] }), Z(`Kanal ${t} speichern`, () => Fh((e) => e.setChannel(n)), "primary", "fa-save")));
+		let n = q.channels[t];
+		n && e.push(G(`Kanal ${t}${t === 0 ? " (primär)" : ""}`, eh(K.Channel.ChannelSchema, n, { skip: ["index"] }), Z(`Kanal ${t} speichern`, () => Hh((e) => e.setChannel(n)), "primary", "fa-save")));
 	}
-	return cg(...e);
+	return vg(...e);
 }
-function hg() {
+function Tg() {
 	let e = [];
-	for (let t of J.ModuleConfig.ModuleConfigSchema.fields) {
-		let n = Y.moduleConfig[t.localName];
-		n && e.push(q(zm[t.localName] ?? t.localName, Qm(t.message, n), Z("Speichern", () => Lh(t.localName), "primary", "fa-save")));
+	for (let t of K.ModuleConfig.ModuleConfigSchema.fields) {
+		let n = q.moduleConfig[t.localName];
+		n && e.push(G(Vm[t.localName] ?? t.localName, eh(t.message, n), Z("Speichern", () => Wh(t.localName), "primary", "fa-save")));
 	}
-	return cg(...e);
+	return vg(...e);
 }
-function gg() {
-	let e = !!Y.kira;
-	e && !Y.devWps && !Y.wpAsked && (Y.wpAsked = !0, setTimeout(() => X("wpl"), 0));
-	let t = K("input", {
+function Eg() {
+	let e = !!q.kira;
+	e && !q.devWps && !q.wpAsked && (q.wpAsked = !0, setTimeout(() => X("wpl"), 0));
+	let t = W("input", {
 		type: "text",
 		class: "form-control form-control-sm",
 		placeholder: "Name",
 		maxlength: "19"
-	}), n = K("input", {
+	}), n = W("input", {
 		type: "number",
 		class: "form-control form-control-sm",
 		step: "any",
 		placeholder: "Breite, z. B. 52.3906"
-	}), r = K("input", {
+	}), r = W("input", {
 		type: "number",
 		class: "form-control form-control-sm",
 		step: "any",
 		placeholder: "Länge, z. B. 13.0645"
-	}), i = K("input", {
+	}), i = W("input", {
 		type: "checkbox",
 		class: "form-check-input",
 		id: "tk-wp-mesh"
 	}), a = () => !t.value || !n.value || !r.value ? (Q("Name, Breite und Länge ausfüllen", !0), null) : {
-		name: $h(t.value),
+		name: lg(t.value),
 		lat: parseFloat(n.value),
 		lon: parseFloat(r.value)
-	}, o = Y.devWps ?? [], s = o.map((e) => {
-		let t = K("input", {
+	}, o = q.devWps ?? [], s = o.map((e) => {
+		let t = W("input", {
 			type: "text",
 			class: "form-control form-control-sm",
 			value: e.name,
 			maxlength: "19",
 			"aria-label": "Name"
 		});
-		t.addEventListener("change", () => X("wpr|" + e.idx + "|" + $h(t.value)));
-		let n = (e, t, n) => K("button", {
+		t.addEventListener("change", () => X("wpr|" + e.idx + "|" + lg(t.value)));
+		let n = (e, t, n) => W("button", {
 			type: "button",
 			class: "btn btn-sm btn-outline-secondary",
 			title: t,
 			"aria-label": t,
 			onclick: () => X(n)
-		}, K("i", { class: "fas " + e }));
+		}, W("i", { class: "fas " + e }));
 		return [
 			t,
 			`${e.lat.toFixed(5)}, ${e.lon.toFixed(5)}`,
-			K("div", { class: "btn-group btn-group-sm" }, n("fa-location-arrow", "Als Ziel", "wpg|" + e.idx), n("fa-paper-plane", "Ins Mesh senden", "wps|" + e.idx), K("button", {
+			W("div", { class: "btn-group btn-group-sm" }, n("fa-location-arrow", "Als Ziel", "wpg|" + e.idx), n("fa-paper-plane", "Ins Mesh senden", "wps|" + e.idx), W("button", {
 				type: "button",
 				class: "btn btn-sm btn-outline-danger",
 				title: "Löschen",
 				"aria-label": "Löschen",
 				onclick: () => confirm("Wegpunkt „" + e.name + "“ löschen?") && X("wpd|" + e.idx)
-			}, K("i", { class: "fas fa-trash" })))
+			}, W("i", { class: "fas fa-trash" })))
 		];
-	}), c = K("input", {
+	}), c = W("input", {
 		type: "file",
 		class: "form-control form-control-sm",
 		accept: ".gpx,application/gpx+xml"
 	});
 	c.addEventListener("change", async () => {
-		let e = Vh(await c.files[0].text()), t = 64 - o.length;
-		for (let n of e.slice(0, t)) X(`wpa|${$h(n.name)}|${Math.round(n.lat * 1e7)}|${Math.round(n.lon * 1e7)}`);
+		let e = Jh(await c.files[0].text()), t = 64 - o.length;
+		for (let n of e.slice(0, t)) X(`wpa|${lg(n.name)}|${Math.round(n.lat * 1e7)}|${Math.round(n.lon * 1e7)}`);
 		Q(e.length > t ? `${t} von ${e.length} Wegpunkten übernommen (Gerät hat Platz für 64).` : `${e.length} Wegpunkte ins Gerät übernommen.`);
 	});
-	let l = K("input", {
+	let l = W("input", {
 		type: "number",
 		class: "form-control form-control-sm",
 		min: "5",
 		max: "500",
-		value: String(Y.arrive ?? 20),
+		value: String(q.arrive ?? 20),
 		id: "tk-arrive"
-	}), u = e ? q("Wegpunkte im Gerät (" + o.length + " von 64)", Y.navTarget ? K("div", { class: "alert alert-info py-1 px-2 small" }, "Aktuelles Ziel: " + Y.navTarget) : null, o.length ? yg([
+	}), u = e ? G("Wegpunkte im Gerät (" + o.length + " von 64)", q.navTarget ? W("div", { class: "alert alert-info py-1 px-2 small" }, "Aktuelles Ziel: " + q.navTarget) : null, o.length ? kg([
 		"Name",
 		"Position",
 		""
-	], s) : K("p", { class: "text-muted small" }, Y.devWps ? "Noch keine Wegpunkte im Gerät." : "Lese Wegpunkte …"), K("div", { class: "mb-2" }, K("label", { class: "form-label small mb-1" }, "GPX-Datei ins Gerät übernehmen"), c), Z("Als GPX exportieren", () => {
-		let e = new Blob([Hh(o.map((e) => ({
+	], s) : W("p", { class: "text-muted small" }, q.devWps ? "Noch keine Wegpunkte im Gerät." : "Lese Wegpunkte …"), W("div", { class: "mb-2" }, W("label", { class: "form-label small mb-1" }, "GPX-Datei ins Gerät übernehmen"), c), Z("Als GPX exportieren", () => {
+		let e = new Blob([Yh(o.map((e) => ({
 			name: e.name,
 			latitudeI: e.lat * 1e7,
 			longitudeI: e.lon * 1e7
 		})))], { type: "application/gpx+xml" });
-		K("a", {
+		W("a", {
 			href: URL.createObjectURL(e),
 			download: "thinkkira-wegpunkte.gpx"
 		}).click();
-	}, "outline-secondary", "fa-file-export"), Z("Neu laden", () => X("wpl"), "outline-secondary", "fa-sync")) : q("Wegpunkte im Gerät", K("div", { class: "alert alert-warning mb-0" }, "Braucht ThinkKira 0.4.0 oder neuer – bitte über den Loader aktualisieren.")), d = q("Wegpunkt anlegen", K("div", { class: "mb-2" }, K("label", { class: "form-label small mb-1" }, "Name"), t), K("div", { class: "row g-2 mb-2" }, K("div", { class: "col-6" }, n), K("div", { class: "col-6" }, r)), K("div", { class: "form-check mb-1" }, i, K("label", {
+	}, "outline-secondary", "fa-file-export"), Z("Neu laden", () => X("wpl"), "outline-secondary", "fa-sync")) : G("Wegpunkte im Gerät", W("div", { class: "alert alert-warning mb-0" }, "Braucht ThinkKira 0.4.0 oder neuer – bitte über den Loader aktualisieren.")), d = G("Wegpunkt anlegen", W("div", { class: "mb-2" }, W("label", { class: "form-label small mb-1" }, "Name"), t), W("div", { class: "row g-2 mb-2" }, W("div", { class: "col-6" }, n), W("div", { class: "col-6" }, r)), W("div", { class: "form-check mb-1" }, i, W("label", {
 		class: "form-check-label small",
 		for: "tk-wp-mesh"
 	}, "Auch als Meshtastic-Wegpunkt an alle senden")), e ? Z("Im Gerät speichern", async () => {
 		let e = a();
-		e && (X(`wpa|${e.name}|${Math.round(e.lat * 1e7)}|${Math.round(e.lon * 1e7)}`), i.checked && await eg(e), Q("Wegpunkt gespeichert" + (i.checked ? " und gesendet" : "")));
+		e && (X(`wpa|${e.name}|${Math.round(e.lat * 1e7)}|${Math.round(e.lon * 1e7)}`), i.checked && await ug(e), Q("Wegpunkt gespeichert" + (i.checked ? " und gesendet" : "")));
 	}, "primary", "fa-save") : null, Z("Nur an alle senden", async () => {
 		let e = a();
-		e && (await eg(e), Q("Wegpunkt gesendet"), $());
-	}, "outline-secondary", "fa-paper-plane")), f = e ? q("Navigation & Track", K("label", {
+		e && (await ug(e), Q("Wegpunkt gesendet"), $());
+	}, "outline-secondary", "fa-paper-plane")), f = e ? G("Navigation & Track", W("label", {
 		class: "form-label small mb-1",
 		for: "tk-arrive"
-	}, "Ankunftsradius (Meter)"), K("div", { class: "input-group input-group-sm mb-2" }, l, K("button", {
+	}, "Ankunftsradius (Meter)"), W("div", { class: "input-group input-group-sm mb-2" }, l, W("button", {
 		type: "button",
 		class: "btn btn-outline-secondary",
 		onclick: () => X("arrive|" + Math.round(+l.value || 20))
-	}, "Speichern")), lg("Innerhalb dieses Abstands meldet das Gerät „Ziel erreicht“ (Ton + LED) und beendet die Navigation."), Z("Track herunterladen (GPX)", () => {
-		Y.trackBuf = "", X("trk"), Q("Track wird gelesen …");
+	}, "Speichern")), yg("Innerhalb dieses Abstands meldet das Gerät „Ziel erreicht“ (Ton + LED) und beendet die Navigation."), Z("Track herunterladen (GPX)", () => {
+		q.trackBuf = "", X("trk"), Q("Track wird gelesen …");
 	}, "outline-secondary", "fa-route"), Z("Track im Gerät löschen", () => confirm("Den aufgezeichneten Track im Gerät löschen?") && X("trc"), "outline-danger", "fa-trash")) : null;
-	return K("div", {}, cg(u, d), cg(f));
+	return W("div", {}, vg(u, d), vg(f));
 }
-function _g() {
-	let e = K("textarea", {
+function Dg() {
+	let e = W("textarea", {
 		rows: "6",
 		class: "form-control form-control-sm",
 		placeholder: "Eine Nachricht pro Zeile, z. B.\nOK\nBin unterwegs\nBrauche Hilfe"
 	});
-	return cg(q("Schnellantworten", lg("Erscheinen auf dem Gerät unter Nachrichten → Antworten. Eine Nachricht pro Zeile."), e, Z("Speichern", () => Fh((t) => t.setCannedMessages(V(J.CannedMessages.CannedMessageModuleConfigSchema, { messages: e.value.split("\n").map((e) => e.trim()).filter(Boolean).join("|") }))), "primary", "fa-save")));
+	return vg(G("Schnellantworten", yg("Erscheinen auf dem Gerät unter Nachrichten → Antworten. Eine Nachricht pro Zeile."), e, Z("Speichern", () => Hh((t) => t.setCannedMessages(B(K.CannedMessages.CannedMessageModuleConfigSchema, { messages: e.value.split("\n").map((e) => e.trim()).filter(Boolean).join("|") }))), "primary", "fa-save")));
 }
-function vg() {
-	let e = Y.kira, t;
-	if (!e) t = q("Funkmodus", K("div", { class: "alert alert-warning mb-0" }, "Keine Antwort vom ThinkKira-Modul. Bitte die neueste ThinkKira-Firmware über den Loader aufspielen."));
+function Og() {
+	let e = q.kira, t;
+	if (!e) t = G("Funkmodus", W("div", { class: "alert alert-warning mb-0" }, "Keine Antwort vom ThinkKira-Modul. Bitte die neueste ThinkKira-Firmware über den Loader aufspielen."));
 	else {
-		let n = K("select", {
+		let n = W("select", {
 			id: "tk-mode",
 			class: "form-select form-select-sm"
 		});
-		n.append(K("option", { value: "meshtastic" }, "Meshtastic (Standard, kompatibel mit allen Meshtastic-Geräten)")), n.append(K("option", { value: "kira" }, "Kira-Funk (eigenes Netz, nur ThinkKira-Geräte)")), n.value = e.mode, t = q("Funkmodus", K("div", { class: "mb-2" }, K("label", {
+		n.append(W("option", { value: "meshtastic" }, "Meshtastic (Standard, kompatibel mit allen Meshtastic-Geräten)")), n.append(W("option", { value: "kira" }, "Kira-Funk (eigenes Netz, nur ThinkKira-Geräte)")), n.value = e.mode, t = G("Funkmodus", W("div", { class: "mb-2" }, W("label", {
 			class: "form-label small mb-1",
 			for: "tk-mode"
-		}, "Modus"), n), lg("Kira-Funk nutzt ein eigenes Sync-Word: Die Geräte hören nur noch andere ThinkKira-Geräte im Kira-Funk, nicht mehr das Meshtastic-Netz. Kanäle und Verschlüsselung bleiben gleich. Beim Wechsel startet das Gerät neu."), Z("Modus speichern", async () => {
+		}, "Modus"), n), yg("Kira-Funk nutzt ein eigenes Sync-Word: Die Geräte hören nur noch andere ThinkKira-Geräte im Kira-Funk, nicht mehr das Meshtastic-Netz. Kanäle und Verschlüsselung bleiben gleich. Beim Wechsel startet das Gerät neu."), Z("Modus speichern", async () => {
 			if (n.value === e.mode) return Q("Der Modus ist schon eingestellt.");
 			await X("mode|" + n.value) && Q("Gespeichert. Das Gerät startet neu – danach bitte neu verbinden.");
-		}, "primary", "fa-save"), K("div", { class: "small text-muted mt-2" }, "ThinkKira " + e.version));
+		}, "primary", "fa-save"), W("div", { class: "small text-muted mt-2" }, "ThinkKira " + e.version));
 	}
-	let n = Y.kiraStats, r = [];
+	let n = q.kiraStats, r = [];
 	if (n?.counters) {
-		let e = n.counters, t = (e, t) => K("div", { class: "col-6 col-md-4" }, K("div", { class: "small text-muted" }, e), K("div", { class: "fw-bold" }, String(t)));
-		r.push(K("div", { class: "row g-2 mb-3" }, t("Empfangen", e.rxGood), t("Empfangsfehler", e.rxBad), t("Gesendet", e.tx), t("Weitergeleitet", e.relay), t("Pings", e.pings), t("Antworten", e.pongs)));
+		let e = n.counters, t = (e, t) => W("div", { class: "col-6 col-md-4" }, W("div", { class: "small text-muted" }, e), W("div", { class: "fw-bold" }, String(t)));
+		r.push(W("div", { class: "row g-2 mb-3" }, t("Empfangen", e.rxGood), t("Empfangsfehler", e.rxBad), t("Gesendet", e.tx), t("Weitergeleitet", e.relay), t("Pings", e.pings), t("Antworten", e.pongs)));
 	}
-	n?.heard?.length && (r.push(K("div", { class: "fw-bold small mb-1" }, "Zuletzt gehört")), r.push(yg([
+	n?.heard?.length && (r.push(W("div", { class: "fw-bold small mb-1" }, "Zuletzt gehört")), r.push(kg([
 		"Knoten",
 		"RSSI",
 		"SNR",
 		"vor"
 	], n.heard.map((e) => [
-		ig(e.from),
+		mg(e.from),
 		e.rssi + " dBm",
 		e.snr.toFixed(1) + " dB",
 		e.ago + " s"
-	])))), n || r.push(lg("Noch keine Werte geladen."));
-	let i = q("Funk-Statistik", ...r, Z("Aktualisieren", () => X("stats"), "outline-secondary", "fa-sync")), a = [lg("Sendet einen Ping an alle direkt erreichbaren ThinkKira-Geräte (ohne Weiterleitung). Jede Antwort zeigt, wie gut beide Seiten sich hören.")];
-	n?.range?.length && a.push(yg([
+	])))), n || r.push(yg("Noch keine Werte geladen."));
+	let i = G("Funk-Statistik", ...r, Z("Aktualisieren", () => X("stats"), "outline-secondary", "fa-sync")), a = [yg("Sendet einen Ping an alle direkt erreichbaren ThinkKira-Geräte (ohne Weiterleitung). Jede Antwort zeigt, wie gut beide Seiten sich hören.")];
+	n?.range?.length && a.push(kg([
 		"#",
 		"Gerät",
 		"dort gehört",
 		"hier gehört"
 	], n.range.map((e) => [
 		String(e.seq),
-		ig(e.from),
+		mg(e.from),
 		e.rssiThem + " dBm / " + e.snrThem.toFixed(1) + " dB",
 		e.rssiUs + " dBm / " + e.snrUs.toFixed(1) + " dB"
 	])));
-	let o = q("Reichweitentest", ...a, Z("Ping senden", async () => {
+	let o = G("Reichweitentest", ...a, Z("Ping senden", async () => {
 		await X("ping") && Q("Ping gesendet. Antworten erscheinen hier.");
 	}, "primary", "fa-satellite-dish")), s = [
 		["WLAN-Weboberfläche, Update aus GitHub-Release", 5],
 		["Energieprofile (Wandern / Basis / Maximal sparen)", 6],
 		["SOS-Einstellungen", 7],
 		["Wecker & Erinnerungen", 7]
-	], c = K("ul", { class: "list-group list-group-flush" });
-	for (let [e, t] of s) c.append(K("li", { class: "list-group-item px-0 d-flex justify-content-between align-items-center gap-2" }, e, K("span", { class: "badge text-bg-secondary" }, `ab Phase ${t}`)));
-	Y.device && e && !n && !Y.kiraStatsAsked && (Y.kiraStatsAsked = !0, setTimeout(() => X("stats"), 0));
-	let l = Y.ui, u = q("Design der Oberfläche", lg("Das Design erstellst du im ThinkKira Designer (geht auch ohne Gerät) und exportierst es als Datei. Hier überträgst du die Datei aufs Gerät. Das Gerät übernimmt sie sofort."), l ? K("div", { class: "small mb-1" }, K("div", {}, "Seiten: " + [...l.order].filter((e) => l.pages & 1 << e).map((e) => [
+	], c = W("ul", { class: "list-group list-group-flush" });
+	for (let [e, t] of s) c.append(W("li", { class: "list-group-item px-0 d-flex justify-content-between align-items-center gap-2" }, e, W("span", { class: "badge text-bg-secondary" }, `ab Phase ${t}`)));
+	q.device && e && !n && !q.kiraStatsAsked && (q.kiraStatsAsked = !0, setTimeout(() => X("stats"), 0));
+	let l = q.ui, u = G("Design der Oberfläche", yg("Das Design erstellst du im ThinkKira Designer (geht auch ohne Gerät) und exportierst es als Datei. Hier überträgst du die Datei aufs Gerät. Das Gerät übernimmt sie sofort."), l ? W("div", { class: "small mb-1" }, W("div", {}, "Seiten: " + [...l.order].filter((e) => l.pages & 1 << e).map((e) => [
 		"Start",
 		"Nachrichten",
 		"Navigation",
 		"Karte",
 		"Knoten",
 		"Einstellungen"
-	][+e]).join(" → ")), K("div", {}, "Schnellantworten: " + l.replies.join(", "))) : K("div", { class: "alert alert-warning py-2 mb-1" }, "Das Gerät kennt noch kein Design. Bitte ThinkKira 0.3.2 oder neuer über den Loader aufspielen."), Z("Design-Datei ans Gerät übertragen …", async () => {
-		let e = await Th();
+	][+e]).join(" → ")), W("div", {}, "Schnellantworten: " + l.replies.join(", "))) : W("div", { class: "alert alert-warning py-2 mb-1" }, "Das Gerät kennt noch kein Design. Bitte ThinkKira 0.3.2 oder neuer über den Loader aufspielen."), Z("Design-Datei ans Gerät übertragen …", async () => {
+		let e = await Nh();
 		if (e) try {
-			let t = wh(await e.text());
-			if (!Y.device) return Q("Bitte zuerst das Gerät verbinden.", !0);
-			for (let e of [yh(t), ...bh(t.menus)]) X(e);
+			let t = Mh(await e.text());
+			if (!q.device) return Q("Bitte zuerst das Gerät verbinden.", !0);
+			for (let e of [
+				Dh(t),
+				...Oh(t.menus),
+				...t.tips ? Th(t.tips) : []
+			]) X(e);
 			Q("Design „" + e.name + "“ wird übertragen …");
 		} catch (e) {
 			Q(e.message, !0);
@@ -13416,97 +13507,98 @@ function vg() {
 	}, "primary", "fa-upload"), l ? Z("Design vom Gerät herunterladen", () => {
 		let e = null;
 		try {
-			e = Y.menuText ? rh(Y.menuText) : null;
+			e = q.menuText ? ah(q.menuText) : null;
 		} catch {}
-		Ch(e && e[5]?.length ? {
+		jh({
 			...l,
-			menus: e
-		} : l);
+			...e && e[5]?.length ? { menus: e } : {},
+			tips: q.tips ?? []
+		});
 	}, "outline-secondary", "fa-download") : null);
-	e && Y.mapInfo === void 0 && !Y.mapAsked && (Y.mapAsked = !0, setTimeout(() => X("mapi"), 0));
-	let d = Y.mapInfo, f = Y.mapUp, ee = q("Offline-Karte", d ? K("div", { class: "small mb-2" }, `Im Gerät: ${Math.round(d.size / 1024)} KB, Detailstufe ${d.level}, ${d.bbox[0].toFixed(2)}–${d.bbox[2].toFixed(2)} N, ${d.bbox[1].toFixed(2)}–${d.bbox[3].toFixed(2)} O`) : K("div", { class: "small text-muted mb-2" }, d === !1 ? "Keine Karte im Gerät." : "Frage das Gerät …"), f ? K("div", {}, K("div", { class: "small mb-1" }, `Übertrage „${f.label}“ … ${Math.round(f.sent / 1024)} von ${Math.round(f.total / 1024)} KB`), K("div", {
+	e && q.mapInfo === void 0 && !q.mapAsked && (q.mapAsked = !0, setTimeout(() => X("mapi"), 0));
+	let d = q.mapInfo, f = q.mapUp, ee = G("Offline-Karte", d ? W("div", { class: "small mb-2" }, `Im Gerät: ${Math.round(d.size / 1024)} KB, Detailstufe ${d.level}, ${d.bbox[0].toFixed(2)}–${d.bbox[2].toFixed(2)} N, ${d.bbox[1].toFixed(2)}–${d.bbox[3].toFixed(2)} O`) : W("div", { class: "small text-muted mb-2" }, d === !1 ? "Keine Karte im Gerät." : "Frage das Gerät …"), f ? W("div", {}, W("div", { class: "small mb-1" }, `Übertrage „${f.label}“ … ${Math.round(f.sent / 1024)} von ${Math.round(f.total / 1024)} KB`), W("div", {
 		class: "progress mb-2",
 		role: "progressbar",
 		"aria-label": "Fortschritt"
-	}, K("div", {
+	}, W("div", {
 		class: "progress-bar",
 		style: `width:${Math.round(100 * f.sent / f.total)}%`
-	})), Z("Abbrechen", () => f.cancel = !0, "outline-danger", "fa-times")) : K("div", {}, Kh(), Z("Karte laden", async () => {
-		let e = (Y.mapList || Uh).find((e) => e.name === Y.mapPick) ?? Uh[0];
+	})), Z("Abbrechen", () => f.cancel = !0, "outline-danger", "fa-times")) : W("div", {}, $h(), Z("Karte laden", async () => {
+		let e = (q.mapList || Xh).find((e) => e.name === q.mapPick) ?? Xh[0];
 		try {
 			Q("Lade Karte „" + e.title + "“ …");
-			let t = await fetch(Xh() + "?map=" + encodeURIComponent(e.name));
-			if (!t.ok) throw $m("Karte nicht erreichbar (" + t.status + ").");
-			await Zh(new Uint8Array(await t.arrayBuffer()), e.title);
+			let t = await fetch(rg() + "?map=" + encodeURIComponent(e.name));
+			if (!t.ok) throw th("Karte nicht erreichbar (" + t.status + ").");
+			await sg(new Uint8Array(await t.arrayBuffer()), e.title);
 		} catch (e) {
-			Q(eh(e), !0);
+			Q(nh(e), !0);
 		}
 	}, "primary", "fa-map"), Z("Kartendatei wählen …", async () => {
-		let e = await Th(".tkm");
-		e && await Zh(new Uint8Array(await e.arrayBuffer()), e.name);
-	}, "outline-secondary", "fa-folder-open"), d ? Z("Karte löschen", () => confirm("Die Offline-Karte im Gerät löschen?") && X("mapx"), "outline-danger", "fa-trash") : null), lg("Übertragung per USB dauert einige Minuten. Detailkarten zeigen auch Wege und Pfade, die groben Karten nur Hauptstraßen, Flüsse und Orte. Kartendaten © OpenStreetMap-Mitwirkende (ODbL)."));
-	return K("div", {}, cg(t, i), cg(o, u), cg(ee, q("Kommt noch", c)));
+		let e = await Nh(".tkm");
+		e && await sg(new Uint8Array(await e.arrayBuffer()), e.name);
+	}, "outline-secondary", "fa-folder-open"), d ? Z("Karte löschen", () => confirm("Die Offline-Karte im Gerät löschen?") && X("mapx"), "outline-danger", "fa-trash") : null, q.mapLogText ? Z("Fehlerprotokoll kopieren", () => navigator.clipboard.writeText(q.mapLogText).then(() => Q("Protokoll kopiert – bitte an Sven/Claude schicken.")), "outline-secondary", "fa-clipboard") : null), yg("Übertragung per USB dauert einige Minuten. Detailkarten zeigen auch Wege und Pfade, die groben Karten nur Hauptstraßen, Flüsse und Orte. Kartendaten © OpenStreetMap-Mitwirkende (ODbL)."));
+	return W("div", {}, vg(t, i), vg(o, u), vg(ee, G("Kommt noch", c)));
 }
-function yg(e, t) {
-	return K("div", { class: "table-responsive" }, K("table", { class: "table table-sm table-striped mb-2" }, K("thead", {}, K("tr", {}, ...e.map((e) => K("th", {}, e)))), K("tbody", {}, ...t.map((e) => K("tr", {}, ...e.map((e) => K("td", {}, e)))))));
+function kg(e, t) {
+	return W("div", { class: "table-responsive" }, W("table", { class: "table table-sm table-striped mb-2" }, W("thead", {}, W("tr", {}, ...e.map((e) => W("th", {}, e)))), W("tbody", {}, ...t.map((e) => W("tr", {}, ...e.map((e) => W("td", {}, e)))))));
 }
-function bg() {
-	let e = K("input", {
+function Ag() {
+	let e = W("input", {
 		type: "file",
 		class: "form-control form-control-sm",
 		accept: "application/json,.json"
 	});
-	return e.addEventListener("change", () => Bh(e.files[0])), cg(q("Sicherung", lg("Alle Einstellungen, Kanäle und den Namen als Datei sichern oder zurückspielen."), Z("Alle Einstellungen sichern", zh, "primary", "fa-download"), K("div", { class: "mt-3" }, K("label", { class: "form-label small mb-1" }, "Sicherung wiederherstellen"), e)), q("Gerät", Z("Neustart", () => Y.device?.reboot(2), "outline-secondary", "fa-redo"), Z("Werkseinstellungen", () => {
-		confirm("Alle Einstellungen auf Werkseinstellungen zurücksetzen?") && Y.device?.factoryResetConfig();
+	return e.addEventListener("change", () => qh(e.files[0])), vg(G("Sicherung", yg("Alle Einstellungen, Kanäle und den Namen als Datei sichern oder zurückspielen."), Z("Alle Einstellungen sichern", Kh, "primary", "fa-download"), W("div", { class: "mt-3" }, W("label", { class: "form-label small mb-1" }, "Sicherung wiederherstellen"), e)), G("Gerät", Z("Neustart", () => q.device?.reboot(2), "outline-secondary", "fa-redo"), Z("Werkseinstellungen", () => {
+		confirm("Alle Einstellungen auf Werkseinstellungen zurücksetzen?") && q.device?.factoryResetConfig();
 	}, "outline-danger", "fa-exclamation-triangle")));
 }
-function xg() {
-	let e = Y.page;
-	return e === "device" ? fg() : e === "channels" ? mg() : e.startsWith("cfg:") ? pg(e.slice(4)) : e === "modules" ? hg() : e === "waypoints" ? gg() : e === "canned" ? _g() : e === "thinkkira" ? vg() : bg();
+function jg() {
+	let e = q.page;
+	return e === "device" ? Sg() : e === "channels" ? wg() : e.startsWith("cfg:") ? Cg(e.slice(4)) : e === "modules" ? Tg() : e === "waypoints" ? Eg() : e === "canned" ? Dg() : e === "thinkkira" ? Og() : Ag();
 }
-var Sg;
+var Mg;
 function Q(e, t = !1) {
-	let n = Dh.querySelector(".tk-msg");
-	n && (n.replaceChildren(K("div", { class: "alert shadow py-2 mb-0 " + (t ? "alert-danger" : "alert-success") }, e)), clearTimeout(Sg), Sg = setTimeout(() => n.replaceChildren(), 5e3));
+	let n = Fh.querySelector(".tk-msg");
+	n && (n.replaceChildren(W("div", { class: "alert shadow py-2 mb-0 " + (t ? "alert-danger" : "alert-success") }, e)), clearTimeout(Mg), Mg = setTimeout(() => n.replaceChildren(), 5e3));
 }
 function $() {
-	if (!Dh) return;
-	let e = !!Y.device, t = "serial" in navigator, n = "bluetooth" in navigator, r = Y.status === "verbunden", i = [K("div", { class: "d-flex flex-wrap gap-2 align-items-center mb-3" }, e ? null : K("button", {
+	if (!Fh) return;
+	let e = !!q.device, t = "serial" in navigator, n = "bluetooth" in navigator, r = q.status === "verbunden", i = [W("div", { class: "d-flex flex-wrap gap-2 align-items-center mb-3" }, e ? null : W("button", {
 		type: "button",
 		class: "btn btn-primary",
 		disabled: t ? null : "",
-		onclick: () => Oh("serial")
-	}, sg("fa-plug"), "Per USB verbinden"), e ? null : K("button", {
+		onclick: () => Ih("serial")
+	}, _g("fa-plug"), "Per USB verbinden"), e ? null : W("button", {
 		type: "button",
 		class: "btn btn-primary",
 		disabled: n ? null : "",
-		onclick: () => Oh("ble")
-	}, sg("fa-plug"), "Per Bluetooth verbinden"), e ? K("button", {
+		onclick: () => Ih("ble")
+	}, _g("fa-plug"), "Per Bluetooth verbinden"), e ? W("button", {
 		type: "button",
 		class: "btn btn-outline-secondary",
-		onclick: jh
-	}, sg("fa-times"), "Trennen") : null, K("span", { class: "badge " + (r ? "text-bg-success" : "text-bg-secondary") }, e ? Y.status : Y.status === "getrennt" ? "nicht verbunden" : Y.status)), Dh.querySelector(".tk-msg") ?? K("div", {
+		onclick: zh
+	}, _g("fa-times"), "Trennen") : null, W("span", { class: "badge " + (r ? "text-bg-success" : "text-bg-secondary") }, e ? q.status : q.status === "getrennt" ? "nicht verbunden" : q.status)), Fh.querySelector(".tk-msg") ?? W("div", {
 		class: "tk-msg position-fixed bottom-0 end-0 p-3 z-3",
 		role: "status",
 		"aria-live": "polite"
 	})];
-	if (!t && !n && i.push(K("div", { class: "alert alert-warning" }, "Dein Browser kann nicht auf USB oder Bluetooth zugreifen. Bitte Chrome oder Edge am Computer verwenden.")), !e) i.push(K("p", { class: "text-muted" }, "Gerät per USB-Kabel oder Bluetooth verbinden. Danach lassen sich alle Einstellungen ändern."));
+	if (!t && !n && i.push(W("div", { class: "alert alert-warning" }, "Dein Browser kann nicht auf USB oder Bluetooth zugreifen. Bitte Chrome oder Edge am Computer verwenden.")), !e) i.push(W("p", { class: "text-muted" }, "Gerät per USB-Kabel oder Bluetooth verbinden. Danach lassen sich alle Einstellungen ändern."));
 	else {
-		i.push(dg());
-		let e = K("ul", { class: "nav nav-pills flex-wrap gap-1 mb-3" });
-		for (let t of ug) e.append(K("li", { class: "nav-item" }, K("button", {
+		i.push(xg());
+		let e = W("ul", { class: "nav nav-pills flex-wrap gap-1 mb-3" });
+		for (let t of bg) e.append(W("li", { class: "nav-item" }, W("button", {
 			type: "button",
-			class: "nav-link py-1 px-2" + (Y.page === t.id ? " active" : ""),
+			class: "nav-link py-1 px-2" + (q.page === t.id ? " active" : ""),
 			onclick: () => {
-				Y.page = t.id, $();
+				q.page = t.id, $();
 			}
-		}, sg(t.ic), t.title)));
-		i.push(e, xg());
+		}, _g(t.ic), t.title)));
+		i.push(e, jg());
 	}
-	Dh.replaceChildren(...i.filter(Boolean));
+	Fh.replaceChildren(...i.filter(Boolean));
 }
-function Cg(e = "#tk-config") {
-	Dh = typeof e == "string" ? document.querySelector(e) : e, Dh && $();
+function Ng(e = "#tk-config") {
+	Fh = typeof e == "string" ? document.querySelector(e) : e, Fh && $();
 }
-typeof document < "u" && (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => Cg()) : Cg());
-export { Cg as mount };
+typeof document < "u" && (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => Ng()) : Ng());
+export { Ng as mount };

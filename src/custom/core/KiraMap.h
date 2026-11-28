@@ -47,6 +47,8 @@ class KiraMapFile
     bool finishUpload(std::string &error);
     bool remove();
     uint32_t received() const { return upBytes; }
+    uint32_t expected() const { return upExpected; }
+    bool isUploading() const { return uploading; }
     uint8_t rev = 0; // ändert sich, wenn eine neue Karte da ist
 
   private:

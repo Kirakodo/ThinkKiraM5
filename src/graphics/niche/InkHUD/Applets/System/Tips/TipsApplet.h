@@ -28,6 +28,9 @@ class TipsApplet : public SystemApplet
         CUSTOMIZATION,
         BUTTONS,
         ROTATION,
+#ifdef THINKKIRA
+        CUSTOM, // eigener Tipp aus dem Designer
+#endif
     };
 
   public:
@@ -46,6 +49,9 @@ class TipsApplet : public SystemApplet
 #endif
 
     std::deque<Tip> tipQueue; // List of tips to show, one after another
+#ifdef THINKKIRA
+    size_t customIndex = 0; // welcher eigene Tipp gerade dran ist
+#endif
 
     WindowManager *windowManager = nullptr; // For convenience. Set in constructor.
 };

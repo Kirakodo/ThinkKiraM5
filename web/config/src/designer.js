@@ -1,6 +1,6 @@
 // ThinkKira Designer – Bausteine für die Bildschirm-Oberfläche:
 // Seiten-Reihenfolge und an/aus, Bausteine der Startseite, Schnellantworten, mit Vorschau (200×200 E-Ink).
-// Design-Datei (JSON): { format: "thinkkira-design", version: 3, order, pages, start, replies[], keys, bar, menu[] }.
+// Design-Datei (JSON): { format: "thinkkira-design", version: 4, order, pages, start, replies[], keys, bar, menu[], tips[{title,text}] }.
 // Gerätebefehle auf Port 287: "ui" → "u|reihenfolge|seitenbits|bausteine|antwort;antwort;…", "ui|…" setzt.
 // SPDX-License-Identifier: GPL-3.0-only
 import { el, group } from "./form.js";
@@ -64,7 +64,45 @@ export const DEFAULT_UI = {
   keys: DEFAULT_KEYS,
   bar: DEFAULT_BAR,
   menus: parseMenu(DEFAULT_MENU_TEXT),
+  tips: [],
 };
+
+// Eigene Tipps, die das Gerät nach jedem Start nacheinander zeigt (muss zu KiraTips.cpp passen)
+export const TIPS_MAX = 8;
+export const TIP_TITLE_MAX = 40;
+export const TIP_TEXT_MAX = 300;
+const TIPS_MAX_BYTES = 2000;
+const cleanTip = (t) => ({ title: String(t?.title ?? "").replace(/[\r\n]/g, " ").trim(), text: String(t?.text ?? "").replace(/\r/g, "").trim() });
+export function tipsToText(tips) {
+  return tips.map((t) => "T" + t.title + "\n" + (t.text ? t.text.split("\n").map((l) => "L" + l + "\n").join("") : "")).join("");
+}
+export function parseTipsText(text) {
+  const out = [];
+  for (const line of text.split("\n")) {
+    if (line[0] === "T") out.push({ title: line.slice(1), text: "" });
+    else if (line[0] === "L" && out.length) out.at(-1).text += (out.at(-1).text ? "\n" : "") + line.slice(1);
+  }
+  return out;
+}
+export function checkTips(tips) {
+  if (!Array.isArray(tips)) return "Die Tipps sind ungültig.";
+  if (tips.length > TIPS_MAX) return `Höchstens ${TIPS_MAX} Tipps.`;
+  for (const [i, t] of tips.entries()) {
+    if (!t.title) return `Tipp ${i + 1} braucht eine Überschrift.`;
+    if (t.title.length > TIP_TITLE_MAX) return `Die Überschrift von Tipp ${i + 1} ist zu lang (höchstens ${TIP_TITLE_MAX} Zeichen).`;
+    if (t.text.length > TIP_TEXT_MAX) return `Der Text von Tipp ${i + 1} ist zu lang (höchstens ${TIP_TEXT_MAX} Zeichen).`;
+  }
+  if (new TextEncoder().encode(tipsToText(tips)).length > TIPS_MAX_BYTES) return "Die Tipps sind zusammen zu lang. Bitte kürzen.";
+  return null;
+}
+// Befehle zum Übertragen in Stücken; nie mitten in einem Zeichen trennen
+export function tipsCommands(tips) {
+  const t = tipsToText(tips.map(cleanTip));
+  const cmds = ["tb"];
+  for (let i = 0; i < t.length; i += 70) cmds.push("tl|" + t.slice(i, i + 70));
+  cmds.push("te");
+  return cmds;
+}
 
 // "u|…"-Antwort vom Gerät lesen
 export function parseUi(fields) {
@@ -93,11 +131,23 @@ export const copy = (u) => ({
   keys: u.keys ?? DEFAULT_KEYS,
   bar: u.bar ?? DEFAULT_BAR,
   menus: cloneMenus(u.menus ?? DEFAULT_UI.menus),
+  tips: (u.tips ?? []).map((t) => ({ title: t.title, text: t.text })),
 });
 
 export function designJson(d) {
   const c = copy(d);
-  return { format: "thinkkira-design", version: 3, order: c.order, pages: c.pages, start: c.start, replies: c.replies, keys: c.keys, bar: c.bar, menu: menuToText(c.menus).split("\n").filter(Boolean) };
+  return {
+    format: "thinkkira-design",
+    version: 4,
+    order: c.order,
+    pages: c.pages,
+    start: c.start,
+    replies: c.replies,
+    keys: c.keys,
+    bar: c.bar,
+    menu: menuToText(c.menus).split("\n").filter(Boolean),
+    tips: c.tips.map(cleanTip),
+  };
 }
 
 export function exportDesign(d, name = "thinkkira-design.json") {
@@ -129,7 +179,13 @@ export function parseDesign(text) {
   const bar = j.bar ?? DEFAULT_BAR;
   const bErr = checkBar(bar);
   if (bErr) throw new Error(bErr);
-  return { order, pages: (+j.pages & 63) | 0x21, start, replies, keys, bar, menus };
+  // Tipps gibt es erst ab Version 4; fehlen sie, bleiben die Tipps im Gerät unverändert (tips: undefined)
+  const tips = Array.isArray(j.tips) ? j.tips.map(cleanTip) : undefined;
+  if (tips) {
+    const tErr = checkTips(tips);
+    if (tErr) throw new Error(tErr);
+  }
+  return { order, pages: (+j.pages & 63) | 0x21, start, replies, keys, bar, menus, tips };
 }
 
 export function pickFile(accept = ".json,application/json") {
@@ -152,7 +208,8 @@ export function checkDesign(d) {
   if (!d.menus[5].length) return "Das Menü der Einstellungen darf nicht leer sein.";
   if (d.menus.some((m) => m.some((e) => e.sub && !e.sub.length))) return "Ein Untermenü ist leer. Bitte Einträge hinzufügen oder es löschen.";
   if (menuToText(d.menus).length > MENU_MAX_TEXT) return "Die Menüs sind zu groß. Bitte Einträge entfernen.";
-  return null;
+  d.tips = (d.tips ?? []).map(cleanTip);
+  return checkTips(d.tips);
 }
 const move = (arr, i, dir) => {
   const j = i + dir;
@@ -607,6 +664,65 @@ export function designerView(v) {
     kErr ? el("div", { class: "alert alert-danger py-1 px-2 mt-2 mb-0 small" }, kErr) : null,
   );
 
+  // --- Eigene Tipps nach dem Start
+  d.tips ??= [];
+  const tipRows = d.tips.map((t, i) => {
+    const title = el("input", { type: "text", class: "form-control form-control-sm mb-1", value: t.title, maxlength: String(TIP_TITLE_MAX), placeholder: "Überschrift", "aria-label": `Tipp ${i + 1}: Überschrift` });
+    title.addEventListener("input", () => {
+      t.title = title.value.replace(/[\r\n]/g, " ");
+      v.typed?.();
+    });
+    const text = el("textarea", { class: "form-control form-control-sm", rows: "3", maxlength: String(TIP_TEXT_MAX), placeholder: "Text (Zeilenumbrüche erlaubt)", "aria-label": `Tipp ${i + 1}: Text` });
+    text.value = t.text;
+    text.addEventListener("input", () => {
+      t.text = text.value;
+      v.typed?.();
+    });
+    return el(
+      "li",
+      { class: "list-group-item px-0" },
+      el(
+        "div",
+        { class: "d-flex align-items-center gap-1 mb-1" },
+        el("span", { class: "badge text-bg-secondary me-auto" }, "Tipp " + (i + 1)),
+        smallBtn("fa-arrow-up", "Nach oben", () => {
+          d.tips = move(d.tips, i, -1);
+          changed();
+        }, i === 0),
+        smallBtn("fa-arrow-down", "Nach unten", () => {
+          d.tips = move(d.tips, i, 1);
+          changed();
+        }, i === d.tips.length - 1),
+        smallBtn("fa-trash", "Löschen", () => {
+          d.tips.splice(i, 1);
+          changed();
+        }),
+      ),
+      title,
+      text,
+    );
+  });
+  const tipsBox = group(
+    "Tipps nach dem Start",
+    hint("Das Gerät zeigt diese Tipps nach jedem Start nacheinander an, weiter mit einer Taste. Ohne Tipps startet es direkt. Die Meshtastic-Tipps sind entfernt."),
+    tipRows.length ? el("ul", { class: "list-group list-group-flush" }, ...tipRows) : el("div", { class: "small text-muted" }, "Keine Tipps angelegt."),
+    d.tips.length < TIPS_MAX
+      ? el(
+          "button",
+          {
+            type: "button",
+            class: "btn btn-sm btn-outline-secondary mt-2",
+            onclick: () => {
+              d.tips.push({ title: "Neuer Tipp", text: "" });
+              changed();
+            },
+          },
+          el("i", { class: "fas fa-plus me-1" }),
+          "Tipp hinzufügen",
+        )
+      : null,
+  );
+
   // --- Vorschau + Speichern
   const canvas = el("canvas", { width: "400", height: "400", class: "border rounded d-block mx-auto mw-100", "aria-label": "Vorschau des Bildschirms" });
   drawPreview(canvas, d, state.uiPreview, v.previewMenu);
@@ -629,6 +745,6 @@ export function designerView(v) {
     el("div", { class: "row g-3 mb-3" }, el("div", { class: "col-lg-6" }, pagesBox), el("div", { class: "col-lg-6" }, previewBox)),
     el("div", { class: "row g-3 mb-3" }, el("div", { class: "col-lg-6" }, menuBox), el("div", { class: "col-lg-6" }, keysBox)),
     el("div", { class: "row g-3 mb-3" }, el("div", { class: "col-lg-6" }, startBox), el("div", { class: "col-lg-6" }, barBox)),
-    el("div", { class: "row g-3 mb-3" }, el("div", { class: "col-lg-6" }, repliesBox)),
+    el("div", { class: "row g-3 mb-3" }, el("div", { class: "col-lg-6" }, repliesBox), el("div", { class: "col-lg-6" }, tipsBox)),
   );
 }

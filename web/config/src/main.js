@@ -10,7 +10,7 @@ import { TransportWebBluetooth } from "@meshtastic/transport-web-bluetooth";
 import { create, toJson, fromJson, clone, toBinary } from "@bufbuild/protobuf";
 import { renderMessage, el, group, fehlerText, deFehler } from "./form.js";
 import { SECTION_LABELS } from "./labels.js";
-import { parseUi, uiCommand, menuCommands, parseDesign, exportDesign, pickFile } from "./designer.js";
+import { parseUi, uiCommand, menuCommands, tipsCommands, parseTipsText, parseDesign, exportDesign, pickFile } from "./designer.js";
 import { parseMenu } from "./menu-model.js";
 
 const P = Protobuf;
@@ -46,6 +46,7 @@ async function connect(kind) {
     const device = new MeshDevice(transport);
     state.device = device;
     state.transport = transport;
+    state.transportKind = kind === "serial" ? "USB" : "Bluetooth";
     state.config = {};
     state.moduleConfig = {};
     state.channels = [];
@@ -56,6 +57,7 @@ async function connect(kind) {
     state.wifiNets = null;
     state.ui = null;
     state.menuText = state.menuBuf = null;
+    state.tips = state.tipsBuf = null;
     state.devWps = state.wpBuf = null;
     state.wpAsked = false;
     state.mapInfo = undefined;
@@ -67,6 +69,7 @@ async function connect(kind) {
         kiraSend("get");
         kiraSend("ui");
         kiraSend("mg");
+        kiraSend("tg");
       }
       else if (s === 2 && state.device === device && !state.closing) {
         // Gerät weg (Kabel gezogen, Neustart, Bluetooth aus): aufräumen
@@ -134,6 +137,7 @@ function resetConnection(status) {
   state.wifiScanning = false;
   state.ui = null;
   state.menuText = state.menuBuf = null;
+  state.tips = state.tipsBuf = null;
   setStatus(status);
 }
 
@@ -325,9 +329,11 @@ function mapPicker() {
   );
 }
 let mapWait = null;
-function waitDevice(ms, text) {
+// Wartet auf eine Antwort des Geräts, die accept(antwort) erfüllt. Andere (z. B. verspätete Quittungen
+// eines früheren Stücks) werden übergangen – sonst verrutscht die Zuordnung von Befehl und Antwort.
+function waitDevice(ms, text, accept = () => true) {
   return new Promise((resolve, reject) => {
-    mapWait = { resolve, reject };
+    mapWait = { resolve: (v) => accept(v) && resolve(v), reject };
     setTimeout(() => reject(new Error(text)), ms);
   }).finally(() => (mapWait = null));
 }
@@ -367,6 +373,26 @@ async function fastSend(cmds) {
 
 const firmwareUrl = () => root?.dataset.firmware || "/_scripts/php/keylink/thinkkira/firmware.php";
 
+// Protokoll der letzten Kartenübertragung (zum Kopieren bei Fehlern)
+const mapLog = [];
+let mapT0 = 0;
+function mlog(...t) {
+  mapLog.push(((Date.now() - mapT0) / 1000).toFixed(1) + " s  " + t.join(" "));
+  if (mapLog.length > 300) mapLog.splice(1, 1);
+}
+
+// Stand im Gerät abfragen: { got, expected, up } oder null
+async function mapQuery() {
+  const w = waitDevice(4000, "keine Quittung", (r) => typeof r === "object");
+  await fastSend(["mapq"]);
+  try {
+    const r = await w;
+    return typeof r === "object" ? r : { got: r, expected: 0, up: false };
+  } catch {
+    return null;
+  }
+}
+
 async function uploadMap(bytes, label) {
   if (!state.device) return toast("Bitte zuerst das Gerät verbinden.", true);
   if (bytes.length < 40 || new TextDecoder().decode(bytes.subarray(0, 4)) !== "TKM1") return toast("Das ist keine ThinkKira-Kartendatei (.tkm).", true);
@@ -374,58 +400,102 @@ async function uploadMap(bytes, label) {
   if (v[0] === 0 && (v[1] < 4 || (v[1] === 4 && (v[2] || 0) < 1)))
     return toast("Auf dem Gerät läuft ThinkKira " + (state.kira?.version ?? "?") + ". Für Karten bitte zuerst im Loader die neueste Version installieren.", true);
   state.mapUp = { total: bytes.length, sent: 0, label, cancel: false };
+  state.mapLogText = null;
+  mapLog.length = 0;
+  mapT0 = Date.now();
+  mlog("Start", label, bytes.length, "Byte, Gerät", state.kira?.version ?? "?", "über", state.transportKind ?? "?");
   render();
+  const kb = (n) => Math.round(n / 1024);
   try {
-    // Start ankündigen; das Gerät legt die Datei an (kann bei voller Karte etwas dauern) – bis zu 3 Versuche
-    for (let i = 0; ; i++) {
-      const ready = waitDevice(10000, "Das Gerät antwortet nicht auf den Kartenstart. Bitte Gerät neu starten und erneut verbinden.");
-      kiraSend("mapb|" + bytes.length);
-      try {
-        await ready;
-        break;
-      } catch (e) {
-        if (i >= 2 || state.mapUp.cancel) throw e;
+    // Unterbrochene Übertragung derselben Datei? Dann dort weitermachen, statt neu anzufangen.
+    let pos = 0;
+    const st = await mapQuery();
+    mlog("Stand im Gerät:", st ? `${st.got}/${st.expected} läuft=${st.up}` : "keine Antwort");
+    if (st?.up && st.expected === bytes.length && st.got > 0 && st.got < bytes.length && state.mapResume === label) {
+      pos = st.got;
+      mlog("Setze fort bei", pos);
+    } else {
+      for (let i = 0; ; i++) {
+        const ready = waitDevice(10000, "Das Gerät antwortet nicht auf den Kartenstart. Bitte Gerät neu starten und erneut verbinden.", (r) => r === "ready");
+        await fastSend(["mapb|" + bytes.length]);
+        try {
+          await ready;
+          mlog("Gerät bereit");
+          break;
+        } catch (e) {
+          mlog("Kartenstart ohne Antwort, Versuch", i + 1, e.message);
+          if (i >= 2 || state.mapUp.cancel) throw e;
+        }
       }
     }
+    state.mapResume = label;
     // 162 Byte → 216 Zeichen Base64; mit „mapd|offset|“ höchstens 228 Byte (Meshtastic erlaubt 233 je Paket)
     const CH = 162;
     // Stop-and-Wait: ein Stück senden, Gerät quittiert mit seinem Stand (k|a|bytes), dort weitermachen.
     // Mehrere Stücke auf einmal würden den kleinen USB-Empfangspuffer des Geräts überlaufen lassen.
-    let pos = 0,
-      fails = 0;
+    let fails = 0;
     while (pos < bytes.length) {
       if (state.mapUp.cancel) throw deFehler("Abgebrochen.");
       let bin = "";
       for (const c of bytes.subarray(pos, pos + CH)) bin += String.fromCharCode(c);
-      const ack = waitDevice(4000, "keine Quittung");
-      // nach einer Zeitüberschreitung zusätzlich den Stand abfragen (mapq), falls nur die Quittung verloren ging
-      await fastSend(fails ? ["mapd|" + pos + "|" + btoa(bin), "mapq"] : ["mapd|" + pos + "|" + btoa(bin)]);
+      // nur eine Quittung mit Fortschritt zählt; ging die Quittung verloren, quittiert das Gerät das
+      // wiederholte Stück (es verwirft es wegen des falschen Offsets) mit seinem aktuellen Stand
+      const ack = waitDevice(2500, "keine Quittung", (r) => typeof r === "number" && r > pos);
+      await fastSend(["mapd|" + pos + "|" + btoa(bin)]);
       let got;
       try {
         got = await ack;
       } catch (e) {
-        console.warn("Karte: keine Quittung bei Byte", pos, "Versuch", fails + 1);
+        mlog("keine Quittung bei", pos, "Versuch", fails + 1);
         if (e.message !== "keine Quittung") throw e; // z. B. Fehlermeldung des Geräts
         if (++fails > 15)
           throw deFehler(
-            "Das Gerät quittiert seit einer Minute nicht mehr (bei " + Math.round(pos / 1024) + " von " + Math.round(bytes.length / 1024) + " KB). Bitte Gerät neu starten, Seite neu laden und erneut versuchen.",
+            `Das Gerät quittiert seit 40 Sekunden nicht mehr (bei ${kb(pos)} von ${kb(bytes.length)} KB). Gerät neu starten, neu verbinden und nochmal „Karte laden“ drücken – die Übertragung macht dann an dieser Stelle weiter.`,
           );
+        if (fails % 3 === 0) {
+          // mehrfach nichts: Stand im Gerät abfragen und dort weitermachen
+          const st = await mapQuery();
+          mlog("Stand im Gerät:", st ? `${st.got}/${st.expected} läuft=${st.up}` : "keine Antwort");
+          if (st && !st.up) throw deFehler("Das Gerät hat den Kartenempfang abgebrochen. Bitte nochmal „Karte laden“ drücken.");
+          if (st) pos = st.got;
+        }
         continue; // Stück erneut senden; das Gerät quittiert auch Wiederholungen
       }
-      if (typeof got !== "number") continue;
-      if (got > pos) fails = 0;
-      else if (++fails > 20) throw deFehler("Zu viele Übertragungsfehler. Bitte erneut versuchen (USB-Kabel prüfen).");
+      fails = 0;
       pos = got;
       if (pos - state.mapUp.sent >= 4096 || pos >= bytes.length) {
         state.mapUp.sent = pos;
         render();
       }
     }
-    const done = waitDevice(20000, "Das Gerät hat das Ende nicht bestätigt.");
-    kiraSend("mape");
-    await done;
-    toast("Karte „" + label + "“ übertragen (" + Math.round(bytes.length / 1024) + " KB).");
+    mlog("alle Daten übertragen");
+    // Abschluss: bis zu 3 Versuche; kommt keine Bestätigung, fragt mapi, ob die Karte trotzdem fertig ist
+    let ok = false;
+    for (let i = 0; i < 3 && !ok; i++) {
+      const done = waitDevice(15000, "Das Gerät hat das Ende nicht bestätigt.", (r) => r === "ok");
+      await fastSend(["mape"]);
+      try {
+        await done;
+        ok = true;
+      } catch (e) {
+        mlog("Abschluss ohne Bestätigung, Versuch", i + 1, e.message);
+        if (!e.message.includes("bestätigt")) throw e;
+      }
+    }
+    if (!ok) {
+      // Bestätigung verloren? Stand abfragen: alles da und Empfang beendet heißt, die Karte ist gespeichert.
+      const st = await mapQuery();
+      mlog("Stand nach Abschluss:", st ? `${st.got}/${st.expected} läuft=${st.up}` : "keine Antwort");
+      ok = !!st && !st.up && st.got === bytes.length && st.expected === bytes.length;
+    }
+    state.mapResume = null;
+    kiraSend("mapi");
+    if (!ok) throw deFehler("Das Gerät hat den Abschluss nicht bestätigt. Bitte prüfen, ob die Karte auf dem Gerät erscheint.");
+    mlog("fertig");
+    toast("Karte „" + label + "“ übertragen (" + kb(bytes.length) + " KB).");
   } catch (e) {
+    mlog("Fehler:", e.message);
+    state.mapLogText = mapLog.join("\n");
     toast("Karte: " + fehlerText(e), true);
   } finally {
     state.mapUp = null;
@@ -478,7 +548,7 @@ function onKiraPacket(p) {
     else if (a === "ok") {
       mapWait?.resolve("ok");
       kiraSend("mapi");
-    } else if (a === "a") mapWait?.resolve(+b);
+    } else if (a === "a") mapWait?.resolve(rest.length >= 2 ? { got: +b, expected: +rest[0], up: rest[1] === "1" } : +b);
     renderSoon();
     return;
   }
@@ -526,6 +596,19 @@ function onKiraPacket(p) {
     } else state.menuBuf = (state.menuBuf ?? "") + chunk;
     return;
   }
+  if (kind === "T") {
+    // eigene Start-Tipps: T|stück … T|end, nach dem Speichern T|ok|anzahl
+    const chunk = text.slice(2);
+    if (chunk === "end") {
+      state.tips = parseTipsText(state.tipsBuf ?? "");
+      state.tipsBuf = "";
+      renderSoon();
+    } else if (/^ok\|\d+$/.test(chunk)) {
+      toast(+chunk.slice(3) ? `${chunk.slice(3)} Tipps gespeichert.` : "Keine Tipps mehr im Gerät.");
+      kiraSend("tg");
+    } else state.tipsBuf = (state.tipsBuf ?? "") + chunk;
+    return;
+  }
   if (kind === "u") {
     state.ui = parseUi([a, b, ...rest]);
     renderSoon();
@@ -559,7 +642,10 @@ function onKiraPacket(p) {
     return;
   }
   if (kind === "err") {
-    if (a.startsWith("Karte")) mapWait?.reject(new Error(a));
+    if (a.startsWith("Karte")) {
+      mlog("Gerät meldet:", a);
+      mapWait?.reject(new Error(a));
+    }
     toast("Gerät meldet: " + a, true);
     return;
   }
@@ -1015,7 +1101,8 @@ function pageThinkKira() {
           const d = parseDesign(await f.text());
           if (!state.device) return toast("Bitte zuerst das Gerät verbinden.", true);
           // Reihenfolge bleibt erhalten (Sendewarteschlange); das Gerät bestätigt am Ende mit „M|ok“
-          for (const c of [uiCommand(d), ...menuCommands(d.menus)]) kiraSend(c);
+          // Tipps nur, wenn die Datei welche festlegt (ältere Design-Dateien haben keine)
+          for (const c of [uiCommand(d), ...menuCommands(d.menus), ...(d.tips ? tipsCommands(d.tips) : [])]) kiraSend(c);
           toast("Design „" + f.name + "“ wird übertragen …");
         } catch (e) {
           toast(e.message, true);
@@ -1033,7 +1120,7 @@ function pageThinkKira() {
             try {
               menus = state.menuText ? parseMenu(state.menuText) : null;
             } catch {}
-            exportDesign(menus && menus[5]?.length ? { ...ui, menus } : ui);
+            exportDesign({ ...ui, ...(menus && menus[5]?.length ? { menus } : {}), tips: state.tips ?? [] });
           },
           "outline-secondary",
           "fa-download",
@@ -1090,6 +1177,14 @@ function pageThinkKira() {
             "fa-folder-open",
           ),
           mi ? btn("Karte löschen", () => confirm("Die Offline-Karte im Gerät löschen?") && kiraSend("mapx"), "outline-danger", "fa-trash") : null,
+          state.mapLogText
+            ? btn(
+                "Fehlerprotokoll kopieren",
+                () => navigator.clipboard.writeText(state.mapLogText).then(() => toast("Protokoll kopiert – bitte an Sven/Claude schicken.")),
+                "outline-secondary",
+                "fa-clipboard",
+              )
+            : null,
         ),
     hint("Übertragung per USB dauert einige Minuten. Detailkarten zeigen auch Wege und Pfade, die groben Karten nur Hauptstraßen, Flüsse und Orte. Kartendaten © OpenStreetMap-Mitwirkende (ODbL)."),
   );

@@ -43,11 +43,13 @@ class KiraModule : public SinglePortModule
     void sendInfo();
     void sendUi();
     void sendMenu();
+    void sendTips();
     void sendWaypoints();
     void waypointCommand(char *cmd);
     void sendTrack();
     void mapCommand(char *cmd);
     std::string menuUpload; // Designer-Menü wird in Stücken übertragen
+    std::string tipsUpload; // eigene Start-Tipps, ebenso
     uint32_t lastPongMs = 0;
     bool pingFromClient = false;
 };

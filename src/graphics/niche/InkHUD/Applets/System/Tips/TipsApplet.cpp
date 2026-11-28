@@ -6,12 +6,29 @@
 
 #include "main.h"
 
+#ifdef THINKKIRA
+#include "custom/core/KiraTips.h"
+#endif
+
 using namespace NicheGraphics;
 
 InkHUD::TipsApplet::TipsApplet()
 {
     bool needsRegion = (config.lora.region == meshtastic_Config_LoRaConfig_RegionCode_UNSET);
 
+#ifdef THINKKIRA
+    // ThinkKira: keine Meshtastic-Tipps beim Start. Nur die Region-Auswahl, solange keine gesetzt ist,
+    // danach die eigenen Tipps aus dem Designer (falls welche angelegt sind).
+    if (needsRegion) {
+        tipQueue.push_back(Tip::FINISH_SETUP);
+        tipQueue.push_back(Tip::PICK_REGION);
+    }
+    for (size_t i = 0; i < ThinkKira::tips().size(); i++)
+        tipQueue.push_back(Tip::CUSTOM);
+    if (!tipQueue.empty())
+        bringToForeground();
+    return;
+#endif
     bool showTutorialTips = (settings->tips.firstBoot || needsRegion);
 
     // Welcome screen
@@ -51,6 +68,24 @@ void InkHUD::TipsApplet::onRender(bool full)
         (inkhud && inkhud->hasTouchEnabledProvider()) ? "Tap screen to continue" : "Press button to continue";
 
     switch (tipQueue.front()) {
+#ifdef THINKKIRA
+    case Tip::CUSTOM: {
+        const auto &list = ThinkKira::tips();
+        if (customIndex >= list.size())
+            break;
+        const ThinkKira::Tip &t = list[customIndex];
+        setFont(fontMedium);
+        std::string title = parse(t.title);
+        uint16_t h = getWrappedTextHeight(0, width(), title);
+        printWrapped(0, 0, width(), title);
+        setFont(fontSmall);
+        printWrapped(0, h + fontSmall.lineHeight() / 2, width(), parse(t.text));
+        char pos[40];
+        snprintf(pos, sizeof(pos), "Taste: weiter (%u/%u)", (unsigned)(customIndex + 1), (unsigned)list.size());
+        printAt(0, Y(1.0), parse(pos), LEFT, BOTTOM);
+        break;
+    }
+#endif
     case Tip::WELCOME:
         renderWelcome();
         break;
@@ -343,6 +378,10 @@ void InkHUD::TipsApplet::onButtonShortPress()
         return;
     }
     // Consume current tip
+#ifdef THINKKIRA
+    if (tipQueue.front() == Tip::CUSTOM)
+        customIndex++;
+#endif
     tipQueue.pop_front();
 
     // All tips done

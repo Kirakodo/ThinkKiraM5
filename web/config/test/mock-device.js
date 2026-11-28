@@ -91,6 +91,7 @@ class FakePort {
       if (f[0] === "mapb") {
         this.mapBytes = 0;
         this.mapTotal = +f[1];
+        this.mapUp = true;
         this.send(kiraPacket("k|ready"));
         return;
       }
@@ -102,18 +103,35 @@ class FakePort {
         return;
       }
       if (f[0] === "mapq") {
-        this.send(kiraPacket("k|a|" + this.mapBytes));
+        this.send(kiraPacket(`k|a|${this.mapBytes ?? 0}|${this.mapTotal ?? 0}|${this.mapUp ? 1 : 0}`));
         return;
       }
       if (f[0] === "mape") {
         if (this.mapBytes === this.mapTotal) {
           this.map = this.mapBytes;
+          this.mapUp = false;
+          if (Math.random() < (globalThis.__okDropRate ?? 0)) return; // Antwort verloren
           this.send(kiraPacket("k|ok|" + this.mapBytes));
         } else this.send(kiraPacket("err|Karte: unvollständig"));
         return;
       }
       if (f[0] === "mapi") {
         this.send(kiraPacket(this.map ? `k|info|${this.map}|2|522600000|129500000|524500000|133200000` : "k|none"));
+        return;
+      }
+      if (cmd === "tb") this.tipsUp = "";
+      if (cmd.startsWith("tl|")) {
+        if (new TextEncoder().encode(cmd).length > 233) throw new Error("Paket zu groß: " + cmd.length);
+        this.tipsUp += cmd.slice(3);
+      }
+      if (cmd === "te") {
+        this.tips = this.tipsUp;
+        this.send(kiraPacket("T|ok|" + (this.tips.match(/^T/gm) ?? []).length));
+        return;
+      }
+      if (cmd === "tg") {
+        if (this.tips) this.send(kiraPacket("T|" + this.tips));
+        this.send(kiraPacket("T|end"));
         return;
       }
       if (cmd === "mb") this.menuUp = "";
@@ -125,7 +143,7 @@ class FakePort {
         trk: ["t|523906000,130645000,1764300000\n523910000,130650000,1764300010\n", "t|end|2"],
         ui: [this.ui ?? "u|012345|63|cbgsknm|OK;Ja;Nein;Bin unterwegs"],
         wifiscan: ["w|-55|0|Heimnetz", "w|-78|1|Cafe Gast", "w|end|2"],
-        get: ["m|meshtastic|0.4.3"],
+        get: ["m|meshtastic|0.4.4"],
         info: ["i|0.2.1|v2|4096|4096|2244|2368|120|8|0|180|87|4012|1", "f|1024"],
         stats: ["s|12|1|5|2|1|1", "h|0a0b0c0d|-91|5.5|12", "r|1|0a0b0c0d|-95|4.0|-93|5.0|30", "s|end"],
         ping: ["r|2|0a0b0c0d|-96|3.5|-94|4.5|0"],
