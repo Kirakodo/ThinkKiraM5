@@ -12828,10 +12828,12 @@ function Jh(e, t) {
 	}).finally(() => qh = null);
 }
 async function Yh(e) {
-	let t = Y.device;
-	for (; t.queue?.lock;) await new Promise((e) => setTimeout(e, 20));
-	let n = t.transport.toDevice.getWriter();
+	let t = Y.device, n = t.queue, r = Date.now();
+	for (; n?.lock && Date.now() - r < 15e3;) await new Promise((e) => setTimeout(e, 20));
+	n && (n.lock = !0);
+	let i;
 	try {
+		i = t.transport.toDevice.getWriter();
 		for (let t of e) {
 			let e = V(J.Mesh.MeshPacketSchema, {
 				payloadVariant: {
@@ -12846,13 +12848,13 @@ async function Yh(e) {
 				id: Math.floor(Math.random() * 0x7fffffff) + 1,
 				wantAck: !1
 			});
-			await n.write(Qf(J.Mesh.ToRadioSchema, V(J.Mesh.ToRadioSchema, { payloadVariant: {
+			await i.write(Qf(J.Mesh.ToRadioSchema, V(J.Mesh.ToRadioSchema, { payloadVariant: {
 				case: "packet",
 				value: e
 			} })));
 		}
 	} finally {
-		n.releaseLock();
+		i?.releaseLock(), n && (n.lock = !1, n.queue?.some((e) => !e.sent) && n.processQueue(t.transport.toDevice).catch((e) => console.warn(e)));
 	}
 }
 var Xh = () => Dh?.dataset.firmware || "/_scripts/php/keylink/thinkkira/firmware.php";

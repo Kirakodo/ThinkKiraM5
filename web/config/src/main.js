@@ -336,9 +336,15 @@ function waitDevice(ms, text) {
 // wartet 200 ms je Paket, das wäre für eine Karte (tausende Stücke) zu langsam.
 async function fastSend(cmds) {
   const dev = state.device;
-  while (dev.queue?.lock) await new Promise((r) => setTimeout(r, 20));
-  const writer = dev.transport.toDevice.getWriter();
+  const q = dev.queue;
+  // Die Warteschlange der Meshtastic-Bibliothek sperren, solange wir selbst schreiben. Sonst holt sie sich
+  // gleichzeitig den Schreibzugriff, bekommt einen Fehler und bleibt für immer gesperrt (dann geht gar nichts mehr).
+  const t0 = Date.now();
+  while (q?.lock && Date.now() - t0 < 15000) await new Promise((r) => setTimeout(r, 20));
+  if (q) q.lock = true; // nach 15 s gilt eine hängende Sperre als verwaist
+  let writer;
   try {
+    writer = dev.transport.toDevice.getWriter();
     for (const cmd of cmds) {
       const packet = create(P.Mesh.MeshPacketSchema, {
         payloadVariant: { case: "decoded", value: { payload: new TextEncoder().encode(cmd), portnum: KIRA_PORT } },
@@ -350,7 +356,12 @@ async function fastSend(cmds) {
       await writer.write(toBinary(P.Mesh.ToRadioSchema, create(P.Mesh.ToRadioSchema, { payloadVariant: { case: "packet", value: packet } })));
     }
   } finally {
-    writer.releaseLock();
+    writer?.releaseLock();
+    if (q) {
+      q.lock = false;
+      // was in der Zwischenzeit angefallen ist (z. B. Herzschlag der Bibliothek), jetzt senden
+      if (q.queue?.some((x) => !x.sent)) q.processQueue(dev.transport.toDevice).catch((e) => console.warn(e));
+    }
   }
 }
 
