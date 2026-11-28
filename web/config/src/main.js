@@ -10,7 +10,8 @@ import { TransportWebBluetooth } from "@meshtastic/transport-web-bluetooth";
 import { create, toJson, fromJson, clone } from "@bufbuild/protobuf";
 import { renderMessage, el, group, fehlerText } from "./form.js";
 import { SECTION_LABELS } from "./labels.js";
-import { parseUi, uiCommand, parseDesign, exportDesign, pickFile } from "./designer.js";
+import { parseUi, uiCommand, menuCommands, parseDesign, exportDesign, pickFile } from "./designer.js";
+import { parseMenu } from "./menu-model.js";
 
 const P = Protobuf;
 const STATUS_CONFIGURED = 7;
@@ -54,12 +55,14 @@ async function connect(kind) {
     state.kiraStatsAsked = false;
     state.wifiNets = null;
     state.ui = null;
+    state.menuText = state.menuBuf = null;
 
     device.events.onDeviceStatus.subscribe((s) => {
       if (s === STATUS_CONFIGURED) {
         setStatus("verbunden");
         kiraSend("get");
         kiraSend("ui");
+        kiraSend("mg");
       }
       else if (s === 2 && state.device === device && !state.closing) {
         // Gerät weg (Kabel gezogen, Neustart, Bluetooth aus): aufräumen
@@ -126,6 +129,7 @@ function resetConnection(status) {
   state.wifiNets = null;
   state.wifiScanning = false;
   state.ui = null;
+  state.menuText = state.menuBuf = null;
   setStatus(status);
 }
 
@@ -260,6 +264,19 @@ function onKiraPacket(p) {
   if (kind === "m") {
     state.kira = { mode: a, version: b };
     renderSoon();
+    return;
+  }
+  if (kind === "M") {
+    const chunk = text.slice(2);
+    if (chunk === "end") {
+      state.menuText = state.menuBuf ?? "";
+      state.menuBuf = "";
+      renderSoon();
+    } else if (chunk === "ok") {
+      toast("Design übertragen. Das Gerät zeigt die neue Oberfläche sofort.");
+      kiraSend("ui");
+      kiraSend("mg");
+    } else state.menuBuf = (state.menuBuf ?? "") + chunk;
     return;
   }
   if (kind === "u") {
@@ -669,7 +686,7 @@ function pageThinkKira() {
           el("div", {}, "Seiten: " + [...ui.order].filter((c) => ui.pages & (1 << +c)).map((c) => ["Start", "Nachrichten", "Navigation", "Karte", "Knoten", "Einstellungen"][+c]).join(" → ")),
           el("div", {}, "Schnellantworten: " + ui.replies.join(", ")),
         )
-      : el("div", { class: "alert alert-warning py-2 mb-1" }, "Das Gerät kennt noch kein Design. Bitte ThinkKira 0.3.1 oder neuer über den Loader aufspielen."),
+      : el("div", { class: "alert alert-warning py-2 mb-1" }, "Das Gerät kennt noch kein Design. Bitte ThinkKira 0.3.2 oder neuer über den Loader aufspielen."),
     btn(
       "Design übertragen …",
       async () => {
@@ -677,8 +694,10 @@ function pageThinkKira() {
         if (!f) return;
         try {
           const d = parseDesign(await f.text());
-          if (await kiraSend(uiCommand(d))) toast("Design „" + f.name + "“ übertragen.");
-          else toast("Übertragen fehlgeschlagen. Ist das Gerät noch verbunden?", true);
+          if (!state.device) return toast("Bitte zuerst das Gerät verbinden.", true);
+          // Reihenfolge bleibt erhalten (Sendewarteschlange); das Gerät bestätigt am Ende mit „M|ok“
+          for (const c of [uiCommand(d), ...menuCommands(d.menus)]) kiraSend(c);
+          toast("Design „" + f.name + "“ wird übertragen …");
         } catch (e) {
           toast(e.message, true);
         }
@@ -686,7 +705,20 @@ function pageThinkKira() {
       "primary",
       "fa-upload",
     ),
-    ui ? btn("Design vom Gerät exportieren", () => exportDesign(ui), "outline-secondary", "fa-download") : null,
+    ui
+      ? btn(
+          "Design vom Gerät exportieren",
+          () => {
+            try {
+              exportDesign({ ...ui, menus: parseMenu(state.menuText || "") });
+            } catch {
+              exportDesign(ui); // alte Firmware ohne Menü-Daten: Standardmenüs
+            }
+          },
+          "outline-secondary",
+          "fa-download",
+        )
+      : null,
   );
   return el("div", {}, grid(modeBox, statBox), grid(rangeBox, designBox), grid(group("Kommt noch", ul)));
 }

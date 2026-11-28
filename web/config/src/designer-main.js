@@ -3,12 +3,13 @@
 // Einbettung: <div id="tk-designer"></div> + dieses Modul.
 // SPDX-License-Identifier: GPL-3.0-only
 import { el } from "./form.js";
-import { DEFAULT_UI, checkDesign, copy, designerView, exportDesign, parseDesign, pickFile } from "./designer.js";
+import { DEFAULT_UI, checkDesign, copy, designJson, designerView, exportDesign, parseDesign, pickFile } from "./designer.js";
 
 const KEY = "thinkkira-design";
 let root,
   d,
   preview = 0,
+  previewMenu = false,
   msgTimer;
 
 function load() {
@@ -21,7 +22,7 @@ function load() {
 
 function save() {
   try {
-    localStorage.setItem(KEY, JSON.stringify({ format: "thinkkira-design", version: 1, ...d }));
+    localStorage.setItem(KEY, JSON.stringify(designJson(d)));
   } catch {}
 }
 
@@ -47,6 +48,11 @@ function render() {
     typed: save,
     setPreview: (i) => {
       preview = i;
+      render();
+    },
+    previewMenu,
+    setPreviewMenu: (b) => {
+      previewMenu = b;
       render();
     },
     actions: [

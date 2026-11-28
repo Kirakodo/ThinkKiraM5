@@ -77,7 +77,12 @@ class FakePort {
         const f = cmd.split("|");
         this.ui = "u|" + f[1] + "|" + f[2] + "|" + f[3] + "|" + f.slice(4).join("|");
       }
+      if (cmd === "mb") this.menuUp = "";
+      if (cmd.startsWith("ml|")) this.menuUp += cmd.slice(3);
+      if (cmd === "me") this.menu = this.menuUp;
       const replies = {
+        mg: ["M|" + (this.menu ?? "P5\nIsys.info|Info\n"), "M|end"],
+        me: ["M|ok"],
         ui: [this.ui ?? "u|012345|63|cbgsknm|OK;Ja;Nein;Bin unterwegs"],
         wifiscan: ["w|-55|0|Heimnetz", "w|-78|1|Cafe Gast", "w|end|2"],
         get: ["m|meshtastic|0.2.1"],
