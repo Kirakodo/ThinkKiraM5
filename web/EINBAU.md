@@ -48,7 +48,7 @@ Inhalt der Karte **`Konfigurator.php`** in `SUBPAGES/keylink/ThinkKira/`:
 
 Eigenständiges Werkzeug für die Bildschirm-Oberfläche: Seiten-Reihenfolge und an/aus, Bausteine der Startseite,
 Schnellantworten, Vorschau. Braucht **kein Gerät**; der Entwurf bleibt im Browser gespeichert. Ergebnis wird als
-Design-Datei (`thinkkira-design.json`) exportiert und im Konfigurator unter ThinkKira → „Design übertragen …“ aufs Gerät gebracht.
+Design-Datei (`thinkkira-design.json`) heruntergeladen und im Konfigurator unter ThinkKira → „Design-Datei ans Gerät übertragen …“ aufs Gerät gebracht.
 
 Inhalt der Karte **`Designer.php`** in `SUBPAGES/keylink/ThinkKira/`:
 

@@ -474,12 +474,12 @@ function V() {
 			F = e, V();
 		},
 		actions: [
-			B("Design exportieren", "fa-download", "primary", () => {
+			B("Design herunterladen", "fa-download", "primary", () => {
 				let e = T(N);
 				if (e) return z(e, !0);
-				R(), S(N), z("Design-Datei gespeichert. Übertragen: Konfigurator → ThinkKira → „Design übertragen“.");
+				R(), S(N), z("Design-Datei gespeichert. Übertragen: Konfigurator → ThinkKira → „Design-Datei ans Gerät übertragen“.");
 			}),
-			B("Design importieren", "fa-upload", "outline-secondary", async () => {
+			B("Design hochladen (weiter bearbeiten)", "fa-upload", "outline-secondary", async () => {
 				let e = await w();
 				if (e) try {
 					N = C(await e.text()), P = 0, R(), V(), z("Design „" + e.name + "“ geladen.");

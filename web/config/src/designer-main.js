@@ -1,5 +1,5 @@
 // ThinkKira Designer – eigenständig, ohne Gerät. Entwurf bleibt im Browser gespeichert (localStorage),
-// Export/Import als Design-Datei. Übertragen aufs Gerät: Konfigurator → ThinkKira → „Design übertragen“.
+// Export/Import als Design-Datei. Übertragen aufs Gerät: Konfigurator → ThinkKira → „Design-Datei ans Gerät übertragen“.
 // Einbettung: <div id="tk-designer"></div> + dieses Modul.
 // SPDX-License-Identifier: GPL-3.0-only
 import { el } from "./form.js";
@@ -56,14 +56,14 @@ function render() {
       render();
     },
     actions: [
-      button("Design exportieren", "fa-download", "primary", () => {
+      button("Design herunterladen", "fa-download", "primary", () => {
         const err = checkDesign(d);
         if (err) return msg(err, true);
         save();
         exportDesign(d);
-        msg("Design-Datei gespeichert. Übertragen: Konfigurator → ThinkKira → „Design übertragen“.");
+        msg("Design-Datei gespeichert. Übertragen: Konfigurator → ThinkKira → „Design-Datei ans Gerät übertragen“.");
       }),
-      button("Design importieren", "fa-upload", "outline-secondary", async () => {
+      button("Design hochladen (weiter bearbeiten)", "fa-upload", "outline-secondary", async () => {
         const f = await pickFile();
         if (!f) return;
         try {

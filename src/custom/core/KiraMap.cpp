@@ -18,6 +18,9 @@ namespace ThinkKira
 static const char *MAP_PATH = "/kira/map.tkm";
 static const char *PART_PATH = "/kira/map.part";
 static constexpr uint32_t HEADER_SIZE = 32;
+#ifdef FSCom
+static File upFile; // bleibt während des Empfangs offen (öffnen/schließen je Stück wäre zu langsam)
+#endif
 
 KiraMapFile &mapFile()
 {
@@ -89,6 +92,8 @@ bool KiraMapFile::beginUpload(uint32_t bytes, std::string &error)
 {
 #ifdef FSCom
     concurrency::LockGuard g(spiLock);
+    if (upFile)
+        upFile.close();
     FSCom.remove(PART_PATH);
     // Platz: die alte Karte wird erst am Ende ersetzt, zählt also noch mit
     uint32_t oldMap = 0;
@@ -106,12 +111,11 @@ bool KiraMapFile::beginUpload(uint32_t bytes, std::string &error)
         checked = false;
     }
     FSCom.mkdir("/kira");
-    File f = FSCom.open(PART_PATH, FILE_O_WRITE);
-    if (!f) {
+    upFile = FSCom.open(PART_PATH, FILE_O_WRITE);
+    if (!upFile) {
         error = "Datei konnte nicht angelegt werden";
         return false;
     }
-    f.close();
     upExpected = bytes;
     upBytes = 0;
     uploading = true;
@@ -132,11 +136,9 @@ bool KiraMapFile::appendBase64(const char *b64)
     if (mbedtls_base64_decode(buf, sizeof(buf), &n, (const unsigned char *)b64, strlen(b64)) != 0)
         return false;
     concurrency::LockGuard g(spiLock);
-    File f = FSCom.open(PART_PATH, FILE_O_APPEND);
-    if (!f)
+    if (!upFile)
         return false;
-    bool good = f.write(buf, n) == n;
-    f.close();
+    bool good = upFile.write(buf, n) == n;
     if (good)
         upBytes += n;
     return good;
@@ -154,6 +156,8 @@ bool KiraMapFile::finishUpload(std::string &error)
     uploading = false;
 #ifdef FSCom
     concurrency::LockGuard g(spiLock);
+    if (upFile)
+        upFile.close();
     if (upBytes != upExpected) {
         FSCom.remove(PART_PATH);
         error = "unvollständig (" + std::to_string(upBytes) + " von " + std::to_string(upExpected) + " Byte)";

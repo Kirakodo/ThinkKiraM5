@@ -283,33 +283,33 @@ async function uploadMap(bytes, label) {
     const ready = waitDevice(10000, "Das Gerät antwortet nicht.");
     kiraSend("mapb|" + bytes.length);
     await ready;
-    const CH = 168; // 168 Byte → 224 Zeichen Base64, passt mit Offset in ein Paket
-    // Go-Back-N: je 8 Stücke senden, dann mit mapq den Stand abfragen; ging etwas verloren, ab dort neu senden
+    // 162 Byte → 216 Zeichen Base64; mit „mapd|offset|“ höchstens 228 Byte (Meshtastic erlaubt 233 je Paket)
+    const CH = 162;
+    // Stop-and-Wait: ein Stück senden, Gerät quittiert mit seinem Stand (k|a|bytes), dort weitermachen.
+    // Mehrere Stücke auf einmal würden den kleinen USB-Empfangspuffer des Geräts überlaufen lassen.
     let pos = 0,
       fails = 0;
     while (pos < bytes.length) {
       if (state.mapUp.cancel) throw deFehler("Abgebrochen.");
-      const cmds = [];
-      for (let o = pos, k = 0; k < 8 && o < bytes.length; k++, o += CH) {
-        let bin = "";
-        for (const c of bytes.subarray(o, o + CH)) bin += String.fromCharCode(c);
-        cmds.push("mapd|" + o + "|" + btoa(bin));
-      }
-      cmds.push("mapq"); // Stand abfragen
-      const ack = waitDevice(8000, "Das Gerät quittiert nicht mehr – Verbindung prüfen.");
-      await fastSend(cmds);
+      let bin = "";
+      for (const c of bytes.subarray(pos, pos + CH)) bin += String.fromCharCode(c);
+      const ack = waitDevice(3000, "Das Gerät quittiert nicht mehr – Verbindung prüfen.");
+      await fastSend(["mapd|" + pos + "|" + btoa(bin)]);
       let got;
       try {
         got = await ack;
       } catch (e) {
-        if (++fails > 5) throw e;
-        continue; // Fenster ab pos erneut senden, mapq fragt den Stand neu ab
+        if (++fails > 8) throw e;
+        continue; // Stück erneut senden; das Gerät quittiert auch Wiederholungen
       }
+      if (typeof got !== "number") continue;
       if (got > pos) fails = 0;
       else if (++fails > 20) throw deFehler("Zu viele Übertragungsfehler. Bitte erneut versuchen (USB-Kabel prüfen).");
       pos = got;
-      state.mapUp.sent = pos;
-      render();
+      if (pos - state.mapUp.sent >= 4096 || pos >= bytes.length) {
+        state.mapUp.sent = pos;
+        render();
+      }
     }
     const done = waitDevice(20000, "Das Gerät hat das Ende nicht bestätigt.");
     kiraSend("mape");
@@ -897,7 +897,7 @@ function pageThinkKira() {
         )
       : el("div", { class: "alert alert-warning py-2 mb-1" }, "Das Gerät kennt noch kein Design. Bitte ThinkKira 0.3.2 oder neuer über den Loader aufspielen."),
     btn(
-      "Design übertragen …",
+      "Design-Datei ans Gerät übertragen …",
       async () => {
         const f = await pickFile();
         if (!f) return;
@@ -916,13 +916,14 @@ function pageThinkKira() {
     ),
     ui
       ? btn(
-          "Design vom Gerät exportieren",
+          "Design vom Gerät herunterladen",
           () => {
+            // dasselbe Dateiformat wie der Designer; fehlt das Menü des Geräts (alte Firmware), gelten die Standardmenüs
+            let menus = null;
             try {
-              exportDesign({ ...ui, menus: parseMenu(state.menuText || "") });
-            } catch {
-              exportDesign(ui); // alte Firmware ohne Menü-Daten: Standardmenüs
-            }
+              menus = state.menuText ? parseMenu(state.menuText) : null;
+            } catch {}
+            exportDesign(menus && menus[5]?.length ? { ...ui, menus } : ui);
           },
           "outline-secondary",
           "fa-download",

@@ -95,7 +95,10 @@ class FakePort {
         return;
       }
       if (f[0] === "mapd") {
-        if (+f[1] === this.mapBytes && Math.random() > (globalThis.__dropRate ?? 0)) this.mapBytes += atob(f[2]).length;
+        if (cmd.length > 233) throw new Error("Paket zu groß: " + cmd.length);
+        if (Math.random() < (globalThis.__dropRate ?? 0)) return; // auf dem Weg verloren
+        if (+f[1] === this.mapBytes) this.mapBytes += atob(f[2]).length;
+        this.send(kiraPacket("k|a|" + this.mapBytes));
         return;
       }
       if (f[0] === "mapq") {

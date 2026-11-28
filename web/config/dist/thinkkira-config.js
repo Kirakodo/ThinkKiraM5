@@ -12791,25 +12791,22 @@ async function Uh(e, t) {
 		let r = 0, i = 0;
 		for (; r < e.length;) {
 			if (Y.mapUp.cancel) throw $m("Abgebrochen.");
-			let t = [];
-			for (let n = r, i = 0; i < 8 && n < e.length; i++, n += 168) {
-				let r = "";
-				for (let t of e.subarray(n, n + 168)) r += String.fromCharCode(t);
-				t.push("mapd|" + n + "|" + btoa(r));
-			}
-			t.push("mapq");
-			let n = Bh(8e3, "Das Gerät quittiert nicht mehr – Verbindung prüfen.");
-			await Vh(t);
+			let t = "";
+			for (let n of e.subarray(r, r + 162)) t += String.fromCharCode(n);
+			let n = Bh(3e3, "Das Gerät quittiert nicht mehr – Verbindung prüfen.");
+			await Vh(["mapd|" + r + "|" + btoa(t)]);
 			let a;
 			try {
 				a = await n;
 			} catch (e) {
-				if (++i > 5) throw e;
+				if (++i > 8) throw e;
 				continue;
 			}
-			if (a > r) i = 0;
-			else if (++i > 20) throw $m("Zu viele Übertragungsfehler. Bitte erneut versuchen (USB-Kabel prüfen).");
-			r = a, Y.mapUp.sent = r, $();
+			if (typeof a == "number") {
+				if (a > r) i = 0;
+				else if (++i > 20) throw $m("Zu viele Übertragungsfehler. Bitte erneut versuchen (USB-Kabel prüfen).");
+				r = a, (r - Y.mapUp.sent >= 4096 || r >= e.length) && (Y.mapUp.sent = r, $());
+			}
 		}
 		let a = Bh(2e4, "Das Gerät hat das Ende nicht bestätigt.");
 		X("mape"), await a, Q("Karte „" + t + "“ übertragen (" + Math.round(e.length / 1024) + " KB).");
@@ -13313,7 +13310,7 @@ function ug() {
 		"Karte",
 		"Knoten",
 		"Einstellungen"
-	][+e]).join(" → ")), K("div", {}, "Schnellantworten: " + l.replies.join(", "))) : K("div", { class: "alert alert-warning py-2 mb-1" }, "Das Gerät kennt noch kein Design. Bitte ThinkKira 0.3.2 oder neuer über den Loader aufspielen."), Z("Design übertragen …", async () => {
+	][+e]).join(" → ")), K("div", {}, "Schnellantworten: " + l.replies.join(", "))) : K("div", { class: "alert alert-warning py-2 mb-1" }, "Das Gerät kennt noch kein Design. Bitte ThinkKira 0.3.2 oder neuer über den Loader aufspielen."), Z("Design-Datei ans Gerät übertragen …", async () => {
 		let e = await xh();
 		if (e) try {
 			let t = bh(await e.text());
@@ -13323,15 +13320,15 @@ function ug() {
 		} catch (e) {
 			Q(e.message, !0);
 		}
-	}, "primary", "fa-upload"), l ? Z("Design vom Gerät exportieren", () => {
+	}, "primary", "fa-upload"), l ? Z("Design vom Gerät herunterladen", () => {
+		let e = null;
 		try {
-			yh({
-				...l,
-				menus: rh(Y.menuText || "")
-			});
-		} catch {
-			yh(l);
-		}
+			e = Y.menuText ? rh(Y.menuText) : null;
+		} catch {}
+		yh(e && e[5]?.length ? {
+			...l,
+			menus: e
+		} : l);
 	}, "outline-secondary", "fa-download") : null);
 	e && Y.mapInfo === void 0 && !Y.mapAsked && (Y.mapAsked = !0, setTimeout(() => X("mapi"), 0));
 	let d = Y.mapInfo, f = Y.mapUp, ee = q("Offline-Karte", d ? K("div", { class: "small mb-2" }, `Im Gerät: ${Math.round(d.size / 1024)} KB, Detailstufe ${d.level}, ${d.bbox[0].toFixed(2)}–${d.bbox[2].toFixed(2)} N, ${d.bbox[1].toFixed(2)}–${d.bbox[3].toFixed(2)} O`) : K("div", { class: "small text-muted mb-2" }, d === !1 ? "Keine Karte im Gerät." : "Frage das Gerät …"), f ? K("div", {}, K("div", { class: "small mb-1" }, `Übertrage „${f.label}“ … ${Math.round(f.sent / 1024)} von ${Math.round(f.total / 1024)} KB`), K("div", {

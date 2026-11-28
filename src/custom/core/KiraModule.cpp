@@ -196,22 +196,24 @@ void KiraModule::waypointCommand(char *cmd)
 }
 
 // Offline-Karte: mapb|bytes (Beginn) · mapd|offset|base64 (Daten) · mapq (Stand) · mape (fertig) · mapx (löschen) · mapi (Info)
-// Antworten: k|ready · k|a|bytes (Stand auf mapq) · k|ok|bytes · k|info|bytes|stufe|latMin|lonMin|latMax|lonMax · k|none
+// Antworten: k|ready · k|a|bytes (Stand nach jedem mapd und auf mapq) · k|ok|bytes · k|info|bytes|stufe|latMin|lonMin|latMax|lonMax · k|none
 void KiraModule::mapCommand(char *cmd)
 {
     KiraMapFile &m = mapFile();
     std::string err;
     char b[120];
     if (!strncmp(cmd, "mapd|", 5)) {
-        // mapd|offset|base64 – Stücke mit falschem Offset (eins davor ging verloren) werden verworfen;
-        // der Konfigurator fragt nach je 8 Stücken mit mapq den Stand ab und macht dort weiter (Go-Back-N)
+        // mapd|offset|base64 – jedes Stück wird sofort mit dem Stand quittiert (k|a|bytes); Stücke mit falschem
+        // Offset (Wiederholung oder eins davor verloren) werden verworfen, der Konfigurator macht beim Stand weiter
         char *data = strchr(cmd + 5, '|');
         uint32_t off = strtoul(cmd + 5, nullptr, 10);
         if (data && off == m.received() && !m.appendBase64(data + 1))
-            reply("err|Karte: Daten konnten nicht geschrieben werden");
+            return replyNow("err|Karte: Daten konnten nicht geschrieben werden");
+        snprintf(b, sizeof(b), "k|a|%lu", (unsigned long)m.received());
+        replyNow(b);
     } else if (!strcmp(cmd, "mapq")) {
         snprintf(b, sizeof(b), "k|a|%lu", (unsigned long)m.received());
-        reply(b);
+        replyNow(b);
     } else if (!strncmp(cmd, "mapb|", 5)) {
         if (m.beginUpload(strtoul(cmd + 5, nullptr, 10), err))
             reply("k|ready");
